@@ -53,7 +53,7 @@
               <li><strong>Selenium</strong></li>
               <ul>
                 <li><strong>Selenium IDE</strong>: A comprehensive walkthrough of the misunderstood IDE.</li>
-                <li><strong>Storing Tests</strong>: A guide to Automated Testing at it's most basic level.</li>
+                <li><strong>Store and Run Tests</strong>: A guide to Automated Testing at it's most basic level.</li>
               </ul>
               <li><strong>PHPUnit</strong></li>
               <ul>
@@ -68,7 +68,6 @@
               <li><strong>Hudson / Jenkins</strong></li>
               <ul>
                 <li><strong>Continuous Integration</strong>: What does it mean to be continuously integrated?</li>
-                <li><strong>Getting Setup</strong>: A quick tutorial to get you set up to run selenium tests on rollout of code.</li>
               </ul>
             </ul>
           </section>
@@ -82,7 +81,8 @@
 				</section>
 
 				<section>
-					<h2 style='color:#14DAEC'>&lt;SHAMELESS SELF PROMOTION&gt;</h2>
+          <br />
+					<h4 class='tag'>&lt;SHAMELESS SELF PROMOTION&gt;</h4>
 					<p>
             Allan Chappell
 					</p>
@@ -99,7 +99,7 @@
 					<p>
             Blog: <a href='http://generalredneck.com'>GeneralRedneck.com</a>
 					</p>
-					<h2 style='color:#13DAEC'>&lt;SHAMELESS SELF PROMOTION /&gt;</h2>
+					<h4 class='tag'>&lt;/SHAMELESS SELF PROMOTION&gt;</h4>
 				</section>
 
 				<section>
@@ -114,21 +114,159 @@
           <section>
             <h3>Selenium IDE</h3>
             <img src='img/selenium-ide.png' style='border:none; float:left; margin:0px;'/>
-            <ul style='margin-top:70px;'>
-              <li style='margin-bottom:20px;'>Record Your Actions.</li>
+            <ul style='margin-top:60px;'>
+              <li style='margin-bottom:21px;'>Record Your Actions.</li>
               <li style='margin-bottom:20px;'>Modify Your Targets.</li>
               <li style='margin-bottom:20px;'>Fill In the Gaps With Tests.</li>
+              <li style='margin-bottom:20px;'>Store and Run Your Tests.</li>
             </ul>
           </section>
           <section>
-            <h3>Storing Tests</h3>
+            <h3>Selenium IDE</h3>
+            <h4>Record Your Actions.</h4>
+              <img src='img/record-button.png' class='not-fancy' />
+            <p>
+              Live Demo Time!
+            </p>
+          </section>
+          <section>
+            <h3>Store Tests</h3>
+            <h4>Warning: Conflicting Information!</h4>
+            <p>If you plan to move on to more advanced testing:</p>
+            <p><strong>Separate different features into different Test Suites.</strong></p>
+            <br />
+            <p>If you plan to stick with what you got now:</p>
+            <p><strong>Combine all features into the same Test Suite.</strong></p>
+          </section>
+          <section>
+            <h3>Store Tests</h3>
+            <p>For both do:</p>
             <ul>
-              <li>First thing about storing tests.</li>
-              <li>Second thing about storing tests.</li>
-              <li>Third thing about storing tests.</li>
+              <li>Separate tests into logical test cases.</li>
+              <li>Share and reap the rewards!</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Run Tests</h3>
+            <ul>
+              <li style='margin-bottom:20px;'>Make a backup of the database. <br /><span >(Check out <a href='http://drupal.org/project/backup_migrate'>backup and migrate</a>)</span></li>
+              <li style='margin-bottom:20px;'>Run the Tests!</li>
+              <li>Restore if needed.</li>
             </ul>
           </section>
 				</section>
+        <section>
+          <br />
+          <h4 class='tag'>&lt;blink&gt;</h4>
+          <h1>CONGRATULATIONS!!!</h1>
+          <h2>You are ready to move to the next level!</h2>
+          <h4 class='tag'>&lt;/blink&gt;</h4>
+        </section>
+        <section>
+          <br />
+          <h2>Where does PHPUnit come in?</h2>
+          <p>PHPUnit allows you to make the process more <strong>automated</strong>!</p>
+        </section>
+        <section>
+          <h2>PHPUnit</h2>
+          <section>
+            <h3>Selenium Feature Overview</h3>
+            <ul>
+              <li>You can run your old tests! (with massaging)</li>
+              <li>You can now perform repetitive tasks!</li>
+              <li>You can now chain running your tests to events!</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Translation of Selenium tests</h3>
+            <p>There are 2 ways!</p>
+            <ul>
+              <li>PHP Export Addon</li>
+              <li>Throwing your selenese test cases into a directory and telling PHPUnit to run em.</li>
+            </ul>
+          </section>
+          <section>
+            <br />
+            <h4 class='tag'>&lt;Impersonate class='audience'&gt;</h4>
+            <h2>Great... But how to do I use it?</h2>
+            <h4 class='tag'>&lt;/Impersonate&gt;
+          </section>
+          <section>
+            <br />
+            <p>
+              Live Demo Time!
+            </p>
+          </section>
+        </section>
+        <section>
+          <br />
+          <h4 class='tag'>&lt;blink&gt;</h4>
+          <h1>CONGRATULATIONS!!!</h1>
+          <h2>You've leveled up twice in an hour!</h2>
+          <h4 class='tag'>&lt;/blink&gt;</h4>
+          <small>You should feel proud of yourself... No, Really!</small>
+        </section>
+        <section>
+          <br />
+          <h2>There's MORE?!? I thought I made the tests automated?</h2>
+          <p>But you can do more with continuous integration provided by a platform such as Travis, Hudson, Jenkins.</p>
+          <img src='img/Travis.png' class='not-fancy' style='width:140px;'/>
+          <img src='img/headshot.png' class='not-fancy' />
+          <img src='img/hudson-bust.png' class='not-fancy' />
+        </section>
+        <section>
+          <h2>Continuous Integration</h2>
+          <section>
+            <h3>Overview</h3>
+            <p>Continuous Integration (CI) there to help your work's quality by:</p>
+            <ul>
+              <li>Taking repetitive manual tasks and automating them</li>
+              <li>Doing these tasks more frequently</li>
+              <li>And doing these task faster!</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Things That Now Become Easier and Possible</h3>
+              <ul>
+                <li>Code standard checking</li>
+                <li>Processing Tasks on events such as commits!</li>
+                <li>More information in an already formatted report!</li>
+                <li>Running Tests</li>
+              </ul>
+          </section>
+        </section>
+        <section>
+          <h2>To Complete This Level You Must...</h2>
+          <ul>
+            <li><strong>Install a CI system:</strong> Hudson, Jenkins, and Travis are all free with great documentation.</li>
+            <li><strong>Build a job:</strong> Usually tell it when to run. For instance, on git commit to github, or every night at midnight.</li>
+            <li><strong>Tell it what to do:</strong> Anything commandline will run. PHPUnit is commandline. Hudson, Travis, have Selenium built in!</li>
+          <ul>
+        </section>
+        <section>
+          <br />
+          <h4 class='tag'>&lt;blink&gt;</h4>
+          <h1>CONGRATULATIONS!!!</h1>
+          <h2>You've made it to The End!</h2>
+          <h4 class='tag'>&lt;/blink&gt;</h4>
+          <p>But wait there's one more thing...</p>
+        </section>
+        <section>
+          <h2> What this means is that you now have a choice based on the following...</h2> 
+          <ul>
+            <li>How <strong>Automated</strong> do you want to go.</li>
+            <li>What works for your team?</li>
+            <li>How many resources do you have to dedicate to automation?</li>
+          </ul>
+          <br />
+          <br />
+          <h4>In the end, it is almost always best for your product to get to Level 3.</h4>
+        </section>
+        <section>
+          <br />
+          <h1>Questions?</h1>
+        </section>
+        <h2>
 			</div>
 
 			<!-- The navigational controls UI -->

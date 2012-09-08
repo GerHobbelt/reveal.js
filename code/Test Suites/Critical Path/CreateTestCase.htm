@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost:8080/" />
+<title>Create Test Case</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Create Test Case</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/tcm/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=edit-name</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=edit-pass</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=edit-submit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//a[contains(text(),'Add content')])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>link=Test Case</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Test Case</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=edit-title</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=edit-title</td>
+	<td>Test Test Case</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=edit-body-und-0-value</td>
+	<td>This is a test test case.</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=edit-field-prerequisites-und-0-value</td>
+	<td>User Must be logged in.</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=edit-field-steps-und-0-step</td>
+	<td>Click on the View Test case link</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=edit-field-steps-und-0-verify</td>
+	<td>You should see the testcase</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>css=form#test-case-node-form #edit-submit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=page-title</td>
+	<td>Test Test Case</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>css=p</td>
+	<td>This is a test test case.</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//div[contains(@class,'node-test-case')]/div[2]/div[2]/div[2]/div</td>
+	<td>Click on the View Test case link You should see the testcase</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//div[contains(@class,'node-test-case')]/div[2]/div[3]/div[2]/div/p</td>
+	<td>User Must be logged in.</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>css=li.menu-15.last &gt; a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>css=#block-user-login h2</td>
+	<td>User login</td>
+</tr>
+</tbody></table>
+</body>
+</html>
