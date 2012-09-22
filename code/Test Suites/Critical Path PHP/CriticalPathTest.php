@@ -4,7 +4,7 @@ class CriticalPathTest extends PHPUnit_Extensions_SeleniumTestCase
   protected function setUp()
   {
     $this->setBrowser("*chrome");
-    $this->setBrowserUrl("http://localhost:8080/");
+    $this->setBrowserUrl(getenv('SELENIUM_BROWSER_URL'));
   }
 
   public function testLogout()
