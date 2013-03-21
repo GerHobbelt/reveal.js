@@ -14,8 +14,8 @@
  * GLOBAL STYLES
  *********************************************/
 body {
-  background-image: url("img/rvl-bg.jpg");
-  background-position: bottom; }
+  background-image: url("img/rvl-bg-large.jpg");
+  background-position: left bottom; }
 
 .reveal {
   font-family: "Lato", sans-serif;
