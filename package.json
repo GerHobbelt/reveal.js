@@ -6,7 +6,7 @@
   "subdomain": "revealjs",
   "scripts": {
     "test": "grunt jshint",
-    "start": ""
+    "start": "node plugin/multiplex/index.js"
   },
   "author": {
     "name": "Hakim El Hattab",
