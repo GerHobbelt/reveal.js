@@ -14,7 +14,7 @@
     })();
 
     /**
-     * Detects if notes are enable and the current page is opened inside an /iframe
+     * Detects if notes are enabled and the current page is opened inside an /iframe
      * this prevents loading Remotes.io several times
      */
     var remotesAndIsNotes = (function(){
