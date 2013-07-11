@@ -99,7 +99,7 @@ function Hilitor(id, tag)
   // start highlighting at target node
   this.apply = function(input)
   {
-    if(input == undefined || !input) return;
+    if(input == undefined || !input) return [];
     this.remove();
     this.setRegex(input);
     this.hiliteWords(targetNode);
