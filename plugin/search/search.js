@@ -1,6 +1,6 @@
 /*
  * Handles finding a text string anywhere in the slides and showing the next occurrence to the user
- * by navigatating to that slide and highlighting it.
+ * by navigating to that slide and highlighting it.
  *
  * By Jon Snyder <snyder.jon@gmail.com>, February 2013
  */
@@ -18,7 +18,6 @@ var RevealSearch = (function() {
 
 function Hilitor(id, tag)
 {
-
   var targetNode = document.getElementById(id) || document.body;
   var hiliteTag = tag || "EM";
   var skipTags = new RegExp("^(?:" + hiliteTag + "|SCRIPT|FORM|SPAN)$");
