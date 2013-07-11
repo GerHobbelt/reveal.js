@@ -1,3 +1,11 @@
+# Editor backup files
+*~
+*.bak
+
+# MSOffice temporary files
+~*
+
+# misc
 .DS_Store
 .svn
 log/*.log
