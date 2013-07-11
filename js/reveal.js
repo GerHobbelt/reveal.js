@@ -212,6 +212,11 @@ var Reveal = (function(){
 		if( !dom.wrapper.querySelector( '.controls' ) ) {
 			var controlsElement = document.createElement( 'aside' );
 			controlsElement.classList.add( 'controls' );
+
+			// inspired by http://www.quirksmode.org/dom/events/blurfocus.html when mixing reveal with contenteditable areas and 100% keyboard control:
+			// this should make sure that TAB should end up at a node which we recognize as presentation control area and hence process the keys pressed.
+			controlsElement.setAttribute( 'tabindex', '9999' );	
+
 			controlsElement.innerHTML = '<div class="navigate-left"></div>' +
 										'<div class="navigate-right"></div>' +
 										'<div class="navigate-up"></div>' +
@@ -1386,7 +1391,7 @@ var Reveal = (function(){
 		// 'present' class when navigating between adjacent vertical
 		// stacks
 		if( previousSlide ) {
-			previousSlide.classList.remove( 'present' );
+			//previousSlide.classList.remove( 'present' );
 
 			// Reset all slides upon navigate to home
 			// Issue: #285
@@ -1516,6 +1521,29 @@ var Reveal = (function(){
 				// If this element contains vertical slides
 				if( element.querySelector( 'section' ) ) {
 					element.classList.add( 'stack' );
+
+					// Solves an edge case where the previous slide maintains the
+					// 'present' class when navigating between adjacent vertical
+					// stacks
+					if (i != index) {
+						var subslides = toArray( element.querySelectorAll( 'section.present' ) ),
+							subslidesLength = subslides.length;
+
+						for( var j = 0; j < subslidesLength; j++ ) {
+							var subelement = subslides[j];
+
+							subelement.classList.remove( 'present' );
+
+							if( i < index ) {
+								// Any element previous to index is given the 'past' class
+								subelement.classList.add( reverse ? 'future' : 'past' );
+							}
+							else if( i > index ) {
+								// Any element subsequent to index is given the 'future' class
+								subelement.classList.add( reverse ? 'past' : 'future' );
+							}
+						}
+					}
 				}
 			}
 
@@ -2100,10 +2128,30 @@ var Reveal = (function(){
 		// Check if there's a focused element that could be using
 		// the keyboard
 		var activeElement = document.activeElement;
-		var hasFocus = !!( document.activeElement && ( document.activeElement.type || document.activeElement.href || document.activeElement.contentEditable !== 'inherit' ) );
+		var hasFocus = !!( document.activeElement && ( activeElement.type || activeElement.href || activeElement.contentEditable !== 'inherit' ) );
+
+		// Disregard the event if the focused element is located in a hidden slide (a 'past' or 'future' slide)
+		var tag = (document.activeElement && activeElement.nodeName);
+		if (tag === 'SECTION' && activeElement.classList
+			&& (activeElement.classList.contains( 'past' ) || activeElement.classList.contains( 'future' ))) 
+		{
+			hasFocus = false;
+
+			// http://stackoverflow.com/questions/6976486/is-there-any-way-in-javascript-to-focus-the-document-content-area
+
+			// Give the document focus
+			window.focus();
+
+			// Remove focus from any focused element
+			if (document.activeElement) {
+			    document.activeElement.blur();
+			}
+			activeElement = document.activeElement;
+		}
 
 		// Disregard the event if there's a focused element or a
 		// keyboard modifier key is present
+		console.log('onKeyDown: ', hasFocus, activeElement, (document.activeElement && activeElement.nodeName), (document.activeElement && activeElement.type), (document.activeElement && activeElement.href), (document.activeElement && activeElement.contentEditable), ", hidden: ", (document.activeElement ? activeElement.getAttribute('hidden') : "---"), ", key data: ", event.shiftKey, event.keyCode, event.altKey, event.ctrlKey, event.metaKey, isPaused());
 		if( hasFocus || (event.shiftKey && event.keyCode !== 32) || event.altKey || event.ctrlKey || event.metaKey ) return;
 
 		// While paused only allow "unpausing" keyboard events (b and .)
