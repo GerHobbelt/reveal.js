@@ -14,7 +14,7 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/default.css" id="theme">
 
 		<!-- For syntax highlighting -->
@@ -36,7 +36,7 @@
 
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
-				<section>
+				<section contenteditable="true">
 					<h1>Reveal.js</h1>
 					<h3>HTML Presentations Made Easy</h3>
 					<p>
@@ -44,7 +44,7 @@
 					</p>
 				</section>
 
-				<section>
+				<section contenteditable="true">
 					<h2>Heads Up</h2>
 					<p>
 						reveal.js is a framework for easily creating beautiful presentations using HTML. You'll need a browser with
@@ -58,7 +58,7 @@
 
 				<!-- Example of nested vertical slides -->
 				<section>
-					<section>
+					<section contenteditable="true">
 						<h2>Vertical Slides</h2>
 						<p>
 							Slides can be nested inside of other slides,
@@ -68,18 +68,18 @@
 							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
 						</a>
 					</section>
-					<section>
+					<section contenteditable="true">
 						<h2>Basement Level 1</h2>
 						<p>Press down or up to navigate.</p>
 					</section>
-					<section>
+					<section contenteditable="true">
 						<h2>Basement Level 2</h2>
 						<p>Cornify</p>
 						<a class="test" href="http://cornify.com">
 							<img width="280" height="326" src="https://s3.amazonaws.com/hakim-static/reveal-js/cornify.gif" alt="Unicorn">
 						</a>
 					</section>
-					<section>
+					<section contenteditable="true">
 						<h2>Basement Level 3</h2>
 						<p>That's it, time to go back up.</p>
 						<a href="#/2" class="image">
@@ -88,14 +88,14 @@
 					</section>
 				</section>
 
-				<section>
+				<section contenteditable="true">
 					<h2>Slides</h2>
 					<p>
 						Not a coder? No problem. There's a fully-featured visual editor for authoring these, try it out at <a href="http://slid.es" target="_blank">http://slid.es</a>.
 					</p>
 				</section>
 
-				<section>
+				<section contenteditable="true">
 					<h2>Point of View</h2>
 					<p>
 						Press <strong>ESC</strong> to enter the slide overview.
@@ -347,8 +347,8 @@ function linkify( selector ) {
 
 		</div>
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.min.js"></script>
+		<script src="lib/js/head.js"></script>
+		<script src="js/reveal.js"></script>
 
 		<script>
 
@@ -370,8 +370,8 @@ function linkify( selector ) {
 					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
 					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
-					// { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
 					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
 				]
 			});

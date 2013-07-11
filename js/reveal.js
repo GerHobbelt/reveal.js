@@ -13,6 +13,7 @@ var Reveal = (function(){
 		HORIZONTAL_SLIDES_SELECTOR = '.reveal .slides>section',
 		VERTICAL_SLIDES_SELECTOR = '.reveal .slides>section.present>section',
 		HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-child',
+		SLIDE_NO_DISPLAY_DISTANCE = 1,
 
 		// Configurations defaults, can be overridden at initialization time
 		config = {
@@ -1016,7 +1017,7 @@ var Reveal = (function(){
 			clearTimeout( activateOverviewTimeout );
 			clearTimeout( deactivateOverviewTimeout );
 
-			// Not the pretties solution, but need to let the overview
+			// Not the prettiest solution, but need to let the overview
 			// class apply first so that slides are measured accurately
 			// before we can position them
 			activateOverviewTimeout = setTimeout( function(){
@@ -1477,18 +1478,27 @@ var Reveal = (function(){
 
 			// Enforce max and minimum index bounds
 			index = Math.max( Math.min( index, slidesLength - 1 ), 0 );
+			console.log("---------------------");
 
 			for( var i = 0; i < slidesLength; i++ ) {
 				var element = slides[i];
 
-				// Optimization; hide all slides that are three or more steps
+				// Optimization; hide all slides that are N or more steps
 				// away from the present slide
 				if( isOverview() === false ) {
 					// The distance loops so that it measures 1 between the first
-					// and last slides
-					var distance = Math.abs( ( index - i ) % ( slidesLength - 3 ) ) || 0;
+					// and last slides -- in fact it calculates the minimum distance from
+					// slide [index] to slide [i] while assuming the sequence is a loop.
+					if (1) {
+						var distance = Math.abs( ( index - i ) % ( slidesLength - SLIDE_NO_DISPLAY_DISTANCE ) ) || 0;
+					} else {
+					var d1 = Math.abs(index - i);
+					var d2 = slidesLength - d1;   // this will always produce a positive 'd2' value as  d1 <= slidesLength
+					var distance = Math.min(d1, d2);
+					}
 
-					element.style.display = distance > 3 ? 'none' : 'block';
+					element.style.display = distance > SLIDE_NO_DISPLAY_DISTANCE ? 'none' : 'block';
+					console.log("i = ", i, ", index = ", index, ", distance = ", distance, ", display = ", element.style.display, ", slidesLength = ", slidesLength);
 				}
 
 				var reverse = config.rtl && !isVerticalSlide( element );
@@ -1650,12 +1660,12 @@ var Reveal = (function(){
 	}
 
 	/**
-	 * Updates the background elements to reflect the current 
+	 * Updates the background elements to reflect the current
 	 * slide.
 	 */
 	function updateBackground() {
 
-		// Update the classes of all backgrounds to match the 
+		// Update the classes of all backgrounds to match the
 		// states of their slides (past/present/future)
 		toArray( dom.background.childNodes ).forEach( function( backgroundh, h ) {
 
@@ -2357,19 +2367,53 @@ var Reveal = (function(){
 
 	/**
 	 * Clicking on the progress bar results in a navigation to the
-	 * closest approximate horizontal slide using this equation:
-	 *
-	 * ( clickX / presentationWidth ) * numberOfSlides
+	 * closest approximate slide. As the progressbar represents the
+	 * actual slide position (mixed horizontal and vertical) hence
+	 * it makes sense to translate the click event to a (h, v) slide
+	 * coordinate, i.e. reverse transformation.
 	 */
 	function onProgressClicked( event ) {
 
 		event.preventDefault();
 
-		var slidesTotal = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).length;
-		var slideIndex = Math.floor( ( event.clientX / dom.wrapper.offsetWidth ) * slidesTotal );
+		var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
 
-		slide( slideIndex );
+		// The number of past and total slides
+		var totalCount = document.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
+		// 'round' the click position back to slide index
+		var slideIndex = Math.floor( 0.5 + ( event.clientX / window.innerWidth /* dom.wrapper.offsetWidth */ ) * (totalCount - 1) );
+		var pastCount = 0;
+		var h, v;
 
+		// Step through all slides and count the past ones
+		mainLoop: for( var i = 0; i < horizontalSlides.length; i++ ) {
+
+			if (pastCount == slideIndex) {
+				h = i;
+				v = 0;
+				break mainLoop;
+			}
+
+			var horizontalSlide = horizontalSlides[i];
+			var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
+
+			for( var j = 0; j < verticalSlides.length; j++ ) {
+				if (pastCount == slideIndex) {
+					h = i;
+					v = j;
+					break mainLoop;
+				}
+
+				pastCount++;
+			}
+
+			// Don't count the wrapping section for vertical slides
+			if( horizontalSlide.classList.contains( 'stack' ) === false ) {
+				pastCount++;
+			}
+		}
+
+		slide( h, v );
 	}
 
 	/**

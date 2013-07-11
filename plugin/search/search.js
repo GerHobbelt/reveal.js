@@ -7,7 +7,7 @@
 
 var RevealSearch = (function() {
 
-	var matchedSlides;
+	var matchedSlides = [];
 	var currentMatchedIndex;
 	var searchboxDirty;
 	var myHilitor;
