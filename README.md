@@ -6,10 +6,12 @@ reveal.js comes with a broad range of features including [nested slides](https:/
 
 
 #### More reading:
+
 - [Installation](#installation): Step-by-step instructions for getting reveal.js running on your computer.
 - [Changelog](https://github.com/hakimel/reveal.js/releases): Up-to-date version history.
 - [Examples](https://github.com/hakimel/reveal.js/wiki/Example-Presentations): Presentations created with reveal.js, add your own!
 - [Browser Support](https://github.com/hakimel/reveal.js/wiki/Browser-Support): Explanation of browser support and fallbacks.
+
 
 ## Slides
 
@@ -34,6 +36,7 @@ Markup hierarchy needs to be ``<div class="reveal"> <div class="slides"> <sectio
 </div>
 ```
 
+
 ### Markdown
 
 It's possible to write your slides using Markdown. To enable Markdown, add the ```data-markdown``` attribute to your ```<section>``` elements and wrap the contents in a ```<script type="text/template">``` like the example below.
@@ -50,6 +53,7 @@ This is based on [data-markdown](https://gist.github.com/1343518) from [Paul Iri
 </section>
 ```
 
+
 #### External Markdown
 
 You can write your content as a separate file and have reveal.js load it at runtime. Note the separator arguments which determine how slides are delimited in the external file.
@@ -57,6 +61,7 @@ You can write your content as a separate file and have reveal.js load it at runt
 ```html
 <section data-markdown="example.md" data-separator="^\n\n\n" data-vertical="^\n\n"></section>
 ```
+
 
 ### Configuration
 
@@ -192,6 +197,7 @@ Reveal.initialize({
 });
 ```
 
+
 ### Keyboard Bindings
 
 If you're unhappy with any of the default keyboard bindings you can override them using the ```keyboard``` config option:
@@ -238,6 +244,7 @@ Reveal.isOverview();
 Reveal.isPaused();
 ```
 
+
 ### Ready Event
 
 The 'ready' event is fired when reveal.js has loaded all (synchronous) dependencies and is ready to start navigating.
@@ -247,6 +254,7 @@ Reveal.addEventListener( 'ready', function( event ) {
 	// event.currentSlide, event.indexh, event.indexv
 } );
 ```
+
 
 ### Slide Changed Event
 
@@ -272,6 +280,7 @@ Reveal.addEventListener( 'somestate', function() {
 	// TODO: Sprinkle magic
 }, false );
 ```
+
 
 ### Slide Backgrounds
 
@@ -330,6 +339,7 @@ You can also add relative navigation links, similar to the built in reveal.js co
 
 
 ### Fragments
+
 Fragments are used to highlight individual elements on a slide. Every element with the class ```fragment``` will be stepped through before moving on to the next slide. Here's an example: http://lab.hakim.se/reveal-js/#/16
 
 The default fragment style is to start out invisible and fade in. This style can be changed by appending a different class to the fragment:
@@ -366,6 +376,7 @@ The display order of fragments can be controlled using the ```data-fragment-inde
 </section>
 ```
 
+
 ### Fragment events
 
 When a slide fragment is either shown or hidden reveal.js will dispatch an event.
@@ -378,6 +389,7 @@ Reveal.addEventListener( 'fragmenthidden', function( event ) {
 	// event.fragment = the fragment DOM element
 } );
 ```
+
 
 ### Code syntax highlighting
 
@@ -409,11 +421,14 @@ Reveal.addEventListener( 'overviewhidden', function( event ) { /* ... */ } );
 Reveal.toggleOverview();
 ```
 
+
 ### Fullscreen mode
+
 Just press »F« on your keyboard to show your presentation in fullscreen mode. Press the »ESC« key to exit fullscreen mode.
 
 
 ### Embedded media
+
 Embedded HTML5 `<video>`/`<audio>` and YouTube iframes are automatically paused when your navigate away from a slide. This can be disabled by decorating your element with a `data-ignore` attribute.
 
 Add `data-autoplay` to your media element if you want it to automatically start playing when the slide is shown:
@@ -436,6 +451,7 @@ Here's an example of an exported presentation that's been uploaded to SlideShare
 6. Click **Save**.
 
 ![Chrome Print Settings](https://s3.amazonaws.com/hakim-static/reveal-js/pdf-print-settings.png)
+
 
 ## Theming
 
@@ -473,6 +489,7 @@ By default notes are written using standard HTML, see below, but you can add a `
 </section>
 ```
 
+
 ## Server Side Speaker Notes
 
 In some cases it can be desirable to run notes on a separate device from the one you're presenting on. The Node.js-based notes plugin lets you do this using the same note definitions as its client side counterpart. Include the required scripts by adding the following dependencies:
@@ -507,7 +524,9 @@ The multiplex plugin needs the following 3 things to operate:
 
 More details:
 
+
 #### Master presentation
+
 Served from a static file server accessible (preferably) only to the presenter. This need only be on your (the presenter's) computer. (It's safer to run the master presentation from your own computer, so if the venue's Internet goes down it doesn't stop the show.) An example would be to execute the following commands in the directory of your master presentation: 
 
 1. ```npm install node-static```
@@ -541,7 +560,9 @@ Reveal.initialize({
 });
 ```
 
+
 #### Client presentation
+
 Served from a publicly accessible static file server. Examples include: GitHub Pages, Amazon S3, Dreamhost, Akamai, etc. The more reliable, the better. Your audience can then access the client presentation via ```http://example.com/path/to/presentation/client/index.html```, with the configuration below causing them to connect to the socket.io server as clients.
 
 Example configuration:
@@ -565,7 +586,9 @@ Reveal.initialize({
 });
 ```
 
+
 #### Socket.io server
+
 Server that receives the slideChanged events from the master presentation and broadcasts them out to the connected client presentations. This needs to be publicly accessible. You can run your own socket.io server with the commands:
 
 1. ```npm install```
@@ -576,6 +599,7 @@ Or you use the socket.io server at [http://revealjs.jit.su](http://revealjs.jit.
 You'll need to generate a unique secret and token pair for your master and client presentations. To do so, visit ```http://example.com/token```, where ```http://example.com``` is the location of your socket.io server. Or if you're going to use the socket.io server at [http://revealjs.jit.su](http://revealjs.jit.su), visit [http://revealjs.jit.su/token](http://revealjs.jit.su/token).
 
 You are very welcome to point your presentations at the Socket.io server running at [http://revealjs.jit.su](http://revealjs.jit.su), but availability and stability are not guaranteed. For anything mission critical I recommend you run your own server. It is simple to deploy to nodejitsu, heroku, your own environment, etc.
+
 
 ##### socket.io server as file static server
 
@@ -625,9 +649,11 @@ Reveal.initialize({
 });
 ```
 
+
 ## Installation
 
 The **basic setup** is for authoring presentations only. The **full setup** gives you access to all reveal.js features as well as the development tasks needed to make changes to the source.
+
 
 ### Basic setup
 
@@ -672,6 +698,7 @@ $ grunt serve
 
 
 ### Folder Structure
+
 - **css/** Core styles without which the project does not function
 - **js/** Like above but for JavaScript
 - **plugin/** Components that have been developed as extensions to reveal.js
