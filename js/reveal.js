@@ -1478,7 +1478,6 @@ var Reveal = (function(){
 
 			// Enforce max and minimum index bounds
 			index = Math.max( Math.min( index, slidesLength - 1 ), 0 );
-			console.log("---------------------");
 
 			for( var i = 0; i < slidesLength; i++ ) {
 				var element = slides[i];
@@ -1489,16 +1488,11 @@ var Reveal = (function(){
 					// The distance loops so that it measures 1 between the first
 					// and last slides -- in fact it calculates the minimum distance from
 					// slide [index] to slide [i] while assuming the sequence is a loop.
-					if (1) {
-						var distance = Math.abs( ( index - i ) % ( slidesLength - SLIDE_NO_DISPLAY_DISTANCE ) ) || 0;
-					} else {
 					var d1 = Math.abs(index - i);
 					var d2 = slidesLength - d1;   // this will always produce a positive 'd2' value as  d1 <= slidesLength
 					var distance = Math.min(d1, d2);
-					}
 
 					element.style.display = distance > SLIDE_NO_DISPLAY_DISTANCE ? 'none' : 'block';
-					console.log("i = ", i, ", index = ", index, ", distance = ", distance, ", display = ", element.style.display, ", slidesLength = ", slidesLength);
 				}
 
 				var reverse = config.rtl && !isVerticalSlide( element );
