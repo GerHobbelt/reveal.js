@@ -12,3 +12,7 @@ log/*.log
 tmp/**
 node_modules/
 .sass-cache
+
+# output of GRUNT ZIP
+reveal-js-presentation.zip
+
