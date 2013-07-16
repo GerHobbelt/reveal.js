@@ -1516,6 +1516,13 @@ var Reveal = (function(){
                 else if( i > index ) {
                     // Any element subsequent to index is given the 'future' class
                     element.classList.add( reverse ? 'past' : 'future' );
+
+					var fragments = toArray( element.querySelectorAll( '.fragment.visible' ) );
+
+					// No fragments in future slides should be visible ahead of time
+					while( fragments.length ) {
+						fragments.pop().classList.remove( 'visible' );
+					}
                 }
 
                 // If this element contains vertical slides
@@ -1567,6 +1574,8 @@ var Reveal = (function(){
             else {
                 autoSlide = config.autoSlide;
             }
+
+			cueAutoSlide();
 
         }
         else {
