@@ -5,7 +5,35 @@
  *
  * Copyright (C) 2013 Hakim El Hattab, http://hakim.se
  */
-var Reveal = (function(){
+
+(function ( window, factory ) {
+
+  if ( typeof module === "object" && typeof module.exports === "object" ) {
+    // Expose a factory as module.exports in loaders that implement the Node
+    // module pattern (including browserify).
+    // This accentuates the need for a real window in the environment
+    // e.g. var jQuery = require("jquery")(window);
+    module.exports = function( w ) {
+      w = w || window;
+      if ( !w.document ) {
+        throw new Error("jQuery plugin requires a window with a document");
+      }
+      return factory( w, document, head );
+    };
+  } else {
+    if ( typeof define === "function" && define.amd ) {
+      // AMD. Register as a named module.
+      define( "reveal", [ "head" ], function(head) {
+        return factory(window, document, head);
+      });
+    } else {
+        // Browser globals
+        window.Reveal = factory(window, document, head);
+    }
+  }
+
+// Pass this, window may not be defined yet
+}(this, function ( window, document, head, undefined ) {
 
     'use strict';
 
@@ -403,7 +431,6 @@ var Reveal = (function(){
         else {
             proceed();
         }
-
     }
 
     /**
@@ -1628,13 +1655,10 @@ var Reveal = (function(){
                 if( horizontalSlide.classList.contains( 'stack' ) === false ) {
                     pastCount++;
                 }
-
             }
 
             dom.progressbar.style.width = ( pastCount / ( totalCount - 1 ) ) * window.innerWidth + 'px';
-
         }
-
     }
 
     /**
@@ -2669,4 +2693,5 @@ var Reveal = (function(){
         }
     };
 
-})();
+}));
+
