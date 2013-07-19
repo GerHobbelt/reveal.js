@@ -43,6 +43,8 @@
         HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-child',
         SLIDE_NO_DISPLAY_DISTANCE = 1,
 
+        Reveal = null,
+
         // Configurations defaults, can be overridden at initialization time
         config = {
 
@@ -1184,10 +1186,18 @@
     function toggleOverview( override ) {
 
         if( typeof override === 'boolean' ) {
-            override ? activateOverview() : deactivateOverview();
+            if (override) {
+                activateOverview();
+            } else {
+                deactivateOverview();
+            }
         }
         else {
-            isOverview() ? deactivateOverview() : activateOverview();
+            if (isOverview()) {
+                deactivateOverview();
+            } else {
+                activateOverview();
+            }
         }
 
     }
@@ -2137,7 +2147,11 @@
 
         // Prioritize revealing fragments
         if( nextFragment() === false ) {
-            availableRoutes().down ? navigateDown() : navigateRight();
+            if (availableRoutes().down) {
+                navigateDown();
+            } else {
+                navigateRight();
+            }
         }
 
         // If auto-sliding is enabled we need to cue up
@@ -2246,9 +2260,23 @@
                 // end
                 case 35: slide( Number.MAX_VALUE ); break;
                 // space
-                case 32: isOverview() ? deactivateOverview() : event.shiftKey ? navigatePrev() : navigateNext(); break;
+                case 32: 
+                    if (isOverview()) {
+                        deactivateOverview();
+                    } else if (event.shiftKey) {
+                        navigatePrev();
+                    } else { 
+                        navigateNext(); 
+                    }
+                break;
                 // return
-                case 13: isOverview() ? deactivateOverview() : triggered = false; break;
+                case 13: 
+                    if (isOverview()) {
+                        deactivateOverview();
+                    } else {
+                        triggered = false; 
+                    }
+                    break;
                 // b, period, Logitech presenter tools "black screen" button
                 case 66: case 190: case 191: togglePause(); break;
                 // f
@@ -2572,7 +2600,7 @@
     // --------------------------------------------------------------------//
 
 
-    return {
+    Reveal = {
         initialize: initialize,
         configure: configure,
         sync: sync,
@@ -2668,16 +2696,16 @@
 
         // Returns true if we're currently on the first slide
         isFirstSlide: function() {
-            return document.querySelector( SLIDES_SELECTOR + '.past' ) == null ? true : false;
+            return !!document.querySelector( SLIDES_SELECTOR + '.past' );
         },
 
         // Returns true if we're currently on the last slide
         isLastSlide: function() {
             if( currentSlide && currentSlide.classList.contains( '.stack' ) ) {
-                return currentSlide.querySelector( SLIDES_SELECTOR + '.future' ) == null ? true : false;
+                return !!currentSlide.querySelector( SLIDES_SELECTOR + '.future' );
             }
             else {
-                return document.querySelector( SLIDES_SELECTOR + '.future' ) == null ? true : false;
+                return !!document.querySelector( SLIDES_SELECTOR + '.future' );
             }
         },
 
@@ -2693,6 +2721,7 @@
             }
         }
     };
+    return Reveal;
 
 }));
 
