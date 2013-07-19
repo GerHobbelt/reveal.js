@@ -220,6 +220,7 @@
         dom.theme = document.querySelector( '#theme' );
         dom.wrapper = document.querySelector( '.reveal' );
         dom.slides = document.querySelector( '.reveal .slides' );
+        if (!dom.wrapper || !dom.slides) return;
 
         // Background element
         if( !document.querySelector( '.reveal .backgrounds' ) ) {
@@ -440,7 +441,7 @@
     function start() {
 
         // Make sure we've got all the DOM elements we need
-        setupDOM();
+        if (!setupDOM()) return;
 
         // Updates the presentation to match the current configuration values
         configure();
