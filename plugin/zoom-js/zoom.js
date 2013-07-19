@@ -1,6 +1,7 @@
 // Custom reveal.js integration
 (function(){
     var isEnabled = true;
+    var Reveal = require('reveal');
 
     document.querySelector( '.reveal' ).addEventListener( 'mousedown', function( event ) {
         if( event.altKey && isEnabled ) {
