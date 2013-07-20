@@ -469,7 +469,9 @@
      */
     function configure( options ) {
 
-        dom.wrapper.classList.remove( config.transition );
+        if( dom.wrapper ) {
+            dom.wrapper.classList.remove( config.transition );
+        }
 
         // New config options may be passed when this method
         // is invoked through the API after initialization
@@ -478,31 +480,33 @@
         // Force linear transition based on browser capabilities
         if( supports3DTransforms === false ) config.transition = 'linear';
 
-        dom.wrapper.classList.add( config.transition );
+        if( dom.wrapper ) {
+            dom.wrapper.classList.add( config.transition );
 
-        dom.wrapper.setAttribute( 'data-transition-speed', config.transitionSpeed );
-        dom.wrapper.setAttribute( 'data-background-transition', config.backgroundTransition );
+            dom.wrapper.setAttribute( 'data-transition-speed', config.transitionSpeed );
+            dom.wrapper.setAttribute( 'data-background-transition', config.backgroundTransition );
 
-        if( dom.controls ) {
-            dom.controls.style.display = ( config.controls && dom.controls ) ? 'block' : 'none';
-        }
+            if( dom.controls ) {
+                dom.controls.style.display = ( config.controls && dom.controls ) ? 'block' : 'none';
+            }
 
-        if( dom.progress ) {
-            dom.progress.style.display = ( config.progress && dom.progress ) ? 'block' : 'none';
-        }
+            if( dom.progress ) {
+                dom.progress.style.display = ( config.progress && dom.progress ) ? 'block' : 'none';
+            }
 
-        if( config.rtl ) {
-            dom.wrapper.classList.add( 'rtl' );
-        }
-        else {
-            dom.wrapper.classList.remove( 'rtl' );
-        }
+            if( config.rtl ) {
+                dom.wrapper.classList.add( 'rtl' );
+            }
+            else {
+                dom.wrapper.classList.remove( 'rtl' );
+            }
 
-        if( config.center ) {
-            dom.wrapper.classList.add( 'center' );
-        }
-        else {
-            dom.wrapper.classList.remove( 'center' );
+            if( config.center ) {
+                dom.wrapper.classList.add( 'center' );
+            }
+            else {
+                dom.wrapper.classList.remove( 'center' );
+            }
         }
 
         if( config.mouseWheel ) {
@@ -552,12 +556,17 @@
      */
     function addEventListeners() {
 
+        if (eventsAreBound) {
+            console.log("*** attempt to double-register Reveal events.")
+            removeEventListeners();
+        }
+
         eventsAreBound = true;
 
         window.addEventListener( 'hashchange', onWindowHashChange, false );
         window.addEventListener( 'resize', onWindowResize, false );
 
-        if( config.touch ) {
+        if( config.touch && dom.wrapper ) {
             dom.wrapper.addEventListener( 'touchstart', onTouchStart, false );
             dom.wrapper.addEventListener( 'touchmove', onTouchMove, false );
             dom.wrapper.addEventListener( 'touchend', onTouchEnd, false );
@@ -602,21 +611,23 @@
         window.removeEventListener( 'hashchange', onWindowHashChange, false );
         window.removeEventListener( 'resize', onWindowResize, false );
 
-        dom.wrapper.removeEventListener( 'touchstart', onTouchStart, false );
-        dom.wrapper.removeEventListener( 'touchmove', onTouchMove, false );
-        dom.wrapper.removeEventListener( 'touchend', onTouchEnd, false );
+        if ( dom.wrapper ) {
+            dom.wrapper.removeEventListener( 'touchstart', onTouchStart, false );
+            dom.wrapper.removeEventListener( 'touchmove', onTouchMove, false );
+            dom.wrapper.removeEventListener( 'touchend', onTouchEnd, false );
 
-        if( window.navigator.msPointerEnabled ) {
-            dom.wrapper.removeEventListener( 'MSPointerDown', onPointerDown, false );
-            dom.wrapper.removeEventListener( 'MSPointerMove', onPointerMove, false );
-            dom.wrapper.removeEventListener( 'MSPointerUp', onPointerUp, false );
+            if( window.navigator.msPointerEnabled ) {
+                dom.wrapper.removeEventListener( 'MSPointerDown', onPointerDown, false );
+                dom.wrapper.removeEventListener( 'MSPointerMove', onPointerMove, false );
+                dom.wrapper.removeEventListener( 'MSPointerUp', onPointerUp, false );
+            }
         }
 
-        if ( config.progress && dom.progress ) {
+        if ( dom.progress ) {
             dom.progress.removeEventListener( 'click', onProgressClicked, false );
         }
 
-        if ( config.controls && dom.controls ) {
+        if ( dom.controls ) {
             [ 'touchstart', 'click' ].forEach( function( eventName ) {
                 dom.controlsLeft.forEach( function( el ) { el.removeEventListener( eventName, onNavigateLeftClicked, false ); } );
                 dom.controlsRight.forEach( function( el ) { el.removeEventListener( eventName, onNavigateRightClicked, false ); } );
@@ -737,10 +748,12 @@
      */
     function dispatchEvent( type, properties ) {
 
-        var event = document.createEvent( "HTMLEvents", 1, 2 );
-        event.initEvent( type, true, true );
-        extend( event, properties );
-        dom.wrapper.dispatchEvent( event );
+        if( dom.wrapper ) {
+            var event = document.createEvent( "HTMLEvents", 1, 2 );
+            event.initEvent( type, true, true );
+            extend( event, properties );
+            dom.wrapper.dispatchEvent( event );
+        }
 
     }
 
@@ -825,37 +838,39 @@
 
         closePreview();
 
-        dom.preview = document.createElement( 'div' );
-        dom.preview.classList.add( 'preview-link-overlay' );
-        dom.wrapper.appendChild( dom.preview );
+        if( dom.wrapper ) {
+            dom.preview = document.createElement( 'div' );
+            dom.preview.classList.add( 'preview-link-overlay' );
+            dom.wrapper.appendChild( dom.preview );
 
-        dom.preview.innerHTML = [
-            '<header>',
-                '<a class="close" href="#"><span class="icon"></span></a>',
-                '<a class="external" href="'+ url +'" target="_blank"><span class="icon"></span></a>',
-            '</header>',
-            '<div class="spinner"></div>',
-            '<div class="viewport">',
-                '<iframe src="'+ url +'"></iframe>',
-            '</div>'
-        ].join('');
+            dom.preview.innerHTML = [
+                '<header>',
+                    '<a class="close" href="#"><span class="icon"></span></a>',
+                    '<a class="external" href="'+ url +'" target="_blank"><span class="icon"></span></a>',
+                '</header>',
+                '<div class="spinner"></div>',
+                '<div class="viewport">',
+                    '<iframe src="'+ url +'"></iframe>',
+                '</div>'
+            ].join('');
 
-        dom.preview.querySelector( 'iframe' ).addEventListener( 'load', function( event ) {
-            dom.preview.classList.add( 'loaded' );
-        }, false );
+            dom.preview.querySelector( 'iframe' ).addEventListener( 'load', function( event ) {
+                dom.preview.classList.add( 'loaded' );
+            }, false );
 
-        dom.preview.querySelector( '.close' ).addEventListener( 'click', function( event ) {
-            closePreview();
-            event.preventDefault();
-        }, false );
+            dom.preview.querySelector( '.close' ).addEventListener( 'click', function( event ) {
+                closePreview();
+                event.preventDefault();
+            }, false );
 
-        dom.preview.querySelector( '.external' ).addEventListener( 'click', function( event ) {
-            closePreview();
-        }, false );
+            dom.preview.querySelector( '.external' ).addEventListener( 'click', function( event ) {
+                closePreview();
+            }, false );
 
-        setTimeout( function() {
-            dom.preview.classList.add( 'visible' );
-        }, 1 );
+            setTimeout( function() {
+                dom.preview.classList.add( 'visible' );
+            }, 1 );
+        }
 
     }
 
@@ -910,7 +925,7 @@
      */
     function layout() {
 
-        if( dom.wrapper && !isPrintingPDF() ) {
+        if ( dom.wrapper && dom.slides && !isPrintingPDF() ) {
 
             // Available space to scale within
             var availableWidth = dom.wrapper.offsetWidth,
@@ -1039,7 +1054,7 @@
     function activateOverview() {
 
         // Only proceed if enabled in config
-        if( config.overview ) {
+        if( config.overview && dom.wrapper ) {
 
             // Don't auto-slide while in overview mode
             cancelAutoSlide();
@@ -1128,7 +1143,7 @@
     function deactivateOverview() {
 
         // Only proceed if enabled in config
-        if( config.overview ) {
+        if( config.overview && dom.wrapper ) {
 
             clearTimeout( activateOverviewTimeout );
             clearTimeout( deactivateOverviewTimeout );
@@ -1210,7 +1225,7 @@
      */
     function isOverview() {
 
-        return dom.wrapper.classList.contains( 'overview' );
+        return dom.wrapper && dom.wrapper.classList.contains( 'overview' );
 
     }
 
@@ -1259,13 +1274,15 @@
      */
     function pause() {
 
-        var wasPaused = dom.wrapper.classList.contains( 'paused' );
+        if( dom.wrapper ) {
+            var wasPaused = dom.wrapper.classList.contains( 'paused' );
 
-        cancelAutoSlide();
-        dom.wrapper.classList.add( 'paused' );
+            cancelAutoSlide();
+            dom.wrapper.classList.add( 'paused' );
 
-        if( wasPaused === false ) {
-            dispatchEvent( 'paused' );
+            if( wasPaused === false ) {
+                dispatchEvent( 'paused' );
+            }
         }
 
     }
@@ -1275,13 +1292,15 @@
      */
     function resume() {
 
-        var wasPaused = dom.wrapper.classList.contains( 'paused' );
-        dom.wrapper.classList.remove( 'paused' );
+        if( dom.wrapper ) {
+            var wasPaused = dom.wrapper.classList.contains( 'paused' );
+            dom.wrapper.classList.remove( 'paused' );
 
-        cueAutoSlide();
+            cueAutoSlide();
 
-        if( wasPaused ) {
-            dispatchEvent( 'resumed' );
+            if( wasPaused ) {
+                dispatchEvent( 'resumed' );
+            }
         }
 
     }
@@ -1305,7 +1324,7 @@
      */
     function isPaused() {
 
-        return dom.wrapper.classList.contains( 'paused' );
+        return dom.wrapper && dom.wrapper.classList.contains( 'paused' );
 
     }
 
