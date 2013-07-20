@@ -557,7 +557,7 @@
     function addEventListeners() {
 
         if (eventsAreBound) {
-            console.log("*** attempt to double-register Reveal events.")
+            console.log("*** attempt to double-register Reveal events.");
             removeEventListeners();
         }
 
