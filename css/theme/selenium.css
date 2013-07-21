@@ -73,7 +73,10 @@ section.stack {
 }
 .static-heading {
   position: relative;
-  top: -48%;
+  top: -55%;
+}
+strong {
+	color: #ddb619;
 }
 
 .reveal h1,
