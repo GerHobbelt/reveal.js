@@ -18,7 +18,7 @@
       if ( !w.document ) {
         throw new Error("jQuery plugin requires a window with a document");
       }
-      return factory( w, document, head );
+      return factory( w, w.document, head );
     };
   } else {
     if ( typeof define === "function" && define.amd ) {
@@ -186,6 +186,8 @@
 
     /**
      * Starts up the presentation if the client is capable.
+     *
+     * Return FALSE when the function failed to run to completion.
      */
     function initialize( options ) {
 
@@ -194,7 +196,7 @@
 
             // If the browser doesn't support core features we won't be
             // using JavaScript to control the presentation
-            return;
+            return false;
         }
 
         // Force a layout when the whole page, incl fonts, has loaded
@@ -207,7 +209,7 @@
         hideAddressBar();
 
         // Loads the dependencies and continues to #start() once done
-        load();
+        return load();
 
     }
 
@@ -215,6 +217,8 @@
      * Finds and stores references to DOM elements which are
      * required by the presentation. If a required element is
      * not found, it is created.
+     *
+     * Return FALSE when the function failed to run to completion.
      */
     function setupDOM() {
 
@@ -222,7 +226,7 @@
         dom.theme = document.querySelector( '#theme' );
         dom.wrapper = document.querySelector( '.reveal' );
         dom.slides = document.querySelector( '.reveal .slides' );
-        if (!dom.wrapper || !dom.slides) return;
+        if (!dom.wrapper || !dom.slides) return false;
 
         // Background element
         if( !document.querySelector( '.reveal .backgrounds' ) ) {
@@ -285,6 +289,7 @@
             dom.controlsNext = toArray( document.querySelectorAll( '.navigate-next' ) );
         }
 
+        return true;
     }
 
     /**
@@ -390,6 +395,8 @@
      * and will be loaded prior to starting/binding reveal.js.
      * Some dependencies may have an 'async' flag, if so they
      * will load after reveal.js has been started up.
+     *
+     * Return FALSE when the function failed to run to completion.
      */
     function load() {
 
@@ -416,13 +423,15 @@
         }
 
         // Called once synchronous scripts finish loading
+        //
+        // Return FALSE when the function failed to run to completion.
         function proceed() {
             if( scriptsAsync.length ) {
                 // Load asynchronous scripts
                 head.js.apply( null, scriptsAsync );
             }
 
-            start();
+            return start();
         }
 
         if( scripts.length ) {
@@ -430,20 +439,23 @@
 
             // Load synchronous scripts
             head.js.apply( null, scripts );
+            return true;
         }
         else {
-            proceed();
+            return proceed();
         }
     }
 
     /**
      * Starts up reveal.js by binding input events and navigating
      * to the current URL deeplink if there is one.
+     *
+     * Return FALSE when the function failed to run to completion.
      */
     function start() {
 
         // Make sure we've got all the DOM elements we need
-        if (!setupDOM()) return;
+        if (!setupDOM()) return false;
 
         // Updates the presentation to match the current configuration values
         configure();
@@ -461,6 +473,7 @@
             } );
         }, 1 );
 
+        return true;
     }
 
     /**
