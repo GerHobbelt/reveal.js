@@ -24,7 +24,35 @@
 
 */
 
-(function (){
+
+(function ( window, factory ) {
+
+  if ( typeof module === "object" && typeof module.exports === "object" ) {
+    // Expose a factory as module.exports in loaders that implement the Node
+    // module pattern (including browserify).
+    // This accentuates the need for a real window in the environment
+    // e.g. var jQuery = require("jquery")(window);
+    module.exports = function( w ) {
+      w = w || window;
+      if ( !w.document ) {
+        throw new Error("Reveal plugin requires a window with a document");
+      }
+      return factory( w, w.document, Reveal );
+    };
+  } else {
+    if ( typeof define === "function" && define.amd ) {
+      // AMD. Register as a named module.
+      define( "reveal.postmessage", [ "reveal" ], function(Reveal) {
+        return factory(window, document, Reveal);
+      });
+    } else {
+        // Browser globals
+        window.Reveal = factory(window, document, Reveal);
+    }
+  }
+
+// Pass this, window may not be defined yet
+}(this, function ( window, document, Reveal, undefined ) {
 
     window.addEventListener( "message", function ( event ) {
         var data = JSON.parse( event.data ),
@@ -36,7 +64,8 @@
         }
     }, false);
 
-}());
+    return Reveal;
+}));
 
 
 

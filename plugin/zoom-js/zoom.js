@@ -1,7 +1,35 @@
 // Custom reveal.js integration
-(function(){
+
+(function ( window, factory ) {
+
+  if ( typeof module === "object" && typeof module.exports === "object" ) {
+    // Expose a factory as module.exports in loaders that implement the Node
+    // module pattern (including browserify).
+    // This accentuates the need for a real window in the environment
+    // e.g. var jQuery = require("jquery")(window);
+    module.exports = function( w ) {
+      w = w || window;
+      if ( !w.document ) {
+        throw new Error("Reveal plugin requires a window with a document");
+      }
+      return factory( w, w.document, Reveal );
+    };
+  } else {
+    if ( typeof define === "function" && define.amd ) {
+      // AMD. Register as a named module.
+      define( "reveal.zoom", [ "reveal" ], function(Reveal) {
+        return factory(window, document, Reveal);
+      });
+    } else {
+        // Browser globals
+        window.Reveal = factory(window, document, Reveal);
+    }
+  }
+
+// Pass this, window may not be defined yet
+}(this, function ( window, document, Reveal, undefined ) {
+
     var isEnabled = true;
-    var Reveal = require('reveal');
 
     document.querySelector( '.reveal' ).addEventListener( 'mousedown', function( event ) {
         if( event.altKey && isEnabled ) {
@@ -12,7 +40,6 @@
 
     Reveal.addEventListener( 'overviewshown', function() { isEnabled = false; } );
     Reveal.addEventListener( 'overviewhidden', function() { isEnabled = true; } );
-})();
 
 /*!
  * zoom.js 0.2 (modified version for use with reveal.js)
@@ -158,8 +185,8 @@ var zoom = (function(){
     function getScrollOffset() {
         return {
             x: window.scrollX !== undefined ? window.scrollX : window.pageXOffset,
-            y: window.scrollY !== undefined ? window.scrollY : window.pageXYffset
-        }
+            y: window.scrollY !== undefined ? window.scrollY : window.pageYOffset
+        };
     }
 
     return {
@@ -245,13 +272,20 @@ var zoom = (function(){
         },
 
         // Alias
-        magnify: function( options ) { this.to( options ) },
-        reset: function() { this.out() },
+        magnify: function( options ) { 
+            this.to( options );
+        },
+        reset: function() { 
+            this.out(); 
+        },
 
         zoomLevel: function() {
             return level;
         }
-    }
+    };
 
 })();
+
+    return zoom;
+}));
 

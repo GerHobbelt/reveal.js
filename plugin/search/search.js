@@ -29,24 +29,26 @@ function Hilitor(id, tag)
 
   this.setRegex = function(input)
   {
-    input = input.replace(/^[^\w]+|[^\w]+$/g, "").replace(/[^\w'-]+/g, "|");
+    input = input.replace(/^[^\w]+|[^\w]+$/g, "").replace(/[^\w'\-]+/g, "|");
     matchRegex = new RegExp("(" + input + ")","i");
-  }
+  };
 
   this.getRegex = function()
   {
     return matchRegex.toString().replace(/^\/\\b\(|\)\\b\/i$/g, "").replace(/\|/g, " ");
-  }
+  };
 
   // recursively apply word highlighting
   this.hiliteWords = function(node)
   {
-    if(node == undefined || !node) return;
+    var i;
+
+    if(!node) return;
     if(!matchRegex) return;
     if(skipTags.test(node.nodeName)) return;
 
     if(node.hasChildNodes()) {
-      for(var i=0; i < node.childNodes.length; i++)
+      for(i = 0; i < node.childNodes.length; i++)
         this.hiliteWords(node.childNodes[i]);
     }
     if(node.nodeType == 3) { // NODE_TEXT
@@ -60,12 +62,12 @@ function Hilitor(id, tag)
         var slideIndex = Reveal.getIndices(secnode);
         var slidelen = matchingSlides.length;
         var alreadyAdded = false;
-        for (var i=0; i < slidelen; i++) {
+        for (i = 0; i < slidelen; i++) {
             if ( (matchingSlides[i].h === slideIndex.h) && (matchingSlides[i].v === slideIndex.v) ) {
                 alreadyAdded = true;
             }
         }
-        if (! alreadyAdded) {
+        if (!alreadyAdded) {
             matchingSlides.push(slideIndex);
         }
 
@@ -98,7 +100,7 @@ function Hilitor(id, tag)
   // start highlighting at target node
   this.apply = function(input)
   {
-    if(input == undefined || !input) return [];
+    if (!input) return [];
     this.remove();
     this.setRegex(input);
     this.hiliteWords(targetNode);
@@ -175,6 +177,7 @@ function Hilitor(id, tag)
                 break;
             default:
                 searchboxDirty = true;
+                break;
         }
     }, false );
 
