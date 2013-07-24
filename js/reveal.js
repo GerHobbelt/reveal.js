@@ -1012,11 +1012,9 @@
                 else {
                     slide.style.top = '';
                 }
-
             }
 
             updateProgress();
-
         }
 
     }
@@ -2636,6 +2634,7 @@
         initialize: initialize,
         configure: configure,
         sync: sync,
+        start: start,
 
         // Navigation methods
         slide: slide,
