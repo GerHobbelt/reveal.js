@@ -115,7 +115,7 @@ Reveal.initialize({
     transitionSpeed: 'default', // default/fast/slow
 
     // Transition style for full page backgrounds
-    backgroundTransition: 'default' // default/linear
+    backgroundTransition: 'default' // default/linear/none
 
 });
 ```
@@ -412,7 +412,7 @@ By default, Reveal is configured with [highlight.js](http://softwaremaniacs.org/
 
 ### Overview mode
 
-Press "Esc" key to toggle the overview mode on and off. While you're in this mode, you can still navigate between slides,
+Press "Esc" or "o" keys to toggle the overview mode on and off. While you're in this mode, you can still navigate between slides,
 as if you were at 1,000 feet above your presentation. The overview mode comes with a few API hooks:
 
 ```javascript
@@ -431,7 +431,7 @@ Just press »F« on your keyboard to show your presentation in fullscreen mode. 
 
 ### Embedded media
 
-Embedded HTML5 `<video>`/`<audio>` and YouTube iframes are automatically paused when your navigate away from a slide. This can be disabled by decorating your element with a `data-ignore` attribute.
+Embedded HTML5 `<video>`/`<audio>` and YouTube iframes are automatically paused when you navigate away from a slide. This can be disabled by decorating your element with a `data-ignore` attribute.
 
 Add `data-autoplay` to your media element if you want it to automatically start playing when the slide is shown:
 
@@ -546,21 +546,24 @@ Reveal.initialize({
     // other options
 
     multiplex: {
-        // Example values. Generate your own.
+        // Example values. To generate your own, see the socket.io server instructions.
         secret: '13652805320794272084', // Obtained from the socket.io server (revealjs.jit.su/token). Gives this (the master) control of the presentation
         id: '1ea875674b17ca76', // Obtained from socket.io server (revealjs.jit.su/token)
         url: 'revealjs.jit.su:80' // Location of socket.io server
     },
 
+    // Optional libraries used to extend on reveal.js
     dependencies: [
         //...
-        //... other dependencies
+        // other deps
         //...
         { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/master.js', async: true },
 
         // and if you want speaker notes
         { src: 'plugin/notes-server/client.js', async: true }
+		
+        // other dependencies...
     ]
 });
 ```
@@ -575,21 +578,24 @@ Example configuration:
 
 ```javascript
 Reveal.initialize({
-    // other options
+    // other options...
 
     multiplex: {
-        // Example values. Generate your own.
+        // Example values. To generate your own, see the socket.io server instructions.
         secret: null, // null so the clients do not have control of the master presentation
         id: '1ea875674b17ca76', // id, obtained from socket.io server (revealjs.jit.su/token)
         url: 'revealjs.jit.su:80' // Location of socket.io server
     },
 
+    // Optional libraries used to extend on reveal.js
     dependencies: [
         //...
-        //... other dependencies
+        // other deps
         //...
         { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
+		
+        // other dependencies...
     ]
 });
 ```
@@ -616,22 +622,24 @@ The socket.io server can play the role of static file server for your client pre
 Example configuration:
 ```javascript
 Reveal.initialize({
-    // other options
+    // other options...
 
     multiplex: {
-        // Example values. Generate your own.
+        // Example values. To generate your own, see the socket.io server instructions.
         secret: null, // null so the clients do not have control of the master presentation
         id: '1ea875674b17ca76', // id, obtained from socket.io server (example.com/token)
         url: 'example.com:80' // Location of your socket.io server
     },
 
-    // Optional libraries used to extend on reveal.js
+    // Don't forget to add the dependencies
     dependencies: [
         //...
-        //... other dependencies
+        // other deps
         //...
         { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
+		
+        // other dependencies...
     ]
 ```
 
@@ -640,23 +648,25 @@ It can also play the role of static file server for your master presentation and
 Example configuration:
 ```javascript
 Reveal.initialize({
-    // other options
+    // other options...
 
     multiplex: {
-        // Example values. Generate your own.
+        // Example values. To generate your own, see the socket.io server instructions.
         secret: '13652805320794272084', // Obtained from the socket.io server (example.com/token). Gives this (the master) control of the presentation
         id: '1ea875674b17ca76', // Obtained from socket.io server (example.com/token)
         url: 'example.com:80' // Location of your socket.io server
     },
 
-    // Optional libraries used to extend on reveal.js
+    // Don't forget to add the dependencies
     dependencies: [
         //...
-        //... other dependencies
+        // other deps
         //...
         { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/master.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
+		
+        // other dependencies...
     ]
 });
 ```

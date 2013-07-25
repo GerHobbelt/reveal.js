@@ -114,7 +114,7 @@
             transitionSpeed: 'default', // default/fast/slow
 
             // Transition style for full page slide backgrounds
-            backgroundTransition: 'default', // default/linear
+			backgroundTransition: 'default', // default/linear/none
 
             // Script dependencies to load
             dependencies: []
@@ -1412,10 +1412,6 @@
             activateOverview();
         }
 
-        // Update the URL hash after a delay since updating it mid-transition
-        // is likely to cause visual lag
-        writeURL( 1500 );
-
         // Find the current horizontal slide and any possible vertical slides
         // within it
         var currentHorizontalSlide = horizontalSlides[ indexh ],
@@ -1486,6 +1482,9 @@
         updateControls();
         updateProgress();
         updateBackground();
+
+		// Update the URL hash
+		writeURL();
 
     }
 
@@ -1917,7 +1916,9 @@
             var h = parseInt( bits[0], 10 ) || 0,
                 v = parseInt( bits[1], 10 ) || 0;
 
-            slide( h, v );
+			if( h !== indexh || v !== indexv ) {
+				slide( h, v );
+			}
         }
 
     }
@@ -2322,7 +2323,8 @@
         if( triggered ) {
             event.preventDefault();
         }
-        else if ( event.keyCode === 27 && supports3DTransforms ) {
+		// ESC or O key
+		else if ( ( event.keyCode === 27 || event.keyCode === 79 ) && supports3DTransforms ) {
             toggleOverview();
 
             event.preventDefault();
