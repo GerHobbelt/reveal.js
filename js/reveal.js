@@ -124,12 +124,12 @@
         autoSlide = 0,
 
         // The horizontal and vertical index of the currently active slide
-        indexh = 0,
-        indexv = 0,
+        indexh = undefined,
+        indexv = undefined,
 
         // The previous and current slide HTML elements
-        previousSlide,
-        currentSlide,
+        previousSlide = null,
+        currentSlide = undefined,
 
         // Slides may hold a data-state attribute which we pick up and apply
         // as a class to the body. This list contains the combined state of
@@ -474,6 +474,46 @@
         }, 1 );
 
         return true;
+    }
+
+    /**
+     * Restarts reveal.js when a new presentation has been loaded.
+     *
+     * Return FALSE when the function failed to run to completion.
+     */
+    function restart() {
+
+        // Clean up the remains of the previous state, if there ever was one.
+        while( state.length ) {
+            document.documentElement.classList.remove( state.pop() );
+        }
+
+        // Reset the important presentation values:
+
+        // The horizontal and vertical index of the currently active slide
+        indexh = undefined;
+        indexv = undefined;
+
+        // The previous and current slide HTML elements
+        previousSlide = null;
+        currentSlide = undefined;
+
+        // Slides may hold a data-state attribute which we pick up and apply
+        // as a class to the body. This list contains the combined state of
+        // all current slides.
+        state = [];
+
+        // The current scale of the presentation (see width/height config)
+        scale = 1;
+
+
+        // Notify listeners that the presentation is ready but use a 1ms
+        // timeout to ensure it's not fired synchronously after #initialize()
+        setTimeout( function() {
+            dispatchEvent( 'restart' );
+        }, 1 );
+
+        return start();
     }
 
     /**
@@ -2641,7 +2681,7 @@
         initialize: initialize,
         configure: configure,
         sync: sync,
-        start: start,
+        restart: restart,
 
         // Navigation methods
         slide: slide,
