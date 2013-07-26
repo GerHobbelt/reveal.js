@@ -973,8 +973,13 @@
             scale = Math.min( scale, config.maxScale );
 
             // Prefer applying scale via zoom since Chrome blurs scaled content
-            // with nested transforms
-            if( typeof dom.slides.style.zoom !== 'undefined' && !navigator.userAgent.match( /(iphone|ipod|ipad|android)/gi ) ) {
+            // with nested transforms.
+            //
+            // Unfortunately, CSS3 zoom in Chrome has the very bad habit to scale text correctly only down to zoom factors of about 0.4,
+            // go below that number and your text gets bigger and bigger (relatively speaking).
+            // Try this at: http://jsbin.com/aluniv/3
+            // Hence we must revert to using CSS3 transform scale() or scale3d() for Chrome:
+            if( typeof dom.slides.style.zoom !== 'undefined' && !navigator.userAgent.match( /(iphone|ipod|ipad|android|chrome)/gi ) ) {
                 dom.slides.style.zoom = scale;
             }
             // Apply scale transform as a fallback
