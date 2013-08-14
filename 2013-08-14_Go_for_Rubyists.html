@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>reveal.js - The HTML Presentation Framework</title>
+<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+<meta name="author" content="Hakim El Hattab">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="css/reveal.min.css">
+<link rel="stylesheet" href="css/theme/default.css" id="theme">
+<link rel="stylesheet" href="plugin/highlight/tomorrow-night-eighties.css">
+<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+<script>
+  document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+</script>
+</head>
+
+<body>
+<div class="reveal">
+<!-- Any section element inside of this container is displayed as a slide -->
+<div class="slides">
+
+<section>
+<h1>Go for Rubyists</h1>
+<p>
+<small><a href="http://dynport.de">Tobias Schwab</a> / <a href="http://twitter.com/tobstarr">@tobstarr</a></small>
+</p>
+</section>
+
+<section>
+<h2>Go code is...</h2>
+<ul>
+<li class=fragment>statically typed</li>
+<li class=fragment>compiled to machine code</li>
+<li class=fragment>garbage collected</li>
+<li class=fragment>procedural</li>
+<li class=fragment>almost as fast as C code</li>
+<li class=fragment>easy to refactor</li>
+<li class=fragment>pretty boring</li>
+</ul>
+</section>
+
+<section>
+<h2>Go does not have...</h2>
+<ul>
+<li class=fragment>inheritance</li>
+<li class=fragment>method overriding</li>
+<li class=fragment>method overloading</li>
+<li class=fragment>monkey patching</li>
+<li class=fragment>generics</li>
+<li class=fragment>magic</li>
+<li class=fragment>other fancy stuff</li>
+</ul>
+</section>
+
+<section>
+<h2>Hello World!</h2>
+<pre class=fragment><code data-trim>
+string = "hello world!"
+puts string
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim>
+import "fmt"
+
+func main() {
+  str := "hello world!"
+  fmt.Println(str)
+}
+</code></pre>
+</section>
+
+<section>
+<h2>Integers & Strings</h2>
+<pre class=fragment><code data-trim>
+"0".to_i
+1.to_s
+" test ".strip
+"abc".incude?("a")
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim>
+import (
+  "strings"
+  "strconv"
+)
+
+i, e := strconv.Atoi("0")
+a := strconv.Itao(10)
+b := strings.TrimSpace("  test  ")
+c := strings.Contains("abc", "a")
+</code></pre>
+</section>
+
+<section>
+<h2>Objects vs. Types</h2>
+<pre class=fragment><code data-trim>
+class Post
+  attr_accessor :title, :author
+
+  def initialize(attributes)
+    attributes.each do |k, v|
+      self.send(:"#{key}=", v)
+    end
+  end
+
+  def to_s
+    "%s, %s" % [title, author]
+  end
+end
+
+post = Post.new(title: "First Post", author: "Tobias")
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment>
+<code data-trim >
+type Post struct {
+  Title, Author string
+}
+
+func (post *Post) String() string {
+  return fmt.Sprintf("%s, %s", post.Title, post.Author)
+}
+
+post := &Post{Title: "First Post", Author: "Tobias"}
+</code></pre>
+</section>
+
+<section>
+<h2>Hashes vs. Maps</h2>
+<pre class=fragment><code data-trim>
+h = { a: 1, b: 2 }
+h[:c] = 3
+h.delete(:a)
+
+h.each do |k, v|
+  puts "%s: %s" % [k, v]
+end
+
+if h.has_key?(:b)
+  puts h[:b]
+end
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim>
+m := map[string]string {
+  "a": 1, "b": 2,
+}
+m["c"] = 3
+delete(m, "a")
+
+for k, v := range m {
+  fmt.Sprintf("%s: %s\n")
+}
+
+if v, ok := m["c"]; ok {
+  fmt.Println(v)
+}
+</code></pre>
+</section>
+
+<section>
+<h2>Arrays vs. Slices</h2>
+<pre class=fragment><code data-trim>
+posts = [
+  Post.new(title: "First Post", author: "Tobias"),
+  Post.new(title: "Second Post", author: "Tobias")
+]
+posts += Post.new(title: "Third Post", author: "Tobias")
+
+posts.each do |post|
+  puts post
+end
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment>
+<code data-trim >
+posts := []*Post {
+  &Post{Title: "First Post", Author: "Tobias"},
+  &Post{Title: "Second Post", Author: "Tobias"},
+}
+posts = append(posts, &Post{Title: "Third Post", Author: "Tobias"})
+
+for i, post := range posts {
+  fmt.Println(i, post)
+}
+</code></pre>
+</section>
+
+<section>
+<h2>Serialize</h2>
+<pre class=fragment>
+<code data-trim>
+require "json"
+
+def serialize_post(post)
+  { title: post.title, author: post.author }
+end
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim>
+import "encoding/json"
+
+func SerializePost(post *Post) (string, error) {
+  b, e := json.Marshal(post)
+  if e != nil {
+    return "", e
+  }
+  return string(b), nil
+}
+</code></pre>
+</section>
+
+<section>
+<h2>Unserialize</h2>
+<pre class=fragment>
+<code data-trim>
+require "json"
+
+def unserialize_post(raw)
+  Post.new(JSON.load(raw))
+end
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+import "encoding/json"
+
+func UnserializePost(b []byte) (*Post, error) {
+  blog := &Post{}
+  e := json.Unmarshal(b, post)
+  if e != nil {
+    return nil, e
+  }
+  return post, nil
+}
+</code></pre>
+</section>
+
+<section>
+<h2>Customizing JSON</h2>
+<pre class=fragment><code data-trim >
+type Post struct {
+  Title string `json:"title"`
+  Author string `json:"author"`
+}
+</code></pre>
+</section>
+
+<section>
+<h2>Reading Files</h2>
+<pre class=fragment><code data-trim >
+def print_lines_in_file(path)
+  File.open(path) do |f|
+    f.each do |line|
+      puts line
+    end
+  end
+end
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+func PrintLinesInFile(path string) (error) {
+  f, e := os.Open(path)
+  if e != nil {
+    return e
+  }
+  defer f.Close()
+
+  scanner := bufio.NewScanner(f)
+  for scanner.Scan() {
+    fmt.Println(scanner.Text())
+  }
+  return nil
+} // or ioutil.ReadFile()
+</pre></code>
+</section>
+
+<section>
+<h2>Writing Files</h2>
+<pre class=fragment><code data-trim >
+def write_file(path, content)
+  File.open(path, "w") do |f|
+    f.write(content)
+  end
+end
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+func WriteFile(path, content string) (error) {
+  f, e := os.Create(path)
+  if e != nil {
+    return e
+  }
+  defer f.Close()
+  _, e = f.Write([]byte(content))
+  return e
+} // or ioutil.WriteFile()
+
+</pre></code>
+</section>
+
+<section>
+<h2>Regexp</h2>
+<pre class=fragment><code data-trim >
+str = "nginx status=200 path=/"
+str.scan(/status=(\d+)/)
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+s := "nginx status=200 path=/"
+r := regexp.MustCompile("status=(\\d+)")
+r.FindStringSubmatch(s)
+</pre></code>
+</section>
+
+<section>
+<h2>raise vs. panic</h2>
+<pre class=fragment><code data-trim >
+begin
+  raise "not found"
+rescue => err
+  puts err.message
+end
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+defer func() {
+  if p := recover(); p != nil {
+    log.Println(p)
+  }
+}()
+
+panic("not found")
+</code></pre>
+</section>
+
+<section>
+<h2>Duck Typing</h2>
+<pre class=fragment><code data-trim>
+def my_print(printable)
+  puts printable.to_s
+end
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim>
+type Post struct {
+  Title string
+}
+
+func (post *Post) String() string {
+  return post.Title
+}
+
+type Printable interface {
+  String() string
+}
+
+func MyPrint(p Printable) {
+  fmt.Println(p.String())
+}
+</code></pre>
+</section>
+
+<section>
+<h2>HTTP Server</h2>
+<pre class=fragment><code data-trim >
+app = lambda do |env|
+  [200, { "Content-Type" => "application/json" }, ["hello world"]]
+end
+
+run app
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+import "net/http"
+
+func main() {
+  http.HandleFunc(
+    "/", 
+    func(writer http.ResponseWriter, req *http.Request) {
+      writer.Header().Add(
+        "Content-Type",
+        "application/json; charset=utf-8",
+      )
+      writer.WriteHeader(http.StatusOK)
+      writer.Write([]byte("hello world"))
+    },
+  )
+  http.ListenAndServe(":8080", nil)
+}
+</pre></code>
+</section>
+
+<section>
+<h2>HTTP Client</h2>
+<pre class=fragment><code data-trim >
+require "net/http"
+
+rsp = Net::HTTP.get_response(URI("http://127.0.0.1:8080"))
+puts rsp.body
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+import (
+  "net/http"
+  "log"
+  "io/ioutil"
+)
+
+rsp, e := http.Get("http://127.0.0.1:8080")
+if e != nil {
+  log.Fatal(e.Error())
+}
+
+b, e := ioutil.ReadAll(rsp.Body)
+if e != nil {
+  log.Fatal(e.Error())
+}
+
+fmt.Println(string(b))
+</pre></code>
+</section>
+
+<section>
+<h2>MD5</h2>
+<pre class=fragment><code data-trim >
+require "md5"
+
+checksum = Digest::MD5.hexdigest("hello world")
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+import "crypto/md5"
+
+hash := md5.New()
+hash.Write([]byte("hello world"))
+checksum := log.Sprintf("%x", hash.Sum(nil))
+</code></pre>
+</section>
+
+<section>
+<h2>Threads vs. goroutines</h2>
+<pre class=fragment><code data-trim >
+M, ints, sums = Mutex.new, [1, 2, 3, 4], []
+
+ints.map do |i|
+  Thread.new do
+    M.synchronize { sums << i * i }
+  end
+end.map(&:join)
+
+p sums
+</pre></code>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+c, ints, sums := make(chan int), []int{1, 2, 3, 4}, []int{}
+
+for _, i := range ints {
+  go func(i int, c chan int) { c <- i * i }(i, c)
+}
+
+for len(sums) < len(ints) {
+  select {
+  case p := <-c:
+    sums = append(sums, p)
+  }
+}
+log.Println(ints, sums)
+</pre></code>
+</section>
+
+<section>
+<h2>Testing</h2>
+<pre class=fragment><code data-trim >
+require 'minitest/autorun'
+
+class TestSomething < MiniTest::Unit::TestCase
+  def test_equality
+    assert_equal 1, 1
+  end
+end
+</pre></code>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+import (
+  "testing"
+  "github.com/stretchr/testify/assert"
+)
+
+func TestEquality(t *testing.T) {
+  assert.Equal(t, 1, 1)
+}
+</pre></code>
+</section>
+
+<section>
+<h2>Deployment</h2>
+<pre class=fragment><code data-trim>
+$ apt-get install build-essential git-core
+$ apt-get install nginx
+$ apt-get install ruby ruby-dev libcurl4-openssl-dev libmysqlclient-dev
+$ gem install bundler
+$ git clone git@github.com:my/my_app.git
+$ bundle install --deployment --without development test
+$ /etc/init.d/nginx start
+$ bundle exec unicorn
+</pre></code>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+$ curl -O https://jenkins.host/job/my_app/42/artifact/bin/my_app
+$ chmod a+x ./my_app
+$ ./my_app
+</pre></code>
+</section>
+
+<section>
+<h2>rubygems vs. go get</h2>
+<pre class=fragment><code data-trim >
+# gem install redis
+require "redis"
+redis := Redis.new
+</pre></code>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+// go get github.com/garyburd/redigo/redis
+import "github.com/garyburd/redigo/redis"
+
+con, e:= redis.Dial("tcp", "127.0.0.1:6379")
+if e != nil { return e }
+defer con.Close()
+</pre></code>
+</section>
+
+<section>
+<h2>Tooling</h2>
+<ul>
+<li class=fragment>stdlib</li>
+<li class=fragment>gofmt</li>
+<li class=fragment>godoc.org</li>
+<li class=fragment>gocode</li>
+</ul>
+</section>
+
+<section>
+<h2>Projects written in go</h2>
+<ul>
+<li>Docker</li>
+<li>Packer</li>
+<li>Mozilla Heka</li>
+<li>etcd</li>
+</ul>
+</section>
+
+<section>
+<h2>www.dynport.de</h2>
+<h3>@tobstarr</h3>
+</section>
+
+</div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.min.js"></script>
+
+<script>
+
+  // Full list of configuration options available here:
+  // https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: true,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+      // { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+      // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+  });
+
+</script>
+
+</body>
+</html>
