@@ -78,7 +78,7 @@ func main() {
 "0".to_i
 1.to_s
 " test ".strip
-"abc".incude?("a")
+"abc".include?("a")
 </code></pre>
 <h3 class=fragment>vs.</h3>
 <pre class=fragment><code data-trim>
@@ -129,39 +129,6 @@ post := &Post{Title: "First Post", Author: "Tobias"}
 </section>
 
 <section>
-<h2>Hashes vs. Maps</h2>
-<pre class=fragment><code data-trim>
-h = { a: 1, b: 2 }
-h[:c] = 3
-h.delete(:a)
-
-h.each do |k, v|
-  puts "%s: %s" % [k, v]
-end
-
-if h.has_key?(:b)
-  puts h[:b]
-end
-</code></pre>
-<h3 class=fragment>vs.</h3>
-<pre class=fragment><code data-trim>
-m := map[string]string {
-  "a": 1, "b": 2,
-}
-m["c"] = 3
-delete(m, "a")
-
-for k, v := range m {
-  fmt.Sprintf("%s: %s\n")
-}
-
-if v, ok := m["c"]; ok {
-  fmt.Println(v)
-}
-</code></pre>
-</section>
-
-<section>
 <h2>Arrays vs. Slices</h2>
 <pre class=fragment><code data-trim>
 posts = [
@@ -190,13 +157,80 @@ for i, post := range posts {
 </section>
 
 <section>
+<h2>Hashes vs. Maps</h2>
+<pre class=fragment><code data-trim>
+h = { a: 1, b: 2 }
+h[:c] = 3
+h.delete(:a)
+
+h.each do |k, v|
+  puts "%s: %s" % [k, v]
+end
+
+if h.has_key?(:b)
+  puts h[:b]
+end
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim>
+m := map[string]int {
+  "a": 1, "b": 2,
+}
+m["c"] = 3
+delete(m, "a")
+
+for k, v := range m {
+  fmt.Sprintf("%s: %s\n", k, v)
+}
+
+if v, ok := m["c"]; ok {
+  fmt.Println(v)
+}
+</code></pre>
+</section>
+
+<section>
+<h2 style="text-transform:none">Time.now vs. time.Now()</h2>
+<pre class=fragment><code data-trim >
+started = Time.now
+started.strftime("%Y-%m-%dT%H:%M:%S")
+one_hour_ago = started - 3600
+diff = Time.now - started
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+const FORMAT = "2006-01-02T15:04:05"
+
+started := time.Now()
+oneHourAgo := started.Add(time.Hour * -1)
+log.Println(started.Format(FORMAT))
+diff := time.Now().Sub(started)
+diffInSeconds := diff.Seconds()
+</code></pre>
+</section>
+
+<section>
+<h2>Regexp</h2>
+<pre class=fragment><code data-trim >
+str = "nginx status=200 path=/"
+str.scan(/status=(\d+)/)
+</code></pre>
+<h3 class=fragment>vs.</h3>
+<pre class=fragment><code data-trim >
+s := "nginx status=200 path=/"
+r := regexp.MustCompile("status=(\\d+)")
+r.FindStringSubmatch(s)
+</pre></code>
+</section>
+
+<section>
 <h2>Serialize</h2>
 <pre class=fragment>
 <code data-trim>
 require "json"
 
 def serialize_post(post)
-  { title: post.title, author: post.author }
+  JSON.dump(title: post.title, author: post.author)
 end
 </code></pre>
 <h3 class=fragment>vs.</h3>
@@ -228,7 +262,7 @@ end
 import "encoding/json"
 
 func UnserializePost(b []byte) (*Post, error) {
-  blog := &Post{}
+  post := &Post{}
   e := json.Unmarshal(b, post)
   if e != nil {
     return nil, e
@@ -302,20 +336,6 @@ func WriteFile(path, content string) (error) {
 </section>
 
 <section>
-<h2>Regexp</h2>
-<pre class=fragment><code data-trim >
-str = "nginx status=200 path=/"
-str.scan(/status=(\d+)/)
-</code></pre>
-<h3 class=fragment>vs.</h3>
-<pre class=fragment><code data-trim >
-s := "nginx status=200 path=/"
-r := regexp.MustCompile("status=(\\d+)")
-r.FindStringSubmatch(s)
-</pre></code>
-</section>
-
-<section>
 <h2>raise vs. panic</h2>
 <pre class=fragment><code data-trim >
 begin
@@ -385,7 +405,7 @@ func main() {
         "application/json; charset=utf-8",
       )
       writer.WriteHeader(http.StatusOK)
-      writer.Write([]byte("hello world"))
+      writer.Write([]byte(`{ "message": "hello world" }`))
     },
   )
   http.ListenAndServe(":8080", nil)
@@ -500,7 +520,8 @@ func TestEquality(t *testing.T) {
 <pre class=fragment><code data-trim>
 $ apt-get install build-essential git-core
 $ apt-get install nginx
-$ apt-get install ruby ruby-dev libcurl4-openssl-dev libmysqlclient-dev
+$ apt-get install ruby ruby-dev
+$ apt-get install libcurl4-openssl-dev libmysqlclient-dev
 $ gem install bundler
 $ git clone git@github.com:my/my_app.git
 $ bundle install --deployment --without development test
@@ -520,7 +541,7 @@ $ ./my_app
 <pre class=fragment><code data-trim >
 # gem install redis
 require "redis"
-redis := Redis.new
+redis = Redis.new
 </pre></code>
 <h3 class=fragment>vs.</h3>
 <pre class=fragment><code data-trim >
