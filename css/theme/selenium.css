@@ -46,6 +46,11 @@ body {
   position:absolute;
   bottom:0;
   width:18%;
+  right:0;
+}
+#employer-logo {
+  position:absolute;
+  bottom:5px;
 }
 section.stack {
   height:100%;
@@ -181,6 +186,9 @@ strong {
  * NAVIGATION CONTROLS
  *********************************************/
 
+.reveal .controls {
+  top: 10px;
+}
 .reveal .controls a {
 	color: #fff;
 }

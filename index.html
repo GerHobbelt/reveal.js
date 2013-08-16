@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Drupal Debugging Techniques</title>
+		<title>DIY Continuous Integration</title>
 
 		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
 		<meta name="author" content="Allan Chappell">
@@ -35,56 +35,63 @@
 	<body>
     <img src='img/jean.png' id='background'/>
     <img src='img/dc_logo_2013.png' id='conference-logo'/>
+    <img src='img/prometsource-logo.png' id='employer-logo'/>
 		<div class="reveal">
 
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h1>Debuggin Techniques for Drupal</h1>
-          <br />
-					<h3>Even a Redneck Has To Do It...</h3>
+					<h2>DIY Continuous Integration</h2>
+					<h3>With Drupal</h3>
           <br />
           <h5>Drupalcorn Camp 2013</h5>
           <h5>University of Iowa Iowa City, Iowa</h5>
-          <h5>Friday, August 9, 2013 </h5>
+          <h5>Friday, August 10, 2013 </h5>
 				</section>
 
 				<section>
-					<h2 class='static-heading'>What I'm Gonna Hollar Bout!</h2>
+					<h2 class='static-heading' style='top:-65%'>What I'm Gonna Hollar Bout!</h2>
           <section>
             <ul>
-              <li><strong>Why Debuggin is Important</strong>
-                <ul>
-                  <li>What is Debuggin</li>
-                  <li>What are Bugs</li>
-                  <li>What is the Difference Between Codin and Debuggin</li>
-                </ul>
+              <li><strong>What is Continuous Integration</strong> and why should you care.
               </li>
-              <li><strong>Refinin Your Debuggin Approach</strong>
+              <li><strong>Continuous Integration's 10 Principles</strong>
                 <ul>
-                  <li>Gather Information</li>
-                  <li>Replication</li>
-                  <li>Path to Recovery</li>
+                  <li>Revision Control</li>
+                  <li>Build Automation</li>
+                  <li>Self-testing Build</li>
+                  <li>Frequent Commits</li>
+                  <li>Every commit to Development</li>
+                  <li>Fast Builds</li>
+                  <li>Test on a copy of production</li>
+                  <li>Make the build availiable</li>
+                  <li>Make the test results availiable</li>
+                  <li>Automate deployment to Live</li>
                 </ul>
               </li>
             </ul>
           </section>
           <section>
             <ul>
-              <li><strong>Different Debuggin Senarios</strong>
+              <li><strong>Tools of the trade</strong>
                 <ul>
-                  <li>Common Problems</li>
-                  <li>Inspection</li>
-                  <li>Theme Problems</li>
-                  <li>Performance Problems</li>
-                  <li>Interaction Problems</li>
+                  <li>Git</li>
+                  <li>Vagrant</li>
+                  <li>Chef</li>
+                  <li>PHPUnit</li>
+                  <li>Jenkins</li>
                 </ul>
               </li>
             </ul>
           </section>
-					<aside class="notes">
-						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
-					</aside>
+          <section>
+            <h3>This session has three goals:</h3>
+            <ol>
+              <li>explain what continuous integration means relative to Drupal.</li>
+              <li>introduce the tools available to implement CI now.</li>
+              <li>demonstrate what a CI implementation looks like in practice</li>
+            </ol>
+          </section>
 				</section>
 
 				<section>
@@ -114,178 +121,136 @@
           </p>
 					<h4 class='tag'>&lt;/SHAMELESS SELF PROMOTION&gt;</h4>
 				</section>
-
 				<section>
-          <h2 class='static-heading' style='top:-65%;' >Why Is Debuggin Important?</h2>
+          <h2 class='static-heading' style='top:-65%;' >What is Continuous Integration</h2>
           <section>
-            <p><strong>More of your professional career will be spent debuggin rather than codin!</strong></p>
-            <img src='img/no-bugs-1.png' style='height:100px; float:left;' class='not-fancy' />
-            <blockquote>
-            As soon as we started programming, we found 
-            to our surprise that it wasn't as easy to get 
-            programs right as we had thought. 
-            Debugging had to be discovered. I can 
-            remember the exact instant when I realized 
-            that a large part of my life from then on was 
-            going to be spent in finding mistakes in my 
-            own programs.
-            </blockquote>
-            -- <a href='http://books.google.com/books?id=9t5uxP9xHpwC&pg=PA109&lpg=PA109&dq=As+soon+as+we+started+programming,+we+found+to+our+surprise+that+it+wasn't+as+easy+to+get+programs+right+as+we+had+thought.+Debugging+had+to+be+discovered.+I+can+remember+the+exact+instant+when+I+realized+that+a+large+part+of+my+life+from+then+on+was+going+to+be+spent+in+finding+mistakes+in+my+own+programs.&source=web&ots=xePN0pGcyx&sig=LTyzYIjg4E4xitCpu-jWoRLTPp8&hl=en&sa=X&oi=book_result&resnum=4&ct=result'>Maurice Wilkes discovers bugs, 1949</a> 
-          </section>
-          <section>
-            <img src='img/confused-redneck.jpg' class='not-fancy' />
-            <p>To understand why Debuggin is important, you must know:</p>
+            <h3>And Why Should You Care</h3>
             <ul>
-              <li>What Debuggin is</li>
-              <li>What Bugs are</li>
-              <li>What the difference between Codin and Debuggin is.</li>
+              <li>Is it automated testing?</li>
+              <li>Automated deployment?</li>
+              <li>Test-driven development?</li>
+              <li><strong>↝↝↝↝</strong>INSERT BUZZ WORD HERE<strong>↜↜↜↜</strong></li>
             </ul>
           </section>
           <section>
-            <h3>What is Debuggin?</h3>
-            <p>Debuggin is developin an understandin of a codin error, so that the behavior of the code and your expectations of it match.</p>
-            <br />
+            <h3>Not Exactly...</h3>
+            <p>
+              Continuous Integration touches all parties: clients, project managers, system admins, and developers, front and back end. If that’s you, you need to know what CI is.</p>
+          </section>
+          <section>
+            <h3><strong>10 Principles of Continuous Integration</strong></h3>
             <ul>
-              <li>What is in your mind isn't always reality.</li>
-              <li>What is in the code sometimes does more than you observe.</li>
+              <li>Revision Control</li>
+              <li>Build Automation</li>
+              <li>Self-testing Build</li>
+              <li>Frequent Commits</li>
+              <li>Every commit to Development</li>
+              <li>Fast Builds</li>
+              <li>Test on a copy of production</li>
+              <li>Make the build availiable</li>
+              <li>Make the test results availiable</li>
+              <li>Automate deployment to Live</li>
             </ul>
           </section>
           <section>
-            <h3>What are Bugs?</h3>
-            <p><strong>Bugs are a Programmer's Errors!</strong></p>
-            <p><small>(Sometimes your errors...)</small></p>
-            <br />
-            <p>This can be:</p>
+            <h3>Revision Control</h3>
             <ul>
-              <li>Error understanding the initial problem.</li>
-              <li>Error in assumption of the behavior of the code.</li>
-              <li>Error caused by environment and mental influence.</li>
-            </ul>
-            <p><strong>A bug is a mismatch between your mental model of what the code should do and what the code actually does.</strong></p>
-          </section>
-          <section>
-            <h3>What is the Difference Between Codin and Debuggin?</h3>
-            <p><strong>Debuggin</strong> is comin to terms with reality.</p>
-            <p><strong>Codin</strong> is attemptin to make what is in your mind a reality.</p>
-            <br />
-            <p>With careful thought and great care, it is possible to never have to debug your own code. Not all are so lucky</p> 
-          </section>
-				</section>
-				<section>
-          <h2 class='static-heading' style='top:-68%;' >Refinin Your Debuggin Approach</h2>
-          <section>
-            <img src='img/diamond.png' style='width:33%;' class='not-fancy'/>
-            <p>Gonna splain a series of actions you can take to make you a better debugger.</p>
-            <p><strong>The key to GREAT debuggin is a to have a method or process.</strong></p>
-          </section>
-          <section>
-            <h3>Gather Information</h3>
-            <p>Information comes from many sources. Here are a few you need to look at when debuggin.</p>
-            <ul>
-              <li><strong>Logs:</strong> Knowin the location of all your server's logs is important. Even more important is knowing what kind of imformation you can find in them.</li>
-              <li><strong>Bug Reports:</strong> Teach your users to make good bug reports this way you get more information with doing less exploration.</li>
-              <li><strong>Pictures:</strong> Sometimes it's true that a picture is worth a 1000 words.</li>
-            </ul>
-            <p><strong>More information is almost always better.</strong></p>
-          </section>
-          <section>
-            <h3>Replication</h3>
-            <p><strong>Without Replication, there is no real way to know if a bug has been fixed.</strong></p>
-            <p>Replication is also just another way to gather information.</p>
-            <p>Use Replication to narrow down the variables.</p>
-            <br />
-            <p>Things to keep in mind when replicating:</p>
-            <ul>
-              <li>Can you replicate it on a copy of the site?</li>
-              <li>How does the user that reported this use the site?</li>
-              <li>Do you have enough information to accuratly replicate the issue?</li>
+              <li>Should be buildable from a fresh checkout.</li>
+              <li>Version Branching should be minimized.</li>
             </ul>
           </section>
           <section>
-            <h3>Path to Recovery</h3>
-            <p>After Replication, How do we recover?</p>
-            <br />
-            <p>Follow a process:</p>
+            <h3>Build Automation</h3>
             <ul>
-              <li><strong>Cheap Tests First:</strong> Be lazy! Try:
-                <ul>
-                  <li><strong>Clear all caches</strong> (browser, Drupal, Varnish, any other)</li>
-                  <li><strong>Check your branch</strong> Make sure you have the right code.</li>
-                  <li><strong>Check for old js/css</strong> Use your browser to see if the CDN or caching is happening.</li>
-                  <li><strong>Keep a checklist of Dumb Mistakes</strong> Learn from your mistakes. Keep in mind the symptoms.</li>
-                </ul>
-              </li>
+              <li>A single command should have the capability of building a system</li>
             </ul>
           </section>
           <section>
-            <h3>Path to Recovery</h3>
-            <br />
+            <h3>Self-testing Build</h3>
             <ul>
-              <li><strong>Did Anyone Else Solve It?</strong>
-                <ul>
-                  <li>Hit up the Drupal.org issue queues.</li>
-                  <li>Search for exact error messages minus varibles.</li>
-                  <li>Ask on #drupal-support.</li>
-                </ul>
-              </li>
-              <li><strong>Get Dirty!</strong>
-                <ul>
-                  <li>Change One Thing at a Time.</li>
-                  <li>Quit Think about how it works and Look at how it works.</li>
-                  <li>Keep an audit trail. (Comments in code, ticket or some other trackable medium)</li>
-                  <li>Be skeptical of Magic fixes.</li>
-                </ul>
-              </li>
+              <li>When a build is created, tests should run to confirm that it behaves the way developers expect it to.</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Every commit to Development</h3>
+            <ul>
+              <li>Every user should commit to a baseline once a day.</li>
+              <li>Helps tests catch problems early.</li>
+              <li>Developers should expect broken features. (process can manage this)</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Fast Builds</h3>
+            <ul>
+              <li>Developers shouldn't be kept waiting.</li>
+              <li>Resources on automatic builds shouldn't be kept waiting.</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Test on a Copy of Production</h3>
+            <ul>
+              <li>Environmental changes can lead to failures.</li>
+              <li>If a copy cannot be provided, a scalable version reduces risk.</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Make the Build Availible</h3>
+            <ul>
+              <li>It is more time effective to have environments prebuilt and "checked out" than building on the fly</li>
+              <li>Builds availiable for Stakeholders is a must.</li>
+              <li>Everyone should be able to access/use the latest build</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Make the test results availiable</h3>
+            <ul>
+              <li>Confidence in product</li>
+              <li>Provides a "Warranty"</li>
+              <li>Developers can find problems earlier.</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Automate Deployment to Live</h3>
+            <ul>
+              <li>Automated process is faster than manual</li>
+              <li>Less mistakes, always the same.</li>
+              <li>Usually provides an automated contengency plan if it fails.</li>
             </ul>
           </section>
         </section>
         <section>
-          <h2>Common Problems</h2>
-          <ul>
-            <li>Permissions on an input filter.</li>
-            <li>File Permissions on imagecache</li>
-            <li>File Permissions on aggregated js/css files.</li>
-            <li>Typos in modules</li>
-          </ul>
+          <h2 class='static-heading'>Tools of the Trade</h2>
+          <section>
+            <h3>Git</h3>
+            <img src='img/git-flow-timeline.png' class='not-fancy'/>
+            <small>Courtesy of <a href='http://joefleming.net/posts/git-flow/'>Joefleming.net</a></small>
+          </section>
+          <section>
+            <h3>Vagrant</h3>
+          </section>
+          <section>
+            <h3>Chef</h3>
+          </section>
+          <section>
+            <h3>PHPUnit</h3>
+          </section>
+          <section>
+            <h3>Jenkins</h3>
+            <img src='img/headshot.png' class='not-fancy'/>
+            <ul>
+              <li>Git Plugin</li>
+            </ul>
+          </section>
         </section>
         <section>
-          <h2>Inspection</h2>
+          <h2>Links</h2>
           <ul>
-            <li>Krumo / devel module</li>
-            <li>var_dump</li>
-            <li>debug_backtrace</li>
-            <li>watchdog for crons and form refreshes.</li>
-            <li>xdebug / breakpoints / code tracing.</li>
-            <li>drush eval</li>
-          </ul>
-        </section>
-        <section>
-          <h2>Theme Problems</h2>
-          <ul>
-            <li>Devel Themer Module</li>
-            <li>IE Has a limited number of CSS files.</li>
-            <li>Typography Sites look differently in different platforms</li>
-            <li>Multilingual and site looks</li>
-          </ul>
-        </section>
-        <section>
-          <h2>Performance</h2>
-          <ul>
-            <li>Apache Bench</li>
-            <li>MySQL logs and innotop</li>
-            <li>Varnish caching problems</li>
-            <li>APC</li>
-            <li>xhprof</li>
-          </ul>
-        </section>
-        <section>
-          <h2>In Conclusion</h2>
-          <ul>
-            <li>Think! Don't blindly use checklists.</li>
-            <li>Make well informed guesses.</li>
-            <li>Complete testing is important.</li>
-            <li>Follow a process.</li>
-            <li>Document what you have done... For next time.</li>
+            <li><a href='http://www.vagrantup.com/'>Vagrant</a></li>
+            <li><a href='https://github.com/promet/drupal_cookbook'>Drupal Cookbook</a></li>
+            <li><a href='http://phpunit.de/manual/3.7/en/installation.html'>Installing PHPUnit</a></li>
+            <li><a href='http://jenkins-ci.org/'>Jenkins</a></li>
+            <li><a href='https://drupal.org/node/670460'>Using drush to synchronize and deploy sites</a></li>
+            <li><a href='https://github.com/generalredneck/headless-selenium'>Headless Selenium</a>
           </ul>
         </section>
         <section>
