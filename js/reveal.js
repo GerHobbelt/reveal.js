@@ -124,12 +124,12 @@
         autoSlide = 0,
 
         // The horizontal and vertical index of the currently active slide
-        indexh = undefined,
-        indexv = undefined,
+        indexh /* = undefined */, 
+        indexv /* = undefined */,
 
         // The previous and current slide HTML elements
         previousSlide = null,
-        currentSlide = undefined,
+        currentSlide /* = undefined */,
 
         // Slides may hold a data-state attribute which we pick up and apply
         // as a class to the body. This list contains the combined state of
@@ -1024,13 +1024,20 @@
             }
             // Apply scale transform as a fallback
             else {
-                var transform = 'translate(-50%, -50%) scale('+ scale +') translate(50%, 50%)';
+                var transform = 'scale('+ scale +')';
 
                 dom.slides.style.WebkitTransform = transform;
                 dom.slides.style.MozTransform = transform;
                 dom.slides.style.msTransform = transform;
                 dom.slides.style.OTransform = transform;
                 dom.slides.style.transform = transform;
+
+                var t_origin = '0% 0%';
+                dom.slides.style.WebkitTransformOrigin = t_origin;
+                dom.slides.style.MozTransformOrigin = t_origin;
+                dom.slides.style.msTransformOrigin = t_origin;
+                dom.slides.style.OTransformOrigin = t_origin;
+                dom.slides.style.transformOrigin = t_origin;
             }
 
             // Select all slides, vertical and horizontal
