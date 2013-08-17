@@ -1136,6 +1136,10 @@
             activateOverviewTimeout = setTimeout( function(){
 
                 var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
+                var slides_info = {
+                    horizontal_count: horizontalSlides.length,
+                    vertical_count: 1
+                };
 
                 for( var i = 0, len1 = horizontalSlides.length; i < len1; i++ ) {
                     var hslide = horizontalSlides[i],
@@ -1153,6 +1157,7 @@
                     if( hslide.classList.contains( 'stack' ) ) {
 
                         var verticalSlides = hslide.querySelectorAll( 'section' );
+                        slides_info.vertical_count = Math.max(slides_info.vertical_count, verticalSlides.length);
 
                         for( var j = 0, len2 = verticalSlides.length; j < len2; j++ ) {
                             var verticalIndex = i === indexh ? indexv : getPreviousVerticalIndex( hslide );
@@ -1182,14 +1187,16 @@
                     }
                 }
 
-                layout();
+                console.log("Feed the slides matrix to LAYOUT so we can determine properly how far to zoom/transform: ", slides_info);
+                layout(slides_info);
 
                 if( !wasActive ) {
                     // Notify observers of the overview showing
                     dispatchEvent( 'overviewshown', {
                         'indexh': indexh,
                         'indexv': indexv,
-                        'currentSlide': currentSlide
+                        'currentSlide': currentSlide,
+                        'slidesMatrixInfo': slides_info
                     } );
                 }
 
