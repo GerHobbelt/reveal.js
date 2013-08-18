@@ -90,9 +90,9 @@
             // Turns fragments on and off globally
             fragments: true,
 
-			// Flags if the presentation is running in an embedded mode,
-			// i.e. contained within a limited portion of the screen
-			embedded: false,
+            // Flags if the presentation is running in an embedded mode,
+            // i.e. contained within a limited portion of the screen
+            embedded: false,
 
             // Number of milliseconds between automatically proceeding to the
             // next slide, disabled when set to 0, this value can be overwritten
@@ -103,7 +103,7 @@
             mouseWheel: false,
 
             // Apply a 3D roll to links on hover
-			rollingLinks: false,
+            rollingLinks: false,
 
             // Opens links in an iframe preview overlay
             previewLinks: false,
@@ -118,23 +118,23 @@
             transitionSpeed: 'default', // default/fast/slow
 
             // Transition style for full page slide backgrounds
-			backgroundTransition: 'default', // default/linear/none
+            backgroundTransition: 'default', // default/linear/none
 
-			// Number of slides away from the current that are visible
-			viewDistance: 3,
+            // Number of slides away from the current that are visible
+            viewDistance: 3,
 
             // Script dependencies to load
             dependencies: []
         },
 
-		// Flags if reveal.js is loaded (has dispatched the 'ready' event)
-		loaded = false,
+        // Flags if reveal.js is loaded (has dispatched the 'ready' event)
+        loaded = false,
 
         // The current auto-slide duration
         autoSlide = 0,
 
         // The horizontal and vertical index of the currently active slide
-        indexh /* = undefined */, 
+        indexh /* = undefined */,
         indexv /* = undefined */,
 
         // The previous and current slide HTML elements
@@ -152,14 +152,14 @@
         // Cached references to DOM elements
         dom = {},
 
-		// Client support for CSS 3D transforms, see #checkCapabilities()
-		supports3DTransforms,
+        // Client support for CSS 3D transforms, see #checkCapabilities()
+        supports3DTransforms,
 
-		// Client support for CSS 2D transforms, see #checkCapabilities()
-		supports2DTransforms,
+        // Client support for CSS 2D transforms, see #checkCapabilities()
+        supports2DTransforms,
 
-		// Client is a mobile device, see #checkCapabilities()
-		isMobileDevice,
+        // Client is a mobile device, see #checkCapabilities()
+        isMobileDevice,
 
         // Throttles mouse wheel navigation
         lastMouseWheelStep = 0,
@@ -185,8 +185,8 @@
             startY: 0,
             startSpan: 0,
             startCount: 0,
-			captured: false,
-			threshold: 40
+            captured: false,
+            threshold: 40
         };
 
     /**
@@ -196,7 +196,7 @@
      */
     function initialize( options ) {
 
-		checkCapabilities();
+        checkCapabilities();
 
         if( !supports2DTransforms && !supports3DTransforms ) {
             document.body.setAttribute( 'class', 'no-transforms' );
@@ -221,26 +221,26 @@
     }
 
     /**
-	 * Inspect the client to see what it's capable of, this
-	 * should only happens once per runtime.
-	 */
-	function checkCapabilities() {
+     * Inspect the client to see what it's capable of, this
+     * should only happens once per runtime.
+     */
+    function checkCapabilities() {
 
-		supports3DTransforms =  'WebkitPerspective' in document.body.style ||
-								'MozPerspective' in document.body.style ||
-								'msPerspective' in document.body.style ||
-								'OPerspective' in document.body.style ||
-								'perspective' in document.body.style;
+        supports3DTransforms =  'WebkitPerspective' in document.body.style ||
+                                'MozPerspective' in document.body.style ||
+                                'msPerspective' in document.body.style ||
+                                'OPerspective' in document.body.style ||
+                                'perspective' in document.body.style;
 
-		supports2DTransforms =  'WebkitTransform' in document.body.style ||
-								'MozTransform' in document.body.style ||
-								'msTransform' in document.body.style ||
-								'OTransform' in document.body.style ||
-								'transform' in document.body.style;
+        supports2DTransforms =  'WebkitTransform' in document.body.style ||
+                                'MozTransform' in document.body.style ||
+                                'msTransform' in document.body.style ||
+                                'OTransform' in document.body.style ||
+                                'transform' in document.body.style;
 
-		isMobileDevice = navigator.userAgent.match( /(iphone|ipod|android)/gi );
+        isMobileDevice = navigator.userAgent.match( /(iphone|ipod|android)/gi );
 
-	}
+    }
 
     /**
      * Loads the dependencies of reveal.js. Dependencies are
@@ -312,29 +312,29 @@
         // Make sure we've got all the DOM elements we need
         if (!setupDOM()) return false;
 
-		// Decorate the slide DOM elements with state classes (past/future)
-		setupSlides();
+        // Decorate the slide DOM elements with state classes (past/future)
+        setupSlides();
 
-		// Updates the presentation to match the current configuration values
-		configure();
+        // Updates the presentation to match the current configuration values
+        configure();
 
-		// Read the initial hash
-		readURL();
+        // Read the initial hash
+        readURL();
 
-		// Notify listeners that the presentation is ready but use a 1ms
-		// timeout to ensure it's not fired synchronously after #initialize()
-		setTimeout( function() {
-			// Enable transitions now that we're loaded
-			dom.slides.classList.remove( 'no-transition' );
+        // Notify listeners that the presentation is ready but use a 1ms
+        // timeout to ensure it's not fired synchronously after #initialize()
+        setTimeout( function() {
+            // Enable transitions now that we're loaded
+            dom.slides.classList.remove( 'no-transition' );
 
-			loaded = true;
+            loaded = true;
 
-			dispatchEvent( 'ready', {
-				'indexh': indexh,
-				'indexv': indexv,
-				'currentSlide': currentSlide
-			} );
-		}, 1 );
+            dispatchEvent( 'ready', {
+                'indexh': indexh,
+                'indexv': indexv,
+                'currentSlide': currentSlide
+            } );
+        }, 1 );
 
         return true;
     }
@@ -379,27 +379,27 @@
         return start();
     }
 
-	/**
-	 * Iterates through and decorates slides DOM elements with
-	 * appropriate classes.
-	 */
-	function setupSlides() {
+    /**
+     * Iterates through and decorates slides DOM elements with
+     * appropriate classes.
+     */
+    function setupSlides() {
 
-		var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
-		horizontalSlides.forEach( function( horizontalSlide ) {
+        var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+        horizontalSlides.forEach( function( horizontalSlide ) {
 
-			var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
-			verticalSlides.forEach( function( verticalSlide, y ) {
+            var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
+            verticalSlides.forEach( function( verticalSlide, y ) {
 
-				if( y > 0 ) verticalSlide.classList.add( 'future' );
+                if( y > 0 ) verticalSlide.classList.add( 'future' );
 
-			} );
+            } );
 
-		} );
+        } );
 
-	}
+    }
 
-	/**
+    /**
      * Finds and stores references to DOM elements which are
      * required by the presentation. If a required element is
      * not found, it is created.
@@ -414,33 +414,33 @@
         dom.slides = document.querySelector( '.reveal .slides' );
         if (!dom.wrapper || !dom.slides) return false;
 
-		// Prevent transitions while we're loading
-		dom.slides.classList.add( 'no-transition' );
+        // Prevent transitions while we're loading
+        dom.slides.classList.add( 'no-transition' );
 
         // Background element
-		dom.background = createSingletonNode( dom.wrapper, 'div', 'backgrounds', null );
+        dom.background = createSingletonNode( dom.wrapper, 'div', 'backgrounds', null );
 
         // Progress bar
-		dom.progress = createSingletonNode( dom.wrapper, 'div', 'progress', '<span></span>' );
-		dom.progressbar = dom.progress.querySelector( 'span' );
+        dom.progress = createSingletonNode( dom.wrapper, 'div', 'progress', '<span></span>' );
+        dom.progressbar = dom.progress.querySelector( 'span' );
 
         // Arrow controls
-		dom.arrow_controls = createSingletonNode( dom.wrapper, 'aside', 'controls',
-			'<div class="navigate-left"></div>' +
-			'<div class="navigate-right"></div>' +
-			'<div class="navigate-up"></div>' +
-			'<div class="navigate-down"></div>' );
+        dom.arrow_controls = createSingletonNode( dom.wrapper, 'aside', 'controls',
+            '<div class="navigate-left"></div>' +
+            '<div class="navigate-right"></div>' +
+            '<div class="navigate-up"></div>' +
+            '<div class="navigate-down"></div>' );
         if (dom.arrow_controls) {
             // inspired by http://www.quirksmode.org/dom/events/blurfocus.html when mixing reveal with contenteditable areas and 100% keyboard control:
             // this should make sure that TAB should end up at a node which we recognize as presentation control area and hence process the keys pressed.
             dom.arrow_controls.setAttribute( 'tabindex', '9999' );
-		}
+        }
 
         // State background element [DEPRECATED]
-		createSingletonNode( dom.wrapper, 'div', 'state-background', null );
+        createSingletonNode( dom.wrapper, 'div', 'state-background', null );
 
         // Overlay graphic which is displayed during the paused mode
-		createSingletonNode( dom.wrapper, 'div', 'pause-overlay', null );
+        createSingletonNode( dom.wrapper, 'div', 'pause-overlay', null );
 
         // Cache references to elements
         if ( config.controls ) {
@@ -456,25 +456,25 @@
         }
 
         return true;
-	}
+    }
 
-	/**
-	 * Creates an HTML element and returns a reference to it.
-	 * If the element already exists the existing instance will
-	 * be returned.
-	 */
-	function createSingletonNode( container, tagname, classname, innerHTML ) {
+    /**
+     * Creates an HTML element and returns a reference to it.
+     * If the element already exists the existing instance will
+     * be returned.
+     */
+    function createSingletonNode( container, tagname, classname, innerHTML ) {
 
-		var node = container.querySelector( '.' + classname );
-		if( !node ) {
-			node = document.createElement( tagname );
-			node.classList.add( classname );
-			if( innerHTML !== null ) {
-				node.innerHTML = innerHTML;
-			}
-			container.appendChild( node );
-		}
-		return node;
+        var node = container.querySelector( '.' + classname );
+        if( !node ) {
+            node = document.createElement( tagname );
+            node.classList.add( classname );
+            if( innerHTML !== null ) {
+                node.innerHTML = innerHTML;
+            }
+            container.appendChild( node );
+        }
+        return node;
     }
 
     /**
@@ -559,13 +559,13 @@
 
         } );
 
-	}
+    }
 
-	/**
-	 * Applies the configuration settings from the config
-	 * object. May be called multiple times.
-	 */
-	function configure( options ) {
+    /**
+     * Applies the configuration settings from the config
+     * object. May be called multiple times.
+     */
+    function configure( options ) {
 
         if( dom.wrapper ) {
             dom.wrapper.classList.remove( config.transition );
@@ -776,15 +776,15 @@
     }
 
     /**
-	 * Applies a CSS transform to the target element.
-	 */
-	function transformElement( element, transform, origin ) {
+     * Applies a CSS transform to the target element.
+     */
+    function transformElement( element, transform, origin ) {
 
-		element.style.WebkitTransform = transform;
-		element.style.MozTransform = transform;
-		element.style.msTransform = transform;
-		element.style.OTransform = transform;
-		element.style.transform = transform;
+        element.style.WebkitTransform = transform;
+        element.style.MozTransform = transform;
+        element.style.msTransform = transform;
+        element.style.OTransform = transform;
+        element.style.transform = transform;
 
         if (typeof origin !== 'undefined') {
             element.style.WebkitTransformOrigin = origin;
@@ -793,9 +793,9 @@
             element.style.OTransformOrigin = origin;
             element.style.transformOrigin = origin;
         }
-	}
+    }
 
-	/**
+    /**
      * Retrieves the height of the given element by looking
      * at the position and height of its immediate children.
      */
@@ -830,64 +830,64 @@
 
     }
 
-	function getComputedCSSProperty( element, prop ) {
+    function getComputedCSSProperty( element, prop ) {
 
-		if( window.getComputedStyle ) {
-			return window.getComputedStyle( element )[ prop ];
-		}
-		else {
-			return element.currentStyle ? element.currentStyle( prop ) : element.style[ prop ];
-		}
+        if( window.getComputedStyle ) {
+            return window.getComputedStyle( element )[ prop ];
+        }
+        else {
+            return element.currentStyle ? element.currentStyle( prop ) : element.style[ prop ];
+        }
 
-	}
+    }
 
     /**
-	 * Returns the remaining height within the parent element
-	 * of the target after taking out the height of all
-	 * siblings.
-	 *
-	 * remaining height = [parent height] - [ siblings height]
-	 */
-	function getRemainingHeight( element ) {
+     * Returns the remaining height within the parent element
+     * of the target after taking out the height of all
+     * siblings.
+     *
+     * remaining height = [parent height] - [ siblings height]
+     */
+    function getRemainingHeight( element ) {
 
-		var height = 0;
+        var height = 0;
 
-		if( element ) {
-			var parent = element.parentNode;
-			var siblings = parent.childNodes;
+        if( element ) {
+            var parent = element.parentNode;
+            var siblings = parent.childNodes;
 
-			height = config.height;
+            height = config.height;
 
-			// Remove the height of each sibling
-			toArray( siblings ).forEach( function( sibling ) {
+            // Remove the height of each sibling
+            toArray( siblings ).forEach( function( sibling ) {
 
-				if( typeof sibling.offsetHeight === 'number' && sibling !== element ) {
+                if( typeof sibling.offsetHeight === 'number' && sibling !== element ) {
 
-					var marginTop = parseInt( getComputedCSSProperty( sibling, 'margin-top' ), 10 );
-					var marginBottom = parseInt( getComputedCSSProperty( sibling, 'margin-bottom' ), 10 );
+                    var marginTop = parseInt( getComputedCSSProperty( sibling, 'margin-top' ), 10 );
+                    var marginBottom = parseInt( getComputedCSSProperty( sibling, 'margin-bottom' ), 10 );
 
-					console.log( marginTop, marginBottom );
+                    console.log( marginTop, marginBottom );
 
-					height -= sibling.offsetHeight + marginTop + marginBottom;
+                    height -= sibling.offsetHeight + marginTop + marginBottom;
 
-				}
+                }
 
-			} );
+            } );
 
-		}
+        }
 
-		return height;
+        return height;
 
-	}
+    }
 
-	/**
+    /**
      * Checks if this instance is being used to print a PDF.
      */
     function isPrintingPDF() {
 
         return ( /print-pdf/gi ).test( window.location.search );
 
-	}
+    }
 
     /**
      * Hides the address bar if we're on a mobile device.
@@ -1152,7 +1152,7 @@
             }
             // Apply scale transform as a fallback
             else {
-				transformElement( dom.slides, 'scale('+ scale +')', '0% 0%' );
+                transformElement( dom.slides, 'scale('+ scale +')', '0% 0%' );
             }
 
             // Select all slides, vertical and horizontal
@@ -1183,14 +1183,14 @@
 
             updateProgress();
 
-			// Handle sizing of elements with the 'remaining-height' class
-			toArray( dom.slides.querySelectorAll( 'section > .remaining-height' ) ).forEach( function( element ) {
+            // Handle sizing of elements with the 'remaining-height' class
+            toArray( dom.slides.querySelectorAll( 'section > .remaining-height' ) ).forEach( function( element ) {
 
-				element.style.height = getRemainingHeight( element ) + 'px';
+                element.style.height = getRemainingHeight( element ) + 'px';
 
-			} );
+            } );
 
-		}
+        }
 
     }
 
@@ -1247,8 +1247,8 @@
 
             var wasActive = dom.wrapper.classList.contains( 'overview' );
 
-			// Vary the depth of the overview based on screen size
-			var depth = window.innerWidth < 400 ? 1000 : 2500;
+            // Vary the depth of the overview based on screen size
+            var depth = window.innerWidth < 400 ? 1000 : 2500;
 
             dom.wrapper.classList.add( 'overview' );
             dom.wrapper.classList.remove( 'exit-overview' );
@@ -1269,12 +1269,12 @@
 
                 for( var i = 0, len1 = horizontalSlides.length; i < len1; i++ ) {
                     var hslide = horizontalSlides[i],
-						hoffset = config.rtl ? -105 : 105;
+                        hoffset = config.rtl ? -105 : 105;
 
                     hslide.setAttribute( 'data-index-h', i );
 
-					// Apply CSS transform
-					transformElement( hslide, 'translateZ(-'+ depth +'px) translate(' + ( ( i - indexh ) * hoffset ) + '%, 0%)' );
+                    // Apply CSS transform
+                    transformElement( hslide, 'translateZ(-'+ depth +'px) translate(' + ( ( i - indexh ) * hoffset ) + '%, 0%)' );
 
                     if( hslide.classList.contains( 'stack' ) ) {
 
@@ -1284,13 +1284,13 @@
                         for( var j = 0, len2 = verticalSlides.length; j < len2; j++ ) {
                             var verticalIndex = i === indexh ? indexv : getPreviousVerticalIndex( hslide );
 
-							var vslide = verticalSlides[j];
+                            var vslide = verticalSlides[j];
 
                             vslide.setAttribute( 'data-index-h', i );
                             vslide.setAttribute( 'data-index-v', j );
 
-							// Apply CSS transform
-							transformElement( vslide, 'translate(0%, ' + ( ( j - verticalIndex ) * 105 ) + '%)' );
+                            // Apply CSS transform
+                            transformElement( vslide, 'translate(0%, ' + ( ( j - verticalIndex ) * 105 ) + '%)' );
 
                             // Navigate to this slide on click
                             vslide.addEventListener( 'click', onOverviewSlideClicked, true );
@@ -1307,7 +1307,7 @@
 
                 console.log("Feed the slides matrix to LAYOUT so we can determine properly how far to zoom/transform: ", slides_info);
 
-				updateSlidesVisibility();
+                updateSlidesVisibility();
 
                 layout(slides_info);
 
@@ -1359,7 +1359,7 @@
                 element.style.display = '';
 
                 // Resets all transforms to use the external styles
-				transformElement( element, '' );
+                transformElement( element, '' );
 
                 element.removeEventListener( 'click', onOverviewSlideClicked, true );
             }
@@ -1559,8 +1559,8 @@
         indexh = updateSlides( HORIZONTAL_SLIDES_SELECTOR, h === undefined ? indexh : h );
         indexv = updateSlides( VERTICAL_SLIDES_SELECTOR, v === undefined ? indexv : v );
 
-		// Update the visibility of slides now that the indices have changed
-		updateSlidesVisibility();
+        // Update the visibility of slides now that the indices have changed
+        updateSlidesVisibility();
 
         layout();
 
@@ -1662,8 +1662,8 @@
         updateProgress();
         updateBackground();
 
-		// Update the URL hash
-		writeURL();
+        // Update the URL hash
+        writeURL();
 
     }
 
@@ -1763,12 +1763,12 @@
                     // Any element subsequent to index is given the 'future' class
                     element.classList.add( reverse ? 'past' : 'future' );
 
-					var fragments = toArray( element.querySelectorAll( '.fragment.visible' ) );
+                    var fragments = toArray( element.querySelectorAll( '.fragment.visible' ) );
 
-					// No fragments in future slides should be visible ahead of time
-					while( fragments.length ) {
-						fragments.pop().classList.remove( 'visible' );
-					}
+                    // No fragments in future slides should be visible ahead of time
+                    while( fragments.length ) {
+                        fragments.pop().classList.remove( 'visible' );
+                    }
                 }
 
                 // If this element contains vertical slides
@@ -1821,7 +1821,7 @@
                 autoSlide = config.autoSlide;
             }
 
-			cueAutoSlide();
+            cueAutoSlide();
 
         }
         else {
@@ -1832,66 +1832,66 @@
 
         return index;
 
-	}
+    }
 
-	/**
-	 * Optimization method; hide all slides that are far away
-	 * from the present slide.
-	 */
-	function updateSlidesVisibility() {
+    /**
+     * Optimization method; hide all slides that are far away
+     * from the present slide.
+     */
+    function updateSlidesVisibility() {
 
-		// Select all slides and convert the NodeList result to
-		// an array
-		var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ),
-			horizontalSlidesLength = horizontalSlides.length,
-			distanceX,
-			distanceY;
+        // Select all slides and convert the NodeList result to
+        // an array
+        var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ),
+            horizontalSlidesLength = horizontalSlides.length,
+            distanceX,
+            distanceY;
 
-		if( horizontalSlidesLength ) {
+        if( horizontalSlidesLength ) {
 
-			// The number of steps away from the present slide that will
-			// be visible
-			var viewDistance = isOverview() ? 10 : config.viewDistance;
+            // The number of steps away from the present slide that will
+            // be visible
+            var viewDistance = isOverview() ? 10 : config.viewDistance;
 
-			// Limit view distance on weaker devices
-			if( isMobileDevice ) {
-				viewDistance = isOverview() ? 6 : 1;
-			}
+            // Limit view distance on weaker devices
+            if( isMobileDevice ) {
+                viewDistance = isOverview() ? 6 : 1;
+            }
 
-			for( var x = 0; x < horizontalSlidesLength; x++ ) {
-				var horizontalSlide = horizontalSlides[x];
+            for( var x = 0; x < horizontalSlidesLength; x++ ) {
+                var horizontalSlide = horizontalSlides[x];
 
-				var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) ),
-					verticalSlidesLength = verticalSlides.length;
+                var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) ),
+                    verticalSlidesLength = verticalSlides.length;
 
-				// Loops so that it measures 1 between the first and last slides
-				distanceX = Math.abs( ( indexh - x ) % ( horizontalSlidesLength - viewDistance ) ) || 0;
+                // Loops so that it measures 1 between the first and last slides
+                distanceX = Math.abs( ( indexh - x ) % ( horizontalSlidesLength - viewDistance ) ) || 0;
 
-				if( verticalSlidesLength ) {
+                if( verticalSlidesLength ) {
 
-					// Always show the vertical stack itself, even if its child
-					// slides are invisible
-					horizontalSlide.style.display = 'block';
+                    // Always show the vertical stack itself, even if its child
+                    // slides are invisible
+                    horizontalSlide.style.display = 'block';
 
-					var oy = getPreviousVerticalIndex( horizontalSlide );
+                    var oy = getPreviousVerticalIndex( horizontalSlide );
 
-					for( var y = 0; y < verticalSlidesLength; y++ ) {
-						var verticalSlide = verticalSlides[y];
+                    for( var y = 0; y < verticalSlidesLength; y++ ) {
+                        var verticalSlide = verticalSlides[y];
 
-						distanceY = x === indexh ? Math.abs( indexv - y ) : Math.abs( y - oy );
+                        distanceY = x === indexh ? Math.abs( indexv - y ) : Math.abs( y - oy );
 
-						verticalSlide.style.display = ( distanceX + distanceY ) > viewDistance ? 'none' : 'block';
-					}
+                        verticalSlide.style.display = ( distanceX + distanceY ) > viewDistance ? 'none' : 'block';
+                    }
 
-				}
-				else {
+                }
+                else {
 
-					horizontalSlide.style.display = distanceX > viewDistance ? 'none' : 'block';
+                    horizontalSlide.style.display = distanceX > viewDistance ? 'none' : 'block';
 
-				}
-			}
+                }
+            }
 
-		}
+        }
 
     }
 
@@ -2148,7 +2148,7 @@
             }
             // If the slide doesn't exist, navigate to the current slide
             else {
-				slide( indexh || 0, indexv || 0 );
+                slide( indexh || 0, indexv || 0 );
             }
         }
         else {
@@ -2156,9 +2156,9 @@
             var h = parseInt( bits[0], 10 ) || 0,
                 v = parseInt( bits[1], 10 ) || 0;
 
-			if( h !== indexh || v !== indexv ) {
-				slide( h, v );
-			}
+            if( h !== indexh || v !== indexv ) {
+                slide( h, v );
+            }
         }
 
     }
@@ -2235,12 +2235,12 @@
         }
 
         if( !slide && currentSlide ) {
-			var hasFragments = currentSlide.querySelectorAll( '.fragment' ).length > 0;
-			if( hasFragments ) {
-				var visibleFragments = currentSlide.querySelectorAll( '.fragment.visible' );
-              	f = visibleFragments.length;
-			}
-		}
+            var hasFragments = currentSlide.querySelectorAll( '.fragment' ).length > 0;
+            if( hasFragments ) {
+                var visibleFragments = currentSlide.querySelectorAll( '.fragment.visible' );
+                f = visibleFragments.length;
+            }
+        }
 
         return { h: h, v: v, f: f };
 
@@ -2532,21 +2532,21 @@
                 // end
                 case 35: slide( Number.MAX_VALUE ); break;
                 // space
-                case 32: 
+                case 32:
                     if (isOverview()) {
                         deactivateOverview();
                     } else if (event.shiftKey) {
                         navigatePrev();
-                    } else { 
-                        navigateNext(); 
+                    } else {
+                        navigateNext();
                     }
                 break;
                 // return
-                case 13: 
+                case 13:
                     if (isOverview()) {
                         deactivateOverview();
                     } else {
-                        triggered = false; 
+                        triggered = false;
                     }
                     break;
                 // b, period, Logitech presenter tools "black screen" button
@@ -2564,8 +2564,8 @@
         if( triggered ) {
             event.preventDefault();
         }
-		// ESC or O key
-		else if ( ( event.keyCode === 27 || event.keyCode === 79 ) && supports3DTransforms ) {
+        // ESC or O key
+        else if ( ( event.keyCode === 27 || event.keyCode === 79 ) && supports3DTransforms ) {
             toggleOverview();
 
             event.preventDefault();
@@ -2607,11 +2607,11 @@
     function onTouchMove( event ) {
 
         // Each touch should only trigger one action
-		if( !touch.captured ) {
+        if( !touch.captured ) {
             var currentX = event.touches[0].clientX;
             var currentY = event.touches[0].clientY;
 
-			// If the touch started off with two points and still has
+            // If the touch started off with two points and still has
             // two active touches; test for the pinch gesture
             if( event.touches.length === 2 && touch.startCount === 2 && config.overview ) {
 
@@ -2627,7 +2627,7 @@
                 // If the span is larger than the desire amount we've got
                 // ourselves a pinch
                 if( Math.abs( touch.startSpan - currentSpan ) > touch.threshold ) {
-					touch.captured = true;
+                    touch.captured = true;
 
                     if( currentSpan < touch.startSpan ) {
                         activateOverview();
@@ -2647,34 +2647,34 @@
                     deltaY = currentY - touch.startY;
 
                 if( deltaX > touch.threshold && Math.abs( deltaX ) > Math.abs( deltaY ) ) {
-					touch.captured = true;
+                    touch.captured = true;
                     navigateLeft();
                 }
                 else if( deltaX < -touch.threshold && Math.abs( deltaX ) > Math.abs( deltaY ) ) {
-					touch.captured = true;
+                    touch.captured = true;
                     navigateRight();
                 }
                 else if( deltaY > touch.threshold ) {
-					touch.captured = true;
+                    touch.captured = true;
                     navigateUp();
                 }
                 else if( deltaY < -touch.threshold ) {
-					touch.captured = true;
+                    touch.captured = true;
                     navigateDown();
                 }
 
-				// If we're embedded, only block touch events if they have
-				// triggered an action
-				if( config.embedded ) {
-					if( touch.captured || isVerticalSlide( currentSlide ) ) {
-						event.preventDefault();
-					}
-				}
-				// Not embedded? Block them all to avoid needless tossing
-				// around of the viewport in iOS
-				else {
-					event.preventDefault();
-				}
+                // If we're embedded, only block touch events if they have
+                // triggered an action
+                if( config.embedded ) {
+                    if( touch.captured || isVerticalSlide( currentSlide ) ) {
+                        event.preventDefault();
+                    }
+                }
+                // Not embedded? Block them all to avoid needless tossing
+                // around of the viewport in iOS
+                else {
+                    event.preventDefault();
+                }
 
             }
         }
@@ -2691,7 +2691,7 @@
      */
     function onTouchEnd( event ) {
 
-		touch.captured = false;
+        touch.captured = false;
 
     }
 
@@ -2994,10 +2994,10 @@
             }
         },
 
-		// Checks if reveal.js has been loaded and is ready for use
-		isReady: function() {
-			return loaded;
-		},
+        // Checks if reveal.js has been loaded and is ready for use
+        isReady: function() {
+            return loaded;
+        },
 
         // Forward event binding to the reveal DOM element
         addEventListener: function( type, listener, useCapture ) {

@@ -562,7 +562,7 @@ Reveal.initialize({
 
         // and if you want speaker notes
         { src: 'plugin/notes-server/client.js', async: true }
-		
+
         // other dependencies...
     ]
 });
@@ -594,7 +594,7 @@ Reveal.initialize({
         //...
         { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
-		
+
         // other dependencies...
     ]
 });
@@ -638,7 +638,7 @@ Reveal.initialize({
         //...
         { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
-		
+
         // other dependencies...
     ]
 ```
@@ -665,7 +665,7 @@ Reveal.initialize({
         { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/master.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
-		
+
         // other dependencies...
     ]
 });
@@ -713,15 +713,15 @@ You can edit the following options:
 Example configuration:
 ```js
 Reveal.initialize({
-	// other options
-	leap: {
-		naturalSwipe   : false,    // Invert swipe gestures
-		pointerOpacity : 0.5,      // Set pointer opacity to 0.5
-		pointerColor   : '#d80000' // Red pointer
-	}
-	
-	// Optional libraries used to extend on reveal.js
-	{ src: 'plugin/leap/leap.js', async: true }
+    // other options
+    leap: {
+        naturalSwipe   : false,    // Invert swipe gestures
+        pointerOpacity : 0.5,      // Set pointer opacity to 0.5
+        pointerColor   : '#d80000' // Red pointer
+    }
+
+    // Optional libraries used to extend on reveal.js
+    { src: 'plugin/leap/leap.js', async: true }
 ```
 
 

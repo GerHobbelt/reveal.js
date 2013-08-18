@@ -12,7 +12,7 @@
       if ( !w.document ) {
         throw new Error("Reveal plugin requires a window with a document");
       }
-	  var zoom = require("zoom");
+      var zoom = require("zoom");
       return factory( w, w.document, Reveal, zoom );
     };
   } else {
@@ -43,13 +43,13 @@
     Reveal.addEventListener( 'overviewhidden', function() { isEnabled = true; } );
 
     return {
-		isEnabled: function() {
-			return isEnabled;
-		},
+        isEnabled: function() {
+            return isEnabled;
+        },
 
-		zoom: function() {
-			return zoom;
-		}
-	};
+        zoom: function() {
+            return zoom;
+        }
+    };
 }));
 

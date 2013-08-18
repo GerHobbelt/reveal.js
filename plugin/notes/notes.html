@@ -169,8 +169,8 @@
 
                     var notes = document.getElementById( 'notes' ),
                         currentSlide = document.getElementById( 'current-slide' ),
-						nextSlide = document.getElementById( 'next-slide' ),
-						silenced = false;
+                        nextSlide = document.getElementById( 'next-slide' ),
+                        silenced = false;
 
                     window.addEventListener( 'message', function( event ) {
                         var data = JSON.parse( event.data );
@@ -185,13 +185,13 @@
                             }
                         }
 
-						silenced = true;
+                        silenced = true;
 
-						// Update the note slides
-						currentSlide.contentWindow.Reveal.slide( data.indexh, data.indexv, data.indexf );
-						nextSlide.contentWindow.Reveal.slide( data.nextindexh, data.nextindexv );
+                        // Update the note slides
+                        currentSlide.contentWindow.Reveal.slide( data.indexh, data.indexv, data.indexf );
+                        nextSlide.contentWindow.Reveal.slide( data.nextindexh, data.nextindexv );
 
-						silenced = false;
+                        silenced = false;
 
                     }, false );
 
@@ -223,21 +223,21 @@
 
                     }, 1000 );
 
-					// Broadcasts the state of the notes window to synchronize
-					// the main window
-					function synchronizeMainWindow() {
+                    // Broadcasts the state of the notes window to synchronize
+                    // the main window
+                    function synchronizeMainWindow() {
 
-						if( !silenced ) {
-							var indices = currentSlide.contentWindow.Reveal.getIndices();
-							window.opener.Reveal.slide( indices.h, indices.v, indices.f );
-						}
+                        if( !silenced ) {
+                            var indices = currentSlide.contentWindow.Reveal.getIndices();
+                            window.opener.Reveal.slide( indices.h, indices.v, indices.f );
+                        }
 
-					}
+                    }
 
                     // Navigate the main window when the notes slide changes
-					currentSlide.contentWindow.Reveal.addEventListener( 'slidechanged', synchronizeMainWindow );
-					currentSlide.contentWindow.Reveal.addEventListener( 'fragmentshown', synchronizeMainWindow );
-					currentSlide.contentWindow.Reveal.addEventListener( 'fragmenthidden', synchronizeMainWindow );
+                    currentSlide.contentWindow.Reveal.addEventListener( 'slidechanged', synchronizeMainWindow );
+                    currentSlide.contentWindow.Reveal.addEventListener( 'fragmentshown', synchronizeMainWindow );
+                    currentSlide.contentWindow.Reveal.addEventListener( 'fragmenthidden', synchronizeMainWindow );
 
                 }
                 else {
