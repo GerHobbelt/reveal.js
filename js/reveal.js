@@ -639,7 +639,7 @@
             var themeFinder = /[^\/]*?(?=\.css)/;
             var themeName = themeURL.match(themeFinder)[0];
 
-            if(  config.theme !== themeName ) {
+            if( config.theme !== themeName ) {
                 themeURL = themeURL.replace(themeFinder, config.theme);
                 dom.theme.setAttribute( 'href', themeURL );
             }
