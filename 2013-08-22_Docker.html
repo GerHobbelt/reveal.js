@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>
+      Go for Rubyists
+    </title>
+    <meta content="Go for Rubyists" name="description" />
+    <meta content="Tobias Schwab" name="author" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <link href="css/reveal.min.css" rel="stylesheet" />
+    <link href="css/theme/default.css" id="theme" rel="stylesheet" />
+    <link href="plugin/highlight/tomorrow-night-eighties.css" rel="stylesheet" />
+    <script type="text/javascript">
+      document.write( '<link rel="stylesheet" href=asset_url(%("/css/print/' + ( window.location.search.match( /print-pdf/gi ) ?  'pdf' : 'paper' ) + '.css")) type="text/css" media="print">' );
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides"><section>
+  <h1>
+    Docker
+  </h1>
+  <p>
+    <small><a href="http://dynport.de">tobias.schwab@dynport.de</a>/<a href="http://twitter.com/tobstarr">@tobstarr</a></small>
+  </p>
+</section>
+<section>
+  <h2>
+    Docker
+  </h2>
+  <ul>
+    <li class="fragment">
+      REST API (written in go) on top of LXC
+    </li>
+    <li class="fragment">
+      manages
+      <ul>
+        <li class="fragment">
+          building, packaging and life cycle of containers
+        </li>
+        <li class="fragment">
+          network configuration
+        </li>
+        <li class="fragment">
+          distribution of images
+        </li>
+      </ul>
+    </li>
+    <li class="fragment">
+      AUFS: copy on write file system
+    </li>
+    <li class="fragment">
+      open sourced by dotcloud in March 2013
+    </li>
+  </ul>
+</section>
+<section>
+  <h2>
+    LXC
+  </h2>
+  <ul>
+    <li class="fragment">
+      OS level virtualization
+    </li>
+    <li class="fragment">
+      lightweight
+    </li>
+    <li class="fragment">
+      multiple network and process spaces on single host
+    </li>
+    <li class="fragment">
+      powers e.g. heroku dynamos
+    </li>
+    <li class="fragment">
+      basically "chroot on steroids"
+    </li>
+  </ul>
+</section>
+<section>
+  <h2>
+    Containers
+  </h2>
+  <ul>
+    <li class="fragment">
+      lightweight: NOT full OS/VM
+    </li>
+    <li class="fragment">
+      perfect world: one process per container
+    </li>
+    <li class="fragment">
+      NO sshd
+    </li>
+    <li class="fragment">
+      NO direct FS access
+    </li>
+    <li class="fragment">
+      NO cron
+    </li>
+    <li class="fragment">
+      NO syslog
+    </li>
+    <li class="fragment">
+      NO monitoring
+    </li>
+    <li class="fragment">
+      created to be thrown away
+    </li>
+  </ul>
+</section>
+<section>
+  <h2>
+    Commands
+  </h2>
+  <table>
+    <tr>
+      <td class="fragment">
+        create images
+      </td>
+      <td class="fragment">
+        docker build
+      </td>
+    </tr>
+    <tr>
+      <td class="fragment">
+        tag images
+      </td>
+      <td class="fragment">
+        docker tag
+      </td>
+    </tr>
+    <tr>
+      <td class="fragment">
+        distribute images
+      </td>
+      <td class="fragment">
+        docker push/pull
+      </td>
+    </tr>
+    <tr>
+      <td class="fragment">
+        start containers
+      </td>
+      <td class="fragment">
+        docker run
+      </td>
+    </tr>
+    <tr>
+      <td class="fragment">
+        stop containers
+      </td>
+      <td class="fragment">
+        docker kill
+      </td>
+    </tr>
+    <tr>
+      <td class="fragment">
+        remove containers
+      </td>
+      <td class="fragment">
+        docker rm
+      </td>
+    </tr>
+    <tr>
+      <td class="fragment">
+        remove images
+      </td>
+      <td class="fragment">
+        docker rmi
+      </td>
+    </tr>
+  </table>
+</section>
+<section>
+  <h2>
+    Dockerfile
+  </h2>
+  <ul>
+    <li class="fragment">
+      scripting language to create images
+    </li>
+    <li class="fragment">
+      linear batch script
+    </li>
+    <li class="fragment">
+      caching
+    </li>
+  </ul><pre class="fragment"><code>FROM ubuntu:precise
+MAINTAINER tobias.schwab@dynport.de
+
+RUN sed "s/main$/main universe/" -i /etc/apt/sources.list 
+RUN apt-get update
+RUN apt-get install redis-server
+RUN mkdir -p /data/redis
+
+ADD ./redis.conf /etc/redis.conf
+
+EXPOSE 6379
+CMD redis-server /etc/redis.conf</code></pre>
+</section>
+<section>
+  <h2>
+    DEMO
+  </h2>
+</section>
+<section>
+  <ul>
+    <li>
+      <a href="http://www.docker.io">www.docker.io</a>
+    </li>
+    <li>
+      <a href="http://www.dynport.de">www.dynport.de</a>
+    </li>
+    <li>
+      <a href="http://github.com/dynport">github.com/dynport</a>
+    </li>
+    <li>
+      <a href="http://twitter.com/tobstarr">@tobstarr</a>
+    </li>
+  </ul>
+</section>
+      </div>
+    </div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+    <script type="text/javascript">
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+      
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+      
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+          // { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+          // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+      });
+    </script>
+  </body>
+</html>
