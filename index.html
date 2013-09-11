@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 	<head>
@@ -38,35 +38,38 @@
 			<div class="slides">
 				<section data-markdown>
 					<script type="text/template">
-						# Responsive Design & WordPress
+						<img src="images/3vftcq.jpg" style="width: 100%; height: auto;">
 
-						One Website to Rule Them All
+						## Make Your Website Everything-Friendly
+
+						Follow along at http://www.taupecat.com/responsify
 					</script>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						Tracy Rotton
+						## Tracy Rotton
 
-						Freelance Front-End Developer & Themer
+						Web Developer for  
+						RP3 Agency, Bethesda, Maryland
 
-						http://www.taupecat.com
-
-						tracy@taupecat.com
-
-						@taupecat
+						http://www.taupecat.com  
+						tracy@taupecat.com  
+						[@taupecat](http://twitter.com/taupecat)
 					</script>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						In the beginning…
+						## In the beginning…
 					</script>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						Designers went from print to web…
+						## Designers went from print to web…
+
+						<img src="images/Resolutions.png" style="width: 100%; height: auto;">
 
 						Designed for accepted "minimum" screen resolutions, which changed over time
 					</script>
@@ -74,41 +77,41 @@
 
 				<section data-markdown>
 					<script type="text/template">
-						Now Screens Come in All Shapes & Sizes
+						## Now Screens Come in All Shapes & Sizes
 
 						_and many devices don&apos;t have mice or cursors…_
 					</script>
 				</section>
 
-				<section data-markdown>
-					<script type="text/template">
-						Early Attempt at a Solution:  
+				<section>
+					<h2>Early Attempt at a Solution:<h2>
+					<h2>Mobile-Specific Sites</h2>
 
-						Mobile-Specific Sites
-
-						* Maintaining separate code bases
-						* Experience was often stripped-down with reduced information
-						* Browser sniffing would lead to mobile sites being fed to 10&quot; tablets
-					</script>
+					<ul>
+						<li class="fragment">Maintaining separate code bases</li>
+						<li class="fragment">Experience was often stripped-down with reduced information</li>
+						<li class="fragment">Browser sniffing would lead to mobile sites being fed to 10&quot; tablets</li>
+					</ul>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						&quot;Server Attention Span&quot; Problem
+						## &quot;Server Attention Span&quot; Problem
+
+						<img src="images/server_attention_span.png" style="width: 100%; height: auto;">  
+						http://xkcd.com/869
 					</script>
+				</section>
+
+				<section>
+					So what&apos;s a better answer?
+
+					<h2 class="fragment">Responsive Web Design</h2>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						So what&apos;s a better answer?
-
-						Responsive Web Design
-					</script>
-				</section>
-
-				<section data-markdown>
-					<script type="text/template">
-						What Is Responsive Web Design?
+						## What Is Responsive Web Design?
 
 						&quot;…a design that can adapt to the constraints of the browser window or device that renders it, creating a design that almost _responds_ to the user&apos; needs.&quot;
 
@@ -118,55 +121,66 @@
 
 				<section data-markdown>
 					<script type="text/template">
-						But What Is Responsive Web Design, _Really_?
+						## But What Is Responsive Web Design, _Really?_
 
-						RD is using HTML5, CSS3 and JavaScript to build *one* website that can serve *many* web clients.
+						RWD is using HTML5, CSS3 and JavaScript to build *one* website that can serve *many* web clients.
 
 						It&apos;s flexible, standards-based and accessible.
 					</script>
 				</section>
 
-				<section data-markdown>
-					<script type="text/template">
-						What&apos; the Point?
+				<section>
+					<h2>What&apos;s the Point?</h2>
 
-						The goal is to &quot;universalize&quot; your website&apos;s experience so everyone can access what&apos;s important: *the content*.
-					</script>
+					<p>The goal is to &quot;universalize&quot; your website&apos;s experience so everyone can access what&apos;s important:</p>
+
+					<p class="fragment bigger"><strong>THE CONTENT</strong></p>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						HTML5
+						## HTML5
 
 						* Uses native &lt;video> and &lt;audio> elements; no need for plugins.
-						* *Important:* Set viewport with &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;> tag.
+						* **Important:** Set viewport with the meta viewport tag:
+
+						```
+						<meta name="viewport" content="width=device-width, initial-scale=1">  
+						```
 					</script>
+				</section>
+
+				<section>
+					<h1 class="red">Code Alert!!</h1>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						Code Alert!!
-					</script>
-				</section>
+						## CSS3 Media Queries
 
-				<section data-markdown>
-					<script type="text/template">
-						CSS3 Media Queries
-
+						```
 						/* Start with standard sidebar display */  
-						.column-main { width: 67%; float: left; }  
-						.right-sidebar { width: 33%; float: right; }
-
-						/* Then adjust your rules for smaller screen widths */  
-						@media screen and (max-width: 767px) {  
-							.column-main, .right-sidebar { width: 100%; float: none; }  
+						.column-main {
+							width: 67%; float: left;
 						}
+
+						.right-sidebar {
+							width: 33%; float: right;
+						}
+
+						/* Then adjust your rules for smaller screen widths */
+						@media screen and (max-width: 767px) {
+							.column-main, .right-sidebar {
+								width: 100%; float: none;
+							} 
+						}
+						```
 					</script>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						JavaScript
+						## JavaScript
 
 						* Used to solve some of the problems that can come up in responsive design
 						* Sniffing screen size to make adjustments on the fly
@@ -176,29 +190,29 @@
 
 				<section data-markdown>
 					<script type="text/template">
-						Responsive Design in WordPress
+						## Responsive Design in WordPress
 
-						Themes
+						### Themes
 					</script>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						Responsive Design in WordPress
+						## Responsive Design in WordPress
 
-						Websites
+						### Websites
 					</script>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						Considerations for Responsive Themes
+						## Considerations for Responsive Themes
 					</script>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						Considerations for Responsive Themes
+						## Considerations for Responsive Themes
 
 						* Scaling down navigation
 						* Treatment of sidebars
@@ -207,50 +221,50 @@
 					</script>
 				</section>
 
-				<section data-markdown>
-					<script type="text/template">
-						Problems in Responsive Design
-					</script>
+				<section>
+					<h2>Problems in Responsive Design</h2>
+
+					<div class="fragment">
+						<h3>Images</h3>
+
+						<ul>
+							<li>CSS Resizing</li>
+							<li>Serve smaller image then use JavaScript to push larger image if necessary</li>
+							<li>Server-based solutions</li>
+						</ul>
+					</div>
+				</section>
+
+				<section>
+					<h2>Problems in Responsive Design</h2>
+
+					<div class="fragment">
+						<h3>Content Overload</h3>
+
+						<ul>
+							<li>Site architecture more important than ever</li>
+							<li>Avoid endless scrolling through stacked content</li>
+							<li>Help your visitors find the information they&apos;re looking for</li>
+						</ul>
+					</div>
+				</section>
+
+				<section>
+					<h2>Problems in Responsive Design</h2>
+
+					<div class="fragment">
+						<h3>Internet Explorer < 9</h3>
+
+						<ul>
+							<li>Polyfills like <a href="https://github.com/scottjehl/Respond">Respond.js</a> increase legacy browser capabilities</li>
+							<li>&quot;Mobile first&quot; approach provides baseline experience, then &quot;progressive enhancement&quot; builds up for modern browsers</li>
+						</ul>
+					</div>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						Problems in Responsive Design
-
-						Images
-
-						* CSS Resizing
-						* Serve smaller image then use JavaScript to push larger image if necessary
-						* Server-based solutions
-					</script>
-				</section>
-
-				<section data-markdown>
-					<script type="text/template">
-						Problems in Responsive Design
-
-						Content Overload
-
-						* Site architecture more important than ever
-						* Avoid endless scrolling through stacked content
-						* Help your visitors find the information they&apos;re looking for
-					</script>
-				</section>
-
-				<section data-markdown>
-					<script type="text/template">
-						Problems in Responsive Design
-
-						Internet Explorer < 9
-
-						* Polyfills like *Respond.js* increase legacy browser capabilities
-						* &quot;Mobile first&quot; approach provides baseline experience, then &quot;progressive enhancement&quot; builds up for modern browsers
-					</script>
-				</section>
-
-				<section data-markdown>
-					<script type="text/template">
-						Resources
+						## Resources
 
 						* _Responsive Web Design_, Ethan Marcotte
 						* _Mobile First_, Luke Wroblewski
@@ -261,8 +275,7 @@
 				</section>
 
 				<section>
-					<blockquote class="twitter-tweet"><p>From now on, if it’s not responsive, it’s not web design.</p>&mdash; Andrew Clarke (@Malarkey) <a href="https://twitter.com/Malarkey/statuses/113221032634093569">September 12, 2011</a></blockquote>
-					<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+					<img src="images/malarkey.png" style="width: 100%; height: auto;">
 				</section>
 
 			</div>
