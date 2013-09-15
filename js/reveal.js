@@ -830,49 +830,41 @@
 
     }
 
-    function getComputedCSSProperty( element, prop ) {
-
-        if( window.getComputedStyle ) {
-            return window.getComputedStyle( element )[ prop ];
-        }
-        else {
-            return element.currentStyle ? element.currentStyle( prop ) : element.style[ prop ];
-        }
-
-    }
-
     /**
-     * Returns the remaining height within the parent element
-     * of the target after taking out the height of all
+     * Returns the remaining height within the parent of the
+     * target element after subtracting the height of all
      * siblings.
      *
      * remaining height = [parent height] - [ siblings height]
      */
-    function getRemainingHeight( element ) {
+    function getRemainingHeight( element, height ) {
 
-        var height = 0;
+        height = height || 0;
 
         if( element ) {
             var parent = element.parentNode;
             var siblings = parent.childNodes;
 
-            height = config.height;
-
-            // Remove the height of each sibling
+            // Subtract the height of each sibling
             toArray( siblings ).forEach( function( sibling ) {
 
                 if( typeof sibling.offsetHeight === 'number' && sibling !== element ) {
 
-                    var marginTop = parseInt( getComputedCSSProperty( sibling, 'margin-top' ), 10 );
-                    var marginBottom = parseInt( getComputedCSSProperty( sibling, 'margin-bottom' ), 10 );
-
-                    console.log( marginTop, marginBottom );
+                    var styles = window.getComputedStyle( sibling ),
+                        marginTop = parseInt( styles.marginTop, 10 ),
+                        marginBottom = parseInt( styles.marginBottom, 10 );
 
                     height -= sibling.offsetHeight + marginTop + marginBottom;
 
                 }
 
             } );
+
+            var elementStyles = window.getComputedStyle( element );
+
+            // Subtract the margins of the target element
+            height -= parseInt( elementStyles.marginTop, 10 ) +
+                        parseInt( elementStyles.marginBottom, 10 );
 
         }
 
@@ -894,7 +886,7 @@
      */
     function hideAddressBar() {
 
-        if( /iphone|ipod|android/gi.test( navigator.userAgent ) && !/crios/gi.test( navigator.userAgent ) ) {
+        if( isMobileDevice ) {
             // Events that should trigger the address bar to hide
             window.addEventListener( 'load', removeAddressBar, false );
             window.addEventListener( 'orientationchange', removeAddressBar, false );
@@ -908,7 +900,8 @@
      */
     function removeAddressBar() {
 
-        if( window.orientation === 0 ) {
+        // Portrait and not Chrome for iOS
+        if( window.orientation === 0 && !/crios/gi.test( navigator.userAgent ) ) {
             document.documentElement.style.overflow = 'scroll';
             document.body.style.height = '120%';
         }
@@ -1118,7 +1111,11 @@
 
             // Dimensions of the content
             var slideWidth = config.width,
-                slideHeight = config.height;
+                slideHeight = config.height,
+                slidePadding = 20; // TODO Dig this out of DOM
+
+            // Layout the contents of the slides
+            layoutSlideContents( config.width, config.height, slidePadding );
 
             // Slide width may be a percentage of available width
             if( typeof slideWidth === 'string' && /%$/.test( slideWidth ) ) {
@@ -1173,7 +1170,7 @@
                         slide.style.top = 0;
                     }
                     else {
-                        slide.style.top = Math.max( - ( getAbsoluteHeight( slide ) / 2 ) - 20, -slideHeight / 2 ) + 'px';
+                        slide.style.top = Math.max( - ( getAbsoluteHeight( slide ) / 2 ) - slidePadding, -slideHeight / 2 ) + 'px';
                     }
                 }
                 else {
@@ -1183,14 +1180,39 @@
 
             updateProgress();
 
-            // Handle sizing of elements with the 'remaining-height' class
-            toArray( dom.slides.querySelectorAll( 'section > .remaining-height' ) ).forEach( function( element ) {
-
-                element.style.height = getRemainingHeight( element ) + 'px';
-
-            } );
-
         }
+
+    }
+
+    /**
+     * Applies layout logic to the contents of all slides in
+     * the presentation.
+     */
+    function layoutSlideContents( width, height, padding ) {
+
+        // Handle sizing of elements with the 'stretch' class
+        toArray( dom.slides.querySelectorAll( 'section > .stretch' ) ).forEach( function( element ) {
+
+            // Determine how much vertical space we can use
+            var remainingHeight = getRemainingHeight( element, ( height - ( padding * 2 ) ) );
+
+            // Consider the aspect ratio of media elements
+            if( /(img|video)/gi.test( element.nodeName ) ) {
+                var nw = element.naturalWidth || element.videoWidth,
+                    nh = element.naturalHeight || element.videoHeight;
+
+                var es = Math.min( width / nw, remainingHeight / nh );
+
+                element.style.width = ( nw * es ) + 'px';
+                element.style.height = ( nh * es ) + 'px';
+
+            }
+            else {
+                element.style.width = width + 'px';
+                element.style.height = remainingHeight + 'px';
+            }
+
+        } );
 
     }
 
@@ -1251,7 +1273,7 @@
             var depth = window.innerWidth < 400 ? 1000 : 2500;
 
             dom.wrapper.classList.add( 'overview' );
-            dom.wrapper.classList.remove( 'exit-overview' );
+            dom.wrapper.classList.remove( 'overview-deactivating' );
 
             clearTimeout( activateOverviewTimeout );
             clearTimeout( deactivateOverviewTimeout );
@@ -1259,7 +1281,7 @@
             // Not the prettiest solution, but need to let the overview
             // class apply first so that slides are measured accurately
             // before we can position them
-            activateOverviewTimeout = setTimeout( function(){
+            activateOverviewTimeout = setTimeout( function() {
 
                 var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
                 var slides_info = {
@@ -1344,25 +1366,19 @@
             // Temporarily add a class so that transitions can do different things
             // depending on whether they are exiting/entering overview, or just
             // moving from slide to slide
-            dom.wrapper.classList.add( 'exit-overview' );
+            dom.wrapper.classList.add( 'overview-deactivating' );
 
             deactivateOverviewTimeout = setTimeout( function () {
-                dom.wrapper.classList.remove( 'exit-overview' );
-            }, 10);
+                dom.wrapper.classList.remove( 'overview-deactivating' );
+            }, 1 );
 
             // Select all slides
-            var slides = toArray( document.querySelectorAll( SLIDES_SELECTOR ) );
-
-            for( var i = 0, len = slides.length; i < len; i++ ) {
-                var element = slides[i];
-
-                element.style.display = '';
-
+            toArray( document.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
                 // Resets all transforms to use the external styles
-                transformElement( element, '' );
+                transformElement( slide, '' );
 
-                element.removeEventListener( 'click', onOverviewSlideClicked, true );
-            }
+                slide.removeEventListener( 'click', onOverviewSlideClicked, true );
+            } );
 
             slide( indexh, indexv );
 
@@ -1428,7 +1444,7 @@
         // Prefer slide argument, otherwise use current slide
         slide = slide ? slide : currentSlide;
 
-        return slide && !!slide.parentNode.nodeName.match( /section/i );
+        return slide && slide.parentNode && !!slide.parentNode.nodeName.match( /section/i );
 
     }
 
@@ -1552,8 +1568,8 @@
         // Reset the state array
         state.length = 0;
 
-        var indexhBefore = indexh,
-            indexvBefore = indexv;
+        var indexhBefore = indexh || 0,
+            indexvBefore = indexv || 0;
 
         // Activate and transition to the new slide
         indexh = updateSlides( HORIZONTAL_SLIDES_SELECTOR, h === undefined ? indexh : h );
@@ -1867,11 +1883,10 @@
                 // Loops so that it measures 1 between the first and last slides
                 distanceX = Math.abs( ( indexh - x ) % ( horizontalSlidesLength - viewDistance ) ) || 0;
 
-                if( verticalSlidesLength ) {
+                // Show the horizontal slide if it's within the view distance
+                horizontalSlide.style.display = distanceX > viewDistance ? 'none' : 'block';
 
-                    // Always show the vertical stack itself, even if its child
-                    // slides are invisible
-                    horizontalSlide.style.display = 'block';
+                if( verticalSlidesLength ) {
 
                     var oy = getPreviousVerticalIndex( horizontalSlide );
 
@@ -1882,11 +1897,6 @@
 
                         verticalSlide.style.display = ( distanceX + distanceY ) > viewDistance ? 'none' : 'block';
                     }
-
-                }
-                else {
-
-                    horizontalSlide.style.display = distanceX > viewDistance ? 'none' : 'block';
 
                 }
             }
@@ -2448,7 +2458,7 @@
         // Check if there's a focused element that could be using
         // the keyboard
         var activeElement = document.activeElement;
-        var hasFocus = !!( document.activeElement && ( activeElement.type || activeElement.href || activeElement.contentEditable !== 'inherit' ) );
+        var hasFocus = !!( document.activeElement && ( document.activeElement.type || document.activeElement.href || document.activeElement.contentEditable !== 'inherit' ) );
 
         // Disregard the event if the focused element is located in a hidden slide (a 'past' or 'future' slide)
         var tag = (document.activeElement && activeElement.nodeName);
@@ -2611,7 +2621,7 @@
             var currentX = event.touches[0].clientX;
             var currentY = event.touches[0].clientY;
 
-            // If the touch started off with two points and still has
+            // If the touch started with two points and still has
             // two active touches; test for the pinch gesture
             if( event.touches.length === 2 && touch.startCount === 2 && config.overview ) {
 
@@ -2986,12 +2996,17 @@
 
         // Returns true if we're currently on the last slide
         isLastSlide: function() {
-            if( currentSlide && currentSlide.classList.contains( '.stack' ) ) {
-                return !!currentSlide.querySelector( SLIDES_SELECTOR + '.future' );
+            if( currentSlide ) {
+                // Does this slide have a next sibling?
+                if( currentSlide.nextElementSibling ) return false;
+
+                // If it's vertical, does its parent have a next sibling?
+                if( isVerticalSlide( currentSlide ) && currentSlide.parentNode.nextElementSibling ) return false;
+
+                return true;
             }
-            else {
-                return !!document.querySelector( SLIDES_SELECTOR + '.future' );
-            }
+
+            return false;
         },
 
         // Checks if reveal.js has been loaded and is ready for use
