@@ -24,13 +24,13 @@ Markup hierarchy needs to be ``<div class="reveal"> <div class="slides"> <sectio
 
 ```html
 <div class="reveal">
-	<div class="slides">
-		<section>Single Horizontal Slide</section>
-		<section>
-			<section>Vertical Slide 1</section>
-			<section>Vertical Slide 2</section>
-		</section>
-	</div>
+    <div class="slides">
+        <section>Single Horizontal Slide</section>
+        <section>
+            <section>Vertical Slide 1</section>
+            <section>Vertical Slide 2</section>
+        </section>
+    </div>
 </div>
 ```
 
@@ -42,11 +42,11 @@ This is based on [data-markdown](https://gist.github.com/1343518) from [Paul Iri
 
 ```html
 <section data-markdown>
-	<script type="text/template">
-		## Page title
+    <script type="text/template">
+        ## Page title
 
-		A paragraph with some text and a [link](http://hakim.se).
-	</script>
+        A paragraph with some text and a [link](http://hakim.se).
+    </script>
 </section>
 ```
 
@@ -65,52 +65,52 @@ At the end of your page you need to initialize reveal by running the following c
 ```javascript
 Reveal.initialize({
 
-	// Display controls in the bottom right corner
-	controls: true,
+    // Display controls in the bottom right corner
+    controls: true,
 
-	// Display a presentation progress bar
-	progress: true,
+    // Display a presentation progress bar
+    progress: true,
 
-	// Push each slide change to the browser history
-	history: false,
+    // Push each slide change to the browser history
+    history: false,
 
-	// Enable keyboard shortcuts for navigation
-	keyboard: true,
+    // Enable keyboard shortcuts for navigation
+    keyboard: true,
 
-	// Enable touch events for navigation
-	touch: true,
+    // Enable touch events for navigation
+    touch: true,
 
-	// Enable the slide overview mode
-	overview: true,
+    // Enable the slide overview mode
+    overview: true,
 
-	// Vertical centering of slides
-	center: true,
+    // Vertical centering of slides
+    center: true,
 
-	// Loop the presentation
-	loop: false,
+    // Loop the presentation
+    loop: false,
 
-	// Change the presentation direction to be RTL
-	rtl: false,
+    // Change the presentation direction to be RTL
+    rtl: false,
 
-	// Number of milliseconds between automatically proceeding to the
-	// next slide, disabled when set to 0, this value can be overwritten
-	// by using a data-autoslide attribute on your slides
-	autoSlide: 0,
+    // Number of milliseconds between automatically proceeding to the
+    // next slide, disabled when set to 0, this value can be overwritten
+    // by using a data-autoslide attribute on your slides
+    autoSlide: 0,
 
-	// Enable slide navigation via mouse wheel
-	mouseWheel: false,
+    // Enable slide navigation via mouse wheel
+    mouseWheel: false,
 
-	// Apply a 3D roll to links on hover
-	rollingLinks: true,
+    // Apply a 3D roll to links on hover
+    rollingLinks: true,
 
-	// Transition style
-	transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
+    // Transition style
+    transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
 
-	// Transition speed
-	transitionSpeed: 'default', // default/fast/slow
+    // Transition speed
+    transitionSpeed: 'default', // default/fast/slow
 
-	// Transition style for full page backgrounds
-	backgroundTransition: 'default' // default/linear/none
+    // Transition style for full page backgrounds
+    backgroundTransition: 'default' // default/linear/none
 
 });
 ```
@@ -135,29 +135,29 @@ Reveal.js doesn't _rely_ on any third party scripts to work but a few optional l
 
 ```javascript
 Reveal.initialize({
-	dependencies: [
-		// Cross-browser shim that fully implements classList - https://github.com/eligrey/classList.js/
-		{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+    dependencies: [
+        // Cross-browser shim that fully implements classList - https://github.com/eligrey/classList.js/
+        { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
 
-		// Interpret Markdown in <section> elements
-		{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-		{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        // Interpret Markdown in <section> elements
+        { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 
-		// Syntax highlight for <code> elements
-		{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+        // Syntax highlight for <code> elements
+        { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
 
-		// Zoom in and out with Alt+click
-		{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+        // Zoom in and out with Alt+click
+        { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
 
-		// Speaker notes
-		{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+        // Speaker notes
+        { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
 
-		// Remote control your reveal.js presentation using a touch device
-		{ src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } },
+        // Remote control your reveal.js presentation using a touch device
+        { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } },
 
-		// MathJax
-		{ src: 'plugin/math/math.js', async: true }
-	]
+        // MathJax
+        { src: 'plugin/math/math.js', async: true }
+    ]
 });
 ```
 
@@ -177,20 +177,20 @@ See below for a list of configuration options related to sizing, including defau
 ```javascript
 Reveal.initialize({
 
-	...
+    ...
 
-	// The "normal" size of the presentation, aspect ratio will be preserved
-	// when the presentation is scaled to fit different resolutions. Can be
-	// specified using percentage units.
-	width: 960,
-	height: 700,
+    // The "normal" size of the presentation, aspect ratio will be preserved
+    // when the presentation is scaled to fit different resolutions. Can be
+    // specified using percentage units.
+    width: 960,
+    height: 700,
 
-	// Factor of the display size that should remain empty around the content
-	margin: 0.1,
+    // Factor of the display size that should remain empty around the content
+    margin: 0.1,
 
-	// Bounds for smallest/largest possible scale to apply to content
-	minScale: 0.2,
-	maxScale: 1.0
+    // Bounds for smallest/largest possible scale to apply to content
+    minScale: 0.2,
+    maxScale: 1.0
 
 });
 ```
@@ -247,7 +247,7 @@ The 'ready' event is fired when reveal.js has loaded all (synchronous) dependenc
 
 ```javascript
 Reveal.addEventListener( 'ready', function( event ) {
-	// event.currentSlide, event.indexh, event.indexv
+    // event.currentSlide, event.indexh, event.indexv
 } );
 ```
 
@@ -259,7 +259,7 @@ Some libraries, like MathJax (see [#226](https://github.com/hakimel/reveal.js/is
 
 ```javascript
 Reveal.addEventListener( 'slidechanged', function( event ) {
-	// event.previousSlide, event.currentSlide, event.indexh, event.indexv
+    // event.previousSlide, event.currentSlide, event.indexh, event.indexv
 } );
 ```
 
@@ -272,7 +272,7 @@ Furthermore you can also listen to these changes in state via JavaScript:
 
 ```javascript
 Reveal.addEventListener( 'somestate', function() {
-	// TODO: Sprinkle magic
+    // TODO: Sprinkle magic
 }, false );
 ```
 
@@ -282,13 +282,13 @@ Slides are contained within a limited portion of the screen by default to allow 
 
 ```html
 <section data-background="#ff0000">
-	<h2>All CSS color formats are supported, like rgba() or hsl().</h2>
+    <h2>All CSS color formats are supported, like rgba() or hsl().</h2>
 </section>
 <section data-background="http://example.com/image.png">
-	<h2>This slide will have a full-size background image.</h2>
+    <h2>This slide will have a full-size background image.</h2>
 </section>
 <section data-background="http://example.com/image.png" data-background-size="100px" data-background-repeat="repeat">
-	<h2>This background image will be sized to 100px and repeated.</h2>
+    <h2>This background image will be sized to 100px and repeated.</h2>
 </section>
 ```
 
@@ -300,11 +300,11 @@ The global presentation transition is set using the ```transition``` config valu
 
 ```html
 <section data-transition="zoom">
-	<h2>This slide will override the presentation transition and zoom!</h2>
+    <h2>This slide will override the presentation transition and zoom!</h2>
 </section>
 
 <section data-transition-speed="fast">
-	<h2>Choose from three transition speeds: default, fast or slow!</h2>
+    <h2>Choose from three transition speeds: default, fast or slow!</h2>
 </section>
 ```
 
@@ -339,13 +339,13 @@ The default fragment style is to start out invisible and fade in. This style can
 
 ```html
 <section>
-	<p class="fragment grow">grow</p>
-	<p class="fragment shrink">shrink</p>
-	<p class="fragment roll-in">roll-in</p>
-	<p class="fragment fade-out">fade-out</p>
-	<p class="fragment highlight-red">highlight-red</p>
-	<p class="fragment highlight-green">highlight-green</p>
-	<p class="fragment highlight-blue">highlight-blue</p>
+    <p class="fragment grow">grow</p>
+    <p class="fragment shrink">shrink</p>
+    <p class="fragment roll-in">roll-in</p>
+    <p class="fragment fade-out">fade-out</p>
+    <p class="fragment highlight-red">highlight-red</p>
+    <p class="fragment highlight-green">highlight-green</p>
+    <p class="fragment highlight-blue">highlight-blue</p>
 </section>
 ```
 
@@ -353,9 +353,9 @@ Multiple fragments can be applied to the same element sequentially by wrapping i
 
 ```html
 <section>
-	<span class="fragment fade-in">
-		<span class="fragment fade-out">I'll fade in, then out</span>
-	</span>
+    <span class="fragment fade-in">
+        <span class="fragment fade-out">I'll fade in, then out</span>
+    </span>
 </section>
 ```
 
@@ -363,9 +363,9 @@ The display order of fragments can be controlled using the ```data-fragment-inde
 
 ```html
 <section>
-	<p class="fragment" data-fragment-index="3">Appears last</p>
-	<p class="fragment" data-fragment-index="1">Appears first</p>
-	<p class="fragment" data-fragment-index="2">Appears second</p>
+    <p class="fragment" data-fragment-index="3">Appears last</p>
+    <p class="fragment" data-fragment-index="1">Appears first</p>
+    <p class="fragment" data-fragment-index="2">Appears second</p>
 </section>
 ```
 
@@ -377,10 +377,10 @@ Some libraries, like MathJax (see #505), get confused by the initially hidden fr
 
 ```javascript
 Reveal.addEventListener( 'fragmentshown', function( event ) {
-	// event.fragment = the fragment DOM element
+    // event.fragment = the fragment DOM element
 } );
 Reveal.addEventListener( 'fragmenthidden', function( event ) {
-	// event.fragment = the fragment DOM element
+    // event.fragment = the fragment DOM element
 } );
 ```
 
@@ -390,13 +390,13 @@ By default, Reveal is configured with [highlight.js](http://softwaremaniacs.org/
 
 ```html
 <section>
-	<pre><code data-trim>
+    <pre><code data-trim>
 (def lazy-fib
   (concat
    [0 1]
    ((fn rfib [a b]
         (lazy-cons (+ a b) (rfib b (+ a b)))) 0 1)))
-	</code></pre>
+    </code></pre>
 </section>
 ```
 
@@ -433,7 +433,7 @@ Sometimes it's desirable to have an element, like an image or video, stretch to 
 
 ```html
 <section>
-	<h2>This video will use up the remaining space on the slide</h2>
+    <h2>This video will use up the remaining space on the slide</h2>
     <video class="stretch" src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"></video>
 </section>
 ```
@@ -485,11 +485,11 @@ Notes are defined by appending an ```<aside>``` element to a slide as seen below
 
 ```html
 <section>
-	<h2>Some Slide</h2>
+    <h2>Some Slide</h2>
 
-	<aside class="notes">
-		Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
-	</aside>
+    <aside class="notes">
+        Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+    </aside>
 </section>
 ```
 
@@ -513,12 +513,12 @@ In some cases it can be desirable to run notes on a separate device from the one
 
 ```javascript
 Reveal.initialize({
-	...
+    ...
 
-	dependencies: [
-		{ src: 'socket.io/socket.io.js', async: true },
-		{ src: 'plugin/notes-server/client.js', async: true }
-	]
+    dependencies: [
+        { src: 'socket.io/socket.io.js', async: true },
+        { src: 'plugin/notes-server/client.js', async: true }
+    ]
 });
 ```
 
@@ -542,7 +542,7 @@ The multiplex plugin needs the following 3 things to operate:
 More details:
 
 #### Master presentation
-Served from a static file server accessible (preferably) only to the presenter. This need only be on your (the presenter's) computer. (It's safer to run the master presentation from your own computer, so if the venue's Internet goes down it doesn't stop the show.) An example would be to execute the following commands in the directory of your master presentation: 
+Served from a static file server accessible (preferably) only to the presenter. This need only be on your (the presenter's) computer. (It's safer to run the master presentation from your own computer, so if the venue's Internet goes down it doesn't stop the show.) An example would be to execute the following commands in the directory of your master presentation:
 
 1. ```npm install node-static```
 2. ```static```
@@ -554,25 +554,25 @@ You can then access your master presentation at ```http://localhost:1947```
 Example configuration:
 ```javascript
 Reveal.initialize({
-	// other options...
+    // other options...
 
-	multiplex: {
-		// Example values. To generate your own, see the socket.io server instructions.
-		secret: '13652805320794272084', // Obtained from the socket.io server. Gives this (the master) control of the presentation
-		id: '1ea875674b17ca76', // Obtained from socket.io server
-		url: 'revealjs.jit.su:80' // Location of socket.io server
-	},
+    multiplex: {
+        // Example values. To generate your own, see the socket.io server instructions.
+        secret: '13652805320794272084', // Obtained from the socket.io server. Gives this (the master) control of the presentation
+        id: '1ea875674b17ca76', // Obtained from socket.io server
+        url: 'revealjs.jit.su:80' // Location of socket.io server
+    },
 
-	// Don't forget to add the dependencies
-	dependencies: [
-		{ src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
-		{ src: 'plugin/multiplex/master.js', async: true },
+    // Don't forget to add the dependencies
+    dependencies: [
+        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
+        { src: 'plugin/multiplex/master.js', async: true },
 
-		// and if you want speaker notes
-		{ src: 'plugin/notes-server/client.js', async: true }
+        // and if you want speaker notes
+        { src: 'plugin/notes-server/client.js', async: true }
 
-		// other dependencies...
-	]
+        // other dependencies...
+    ]
 });
 ```
 
@@ -582,22 +582,22 @@ Served from a publicly accessible static file server. Examples include: GitHub P
 Example configuration:
 ```javascript
 Reveal.initialize({
-	// other options...
+    // other options...
 
-	multiplex: {
-		// Example values. To generate your own, see the socket.io server instructions.
-		secret: null, // null so the clients do not have control of the master presentation
-		id: '1ea875674b17ca76', // id, obtained from socket.io server
-		url: 'revealjs.jit.su:80' // Location of socket.io server
-	},
+    multiplex: {
+        // Example values. To generate your own, see the socket.io server instructions.
+        secret: null, // null so the clients do not have control of the master presentation
+        id: '1ea875674b17ca76', // id, obtained from socket.io server
+        url: 'revealjs.jit.su:80' // Location of socket.io server
+    },
 
-	// Don't forget to add the dependencies
-	dependencies: [
-		{ src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
-		{ src: 'plugin/multiplex/client.js', async: true }
+    // Don't forget to add the dependencies
+    dependencies: [
+        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
+        { src: 'plugin/multiplex/client.js', async: true }
 
-		// other dependencies...
-	]
+        // other dependencies...
+    ]
 });
 ```
 
@@ -615,27 +615,27 @@ You are very welcome to point your presentations at the Socket.io server running
 
 ##### socket.io server as file static server
 
-The socket.io server can play the role of static file server for your client presentation, as in the example at [http://revealjs.jit.su](http://revealjs.jit.su). (Open [http://revealjs.jit.su](http://revealjs.jit.su) in two browsers. Navigate through the slides on one, and the other will update to match.) 
+The socket.io server can play the role of static file server for your client presentation, as in the example at [http://revealjs.jit.su](http://revealjs.jit.su). (Open [http://revealjs.jit.su](http://revealjs.jit.su) in two browsers. Navigate through the slides on one, and the other will update to match.)
 
 Example configuration:
 ```javascript
 Reveal.initialize({
-	// other options...
+    // other options...
 
-	multiplex: {
-		// Example values. To generate your own, see the socket.io server instructions.
-		secret: null, // null so the clients do not have control of the master presentation
-		id: '1ea875674b17ca76', // id, obtained from socket.io server
-		url: 'example.com:80' // Location of your socket.io server
-	},
+    multiplex: {
+        // Example values. To generate your own, see the socket.io server instructions.
+        secret: null, // null so the clients do not have control of the master presentation
+        id: '1ea875674b17ca76', // id, obtained from socket.io server
+        url: 'example.com:80' // Location of your socket.io server
+    },
 
-	// Don't forget to add the dependencies
-	dependencies: [
-		{ src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
-		{ src: 'plugin/multiplex/client.js', async: true }
+    // Don't forget to add the dependencies
+    dependencies: [
+        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
+        { src: 'plugin/multiplex/client.js', async: true }
 
-		// other dependencies...
-	]
+        // other dependencies...
+    ]
 ```
 
 It can also play the role of static file server for your master presentation and client presentations at the same time (as long as you don't want to use speaker notes). (Open [http://revealjs.jit.su](http://revealjs.jit.su) in two browsers. Navigate through the slides on one, and the other will update to match. Navigate through the slides on the second, and the first will update to match.) This is probably not desirable, because you don't want your audience to mess with your slides while you're presenting. ;)
@@ -643,23 +643,23 @@ It can also play the role of static file server for your master presentation and
 Example configuration:
 ```javascript
 Reveal.initialize({
-	// other options...
+    // other options...
 
-	multiplex: {
-		// Example values. To generate your own, see the socket.io server instructions.
-		secret: '13652805320794272084', // Obtained from the socket.io server. Gives this (the master) control of the presentation
-		id: '1ea875674b17ca76', // Obtained from socket.io server
-		url: 'example.com:80' // Location of your socket.io server
-	},
+    multiplex: {
+        // Example values. To generate your own, see the socket.io server instructions.
+        secret: '13652805320794272084', // Obtained from the socket.io server. Gives this (the master) control of the presentation
+        id: '1ea875674b17ca76', // Obtained from socket.io server
+        url: 'example.com:80' // Location of your socket.io server
+    },
 
-	// Don't forget to add the dependencies
-	dependencies: [
-		{ src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
-		{ src: 'plugin/multiplex/master.js', async: true },
-		{ src: 'plugin/multiplex/client.js', async: true }
+    // Don't forget to add the dependencies
+    dependencies: [
+        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
+        { src: 'plugin/multiplex/master.js', async: true },
+        { src: 'plugin/multiplex/client.js', async: true }
 
-		// other dependencies...
-	]
+        // other dependencies...
+    ]
 });
 ```
 
@@ -693,17 +693,17 @@ Example configuration:
 ```js
 Reveal.initialize({
 
-	// other options...
+    // other options...
 
-	leap: {
-		naturalSwipe   : false,    // Invert swipe gestures
-		pointerOpacity : 0.5,      // Set pointer opacity to 0.5
-		pointerColor   : '#d80000' // Red pointer
-	},
+    leap: {
+        naturalSwipe   : false,    // Invert swipe gestures
+        pointerOpacity : 0.5,      // Set pointer opacity to 0.5
+        pointerColor   : '#d80000' // Red pointer
+    },
 
-	dependencies: [
-		{ src: 'plugin/leap/leap.js', async: true }
-	]
+    dependencies: [
+        { src: 'plugin/leap/leap.js', async: true }
+    ]
 
 });
 ```
@@ -712,23 +712,23 @@ Reveal.initialize({
 
 If you want to display math equations in your presentation you can easily do so by including this plugin. The plugin is a very thin wrapper around the [MathJax](http://www.mathjax.org/) library. To use it you'll need to include it as a reveal.js dependency, [find our more about dependencies here](#dependencies).
 
-The plugin defaults to using [LaTeX](http://en.wikipedia.org/wiki/LaTeX) but that can be adjusted through the ```math``` configuration object. Note that MathJax is loaded from a remote server. If you want to use it offline you'll need to download a copy of the library and adjust the ```mathjax``` configuration value. 
+The plugin defaults to using [LaTeX](http://en.wikipedia.org/wiki/LaTeX) but that can be adjusted through the ```math``` configuration object. Note that MathJax is loaded from a remote server. If you want to use it offline you'll need to download a copy of the library and adjust the ```mathjax``` configuration value.
 
 Below is an example of how the plugin can be configured. If you don't intend to change these values you do not need to include the ```math``` config object at all.
 
 ```js
 Reveal.initialize({
 
-	// other options ...
+    // other options ...
 
-	math: {
-		mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
-		config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
-	},
-	
-	dependencies: [
-		{ src: 'plugin/math/math.js', async: true }
-	]
+    math: {
+        mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
+        config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+    },
+
+    dependencies: [
+        { src: 'plugin/math/math.js', async: true }
+    ]
 
 });
 ```
