@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="sr">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Paterni - teorija i praksa</title>
+
+    <meta name="description" content="Php paterni u teoriji i praksi">
+    <meta name="author" content="Milan Popović">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+        document.write('<link rel="stylesheet" href="css/print/' + ( window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">');
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+
+<!-- Any section element inside of this container is displayed as a slide -->
+<div class="slides">
+
+<section>
+    <h1>Paterni u teoriji i praksi</h1>
+
+    <h3>Factory, Strategy, Visitor</h3>
+
+    <p>
+        <small><a href="http://www.milanpopovic.me">Milan Popović</a> / <a href="http://twitter.com/komita1981">@komita1981</a>
+        </small>
+    </p>
+</section>
+
+<section>
+    <h2>Osnove</h2>
+
+    <p class="fragment">
+        <a href="#" class="image navigate-down">
+            <img height="373px" src="http://www.portablelearner.com/img/posts/christopher-alexander.png"
+                 alt="Christopher Alexander">
+            <img height="373px"
+                 src="http://upload.wikimedia.org/wikipedia/en/thumb/e/e6/A_Pattern_Language.jpg/250px-A_Pattern_Language.jpg"
+                 alt="Pattern language">
+        </a><br/>
+        Christopher Alexander
+    </p>
+
+    <p class="fragment">
+        <q>
+            &ldquo;Svaki uzor je trodelno pravilo, koje uspostavlja relaciju između nekog problema, njegovog rešenja i
+            njihovog konteksta.&rdquo;
+        </q>
+    </p>
+
+    <aside class="notes">
+        Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the
+        speaker notes window (hit 's' on your keyboard).
+    </aside>
+</section>
+
+<!-- Example of nested vertical slides -->
+<section>
+    <section>
+        <h2>Oblici predstavljanja uzora</h2>
+        <ul>
+            <li>Aleksanderov oblik</li>
+            <li>GOF oblik</li>
+            <li>Coplienov oblik</li>
+        </ul>
+    </section>
+    <section>
+        <h2>Coplienov oblik</h2>
+
+        <p class="fragment">
+            Naziv paterna
+        </p>
+
+        <p class="fragment">
+            Problem
+        </p>
+
+        <p class="fragment">
+            Kontekst
+        </p>
+
+        <p class="fragment">
+            Sile
+        </p>
+
+        <p class="fragment">
+            Rešenje
+        </p>
+
+        <p class="fragment">
+            Obrazloženje
+        </p>
+
+        <p class="fragment">
+            Rezultujući kontekst
+        </p>
+    </section>
+</section>
+<section>
+    <h2>Klasifikacija paterna</h2>
+    <ul>
+        <li>Tronivojski paterni</li>
+        <ul>
+            <li>
+                Idiomi
+            </li>
+            <li>
+                Paterni projektovanja
+            </li>
+            <li>
+                Okviri
+            </li>
+        </ul>
+        <li>Antipaterni</li>
+        <li>Aleksanderovo skaliranje</li>
+        <li>Meta paterni</li>
+        <li>Drugi skalirajući pristupi</li>
+    </ul>
+</section>
+
+<section>
+    <section>
+        <h2>Paterni projektovanja</h2>
+        <ul>
+            <li>
+                Kreacioni
+            </li>
+            <li>
+                Strukturni
+            </li>
+            <li>
+                Paterni ponašanja
+            </li>
+        </ul>
+    </section>
+    <section>
+        <h2>Kreacioni paterni</h2>
+        <ul>
+            <li>
+                Singleton
+            </li>
+            <li>
+                Factory
+            </li>
+            <li>
+                Factory Method
+            </li>
+            <li>
+                Abstract Factory
+            </li>
+            <li>
+                Builder
+            </li>
+            <li>
+                Prototype
+            </li>
+            <li>
+                Object Pool
+            </li>
+        </ul>
+    </section>
+    <section>
+        <h2>Strukturni paterni</h2>
+        <ul>
+            <li>
+                Adapter
+            </li>
+            <li>
+                Bridge
+            </li>
+            <li>
+                Composite
+            </li>
+            <li>
+                Decorator
+            </li>
+            <li>
+                Flyweight
+            </li>
+            <li>
+                Proxy
+            </li>
+        </ul>
+    </section>
+    <section>
+        <h2>Paterni ponašanja</h2>
+        <ul>
+            <li>
+                Chain of Responsibility
+            </li>
+            <li>
+                Command
+            </li>
+            <li>
+                Interpreter
+            </li>
+            <li>
+                Iterator
+            </li>
+            <li>
+                Mediator
+            </li>
+            <li>
+                Memento
+            </li>
+            <li>
+                Observer
+            </li>
+            <li>
+                Strategy
+            </li>
+            <li>
+                Template Method
+            </li>
+            <li>
+                Visitor
+            </li>
+            <li>
+                Null Object
+            </li>
+        </ul>
+    </section>
+</section>
+<section>
+    <h2>Zašto koristiti paterne projektovanja</h2>
+
+    <p class="fragment">
+        Definišu problem
+    </p>
+
+    <p class="fragment">
+        Definišu rešenje
+    </p>
+
+    <p class="fragment">
+        Nezavisni od jezika
+    </p>
+
+    <p class="fragment">
+        Poboljšavaju komunikaciju
+    </p>
+
+    <p class="fragment">
+        Isprobani i testirani
+    </p>
+
+    <p class="fragment">
+        Otvoreni za saradnju
+    </p>
+
+    <p class="fragment">
+        Promovišu dobar dizajn
+    </p>
+</section>
+<section>
+    <h2>Factory patern</h2>
+
+    <p class="fragment">
+        Jedan od najčešće korišćenih paterna
+    </p>
+
+    <p class="fragment">
+        Objekti se kreiraju bez otkrivanja logike kreiranja klijentu
+    </p>
+
+    <p class="fragment">
+        <img height="373px"
+             src="http://www.oodesign.com/images/stories/factory%20implementation.gif"
+             alt="Factory pattern">
+    </p>
+</section>
+<section>
+    <h2>Factory klasa</h2>
+        <pre>
+            <code data-trim contenteditable>
+class Mailbox_Display_Factory
+{
+    /**
+    * Returns new instance of inbox display printer
+    *
+    * @param string $type
+    * @param array $config
+    */
+    public static function forgeDisplayPrinter($type, array $config = array())
+    {
+        $class_name = '\\Application\\Message\\Mailbox_Display_'.ucfirst($type);
+
+        return new $class_name($config);
+    }
+}
+            </code>
+        </pre>
+</section>
+<section>
+    <h2>Strategy patern</h2>
+
+    <p class="fragment">
+        Familija međusobno zamenljivih algoritama
+    </p>
+
+    <p class="fragment">
+        Klijenti biraju algoritam
+    </p>
+
+    <p class="fragment">
+        <img height="373px"
+             src="http://www.oodesign.com/images/design_patterns/behavioral/strategy_implementation_-_uml_class_diagram.gif"
+             alt="Strategy pattern">
+    </p>
+</section>
+<section>
+    <h2>Strategy klase</h2>
+        <pre>
+            <code data-trim contenteditable>
+class Mailbox_Display_Abstract
+{
+    public function __construct(array $config = array())
+    {
+        $this->config = $config;
+    }
+
+    public function render()
+    {
+        $this->prepare_data();
+        $this->view = View::forge('messages/templates/messages/wrapper/'.$this->view_name, $this->view_data, false);
+
+        return $this->view->render();
+    }
+
+    protected function prepareData()
+    {
+        return false;
+    }
+}
+            </code>
+        </pre>
+</section>
+<section>
+    <h2>Strategy klase</h2>
+        <pre>
+            <code data-trim contenteditable>
+class Mailbox_Display_Inbox extends Mailbox_Display_Abstract
+{
+    protected function prepareData()
+    {
+       // some code
+    }
+}
+            </code>
+        </pre>
+</section>
+
+<section>
+    <h2>Visitor patern</h2>
+    <img
+         src="http://www.oodesign.com/images/behavioral/visitor-pattern.png"
+         alt="Strategy pattern">
+</section>
+</div>
+
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.min.js"></script>
+
+<script>
+
+    // Full list of configuration options available here:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        mouseWheel: true,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+            { src: 'lib/js/classList.js', condition: function () {
+                return !document.body.classList;
+            } },
+            { src: 'plugin/markdown/marked.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            } },
+            { src: 'plugin/markdown/markdown.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            } },
+            { src: 'plugin/highlight/highlight.js', async: true, callback: function () {
+                hljs.initHighlightingOnLoad();
+            } },
+            { src: 'plugin/zoom-js/zoom.js', async: true, condition: function () {
+                return !!document.body.classList;
+            } },
+            { src: 'plugin/notes/notes.js', async: true, condition: function () {
+                return !!document.body.classList;
+            } }
+            // { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+            // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+    });
+
+</script>
+
+</body>
+</html>

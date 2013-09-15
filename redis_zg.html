@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Redis</title>
+
+    <meta name="description" content="System overview">
+    <meta name="author" content="Milan Popović">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/default.css" id="theme">
+    <link rel="stylesheet" href="css/presentation/redis_zg.css">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+        document.write('<link rel="stylesheet" href="css/print/' + ( window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">');
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<div class="reveal">
+
+<!-- Any section element inside of this container is displayed as a slide -->
+<div class="slides">
+
+<section>
+    <h1>REDIS</h1>
+
+    <p>
+        <img src="img/redis_zg/php_redis.jpg" alt="Redis" title="Redis">
+    </p>
+
+    <p>
+        <small><a target="_blank" href="http://www.milanpopovic.me">Milan Popović</a> / <a target="_blank"
+                                                                                           href="http://twitter.com/komita1981">@komita1981</a>
+        </small>
+    </p>
+</section>
+
+<section>
+    <h2>Agenda</h2>
+
+    <ul>
+        <li>Redis - opšti pregled</li>
+        <li>Strukture podataka</li>
+        <li>Postojanost podataka</li>
+        <li>Transakcije</li>
+        <li>Organizacija podataka</li>
+        <li>Redis & PHP</li>
+    </ul>
+
+</section>
+
+<section>
+    <h2>Kratka istorija projekta Redis</h2>
+
+    <p class="fragment">
+        Projekat započeo Salvatore Sanfilipo - <a target="_blank" href="http://twitter.com/antirez">@antirez</a> 2009.
+        godine
+    </p>
+
+    <p class="fragment">
+        Napisan u jeziku ANSI C
+    </p>
+    <p class="fragment">
+        Radi na većini POSIX sistema (Linux, OS X, Solaris...)
+    </p>
+
+    <p class="fragment">
+        Open source - <a href="https://github.com/antirez/redis">https://github.com/antirez/redis</a> - 98 kontributora
+    </p>
+
+    <p class="fragment">
+        Od 2010. godine sponzoriše ga VMWare
+    </p>
+    <p class="fragment">
+        Projektu se priključio <a target="_blank" href="https://twitter.com/pnoordhuis">Pieter
+        Noordhuis</a>
+    </p>
+</section>
+
+<section>
+    <section>
+        <h2>Šta je Redis</h2>
+
+        <ul>
+            <li class="fragment">
+                <strong class="highlight-cyan">RE</strong>mote <strong class="highlight-cyan">DI</strong>ctionary
+                <strong class="highlight-cyan">S</strong>erver
+            </li>
+
+            <li class="fragment">
+                Napredna key value baza
+            </li>
+
+            <li class="fragment">
+                Server struktura podataka - string, set, sorted set, list i hash
+            </li>
+
+            <li class="fragment">
+                Podaci se nalaze u memoriji
+            </li>
+
+            <li class="fragment">
+                Ekstremno brz - 100K operacija u sekundi
+            </li>
+
+            <li class="fragment">
+                Nema indeksa i nema šeme
+            </li>
+
+            <li class="fragment">
+                Radi sa komandama
+            </li>
+
+            <li class="fragment">
+                Atomske operacije
+            </li>
+
+            <li class="fragment">
+                Predvidive performanse
+            </li>
+
+            <li class="fragment">
+                Radi na 6379 text based tcp protokolu
+            </li>
+        </ul>
+
+        <aside class="notes">
+            Uzmite jednostavnost memcache, dodajte još tipova podataka, postojanost, još komandi i još mnogo mnogo toga
+            i
+            dobićete Redis
+
+            Jim Gray - memory is new disk, disk is new tape
+
+            Salvatore S. - Vidim Redis pre kao fleksibilan alat nego kao resenje specijalizovano za neki specificni
+            problem
+
+            Naglasak na ključevima pre nego na vrednostima
+
+            100k operacija za upis - set i 80k za citanje - get
+
+            Nije RDBMS
+        </aside>
+    </section>
+    <section>
+        <h2>Šta je Redis</h2>
+        <ul>
+            <li class="fragment">
+                Jednostavna instalacija <br/>
+                <code class="highlight-cyan">$sudo apt-get install redis-server</code>
+            </li>
+
+            <li class="fragment">
+                Podesiva postojanost podataka
+            </li>
+
+            <li class="fragment">
+                Master-slave replication
+            </li>
+
+            <li class="fragment">
+                Particioniranje
+            </li>
+
+            <li class="fragment">
+                Lua scripting - stored procedures
+            </li>
+
+            <li class="fragment">
+                Redis-CLI i Redis Sentinel
+            </li>
+
+            <li class="fragment">
+                Dostupni klijenti za gotovo sve programske jezike
+            </li>
+        </ul>
+    </section>
+</section>
+
+<section>
+    <h2>Strukture podataka</h2>
+
+    <p>
+        Strings, Hashes, Lists, Sets, Sorted Sets
+    </p>
+    <a target="_blank" href="http://www.slideshare.net/dvirsky/kicking-ass-with-redis">
+        <img src="img/redis_zg/redis_data_structures.png" alt="Redis strukture podataka"
+             title="Redis strukture podataka">
+    </a>
+</section>
+
+<section>
+    <section>
+        <h2>Strings</h2>
+        <ul>
+            <li>
+                Predstavlja osnovnu strukturu
+            </li>
+
+            <li>
+                Može da sučuva podatke veličine do 512 MB
+            </li>
+        </ul>
+        <br>
+        <br>
+
+        <p class="highlight-cyan">
+            Primeri stringova:<br>
+        </p>
+
+        <ul>
+            <li>post_counter - 9888</li>
+            <li>current_mode - "Maximum"</li>
+            <li>bitcode - 0101</li>
+            <li>average_points - 15.5</li>
+        </ul>
+
+        <aside class="notes">
+            Ako se koristi samo ova struktura redis je kao memcache sa postojanoscu podataka
+        </aside>
+    </section>
+    <section>
+        <h2>Komande nad stringovima</h2>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Osnovne komande</span> (SET, GET, MSET, MGET, GETSET)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Integer&Float</span> (INCR, INCRBY, DECR, DECRBY, INCRBYFLOAT)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">String</span> (APPEND, SETRANGE, GETRANGE, STRLEN)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Expiring</span> (SETEX, PSETEX)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Locking</span> (SETNX, PSETNX)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Bit</span> (BITCOUNT, BITOP, SETBIT)
+        </p>
+
+    </section>
+</section>
+
+<section>
+    <section>
+        <h2>
+            Hashes
+        </h2>
+        <ul>
+            <li>
+                Predstavljaju niz <span class="highlight-cyan">field</span>-><span class="highlight-cyan">value</span>
+                parova
+            </li>
+
+            <li>
+                Pandam asocijativnim nizovima u PHP-u
+            </li>
+
+            <li>
+                Zauzimaju malo prostora
+            </li>
+
+            <li>
+                Do 2
+                <sup>32</sup>
+                -1 <span class="highlight-cyan">field</span>-><span class="highlight-cyan">value</span> parova
+            </li>
+
+        </ul>
+        <br/>
+        <br/>
+
+        <p class="highlight-cyan">
+            Primer hash-a:<br>
+        </p>
+
+        <div>
+            <table class="dotted">
+                <tr>
+                    <td colspan="2">
+                        user:2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        username
+                    </td>
+                    <td>
+                        komita1981
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        first_name
+                    </td>
+                    <td>
+                        Milan
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        second_name
+                    </td>
+                    <td>
+                        Popović
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        age
+                    </td>
+                    <td>
+                        32
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </section>
+    <section>
+        <h2>
+            Komande nad hash-evima
+        </h2>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Osnovne komande</span> (HSET, HGET, HMSET, HMGET, HGETALL, HKEYS, HVALS, HDEL)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Field komande</span> (HEXISTS, HLEN)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Integer & Float</span> (HINCRBY, HINCRBYFLOAT)
+        </p>
+
+    </section>
+</section>
+<section>
+    <section>
+        <h2>
+            Sets
+        </h2>
+        <ul>
+            <li>
+                Predstavlja neuređenu strukturu jedinstvenih elemenata
+            </li>
+
+            <li>
+                Pandam numeričkim nizovima u PHP-u
+            </li>
+
+            <li>
+                Do 2<sup>32</sup>-1 elemenata
+            </li>
+        </ul>
+        <br/>
+        <br/>
+
+        <p class="highlight-cyan">
+            Primer seta:<br>
+        </p>
+        <ul>
+            <li>even_numbers {2, 4, 6, 8, 10...}</li>
+            <li>group_members {'John', 'Mike', 'Bob', 'Alice'...}</li>
+        </ul>
+    </section>
+    <section>
+        <h2>
+            Komande nad setovima
+        </h2>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Osnovne komande</span> (SADD, SREM, SMEMBERS, SCARD, SISMEMBER)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Pomoćne komande</span> (SRANDMEMBER, SPOP, SMOVE)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Komande skupovnih operacija</span> (SINTER, SUNION, SDIFF, SINTERSTORE,
+            SUNIONSTORE, SDIFFSTORE)
+        </p>
+
+    </section>
+</section>
+<section>
+    <section>
+        <h2>
+            Sorted set
+        </h2>
+        <ul>
+            <li>
+                Uređena struktura jedinstvenih elemenata
+            </li>
+
+            <li>
+                Do 2<sup>32</sup>-1 elemenata
+            </li>
+        </ul>
+        <br/>
+        <br/>
+        <p class="highlight-cyan">
+            Primer sorted seta:<br/>
+        </p>
+
+        <p>
+        <table class="dotted">
+            <tr>
+                <td colspan="2">
+                    score_board:
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Partizan
+                </td>
+                <td>
+                    65
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Rad
+                </td>
+                <td>
+                    50
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Vojvodina
+                </td>
+                <td>
+                    55
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Radnički
+                </td>
+                <td>
+                    45
+                </td>
+            </tr>
+        </table>
+        </p>
+
+    </section>
+    <section>
+        <h2>
+            Komande nad sortiranim setovima
+        </h2>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Osnovne komande</span> (ZADD, ZREM, ZCARD, ZSCORE, ZCOUNT, ZINCRBY)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Komande skupovnih operacija</span> (ZINTERSTORE, ZUNIONSTORE)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Komande ranga</span> (ZRANK, ZREVRANK)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Komande opsega</span> (ZRANGE, ZREVRANGE, ZREMRANGEBYRANK)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Komande bodova</span> (ZRANGEBYSCORE, ZREVRANGEBYSCORE, ZREMRANGEBYSCORE)
+        </p>
+    </section>
+</section>
+<section>
+    <section>
+        <h2>
+            Lists
+        </h2>
+
+        <ul>
+            <li>
+                Predstavlja niz stringova
+            </li>
+
+            <li>
+                Elementi se ubacuju na početak ili kraj (glavu i rep)
+            </li>
+
+            <li>
+                Do 2<sup>32</sup>-1 elemenata
+            </li>
+        </ul>
+        <br/>
+        <br/>
+        <p class="highlight-cyan">
+            Primer liste:<br>
+        </p>
+        <p>
+            last_registered_users: [memre, remem, streamer, poper...]
+            last_logins: [memre, remem, memre, streamer, poper, remem...]
+        </p>
+    </section>
+    <section>
+        <h2>
+            Komande nad listama
+        </h2>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Osnocne operacije</span> (LPUSH, RPUSH, LPOP, RPOP, LLEN)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Blok komande</span> (BRPOP, BLPOP)
+        </p>
+
+        <p class="fragment">
+            <span class="highlight-cyan">Pomoćne komande</span> (LINDEX, LRANGE, LSET, LPUSH, RPUSH...)
+        </p>
+
+    </section>
+</section>
+<section>
+    <h2>Zajedničke komande</h2>
+
+    <p class="fragment">
+        DEL, RENAME, TYPE, SORT
+    </p>
+
+    <p class="fragment">
+        EXPIRE, PEXPIRE, EXPIREAT, PEXPIREAT, PERSIST, TTL, PTTL
+    </p>
+
+    <p class="fragment">
+        KEYS, MONITOR, FLUSHDB
+    </p>
+
+</section>
+<section>
+    <h2>PUB/SUB</h2>
+
+    <p>
+        Publish/Subscribe messaging paradigm
+    </p>
+
+    <p>
+        PUBLISH, SUBSCRIBE, UNSUBSCRIBE, PSUBSCRIBE, PUNSUBSCRIBE
+    </p>
+
+</section>
+<section>
+    <h2>Postojanost podataka</h2>
+
+    <ul>
+        <li>
+            RDB persistance
+        </li>
+        <li>
+            AOF persistance
+        </li>
+        <li>
+            No persistance
+        </li>
+        <li>
+            AOF+RDB persistance
+        </li>
+    </ul>
+</section>
+<section>
+    <h2>Transakcije</h2>
+
+    <ul>
+        <li>
+            Redis transakcije != RDBMS transakcije
+        </li>
+
+        <li>
+            Atomske operacije
+        </li>
+
+        <li>
+            MULTI - EXEC
+        </li>
+
+        <li>
+            WATCH - UNWATCH - DISCARD
+        </li>
+    </ul>
+</section>
+<section>
+    <h2>Organizacija podataka</h2>
+
+    <p class="fragment">
+        Relacione baze : Koje odgovore imam?
+    </p>
+
+    <p class="fragment">
+        Redis : Koja pitanja imam?
+    </p>
+
+    <p class="fragment">
+        Dobri nazivi ključeva
+    </p>
+
+    <p class="fragment">
+        Separatori u nazivu - najčešće <span class="highlight-cyan">":"</span>
+    </p>
+
+</section>
+<section>
+    <h2>Ko koristi Redis?</h2>
+    <img src="img/redis_zg/who_is_using_redis.png" alt="Who is using Redis" title="Who is using Redis">
+    <aside class="notes">
+        Instagram - feed list, activity, 300 miliona parova na 5GB - 16MB na milion parova dok Memcache zauzima 52MB
+        GitHub - exception handling queue management, configuration management
+        StackOverflow- Cache - 1300000 kljuceva u svakom trenutku - 6GB memorije - 1% CPU
+        Pinterest - follower model
+        Tumblr - notifikacije
+
+    </aside>
+</section>
+<section>
+    <h2>PHP & Redis</h2>
+
+    <p class="fragment">
+        <a href="https://github.com/nicolasff/phpredis/" target="_blank">PhpRedis</a>
+    </p>
+
+    <p class="fragment">
+        <a href="https://github.com/nrk/predis">Predis</a>
+    </p>
+
+    <p class="fragment">
+        <a href="https://github.com/jdp/redisent">Redisent</a>
+    </p>
+
+    <p class="fragment">
+        <a href="https://github.com/Shumkov/Rediska">Rediska</a>
+    </p>
+
+    <p class="fragment">
+        <a href="https://github.com/jamm/Memory">RedisServer</a>
+    </p>
+
+    <p class="fragment">
+        <a href="https://github.com/colinmollenhour/credis">Credis</a>
+    </p>
+
+    <aside class="notes">
+        PhpRedis - Nicolas Favre-Felix
+    </aside>
+
+</section>
+<section>
+    <h2>Hoćete da naučite Redis</h2>
+
+    <p class="fragment">
+        <a href="http://try.redis.io/">http://try.redis.io/</a>
+    </p>
+
+    <p class="fragment">
+        <a href="https://github.com/karlseguin/the-little-redis-book">The Little Redis Book</a>
+    </p>
+
+    <p class="fragment">
+        <a href="http://www.manning.com/carlson/">Redis in action</a>
+    </p>
+</section>
+<section>
+    <h1>Kraj</h1>
+
+    <h3>Milan Popović / milanpopovic.me</h3>
+</section>
+</div>
+
+
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.min.js"></script>
+
+<script>
+
+    // Full list of configuration options available here:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        mouseWheel: true,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+            { src: 'lib/js/classList.js', condition: function () {
+                return !document.body.classList;
+            } },
+            { src: 'plugin/markdown/marked.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            } },
+            { src: 'plugin/markdown/markdown.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            } },
+            { src: 'plugin/highlight/highlight.js', async: true, callback: function () {
+                hljs.initHighlightingOnLoad();
+            } },
+            { src: 'plugin/zoom-js/zoom.js', async: true, condition: function () {
+                return !!document.body.classList;
+            } },
+            { src: 'plugin/notes/notes.js', async: true, condition: function () {
+                return !!document.body.classList;
+            } }
+            // { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+            // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+    });
+
+</script>
+
+</body>
+</html>
