@@ -55,7 +55,7 @@ This is based on [data-markdown](https://gist.github.com/1343518) from [Paul Iri
 You can write your content as a separate file and have reveal.js load it at runtime. Note the separator arguments which determine how slides are delimited in the external file. The ```data-charset``` attribute is optional and specifies which charset to use when loading the external file.
 
 ```html
-<section data-markdown="example.md" data-separator="^\n\n\n" data-vertical="^\n\n" data-charset="iso-8859-15"></section>
+<section data-markdown="example.md" data-separator="^\n\n\n" data-vertical="^\n\n" data-notes="^Note:" data-charset="iso-8859-15"></section>
 ```
 
 ### Configuration
@@ -153,7 +153,10 @@ Reveal.initialize({
 		{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
 
 		// Remote control your reveal.js presentation using a touch device
-		{ src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+		{ src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } },
+
+		// MathJax
+		{ src: 'plugin/math/math.js', async: true }
 	]
 });
 ```
@@ -425,6 +428,21 @@ Add `data-autoplay` to your media element if you want it to automatically start 
 ```
 
 
+### Stretching elements
+Sometimes it's desirable to have an element, like an image or video, stretch to consume as much space as possible within a given slide. This can be done by adding the ```.stretch``` class to an element as seen below:
+
+```html
+<section>
+	<h2>This video will use up the remaining space on the slide</h2>
+    <video class="stretch" src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"></video>
+</section>
+```
+
+Limitations:
+- Only direct descendants of a slide section can be stretched
+- Only one descendant per slide section can be stretched
+
+
 ## PDF Export
 
 Presentations can be exported to PDF via a special print stylesheet. This feature requires that you use [Google Chrome](http://google.com/chrome).
@@ -463,7 +481,7 @@ If you want to add a theme of your own see the instructions here: [/css/theme/RE
 
 reveal.js comes with a speaker notes plugin which can be used to present per-slide notes in a separate browser window. The notes window also gives you a preview of the next upcoming slide so it may be helpful even if you haven't written any notes. Press the 's' key on your keyboard to open the notes window.
 
-By default notes are written using standard HTML, see below, but you can add a ```data-markdown``` attribute to the ```<aside>``` to write them using Markdown.
+Notes are defined by appending an ```<aside>``` element to a slide as seen below. You can add the ```data-markdown``` attribute to the aside element if you prefer writing notes using Markdown.
 
 ```html
 <section>
@@ -473,6 +491,20 @@ By default notes are written using standard HTML, see below, but you can add a `
 		Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
 	</aside>
 </section>
+```
+
+If you're using the external Markdown plugin, you can add notes with the help of a special delimiter:
+
+```html
+<section data-markdown="example.md" data-separator="^\n\n\n" data-vertical="^\n\n" data-notes="^Note:"></section>
+
+# Title
+## Sub-title
+
+Here is some content...
+
+Note:
+This will only display in the notes window.
 ```
 
 ## Server Side Speaker Notes
@@ -538,7 +570,7 @@ Reveal.initialize({
 
 		// and if you want speaker notes
 		{ src: 'plugin/notes-server/client.js', async: true }
-		
+
 		// other dependencies...
 	]
 });
@@ -563,7 +595,7 @@ Reveal.initialize({
 	dependencies: [
 		{ src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
 		{ src: 'plugin/multiplex/client.js', async: true }
-		
+
 		// other dependencies...
 	]
 });
@@ -601,7 +633,7 @@ Reveal.initialize({
 	dependencies: [
 		{ src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
 		{ src: 'plugin/multiplex/client.js', async: true }
-		
+
 		// other dependencies...
 	]
 ```
@@ -625,7 +657,7 @@ Reveal.initialize({
 		{ src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
 		{ src: 'plugin/multiplex/master.js', async: true },
 		{ src: 'plugin/multiplex/client.js', async: true }
-		
+
 		// other dependencies...
 	]
 });
@@ -635,49 +667,78 @@ Reveal.initialize({
 The Leap Motion plugin lets you utilize your [Leap Motion](https://www.leapmotion.com/) device to control basic navigation of your presentation. The gestures currently supported are:
 
 ##### 1 to 2 fingers
-* Pointer &mdash; Point to anything on screen. Move your finger past the device to expand the pointer.
+Pointer &mdash; Point to anything on screen. Move your finger past the device to expand the pointer.
 
-##### 1 hand + 3 or more fingers
-
-* Left
-* Right
-* Up
-* down
-
+##### 1 hand + 3 or more fingers (left/right/up/down)
 Navigate through your slides. See config options to invert movements.
 
-##### 2 hands
-* Up
-
+##### 2 hands upwards
 Toggle the overview mode. Do it a second time to exit the overview.
 
 #### Config Options
 You can edit the following options:
-* autoCenter: Defaults to true. Center the pointer based on where you put your finger into the leap motions detection field.
-* gestureDelay: Defaults to 500. How long to delay between gestures in milliseconds.
-* naturalSwipe: Defaults to true. Swipe as though you were touching a touch screen. Set to false to invert.
-* pointerColor: Defaults to #00aaff. The color of the pointer.
-* pointerOpacity: Defaults to 0.7. The opacity of the pointer.
-* pointerSize: Defaults to 15. The minimum height and width of the pointer.
-* pointerTolerance: Defaults to 120. Bigger = slower pointer.
+
+| Property          | Default           | Description
+| ----------------- |:-----------------:| :-------------
+| autoCenter        | true              | Center the pointer based on where you put your finger into the leap motions detection field.
+| gestureDelay      | 500               | How long to delay between gestures in milliseconds.
+| naturalSwipe      | true              | Swipe as though you were touching a touch screen. Set to false to invert.
+| pointerColor      | #00aaff           | The color of the pointer.
+| pointerOpacity    | 0.7               | The opacity of the pointer.
+| pointerSize       | 15                | The minimum height and width of the pointer.
+| pointerTolerance  | 120               | Bigger = slower pointer.
+
 
 Example configuration:
 ```js
 Reveal.initialize({
-	// other options
+
+	// other options...
+
 	leap: {
 		naturalSwipe   : false,    // Invert swipe gestures
 		pointerOpacity : 0.5,      // Set pointer opacity to 0.5
 		pointerColor   : '#d80000' // Red pointer
-	}
-	
-	// Optional libraries used to extend on reveal.js
-	{ src: 'plugin/leap/leap.js', async: true }
+	},
+
+	dependencies: [
+		{ src: 'plugin/leap/leap.js', async: true }
+	]
+
+});
 ```
+
+## MathJax
+
+If you want to display math equations in your presentation you can easily do so by including this plugin. The plugin is a very thin wrapper around the [MathJax](http://www.mathjax.org/) library. To use it you'll need to include it as a reveal.js dependency, [find our more about dependencies here](#dependencies).
+
+The plugin defaults to using [LaTeX](http://en.wikipedia.org/wiki/LaTeX) but that can be adjusted through the ```math``` configuration object. Note that MathJax is loaded from a remote server. If you want to use it offline you'll need to download a copy of the library and adjust the ```mathjax``` configuration value. 
+
+Below is an example of how the plugin can be configured. If you don't intend to change these values you do not need to include the ```math``` config object at all.
+
+```js
+Reveal.initialize({
+
+	// other options ...
+
+	math: {
+		mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
+		config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+	},
+	
+	dependencies: [
+		{ src: 'plugin/math/math.js', async: true }
+	]
+
+});
+```
+
+Read MathJax's documentation if you need [HTTPS delivery](http://docs.mathjax.org/en/latest/start.html#secure-access-to-the-cdn) or serving of [specific versions](http://docs.mathjax.org/en/latest/configuration.html#loading-mathjax-from-the-cdn) for stability.
+
 
 ## Installation
 
-The **basic setup** is for authoring presentations only. The **full setup** gives you access to all reveal.js features as well as the development tasks needed to make changes to the source.
+The **basic setup** is for authoring presentations only. The **full setup** gives you access to all reveal.js features and plugins such as speaker notes as well as the development tasks needed to make changes to the source.
 
 ### Basic setup
 
