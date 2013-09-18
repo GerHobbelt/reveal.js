@@ -123,6 +123,12 @@
             // Transition style for full page slide backgrounds
             backgroundTransition: 'default', // default/linear/none
 
+			// Parallax background image
+			parallaxBackgroundImage: '', // CSS syntax, e.g. "a.jpg"
+
+			// Parallax background size
+			parallaxBackgroundSize: '', // CSS syntax, e.g. "3000px 2000px"
+
             // Number of slides away from the current that are visible
             viewDistance: 3,
 
@@ -568,6 +574,28 @@
             } );
 
         } );
+
+		// Add parallax background if specified
+		if( config.parallaxBackgroundImage ) {
+
+			dom.background.style.backgroundImage = 'url("' + config.parallaxBackgroundImage + '")';
+			dom.background.style.backgroundSize = config.parallaxBackgroundSize;
+
+			// Make sure the below properties are set on the element - these properties are
+			// needed for proper transitions to be set on the element via CSS. To remove
+			// annoying background slide-in effect when the presentation starts, apply
+			// these properties after short time delay
+			setTimeout( function() {
+				dom.wrapper.classList.add( 'has-parallax-background' );
+			}, 1 );
+
+		}
+		else {
+
+			dom.background.style.backgroundImage = '';
+			dom.wrapper.classList.remove( 'has-parallax-background' );
+
+		}
 
     }
 
@@ -1189,6 +1217,7 @@
             }
 
             updateProgress();
+			updateParallax();
 
         }
 
@@ -1625,7 +1654,7 @@
         // Store references to the previous and current slides
         currentSlide = currentVerticalSlides[ indexv ] || currentHorizontalSlide;
 
-
+		////////////////////////////////////
         // Show fragment, if specified
         if( typeof f !== 'undefined' ) {
             var fragments = sortFragments( currentSlide.querySelectorAll( '.fragment' ) );
@@ -1687,6 +1716,7 @@
         updateControls();
         updateProgress();
         updateBackground();
+		updateParallax();
 
         // Update the URL hash
         writeURL();
@@ -2015,12 +2045,12 @@
     }
 
     /**
-     * Updates the background elements to reflect the current
+	 * Updates the background elements to reflect the current 
      * slide.
      */
     function updateBackground() {
 
-        // Update the classes of all backgrounds to match the
+		// Update the classes of all backgrounds to match the 
         // states of their slides (past/present/future)
         toArray( dom.background.childNodes ).forEach( function( backgroundh, h ) {
 
@@ -2042,6 +2072,42 @@
         setTimeout( function() {
             dom.background.classList.remove( 'no-transition' );
         }, 1 );
+
+	}
+
+	/**
+	 * Updates the position of the parallax background based
+	 * on the current slide index.
+	 */
+	function updateParallax() {
+
+		if( config.parallaxBackgroundImage ) {
+
+			var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ),
+				verticalSlides = document.querySelectorAll( VERTICAL_SLIDES_SELECTOR );
+
+			var backgroundSize = dom.background.style.backgroundSize.split( ' ' ),
+				backgroundWidth, backgroundHeight;
+
+			if( backgroundSize.length === 1 ) {
+				backgroundWidth = backgroundHeight = parseInt( backgroundSize[0], 10 );
+			}
+			else {
+				backgroundWidth = parseInt( backgroundSize[0], 10 );
+				backgroundHeight = parseInt( backgroundSize[1], 10 );
+			}
+
+			var slideWidth = dom.background.offsetWidth;
+			var horizontalSlideCount = horizontalSlides.length;
+			var horizontalOffset = -( backgroundWidth - slideWidth ) / ( horizontalSlideCount-1 ) * indexh;
+
+			var slideHeight = dom.background.offsetHeight;
+			var verticalSlideCount = verticalSlides.length;
+			var verticalOffset = verticalSlideCount > 0 ? -( backgroundHeight - slideHeight ) / ( verticalSlideCount-1 ) * indexv : 0;
+
+			dom.background.style.backgroundPosition = horizontalOffset + 'px ' + verticalOffset + 'px';
+
+		}
 
     }
 
