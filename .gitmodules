@@ -1,0 +1,6 @@
+[submodule "lib/plugins/zoom"]
+	path = lib/plugins/zoom
+	url = git@github.com:GerHobbelt/zoom.js.git
+[submodule "lib/plugins/highlight"]
+	path = lib/plugins/highlight
+	url = git://github.com/GerHobbelt/highlight.js.git

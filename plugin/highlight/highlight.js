@@ -2,6 +2,19 @@
 
 (function ( window, factory ) {
 
+  // provide fallback if Highlight.js was not loaded...
+  if (typeof hljs === 'undefined') {
+    hljs = {
+      initHighlightingOnLoad: function() {
+        console.log("Dummy HighLight.js initializing...");
+      },
+
+      highlightBlock = function(a) {
+        console.log("Dummy HighLight.js highlightBlock() API invoked.", arguments);
+      }
+    };
+  }
+  
   if ( typeof module === "object" && typeof module.exports === "object" ) {
     // Expose a factory as module.exports in loaders that implement the Node
     // module pattern (including browserify).

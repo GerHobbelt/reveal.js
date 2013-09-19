@@ -333,6 +333,25 @@ function linkify( selector ) {
                 </section>
 
                 <section>
+                    <h2>Examples and Test Pages</h2>
+                    <ul>
+                        <li><a href="./examples/barebones.html">Examples :: barebones</a></li>
+                        <li><a href="./examples/embedded-media.html">Examples :: embedded-media</a></li>
+                        <li><a href="./examples/math.html">Examples :: math</a></li>
+                        <li><a href="./examples/slide-backgrounds.html">Examples :: slide-backgrounds</a></li>
+                        <li><a href="./plugin/markdown/example.html"> Plugin :: markdown/example</a></li>
+                        <li><a href="./plugin/notes/notes.html"> Plugin :: notes/notes</a></li>
+                        <li><a href="./plugin/notes-server/notes.html"> Plugin :: notes-server/notes</a></li>
+                        <li><a href="./plugin/postmessage/example.html"> Plugin :: postmessage/example</a></li>
+                        <li><a href="./test/examples/barebones.html"> Test :: Examples :: barebones</a></li>
+                        <li><a href="./test/examples/embedded-media.html"> Test :: Examples :: embedded-media</a></li>
+                        <li><a href="./test/examples/math.html"> Test :: Examples :: math</a></li>
+                        <li><a href="./test/examples/slide-backgrounds.html"> Test :: Examples :: slide-backgrounds</a></li>
+                        <li><a href="./test/test-markdown.html"> Test :: test-markdown</a></li>
+                        <li><a href="./test/test.html"> Test :: test</a></li>
+                    </ul>
+                </section>
+                <section>
                     <h2>Stellar Links</h2>
                     <ul>
                         <li><a href="http://slid.es">Try the online editor</a></li>
@@ -375,8 +394,8 @@ function linkify( selector ) {
                     { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
                     { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
                     { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    //{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    //{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
                     { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
                     // { src: 'plugin/leap/leap.js', async: true },
                     { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
