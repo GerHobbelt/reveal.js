@@ -212,13 +212,17 @@
         // If there's viewport defined use the body element
         if( !dom.viewport ) {
             dom.viewport = document.body;
-            dom.viewport.className += ' reveal-viewport';
+            if (!dom.viewport.classList.contains('reveal-viewport')) {
+                dom.viewport.classList.add('reveal-viewport');
+            }
         }
 
         // If the browser doesn't support core features we fall back
         // to a JavaScript-free mode without transforms
         if( !supports2DTransforms && !supports3DTransforms ) {
-            dom.viewport.className += ' no-transforms';
+            if (!dom.viewport.classList.contains('no-transforms')) {
+                dom.viewport.classList.add('no-transforms');
+            }
             return false;
         }
 
@@ -980,7 +984,7 @@
             for( var i = 0, len = anchors.length; i < len; i++ ) {
                 var anchor = anchors[i];
 
-                if( anchor.textContent && !anchor.querySelector( '*' ) && ( !anchor.className || !anchor.classList.contains( anchor, 'roll' ) ) ) {
+                if( anchor.textContent && !anchor.querySelector( '*' ) && ( !anchor.className || !anchor.classList.contains( 'roll' ) ) ) {
                     var span = document.createElement('span');
                     span.setAttribute('data-title', anchor.text);
                     span.innerHTML = anchor.innerHTML;
