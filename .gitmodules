@@ -10,3 +10,12 @@
 [submodule "lib/js/response.js"]
 	path = lib/js/response.js
 	url = git@github.com:GerHobbelt/response.js.git
+[submodule "lib/js/head"]
+	path = lib/js/head
+	url = git@github.com:GerHobbelt/headjs.git
+[submodule "lib/plugins/SyntaxHighlighter"]
+	path = lib/plugins/SyntaxHighlighter
+	url = git@github.com:GerHobbelt/SyntaxHighlighter.git
+[submodule "lib/js/classList"]
+	path = lib/js/classList
+	url = git@github.com:GerHobbelt/classList.js.git
