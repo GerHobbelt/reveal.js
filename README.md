@@ -476,6 +476,7 @@ Add `data-autoplay` to your media element if you want it to automatically start 
 
 
 ### Stretching elements
+
 Sometimes it's desirable to have an element, like an image or video, stretch to consume as much space as possible within a given slide. This can be done by adding the ```.stretch``` class to an element as seen below:
 
 ```html
@@ -489,6 +490,21 @@ Limitations:
 - Only direct descendants of a slide section can be stretched
 - Only one descendant per slide section can be stretched
 
+
+### Caveats
+
+- Make sure you have the outer container (generally that would be the `\<html>` tag) spans the entire viewport as Reveal performs some calculations based off the size of the container element. Hence code the start of your presentation like this:
+
+  ```
+  <!doctype html>
+  <html lang="en" style="height: 100%; width: 100%;">
+  ...
+  ```
+
+  On that same subject, also check out http://responsejs.com/labs/dimensions/ , http://verge.airve.com/ and http://www.quirksmode.org/mobile/viewports2.html for the low-down about viewport dimensions and ways to get at them.
+
+  **Note**: when you have loaded [verge](http://verge.airve.com/) or [response.js](http://responsejs.com/) then we use their proven methods to obtain the viewport dimensions and the above-mentioned &lt;html> width/height styles are not required any longer.
+  
 
 ## PDF Export
 
@@ -547,6 +563,7 @@ If you're using the external Markdown plugin, you can add notes with the help of
 <section data-markdown="example.md" data-separator="^\n\n\n" data-vertical="^\n\n" data-notes="^Note:"></section>
 
 # Title
+
 ## Sub-title
 
 Here is some content...

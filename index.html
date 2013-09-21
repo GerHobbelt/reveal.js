@@ -374,6 +374,13 @@ function linkify( selector ) {
 
         <script>
 
+            head.load("lib/plugins/zoom/js/zoom.js", function() {
+                console.log("zoom library loaded.", arguments);
+            });
+            head.load("lib/plugins/highlight/src/highlight.js", function() {
+                console.log("highlight library loaded.", arguments);
+            });
+
             // Full list of configuration options available here:
             // https://github.com/hakimel/reveal.js#configuration
             Reveal.initialize({
