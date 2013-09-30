@@ -1,0 +1,55 @@
+/**
+ * Default theme for reveal.js.
+ *
+ * Copyright (C) 2011-2012 Hakim El Hattab, http://hakim.se
+ */
+
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+
+
+// Include theme-specific fonts
+@font-face { 
+  font-family: ippon-brand;
+  src: url(./fonts/gpkn.ttf); 
+}
+
+@font-face { 
+  font-family: ippon-text; 
+  src: url(./fonts/tr-century-gothic.ttf); 
+}
+
+/*********************************************
+ * HEADERS
+ *********************************************/
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+	margin: $headingMargin;
+	color: $headingColor;
+
+	font-family: $headingFont;
+	line-height: $headingLineHeight;
+	letter-spacing: $headingLetterSpacing;
+}
+
+// Override theme settings (see ../template/settings.scss)
+$heading1TextShadow: 0;
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------
+
+.reveal h1 {
+	color: $ippon-primary;
+	font-family: $brandingFont;
+	text-transform: uppercase;
+}

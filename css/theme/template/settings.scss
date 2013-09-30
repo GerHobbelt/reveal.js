@@ -2,22 +2,26 @@
 // overridden by the super-theme
 
 // Background of the presentation
-$backgroundColor: #2b2b2b;
+$backgroundColor: white;
 
 // Primary/body text
-$mainFont: 'Lato', sans-serif;
+$mainFont: 'ippon-text', Helvetica, Arial, sans-serif;
 $mainFontSize: 36px;
-$mainColor: #eee;
+$mainColor: black;
 
 // Headings
 $headingMargin: 0 0 20px 0;
-$headingFont: 'League Gothic', Impact, sans-serif;
-$headingColor: #eee;
+$headingFont: 'ippon-text', Helvetica, Arial, sans-serif;
+$headingColor: #10b5c6;
 $headingLineHeight: 0.9em;
 $headingLetterSpacing: 0.02em;
 $headingTextTransform: uppercase;
-$headingTextShadow: 0px 0px 6px rgba(0,0,0,0.2);
-$heading1TextShadow: $headingTextShadow;
+//$headingTextShadow: 0px 0px 6px rgba(0,0,0,0.2);
+$headingTextShadow: 0px;
+//$heading1TextShadow: $headingTextShadow;
+$heading1TextShadow: 0px;
+
+$brandingFont: 'ippon-brand', Helvetica, Arial, sans-serif;
 
 // Links and actions
 $linkColor: #13DAEC;
@@ -32,3 +36,14 @@ $selectionColor: #fff;
 @mixin bodyBackground() {
 	background: $backgroundColor;
 }
+
+/*********************************************
+ * IPPON COLORS
+ *********************************************/
+
+$ippon-primary: #e42420;
+$ippon-primary-lighter: #0c5d58;
+$ippon-secondary: #fcc007;
+$ippon-secondary-lighter: #fdcb15;
+$ippon-complementary: #10b5c6;
+$ippon-complementary-darker: #157187;
