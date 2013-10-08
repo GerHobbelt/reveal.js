@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+@import url(http://fonts.googleapis.com/css?family=PT+Sans:400,700|Ubuntu:400,700);
 /**
  * Default theme for reveal.js.
  *
@@ -24,12 +24,89 @@
   background: radial-gradient(center, circle cover, #555a5f 0%, #1c1e20 100%);
   background-color: #2b2b2b; }
 
+body {
+  background: radial-gradient(at center, #fff 60%,#ddd);
+  background-color: #fff;
+}
+body.print-pdf {
+  background: #fff;
+}
+
 .reveal {
-  font-family: "Lato", sans-serif;
+  font-family: "Ubuntu", sans-serif;
   font-size: 36px;
   font-weight: 200;
   letter-spacing: -0.02em;
-  color: #eeeeee; }
+  color: #222; }
+
+.titleel {
+  display: none;
+}
+
+
+.reveal .slides>section.omnipresent {
+  display: block;
+  z-index: 11;
+  opacity: 1;
+}
+
+.reveal .slides>section>div.omnipresent, .reveal .slides>section>section>div.omnipresent {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: -1;
+  opacity: 1;
+}
+
+.reveal.page .slides section:not(.omnipresent):before {
+  background: none;
+}
+
+.reveal.page .slides section:not(.omnipresent):after {
+  box-shadow: none;
+}
+
+.reveal.cube .slides section:not(.omnipresent):before {
+  background: none;
+}
+
+.reveal.cube .slides section:not(.omnipresent):after {
+  box-shadow: none;
+}
+
+
+.titlebar {
+  -webkit-transition: opacity .15s ease;
+  -moz-transition: opacity .15s ease;
+  -ms-transition: opacity .15s ease;
+  -o-transition: opacity .15s ease;
+  transition: opacity .15s ease;
+}
+
+body:not([data-slide='1']) .titlebar {
+  opacity: 0;
+}
+
+body.print-pdf .reveal .slides>section.omnipresent {
+  display: none !important;
+} 
+
+
+body.print-pdf .titlebar {
+  opacity: 1;
+}
+
+*[data-slide='1'] .titleel{
+  display: block;
+}
+
+*[data-slide='1'] .bodyel{
+  display: none;
+}
+
 
 ::selection {
   color: white;
@@ -46,15 +123,13 @@
 .reveal h5,
 .reveal h6 {
   margin: 0 0 20px 0;
-  color: #eeeeee;
-  font-family: "League Gothic", Impact, sans-serif;
-  line-height: 0.9em;
-  letter-spacing: 0.02em;
+  color: #222;
+  font-family: "PT Sans", Arial, sans-serif;
   text-transform: uppercase;
-  text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2); }
+}
 
 .reveal h1 {
-  text-shadow: 0 1px 0 #cccccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbbbbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaaaaa, 0 6px 1px rgba(0, 0, 0, 0.1), 0 0 5px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3), 0 3px 5px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.25), 0 20px 20px rgba(0, 0, 0, 0.15); }
+}
 
 /*********************************************
  * LINKS
@@ -80,6 +155,7 @@
 /*********************************************
  * IMAGES
  *********************************************/
+/*
 .reveal section img {
   margin: 15px 0px;
   background: rgba(255, 255, 255, 0.12);
@@ -90,7 +166,7 @@
   -ms-transition: all .2s linear;
   -o-transition: all .2s linear;
   transition: all .2s linear; }
-
+*/
 .reveal a:hover img {
   background: rgba(255, 255, 255, 0.2);
   border-color: #13daec;
