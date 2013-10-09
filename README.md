@@ -115,7 +115,7 @@ Reveal.initialize({
     transitionSpeed: 'default', // default/fast/slow
 
     // Transition style for full page backgrounds
-    backgroundTransition: 'default' // default/linear/none
+    backgroundTransition: 'default', // default/linear/none
 
     // Parallax background image
     parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
@@ -126,6 +126,11 @@ Reveal.initialize({
     // Number of slides away from the current that are visible
     viewDistance: 3,
 
+	// Transition style for full page backgrounds
+	backgroundTransition: 'default', // default/linear/none
+
+	// Display a subtle timer bar (time is in minutes)
+	timeRemaining: 0
 
 });
 ```
