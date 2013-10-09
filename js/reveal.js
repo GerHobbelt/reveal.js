@@ -138,6 +138,9 @@
             // Number of slides away from the current that are visible
             viewDistance: 3,
 
+            // OmniPresent slides support
+            omniPresent: false,
+
             // Script dependencies to load
             dependencies: []
         },
@@ -536,7 +539,7 @@
     function createBackgrounds() {
 
         if( isPrintingPDF() ) {
-            document.body.classList.add( 'print-pdf' );
+            dom.viewport.classList.add( 'print-pdf' );
         }
 
         // Clear prior backgrounds
@@ -584,7 +587,7 @@
 
         }
 
-		var omnipresent = toArray( document.querySelectorAll( ".reveal .slides>section.omnipresent" ) );
+		var omnipresent = (config.omniPresent ? toArray( document.querySelectorAll( ".reveal .slides>section.omnipresent" ) ) : []);
 		if( omnipresent && omnipresent.length == 1 ) {
 			omnipresent = omnipresent[0];
 		} else {
@@ -1287,7 +1290,7 @@
             var slides = toArray( document.querySelectorAll( SLIDES_SELECTOR ) );
 
             for( var i = 0, len = slides.length; i < len; i++ ) {
-				if( i == 0 ) {
+				if( config.omniPresent && i == 0 ) {
 					continue;
 				}
                 var slide = slides[ i ];
@@ -1866,13 +1869,17 @@
         // an array
         var slides = toArray( document.querySelectorAll( selector ) ),
             slidesLength = slides.length;
-		var background = slides[0];
-		if( background && background.classList.contains('omnipresent') ) {
-			background.classList.remove('past');
-		}
-		if( background && background.classList.contains('omnipresent') && index == 0 ) {
-			index = 1;
-		}
+
+        if( config.omniPresent ) {
+    		var background = slides[0];
+    		if( background && background.classList.contains('omnipresent') ) {
+    			background.classList.remove('past');
+    		}
+    		if( background && background.classList.contains('omnipresent') && index == 0 ) {
+    			index = 1;
+    		}
+        }
+
         if( slidesLength ) {
 
             // Should the index loop?
@@ -1912,7 +1919,7 @@
                 // http://www.w3.org/html/wg/drafts/html/master/editing.html#the-hidden-attribute
                 element.setAttribute( 'hidden', '' );
 
-				if( i < index && (! element.classList.contains('omnipresent')) ) {
+				if( i < index && (!config.omniPresent || !element.classList.contains('omnipresent')) ) {
                     // Any element previous to index is given the 'past' class
                     element.classList.add( reverse ? 'future' : 'past' );
                 }
@@ -2016,7 +2023,7 @@
             }
 
             for( var x = 0; x < horizontalSlidesLength; x++ ) {
-				if (x == 0) {
+				if( config.omniPresent && x == 0 ) {
 					continue;
 				}
                 var horizontalSlide = horizontalSlides[x];
@@ -2093,7 +2100,7 @@
                 }
             }
 			if( ! isPrintingPDF() ) {
-				document.body.setAttribute( 'data-slide', pastCount );
+				dom.viewport.setAttribute( 'data-slide', pastCount );
 			}
             dom.progressbar.style.width = ( pastCount / ( totalCount - 1 ) ) * window.innerWidth + 'px';
         }
