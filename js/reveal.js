@@ -3200,7 +3200,8 @@
 
         // Returns true if we're currently on the first slide
         isFirstSlide: function() {
-            return !!document.querySelector( SLIDES_SELECTOR + '.past' );
+            var rv = document.querySelector( SLIDES_SELECTOR + '.past' );
+            return !rv;
         },
 
         // Returns true if we're currently on the last slide
