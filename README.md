@@ -102,6 +102,9 @@ Reveal.initialize({
     // by using a data-autoslide attribute on your slides
     autoSlide: 0,
 
+    // Stop auto-sliding after user input
+    autoSlideStoppable: true,
+
     // Enable slide navigation via mouse wheel
     mouseWheel: false,
 
@@ -126,11 +129,11 @@ Reveal.initialize({
     // Number of slides away from the current that are visible
     viewDistance: 3,
 
-	// Transition style for full page backgrounds
-	backgroundTransition: 'default', // default/linear/none
+    // Transition style for full page backgrounds
+    backgroundTransition: 'default', // default/linear/none
 
-	// Display a subtle timer bar (time is in minutes)
-	timeRemaining: 0
+    // Display a subtle timer bar (time is in minutes)
+    timeRemaining: 0
 
 });
 ```

@@ -102,6 +102,9 @@
             // by using a data-autoslide attribute on your slides
             autoSlide: 0,
 
+			// Stop auto-sliding after user input
+			autoSlideStoppable: false,
+
             // Enable slide navigation via mouse wheel
             mouseWheel: false,
 
@@ -801,15 +804,20 @@
 
 		if( config.focusBodyOnPageVisiblityChange ) {
 			var visibilityChange;
-			if ('hidden' in document) {
+
+			if( 'hidden' in document ) {
 				visibilityChange = 'visibilitychange';
-			} else if ('msHidden' in document) {
+			}
+			else if( 'msHidden' in document ) {
 				visibilityChange = 'msvisibilitychange';
-			} else if ('webkitHidden' in document) {
+			}
+			else if( 'webkitHidden' in document ) {
 				visibilityChange = 'webkitvisibilitychange';
 			}
 
-			document.addEventListener(visibilityChange, onPageVisibilityChange, false);
+			if( visibilityChange ) {
+				document.addEventListener( visibilityChange, onPageVisibilityChange, false );
+			}
 		}
 
         if ( config.controls && dom.controls ) {
@@ -2638,6 +2646,18 @@
     // ----------------------------- EVENTS -------------------------------//
     // --------------------------------------------------------------------//
 
+	/**
+	 * Called by all event handlers that are based on user
+	 * input.
+	 */
+	function onUserInput( event ) {
+
+		if( config.autoSlideStoppable ) {
+			config.autoSlide = 0;
+			cancelAutoSlide();
+		}
+
+	}
 
     /**
      * Handler for the document level 'keydown' event.
@@ -2776,6 +2796,8 @@
         // another timeout
         cueAutoSlide();
 
+		onUserInput( event );
+
     }
 
     /**
@@ -2799,6 +2821,8 @@
                 y: touch.startY
             } );
         }
+
+		onUserInput( event );
 
     }
 
@@ -2906,6 +2930,8 @@
             onTouchStart( event );
         }
 
+		onUserInput( event );
+
     }
 
     /**
@@ -3003,17 +3029,20 @@
         }
 
         slide( h, v );
+
+		onUserInput( event );
+
     }
 
     /**
      * Event handler for navigation control buttons.
      */
-    function onNavigateLeftClicked( event ) { event.preventDefault(); navigateLeft(); }
-    function onNavigateRightClicked( event ) { event.preventDefault(); navigateRight(); }
-    function onNavigateUpClicked( event ) { event.preventDefault(); navigateUp(); }
-    function onNavigateDownClicked( event ) { event.preventDefault(); navigateDown(); }
-    function onNavigatePrevClicked( event ) { event.preventDefault(); navigatePrev(); }
-    function onNavigateNextClicked( event ) { event.preventDefault(); navigateNext(); }
+	function onNavigateLeftClicked( event ) { event.preventDefault(); navigateLeft(); onUserInput(); }
+	function onNavigateRightClicked( event ) { event.preventDefault(); navigateRight(); onUserInput(); }
+	function onNavigateUpClicked( event ) { event.preventDefault(); navigateUp(); onUserInput(); }
+	function onNavigateDownClicked( event ) { event.preventDefault(); navigateDown(); onUserInput(); }
+	function onNavigatePrevClicked( event ) { event.preventDefault(); navigatePrev(); onUserInput(); }
+	function onNavigateNextClicked( event ) { event.preventDefault(); navigateNext(); onUserInput(); }
 
     /**
      * Handler for the window level 'hashchange' event.
