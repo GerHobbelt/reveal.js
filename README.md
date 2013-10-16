@@ -383,7 +383,7 @@ You can also add relative navigation links, similar to the built in reveal.js co
 
 ### Fragments
 
-Fragments are used to highlight individual elements on a slide. Every element with the class ```fragment``` will be stepped through before moving on to the next slide. Here's an example: http://lab.hakim.se/reveal-js/#/19
+Fragments are used to highlight individual elements on a slide. Every element with the class ```fragment``` will be stepped through before moving on to the next slide. Here's an example: http://lab.hakim.se/reveal-js/#/fragments
 
 The default fragment style is to start out invisible and fade in. This style can be changed by appending a different class to the fragment:
 
@@ -875,22 +875,22 @@ Some reveal.js features, like external markdown, require that presentations run 
 2. Install [Grunt](http://gruntjs.com/getting-started#installing-the-cli)
 
 4. Clone the reveal.js repository
-```
+```sh
 $ git clone git@github.com:hakimel/reveal.js.git
 ```
 
 5. Navigate to the reveal.js folder
-```
+```sh
 $ cd reveal.js
 ```
 
 6. Install dependencies
-```
+```sh
 $ npm install
 ```
 
 7. Serve the presentation and monitor source files for changes
-```
+```sh
 $ grunt serve
 ```
 
