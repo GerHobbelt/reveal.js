@@ -145,9 +145,6 @@
             // Number of slides away from the current that are visible
             viewDistance: 3,
 
-            // OmniPresent slides support
-            omniPresent: false,
-
             // Script dependencies to load
             dependencies: []
         },
@@ -479,7 +476,7 @@
         dom.slides.classList.add( 'no-transition' );
 
         dom.slides_wrapper = createSingletonNode( dom.wrapper, 'div', 'slides-wrapper', null );
-        // now place wrapper at the 'slides' position in the DOM and wrap it around the slides when we didn't already: 
+        // now place wrapper at the 'slides' position in the DOM and wrap it around the slides when we didn't already:
         //   http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-952280727
         if (!dom.slides_wrapper.hasChildNodes()) {
             dom.slides_wrapper = dom.wrapper.insertBefore(dom.slides_wrapper, dom.slides);
@@ -551,6 +548,7 @@
             container.appendChild( node );
         }
         return node;
+
     }
 
     /**
@@ -689,7 +687,7 @@
             if( dom.progress ) {
                 dom.progress.style.display = config.progress ? 'block' : 'none';
             }
-			
+
 			if( dom.timeRemaining ) {
 				dom.timeRemaining.style.display = config.timeRemaining ? 'block' : 'none';
 			}
@@ -1609,7 +1607,7 @@
     /**
      * Return theoverview rendering mode:
      *
-     * 0: default. Uses CSS3 translateZ style. This mode does not work well with large presentations and/or subelements which have been tweaked using CSS z-index 
+     * 0: default. Uses CSS3 translateZ style. This mode does not work well with large presentations and/or subelements which have been tweaked using CSS z-index
      * 1: outer DIV zoom
      * 2: outer DIV scale
      */
@@ -1629,7 +1627,7 @@
         case 'scale':
             return 2;
         }
-    } 
+    }
 
     /**
      * Checks if the current or specified slide is vertical
@@ -2147,7 +2145,8 @@
                     pastCount++;
                 }
             }
-			if( ! isPrintingPDF() ) {
+
+			if( !isPrintingPDF() ) {
 				dom.viewport.setAttribute( 'data-slide', pastCount );
 			}
             dom.progressbar.style.width = ( pastCount / ( totalCount - 1 ) ) * window.innerWidth + 'px';
