@@ -60,6 +60,10 @@
             minScale: 0.2,
             maxScale: 1.0,
 
+            // Bounds for smallest/largest possible scale to apply to overview display
+            overviewMinScale: 0.05,
+            overviewMaxScale: 1.0,
+
             // Display controls in the bottom right corner
             controls: true,
 
@@ -75,8 +79,8 @@
             // Enable keyboard shortcuts for navigation
             keyboard: true,
 
-            // Enable the slide overview mode
-            overview: true,
+            // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'zoom' | 'scale')
+            overview: 'zoom',
 
             // Vertical centring of slides
             center: true,
@@ -166,6 +170,9 @@
         // as a class to the body. This list contains the combined state of
         // all current slides.
         state = [],
+
+        // NULL when a single slide is shown; in overview mode this contains the overview info (number of H/V slides, ...)
+        overview_slides_info = null,
 
         // The current scale of the presentation (see width/height config)
         scale = 1,
@@ -470,6 +477,17 @@
 
         // Prevent transitions while we're loading
         dom.slides.classList.add( 'no-transition' );
+
+        dom.slides_wrapper = createSingletonNode( dom.wrapper, 'div', 'slides-wrapper', null );
+        // now place wrapper at the 'slides' position in the DOM and wrap it around the slides when we didn't already: 
+        //   http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-952280727
+        if (!dom.slides_wrapper.hasChildNodes()) {
+            dom.slides_wrapper = dom.wrapper.insertBefore(dom.slides_wrapper, dom.slides);
+            dom.slides_wrapper.appendChild(dom.slides);
+        }
+        // set width/height or zoom/scale won't work:
+        dom.slides_wrapper.style.width = '100%';
+        dom.slides_wrapper.style.height = '100%';
 
         // Background element
         dom.background = createSingletonNode( dom.wrapper, 'div', 'backgrounds', null );
@@ -1295,6 +1313,38 @@
                 transformElement( dom.slides, 'scale('+ scale +')', '0% 0%' );
             }
 
+            // When overview mode is active (and the relevant data available), do scale the slides' collective too:
+            if (overview_slides_info) {
+                var totalSlidesWidth = slideWidth * overview_slides_info.horizontal_count * 1.05; // Reveal uses 5% spacing between slides in the overview display
+                var totalSlidesHeight = slideHeight * overview_slides_info.vertical_count * 1.05;
+
+                // Determine scale of content to fit within available space
+                var overviewScale = Math.max( availableWidth / totalSlidesWidth, availableHeight / totalSlidesHeight );
+                overviewScale /= scale;
+
+                // Respect max/min scale settings
+                overviewScale = Math.max( overviewScale, config.overviewMinScale );
+                overviewScale = Math.min( overviewScale, config.overviewMaxScale );
+
+                if( typeof dom.slides_wrapper.style.zoom !== 'undefined' && !navigator.userAgent.match( /(iphone|ipod|ipad|android|chrome)/gi ) ) {
+                    dom.slides_wrapper.style.zoom = overviewScale;
+                }
+                // Apply scale transform as a fallback
+                else {
+                    transformElement( dom.slides_wrapper, 'scale('+ overviewScale +')', '50% 25%' );
+                }
+            } else {
+                // reset wrapper scale for slingle sheet view
+                if( typeof dom.slides_wrapper.style.zoom !== 'undefined' && !navigator.userAgent.match( /(iphone|ipod|ipad|android|chrome)/gi ) ) {
+                    dom.slides_wrapper.style.zoom = null;
+                }
+                // Apply scale transform as a fallback
+                else {
+                    transformElement( dom.slides_wrapper, '' );
+                }
+
+            }
+
             // Select all slides, vertical and horizontal
             var slides = toArray( document.querySelectorAll( SLIDES_SELECTOR ) );
 
@@ -1431,7 +1481,7 @@
             activateOverviewTimeout = setTimeout( function() {
 
                 var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
-                var slides_info = {
+                overview_slides_info = {
                     horizontal_count: horizontalSlides.length,
                     vertical_count: 1
                 };
@@ -1443,12 +1493,12 @@
                     hslide.setAttribute( 'data-index-h', i );
 
                     // Apply CSS transform
-                    transformElement( hslide, 'translateZ(-'+ depth +'px) translate(' + ( ( i - indexh ) * hoffset ) + '%, 0%)' );
+                    transformElement( hslide, (!getSpecialOverviewMode() ? 'translateZ(-'+ depth +'px) ' : '') + 'translate(' + ( ( i - indexh ) * hoffset ) + '%, 0%)' );
 
                     if( hslide.classList.contains( 'stack' ) ) {
 
                         var verticalSlides = hslide.querySelectorAll( 'section' );
-                        slides_info.vertical_count = Math.max(slides_info.vertical_count, verticalSlides.length);
+                        overview_slides_info.vertical_count = Math.max(overview_slides_info.vertical_count, verticalSlides.length);
 
                         for( var j = 0, len2 = verticalSlides.length; j < len2; j++ ) {
                             var verticalIndex = i === indexh ? indexv : getPreviousVerticalIndex( hslide );
@@ -1474,11 +1524,11 @@
                     }
                 }
 
-                console.log("Feed the slides matrix to LAYOUT so we can determine properly how far to zoom/transform: ", slides_info);
-
                 updateSlidesVisibility();
 
-                layout(slides_info);
+                console.log("Feed the slides matrix to LAYOUT so we can determine properly how far to zoom/transform: ", overview_slides_info);
+
+                layout();
 
                 if( !wasActive ) {
                     // Notify observers of the overview showing
@@ -1486,7 +1536,7 @@
                         'indexh': indexh,
                         'indexv': indexv,
                         'currentSlide': currentSlide,
-                        'slidesMatrixInfo': slides_info
+                        'slidesMatrixInfo': overview_slides_info
                     } );
                 }
 
@@ -1507,6 +1557,8 @@
 
             clearTimeout( activateOverviewTimeout );
             clearTimeout( deactivateOverviewTimeout );
+
+            overview_slides_info = null;
 
             dom.wrapper.classList.remove( 'overview' );
 
@@ -1578,6 +1630,31 @@
         return dom.wrapper && dom.wrapper.classList.contains( 'overview' );
 
     }
+
+    /**
+     * Return theoverview rendering mode:
+     *
+     * 0: default. Uses CSS3 translateZ style. This mode does not work well with large presentations and/or subelements which have been tweaked using CSS z-index 
+     * 1: outer DIV zoom
+     * 2: outer DIV scale
+     */
+    function getSpecialOverviewMode() {
+        switch (config.overview) {
+        case false:
+            return false;
+
+        default:
+        case true:
+        case 'translateZ':
+            return 0;
+
+        case 'zoom':
+            return 1;
+
+        case 'scale':
+            return 2;
+        }
+    } 
 
     /**
      * Checks if the current or specified slide is vertical

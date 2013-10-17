@@ -19,3 +19,6 @@
 [submodule "lib/js/classList"]
 	path = lib/js/classList
 	url = git@github.com:GerHobbelt/classList.js.git
+[submodule "lib/js/zoom"]
+	path = lib/js/zoom
+	url = git@github.com:GerHobbelt/zoom.js.git

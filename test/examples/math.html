@@ -175,7 +175,7 @@
 
                 dependencies: [
                     { src: '../../lib/js/classList/classList.js' },
-                    { src: '../../plugin/math/math.js', async: false }
+                    { src: '../../plugin/math/math.js', async: false /* async=true: will load MathJax while the presentation is already running, which is fine when it is not used in the first slide. However, the side effect is that when browsing quickly through the presentation that some pages may not have rendered their formulas yet. */ }
                 ]
             });
 
