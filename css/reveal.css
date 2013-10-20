@@ -1486,6 +1486,31 @@ body {
     float: right
 }
 
+/*********************************************
+ * PARALLAX BACKGROUND
+ *********************************************/
+
+.reveal.has-parallax-background .backgrounds {
+	-webkit-transition: all 0.8s ease;
+	   -moz-transition: all 0.8s ease;
+	    -ms-transition: all 0.8s ease;
+	        transition: all 0.8s ease;
+}
+
+/* Global transition speed settings */
+.reveal.has-parallax-background[data-transition-speed="fast"] .backgrounds {
+	-webkit-transition-duration: 400ms;
+	   -moz-transition-duration: 400ms;
+	    -ms-transition-duration: 400ms;
+	        transition-duration: 400ms;
+}
+.reveal.has-parallax-background[data-transition-speed="slow"] .backgrounds {
+	-webkit-transition-duration: 1200ms;
+	   -moz-transition-duration: 1200ms;
+	    -ms-transition-duration: 1200ms;
+	        transition-duration: 1200ms;
+}
+
 
 /*********************************************
  * LINK PREVIEW OVERLAY
@@ -1608,6 +1633,30 @@ body {
             -ms-transform: scale(0.2);
                 transform: scale(0.2);
     }
+
+
+
+/*********************************************
+ * PLAYBACK COMPONENT
+ *********************************************/
+
+.reveal .playback {
+	position: fixed;
+	left: 15px;
+	bottom: 15px;
+	z-index: 30;
+	cursor: pointer;
+
+	-webkit-transition: all 400ms ease;
+	   -moz-transition: all 400ms ease;
+	    -ms-transition: all 400ms ease;
+	        transition: all 400ms ease;
+}
+
+.reveal.overview .playback {
+	opacity: 0;
+	visibility: hidden;
+}
 
 
 /*********************************************
