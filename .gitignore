@@ -1,6 +1,23 @@
+# Editor backup files
+*~
+*.bak
+
+# MSOffice temporary files
+~*
+
+# misc
 .DS_Store
 .svn
 log/*.log
 tmp/**
 node_modules/
 .sass-cache
+
+# output of GRUNT ZIP
+reveal-js-presentation.zip
+
+
+# ignored dist/build outputs
+css/reveal.min.css
+js/reveal.min.js
+

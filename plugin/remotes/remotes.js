@@ -1,5 +1,5 @@
 /**
- * Touch-based remote controller for your presentation courtesy 
+ * Touch-based remote controller for your presentation courtesy
  * of the folks at http://remotes.io
  */
 
@@ -7,14 +7,14 @@
 
     /**
      * Detects if we are dealing with a touch enabled device (with some false positives)
-     * Borrowed from modernizr: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touch.js   
+     * Borrowed from modernizr: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touch.js
      */
     var hasTouch  = (function(){
         return ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch;
     })();
 
     /**
-     * Detects if notes are enable and the current page is opened inside an /iframe
+     * Detects if notes are enabled and the current page is opened inside an /iframe
      * this prevents loading Remotes.io several times
      */
     var isNotesAndIframe = (function(){
@@ -34,6 +34,6 @@
             ;
         } );
 
-        head.js('https://raw.github.com/Remotes/Remotes/master/dist/remotes.ne.min.js');
+        head.js('https://hakim-static.s3.amazonaws.com/reveal-js/remotes.ne.min.js');
     }
 })(window);
