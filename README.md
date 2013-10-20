@@ -532,7 +532,7 @@ Limitations:
   On that same subject, also check out http://responsejs.com/labs/dimensions/ , http://verge.airve.com/ and http://www.quirksmode.org/mobile/viewports2.html for the low-down about viewport dimensions and ways to get at them.
 
   **Note**: when you have loaded [verge](http://verge.airve.com/) or [response.js](http://responsejs.com/) then we use their proven methods to obtain the viewport dimensions and the above-mentioned &lt;html> width/height styles are not required any longer.
-  
+
 
 ## PDF Export
 
@@ -940,7 +940,7 @@ If you have personal support questions use [StackOverflow](http://stackoverflow.
   - Tabs to indent
   - Single-quoted strings
   - No space between function name and opening argument parenthesis
-  - One space after opening and before closing parenthesis 
+  - One space after opening and before closing parenthesis
 - Should be made towards the **dev branch**
 - Should be submitted from a feature/topic branch (not your master)
 
