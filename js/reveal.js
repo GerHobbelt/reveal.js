@@ -107,7 +107,7 @@
             autoSlide: 0,
 
 			// Stop auto-sliding after user input
-			autoSlideStoppable: false,
+			autoSlideStoppable: true,
 
             // Enable slide navigation via mouse wheel
             mouseWheel: false,
@@ -152,9 +152,6 @@
         // Flags if reveal.js is loaded (has dispatched the 'ready' event)
         loaded = false,
 
-        // The current auto-slide duration
-        autoSlide = 0,
-
         // The horizontal and vertical index of the currently active slide
         indexh /* = undefined */,
         indexv /* = undefined */,
@@ -177,20 +174,14 @@
         // Cached references to DOM elements
         dom = {},
 
-        // Client support for CSS 3D transforms, see #checkCapabilities()
-        supports3DTransforms,
-
-        // Client support for CSS 2D transforms, see #checkCapabilities()
-        supports2DTransforms,
+		// Features supported by the browser, see #checkCapabilities()
+		features = {},
 
         // Client is a mobile device, see #checkCapabilities()
         isMobileDevice,
 
         // Throttles mouse wheel navigation
         lastMouseWheelStep = 0,
-
-        // An interval used to automatically move on to the next slide
-        autoSlideTimeout = 0,
 
         // Delays updates to the URL due to a Chrome thumbnailer bug
         writeURLTimeout = 0,
@@ -203,6 +194,15 @@
 
         // Flags if the interaction event listeners are bound
         eventsAreBound = false,
+
+		// The current auto-slide duration
+		autoSlide = 0,
+
+		// Auto slide properties
+		autoSlidePlayer,
+		autoSlideTimeout = 0,
+		autoSlideStartTime = -1,
+		autoSlidePaused = false,
 
         // Holds information about the currently ongoing touch input
         touch = {
@@ -235,7 +235,7 @@
 
         // If the browser doesn't support core features we fall back
         // to a JavaScript-free mode without transforms
-        if( !supports2DTransforms && !supports3DTransforms ) {
+		if( !features.transforms2d && !features.transforms3d ) {
             if (!dom.viewport.classList.contains('no-transforms')) {
                 dom.viewport.classList.add('no-transforms');
             }
@@ -263,17 +263,22 @@
      */
     function checkCapabilities() {
 
-        supports3DTransforms =  'WebkitPerspective' in document.body.style ||
+		features.transforms3d = 'WebkitPerspective' in document.body.style ||
                                 'MozPerspective' in document.body.style ||
                                 'msPerspective' in document.body.style ||
                                 'OPerspective' in document.body.style ||
                                 'perspective' in document.body.style;
 
-        supports2DTransforms =  'WebkitTransform' in document.body.style ||
+		features.transforms2d = 'WebkitTransform' in document.body.style ||
                                 'MozTransform' in document.body.style ||
                                 'msTransform' in document.body.style ||
                                 'OTransform' in document.body.style ||
                                 'transform' in document.body.style;
+
+		features.requestAnimationFrameMethod = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame;
+		features.requestAnimationFrame = typeof features.requestAnimationFrameMethod === 'function';
+
+		features.canvas = !!document.createElement( 'canvas' ).getContext;
 
         isMobileDevice = navigator.userAgent.match( /(iphone|ipod|android)/gi );
 
@@ -663,6 +668,8 @@
      */
     function configure( options ) {
 
+		var numberOfSlides = document.querySelectorAll( SLIDES_SELECTOR ).length;
+
         if( dom.wrapper ) {
             dom.wrapper.classList.remove( config.transition );
         }
@@ -672,7 +679,7 @@
         if( typeof options === 'object' ) extend( config, options );
 
         // Force linear transition based on browser capabilities
-        if( supports3DTransforms === false ) config.transition = 'linear';
+		if( features.transforms3d === false ) config.transition = 'linear';
 
         if( dom.wrapper ) {
             dom.wrapper.classList.add( config.transition );
@@ -731,6 +738,20 @@
         else {
             disablePreviewLinks();
             enablePreviewLinks( '[data-preview-link]' );
+		}
+
+		// Auto-slide playback controls
+		if( numberOfSlides > 1 && config.autoSlide && config.autoSlideStoppable && features.canvas && features.requestAnimationFrame ) {
+			autoSlidePlayer = new Playback( dom.wrapper, function() {
+				return Math.min( Math.max( ( Date.now() - autoSlideStartTime ) / autoSlide, 0 ), 1 );
+			} );
+
+			autoSlidePlayer.on( 'click', onAutoSlidePlayerClick );
+			autoSlidePaused = false;
+		}
+		else if( autoSlidePlayer ) {
+			autoSlidePlayer.destroy();
+			autoSlidePlayer = null;
         }
 
         // Load the theme in the config, if it's not already loaded
@@ -1037,16 +1058,6 @@
      */
     function removeAddressBar() {
 
-        // Portrait and not Chrome for iOS
-        if( window.orientation === 0 && !/crios/gi.test( navigator.userAgent ) ) {
-            document.documentElement.style.overflow = 'scroll';
-            document.body.style.height = '120%';
-        }
-        else {
-            document.documentElement.style.overflow = '';
-            document.body.style.height = '100%';
-        }
-
         setTimeout( function() {
             window.scrollTo( 0, 1 );
         }, 10 );
@@ -1073,7 +1084,7 @@
      */
     function enableRollingLinks() {
 
-        if( supports3DTransforms && !( 'msPerspective' in document.body.style ) ) {
+		if( features.transforms3d && !( 'msPerspective' in document.body.style ) ) {
             var anchors = document.querySelectorAll( SLIDES_SELECTOR + ' a:not(.image)' );
 
             for( var i = 0, len = anchors.length; i < len; i++ ) {
@@ -1878,6 +1889,8 @@
         // Update the URL hash
         writeURL();
 
+		cueAutoSlide();
+
     }
 
     /**
@@ -2023,18 +2036,6 @@
             if( slideState ) {
                 state = state.concat( slideState.split( ' ' ) );
             }
-
-            // If this slide has a data-autoslide attribute associated use this as
-            // autoSlide value otherwise use the global configured time
-            var slideAutoSlide = slides[index].getAttribute( 'data-autoslide' );
-            if( slideAutoSlide ) {
-                autoSlide = parseInt( slideAutoSlide, 10 );
-            }
-            else {
-                autoSlide = config.autoSlide;
-            }
-
-            cueAutoSlide();
 
         }
         else {
@@ -2567,11 +2568,35 @@
      */
     function cueAutoSlide() {
 
-        clearTimeout( autoSlideTimeout );
+		cancelAutoSlide();
 
-        // Cue the next auto-slide if enabled
-        if( autoSlide && !isPaused() && !isOverview() ) {
-            autoSlideTimeout = setTimeout( navigateNext, autoSlide );
+		if( currentSlide ) {
+
+			// If the current slide has a data-autoslide use that,
+			// otherwise use the config.autoSlide value
+			var slideAutoSlide = currentSlide.getAttribute( 'data-autoslide' );
+			if( slideAutoSlide ) {
+				autoSlide = parseInt( slideAutoSlide, 10 );
+			}
+			else {
+				autoSlide = config.autoSlide;
+			}
+
+			// Cue the next auto-slide if:
+			// - There is an autoSlide value
+			// - Auto-sliding isn't paused by the user
+			// - The presentation isn't paused
+			// - The overview isn't active
+			// - The presentation isn't over
+			if( autoSlide && !autoSlidePaused && !isPaused() && !isOverview() && ( !Reveal.isLastSlide() || config.loop === true ) ) {
+				autoSlideTimeout = setTimeout( navigateNext, autoSlide );
+				autoSlideStartTime = Date.now();
+			}
+
+			if( autoSlidePlayer ) {
+				autoSlidePlayer.setPlaying( autoSlideTimeout !== -1 );
+			}
+
         }
 
     }
@@ -2582,6 +2607,25 @@
     function cancelAutoSlide() {
 
         clearTimeout( autoSlideTimeout );
+		autoSlideTimeout = -1;
+
+	}
+
+	function pauseAutoSlide() {
+
+		autoSlidePaused = true;
+		clearTimeout( autoSlideTimeout );
+
+		if( autoSlidePlayer ) {
+			autoSlidePlayer.setPlaying( false );
+		}
+
+	}
+
+	function resumeAutoSlide() {
+
+		autoSlidePaused = false;
+		cueAutoSlide();
 
     }
 
@@ -2692,8 +2736,7 @@
 	function onUserInput( event ) {
 
 		if( config.autoSlideStoppable ) {
-			config.autoSlide = 0;
-			cancelAutoSlide();
+			pauseAutoSlide();
 		}
 
 	}
@@ -2704,6 +2747,8 @@
      * @param {Object} event
      */
     function onDocumentKeyDown( event ) {
+
+		onUserInput( event );
 
         // Check if there's a focused element that could be using
         // the keyboard
@@ -2825,8 +2870,13 @@
             event.preventDefault();
         }
         // ESC or O key
-        else if ( ( event.keyCode === 27 || event.keyCode === 79 ) && supports3DTransforms ) {
-            toggleOverview();
+		else if ( ( event.keyCode === 27 || event.keyCode === 79 ) && features.transforms3d ) {
+			if( dom.preview ) {
+				closePreview();
+			}
+			else {
+				toggleOverview();
+			}
 
             event.preventDefault();
         }
@@ -2834,8 +2884,6 @@
         // If auto-sliding is enabled we need to cue up
         // another timeout
         cueAutoSlide();
-
-		onUserInput( event );
 
     }
 
@@ -2861,8 +2909,6 @@
             } );
         }
 
-		onUserInput( event );
-
     }
 
     /**
@@ -2872,6 +2918,8 @@
 
         // Each touch should only trigger one action
         if( !touch.captured ) {
+			onUserInput( event );
+
             var currentX = event.touches[0].clientX;
             var currentY = event.touches[0].clientY;
 
@@ -2969,8 +3017,6 @@
             onTouchStart( event );
         }
 
-		onUserInput( event );
-
     }
 
     /**
@@ -3028,6 +3074,8 @@
      */
     function onProgressClicked( event ) {
 
+		onUserInput( event );
+
         event.preventDefault();
 
         var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
@@ -3069,19 +3117,17 @@
 
         slide( h, v );
 
-		onUserInput( event );
-
     }
 
     /**
      * Event handler for navigation control buttons.
      */
-	function onNavigateLeftClicked( event ) { event.preventDefault(); navigateLeft(); onUserInput(); }
-	function onNavigateRightClicked( event ) { event.preventDefault(); navigateRight(); onUserInput(); }
-	function onNavigateUpClicked( event ) { event.preventDefault(); navigateUp(); onUserInput(); }
-	function onNavigateDownClicked( event ) { event.preventDefault(); navigateDown(); onUserInput(); }
-	function onNavigatePrevClicked( event ) { event.preventDefault(); navigatePrev(); onUserInput(); }
-	function onNavigateNextClicked( event ) { event.preventDefault(); navigateNext(); onUserInput(); }
+	function onNavigateLeftClicked( event ) { event.preventDefault(); onUserInput(); navigateLeft(); }
+	function onNavigateRightClicked( event ) { event.preventDefault(); onUserInput(); navigateRight(); }
+	function onNavigateUpClicked( event ) { event.preventDefault(); onUserInput(); navigateUp(); }
+	function onNavigateDownClicked( event ) { event.preventDefault(); onUserInput(); navigateDown(); }
+	function onNavigatePrevClicked( event ) { event.preventDefault(); onUserInput(); navigatePrev(); }
+	function onNavigateNextClicked( event ) { event.preventDefault(); onUserInput(); navigateNext(); }
 
     /**
      * Handler for the window level 'hashchange' event.
@@ -3164,6 +3210,191 @@
         }
 
     }
+
+	/**
+	 * Handles click on the auto-sliding controls element.
+	 */
+	function onAutoSlidePlayerClick( event ) {
+
+		// Replay
+		if( Reveal.isLastSlide() && config.loop === false ) {
+			slide( 0, 0 );
+			resumeAutoSlide();
+		}
+		// Resume
+		else if( autoSlidePaused ) {
+			resumeAutoSlide();
+		}
+		// Pause
+		else {
+			pauseAutoSlide();
+		}
+
+	}
+
+
+	// --------------------------------------------------------------------//
+	// ------------------------ PLAYBACK COMPONENT ------------------------//
+	// --------------------------------------------------------------------//
+
+
+	/**
+	 * Constructor for the playback component, which displays
+	 * play/pause/progress controls.
+	 *
+	 * @param {HTMLElement} container The component will append
+	 * itself to this
+	 * @param {Function} progressCheck A method which will be
+	 * called frequently to get the current progress on a range
+	 * of 0-1
+	 */
+	function Playback( container, progressCheck ) {
+
+		// Cosmetics
+		this.diameter = 50;
+		this.thickness = 3;
+
+		// Flags if we are currently playing
+		this.playing = false;
+
+		// Current progress on a 0-1 range
+		this.progress = 0;
+
+		// Used to loop the animation smoothly
+		this.progressOffset = 1;
+
+		this.container = container;
+		this.progressCheck = progressCheck;
+
+		this.canvas = document.createElement( 'canvas' );
+		this.canvas.className = 'playback';
+		this.canvas.width = this.diameter;
+		this.canvas.height = this.diameter;
+		this.context = this.canvas.getContext( '2d' );
+
+		this.container.appendChild( this.canvas );
+
+		this.render();
+
+	}
+
+	Playback.prototype.setPlaying = function( value ) {
+
+		var wasPlaying = this.playing;
+
+		this.playing = value;
+
+		// Start repainting if we weren't already
+		if( !wasPlaying && this.playing ) {
+			this.animate();
+		}
+		else {
+			this.render();
+		}
+
+	};
+
+	Playback.prototype.animate = function() {
+
+		var progressBefore = this.progress;
+
+		this.progress = this.progressCheck();
+
+		// When we loop, offset the progress so that it eases
+		// smoothly rather than immediately resetting
+		if( progressBefore > 0.8 && this.progress < 0.2 ) {
+			this.progressOffset = this.progress;
+		}
+
+		this.render();
+
+		if( this.playing ) {
+			features.requestAnimationFrameMethod.call( window, this.animate.bind( this ) );
+		}
+
+	};
+
+	/**
+	 * Renders the current progress and playback state.
+	 */
+	Playback.prototype.render = function() {
+
+		var progress = this.playing ? this.progress : 0,
+			radius = ( this.diameter / 2 ) - this.thickness,
+			x = this.diameter / 2,
+			y = this.diameter / 2,
+			iconSize = 14;
+
+		// Ease towards 1
+		this.progressOffset += ( 1 - this.progressOffset ) * 0.1;
+
+		var endAngle = ( - Math.PI / 2 ) + ( progress * ( Math.PI * 2 ) );
+		var startAngle = ( - Math.PI / 2 ) + ( this.progressOffset * ( Math.PI * 2 ) );
+
+		this.context.save();
+		this.context.clearRect( 0, 0, this.diameter, this.diameter );
+
+		// Solid background color
+		this.context.beginPath();
+		this.context.arc( x, y, radius + 2, 0, Math.PI * 2, false );
+		this.context.fillStyle = 'rgba( 0, 0, 0, 0.4 )';
+		this.context.fill();
+
+		// Draw progress track
+		this.context.beginPath();
+		this.context.arc( x, y, radius, 0, Math.PI * 2, false );
+		this.context.lineWidth = this.thickness;
+		this.context.strokeStyle = '#666';
+		this.context.stroke();
+
+		if( this.playing ) {
+			// Draw progress on top of track
+			this.context.beginPath();
+			this.context.arc( x, y, radius, startAngle, endAngle, false );
+			this.context.lineWidth = this.thickness;
+			this.context.strokeStyle = '#fff';
+			this.context.stroke();
+		}
+
+		this.context.translate( x - ( iconSize / 2 ), y - ( iconSize / 2 ) );
+
+		// Draw play/pause icons
+		if( this.playing ) {
+			this.context.fillStyle = '#fff';
+			this.context.fillRect( 0, 0, iconSize / 2 - 2, iconSize );
+			this.context.fillRect( iconSize / 2 + 2, 0, iconSize / 2 - 2, iconSize );
+		}
+		else {
+			this.context.beginPath();
+			this.context.translate( 2, 0 );
+			this.context.moveTo( 0, 0 );
+			this.context.lineTo( iconSize - 2, iconSize / 2 );
+			this.context.lineTo( 0, iconSize );
+			this.context.fillStyle = '#fff';
+			this.context.fill();
+		}
+
+		this.context.restore();
+
+	};
+
+	Playback.prototype.on = function( type, listener ) {
+		this.canvas.addEventListener( type, listener, false );
+	};
+
+	Playback.prototype.off = function( type, listener ) {
+		this.canvas.removeEventListener( type, listener, false );
+	};
+
+	Playback.prototype.destroy = function() {
+
+		this.playing = false;
+
+		if( this.canvas.parentNode ) {
+			this.container.removeChild( this.canvas );
+		}
+
+	};
 
 
     // --------------------------------------------------------------------//
