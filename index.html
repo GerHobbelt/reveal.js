@@ -44,9 +44,9 @@
 					<h2>DIY Continuous Integration</h2>
 					<h3>With Drupal</h3>
           <br />
-          <h5>Drupalcorn Camp 2013</h5>
-          <h5>University of Iowa Iowa City, Iowa</h5>
-          <h5>Friday, August 10, 2013 </h5>
+          <h5>BADCamp 2013</h5>
+          <h5>University of California, Berkeley, CA</h5>
+          <h5>Saturday, October 26, 2013</h5>
 				</section>
 
 				<section>
@@ -59,14 +59,14 @@
                 <ul>
                   <li>Revision Control</li>
                   <li>Build Automation</li>
-                  <li>Self-testing Build</li>
+                  <li>Automate Deployment</li>
+                  <li>Self-Testing Build</li>
+                  <li>Testing in a Clone of Production</li>
                   <li>Frequent Commits</li>
-                  <li>Every commit to Development</li>
+                  <li>Code Consolidation</li>
                   <li>Fast Builds</li>
-                  <li>Test on a copy of production</li>
-                  <li>Make the build availiable</li>
-                  <li>Make the test results availiable</li>
-                  <li>Automate deployment to Live</li>
+                  <li>Build Availability</li>
+                  <li>Test Result Availability</li>
                 </ul>
               </li>
             </ul>
@@ -117,7 +117,7 @@
           <p>
             <a href='https://github.com/generalredneck/headless-selenium'>Headless Selenium</a><br />
             <a href='https://drupal.org/project/views_natural_sort'>Views Natural Sort</a><br />
-            <a href='https://drupal.org/sandbox/generalredneck/1990410'>CiviCRM User Merge</a>
+            <a href='https://drupal.org/project/usermerge'>User Merge</a>
           </p>
 					<h4 class='tag'>&lt;/SHAMELESS SELF PROMOTION&gt;</h4>
 				</section>
@@ -140,16 +140,16 @@
           <section>
             <h3><strong>10 Principles of Continuous Integration</strong></h3>
             <ul>
-              <li>Revision Control</li>
-              <li>Build Automation</li>
-              <li>Self-testing Build</li>
-              <li>Frequent Commits</li>
-              <li>Every commit to Development</li>
-              <li>Fast Builds</li>
-              <li>Test on a copy of production</li>
-              <li>Make the build availiable</li>
-              <li>Make the test results availiable</li>
-              <li>Automate deployment to Live</li>
+                <li>Revision Control</li>
+                <li>Build Automation</li>
+                <li>Automate Deployment</li>
+                <li>Self-Testing Build</li>
+                <li>Testing in a Clone of Production</li>
+                <li>Frequent Commits</li>
+                <li>Code Consolidation</li>
+                <li>Fast Builds</li>
+                <li>Build Availability</li>
+                <li>Test Result Availability</li>
             </ul>
           </section>
           <section>
@@ -166,13 +166,28 @@
             </ul>
           </section>
           <section>
+            <h3>Automate Deployment</h3>
+            <ul>
+              <li>Automated process is faster than manual</li>
+              <li>Less mistakes, always the same.</li>
+              <li>Usually provides an automated contengency plan if it fails.</li>
+            </ul>
+          </section>
+          <section>
             <h3>Self-testing Build</h3>
             <ul>
               <li>When a build is created, tests should run to confirm that it behaves the way developers expect it to.</li>
             </ul>
           </section>
           <section>
-            <h3>Every commit to Development</h3>
+            <h3>Testing in a Clone of Production</h3>
+            <ul>
+              <li>Environmental changes can lead to failures.</li>
+              <li>If a copy cannot be provided, a scalable version reduces risk.</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Frequent Commits</h3>
             <ul>
               <li>Every user should commit to a baseline once a day.</li>
               <li>Helps tests catch problems early.</li>
@@ -187,14 +202,7 @@
             </ul>
           </section>
           <section>
-            <h3>Test on a Copy of Production</h3>
-            <ul>
-              <li>Environmental changes can lead to failures.</li>
-              <li>If a copy cannot be provided, a scalable version reduces risk.</li>
-            </ul>
-          </section>
-          <section>
-            <h3>Make the Build Availible</h3>
+            <h3>Build Availability</h3>
             <ul>
               <li>It is more time effective to have environments prebuilt and "checked out" than building on the fly</li>
               <li>Builds availiable for Stakeholders is a must.</li>
@@ -202,19 +210,11 @@
             </ul>
           </section>
           <section>
-            <h3>Make the test results availiable</h3>
+            <h3>Test Result Availability</h3>
             <ul>
               <li>Confidence in product</li>
               <li>Provides a "Warranty"</li>
               <li>Developers can find problems earlier.</li>
-            </ul>
-          </section>
-          <section>
-            <h3>Automate Deployment to Live</h3>
-            <ul>
-              <li>Automated process is faster than manual</li>
-              <li>Less mistakes, always the same.</li>
-              <li>Usually provides an automated contengency plan if it fails.</li>
             </ul>
           </section>
         </section>
@@ -222,7 +222,9 @@
           <h2 class='static-heading'>Tools of the Trade</h2>
           <section>
             <h3>Git</h3>
+            <p>
             <img src='img/git-flow-timeline.png' class='not-fancy'/>
+            </p>
             <small>Courtesy of <a href='http://joefleming.net/posts/git-flow/'>Joefleming.net</a></small>
           </section>
           <section>
