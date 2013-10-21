@@ -45,12 +45,13 @@ body {
 #conference-logo {
   position:absolute;
   bottom:0;
-  width:18%;
-  right:0;
+  width:10%;
 }
 #employer-logo {
   position:absolute;
+  width: 20.58%;
   bottom:5px;
+  right:0;
 }
 section.stack {
   height:100%;
