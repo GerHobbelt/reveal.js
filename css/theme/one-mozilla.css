@@ -43,7 +43,7 @@
 /*********************************************
  * GLOBAL STYLES
  *********************************************/
-body {
+.reveal-viewport {
   background: #ffffff;
   /* background: -moz-radial-gradient(center, circle cover, #f4f1e9 0%, #d7d3c8 100%); */
   /* background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, #f4f1e9), color-stop(100%, #d7d3c8)); */

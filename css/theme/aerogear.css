@@ -13,9 +13,16 @@
 /*********************************************
  * GLOBAL STYLES
  *********************************************/
-body {
+.reveal-viewport {
   background-image: url("img/rvl-bg-large.jpg");
-  background-position: left bottom; }
+  background-position: left bottom; 
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+     -moz-background-size: cover;
+       -o-background-size: cover;
+          background-size: cover;
+}
 
 .reveal {
   font-family: "Lato", sans-serif;
