@@ -36,13 +36,566 @@
 
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
+
 				<section>
 					<h1>The JavaScript Revolution</h1>
+					<h3>The New Age of Software Development</h3>
 					<p>
-						Placeholder
+						<small>An original presentation by <a href="http://www.davidwesst.com">David Wesst</a> / <a href="http://twitter.com/davidwesst">@davidwesst</a></small>
 					</p>
 				</section>
+				
+                <!-- Who am I -->
+				<section>
+					<h1>David Wesst</h1>
+                    <h3>From Winnipeg, Manitoba</h3>
+					<h3>Systems Analyst, University of Manitoba (Faculty of Medicine)</h3>
+					<h3>Microsoft MVP, Internet Explorer</h3>
+					<h3>IE User Agent <a href="http://useragents.ie" target="_blank">userAgents.ie</a></h3>
+					<h3>Video Game Producer, Brewpub Games</h3>
+				</section>
+				<section>
+					<h1>David Wesst</h1>
+					<h3>@davidwesst on Twitter</h3>
+					<h3>davidwesst.com on the Web</h3>
+					<h3>dw [at] davidwesst.com on Email</h3>
+                    <h3>davidwesst on Github</h3>
+				</section>
+
+				<!-- The Point -->
+				<section>
+					<section>
+						<h2>The Point</h2>
+						<h3>To leave here with the answer to at least ONE of these points:</h3>
+						<ul>
+							<li class="fragment highlight-blue">To see some new JavaScript tools</li>
+							<li class="fragment highlight-blue">To understand how a JavaScript project can work</li>
+                            <li class="fragment highlight-blue">To bring you up-to-speed with JavaScript</li>
+						</ul>
+					</section>
+					<section>
+						<h2>The Point</h2>
+						<h3 class="fragment roll-in">Theme for this Presentation</h3>
+						<h1 class="fragment" >To show you that JavaScript <strong>is</strong> a real option</h1>
+					</section>
+				</section>
+
+				<!-- The Plan -->
+				<section>
+					<section>
+						<h2>The Plan</h2>
+						<h3>A.K.A. The Agenda</h3>
+						<br />
+						<ul>
+							<li class="fragment">
+								<p>Why JavaScript?</p>
+							</li>
+                            <li class="fragment">
+                                <p>Survival Skills for the New Age of JavaScript</p>
+                            </li>
+							<li class="fragment">
+								<p>Modern Day JavaScript Projects</p>
+                                <ul>
+                                    <li class="fragment roll-in">Source Control</li>
+                                    <li class="fragment roll-in">JavaScript Code Today</li>
+                                    <li class="fragment roll-in">Managing Dependencies</li>
+                                    <li class="fragment roll-in">Test, Test, and Test Again</li>
+                                    <li class="fragment roll-in">Building JavaScript</li>
+                                </ul>
+							</li>
+                            <li class="fragment">
+                                <p>Next Steps</p>
+                            </li>
+						</ul>
+					</section>
+					<section>
+						<h2>The Plan</h2>
+						<h3>Setting Your Expectations</h3>
+						<br />
+						<p>This presentation is...</p>
+						<ul>
+							<li class="fragment highlight-blue">An overview of JavaScript modern development</li>
+                            <li class="fragment highlight-blue">A review of JavaScript development tools</li>
+                            <li class="fragment highlight-blue">A "core sample" of pure JavaScript development </li>
+                            <li class="fragment highlight-blue">A taste of things to come for JavaScript at DevTeach</li>
+						</ul>
+					</section>
+					<section>
+						<h2>The Plan</h2>
+						<h3>Setting Your Expectations</h3>
+						<br />
+						<p>This presentation <strong>is not</strong>...</p>
+						<ul>
+                            <li class="fragment highlight-red">A 100% code-centric presentation</li>
+							<li class="fragment highlight-red">A lesson on JavaScript coding practices</li>
+							<li class="fragment highlight-red">A discussion on JavaScript ALM (Application Lifecycyle Management)</li>
+                            <li class="fragment highlight-red">A "deep-dive" into one or more specific JavaScript technologies</li>
+							
+						</ul>
+					</section>
+				</section>
+				
+				<!-- Why JavaScript -->
+				<section>
+					<section>
+						<h1>Why JavaScript?</h1>
+					</section>
+					<section>
+						<h2>Why JavaScript?</h2>
+                        <h3>Common Arguments about JavaScript</h3>
+						<h3 class="fragment roll-in highlight-blue"><q>JavaScript is for client-side web development and nothing else.</q></h3>
+						<h3 class="fragment roll-in highlight-blue"><q>It's not an OO language, so I can't use it for anything.</q></h3>
+						<h3 class="fragment roll-in highlight-blue"><q>I don't program for the web, so I don't need JavaScript anyway.</q></h3>
+					</section>
+                    <section>
+                        <h2>Why JavaScript?</h2>
+						<img height="500" width="500"
+							alt="Unofficial JavaScript Logo"
+							src="/presentations/typescript-to-the-max/media/500px-Unofficial_JavaScript_logo_svg.png" />
+						<footer><small><a href="http://commons.wikimedia.org/wiki/File:Unofficial_JavaScript_logo.svg">Image Source: Wikimedia Commons</a></small></footer>
+                    </section>
+                    <section>
+						<blockquote class="fragment fade-out">JavaScript is for client-side web development and nothing else.</blockquote>
+						<h3 class="fragment">Not quite...</h3>
+                        <article class="fragment roll-in">
+                            <ul>
+                                <li>Web Browsers</li>
+                                <li>Chrome Installed Apps / Chromium Apps</li>
+                                <li>iOS, Windows Phone, Android (through PhoneGap)</li>
+                                <li>Windows 8</li>
+                                <li>Wii U</li>
+                            </ul>
+						</article>
+                    </section>
+                    <section>
+                        <blockquote class="fragment fade-out">It's not an OO language, so I can't use it for anything.</blockquote>
+                        <h3 class="fragment">Actually, it is.</h3>
+                        <article class="fragment roll-in">
+                            <ul>
+                                <li>Prototype-based Language</li>
+                                <li>Provides properties, classes, polymorphism, etc...</li>
+                            </ul>
+                        </article>                  
+                    </section>
+                    <section>
+                        <blockquote class="fragment fade-out">I don't program for the web, so I don't need JavaScript anyway.</blockquote>
+                        <h3 class="fragment">JavaScript lives outside of the web</h3>
+                        <article class="fragment roll-in">
+                            <ul>
+                                <li>Windows 8</li>
+                                <li>PhoneGap</li>
+                                <li>Chromium Apps</li>
+                                <li>Firefox Apps</li>
+                            </ul>
+                        </article>                  
+                    </section>
+				</section>
+				
+				<!-- Survival Skills for the New Age of JavaScript -->
+                <section>
+                    <section>
+                        <h1>Survival Skills for the New Age of JavaScript</h1>
+                    </section>
+                    <section>
+                        <h2>Survival Skills for the New Age of JavaScript</h2>
+                        <h3>Open Source is your Friend</h3>
+                    </section>
+                    <section>
+                        <h2>Survival Skills for the New Age of JavaScript</h2>
+                        <h3>Plan and Choose Your Platforms</h3>
+                    </section>
+                    <section>
+                        <h2>Survival Skills for the New Age of JavaScript</h2>
+                        <h3>Understand your HTML5</h3>                     
+                    </section>
+                    <section>
+                        <h2>Survival Skills for the New Age of JavaScript</h2>
+                        <h3>Explore Your Environment(s)</h3>
+                        <ul class="fragment roll-in">
+                            <li>Eclipse</li>
+                            <li>Visual Studio 2012</li>
+                            <li>WebMatrix</li>
+                            <li class="fragment highlight-blue"><a href="http://c9.io">Cloud9 (http://c9.io)</a></li>
+                        </ul>
+                        <aside class="notes">
+                            We will use these environments throughout the presentation today
+                        </aside>                    
+                    </section>
+                </section>
+				
+				<!-- Modern Day JavaScript Projects: Source Control -->
+				<section>
+					<section>
+						<h1>Modern Day JavaScript Projects: Source Control </h1>
+					</section>
+                    <section>
+                        <h2>Here's the secret:</h2>
+                        <h1 class="fragment">Any source control will do!</h1>
+                        <br />
+                        <h2 class="fragment roll-in">But in case you are going open source with your project...</h2>
+                    </section>
+					<section>
+						<h2>Modern Day JavaScript Projects: Source Control </h2>
+                        <h3>A few considerations for Open Source projects</h3>
+                        <ul>
+                            <li class="fragment roll-in">Visibility</li>
+                            <li class="fragment roll-in">Share-ability</li>
+                            <li class="fragment roll-in">Accessibility</li>
+                        </ul>
+					</section>
+                    <section>
+                        <h2>Modern Day JavaScript Projects: Source Control </h2>
+                        <h3>Some Options</h3>
+                        <ul>
+                            <li class="fragment roll-in">Github (http://github.com)</li>
+                            <li class="fragment roll-in">Bitbucket (http://bitbucket.org)</li>
+                            <li class="fragment roll-in">CodePlex (http://codeplex.com)</li>
+                            <li class="fragment roll-in">Google Code (http://code.google.com)</li>
+                        </ul>
+                    </section>
+				</section>
+
+                <!-- Modern Day JavaScript Projects: JavaScript Code Today -->
+                <section>
+                    <section>
+                        <h1>Modern Day JavaScript Projects: JavaScript Code Today</h1>
+                    </section>
+                    <section>
+                        <h2>Modern Day JavaScript Projects: JavaScript Code Today</h2>
+                        <h3>Compilers</h3>
+                        <p>Provide solution to some common "issues" with JavaScript</p>
+                        <ul>
+                            <li class="fragment roll-in">More familiar syntax than JavaScript</li>
+                            <li class="fragment roll-in">Provides common keywords like "class" and "interface"</li>
+                            <li class="fragment roll-in">Compiles into optimized JavaScript</li>
+                            <li class="fragment roll-in">Makes OO programming easier to learn in JavaScript</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Modern Day JavaScript Projects: JavaScript Code Today</h2>
+                        <h3>Compilers</h3>
+                        <p>Popular Examples</p>
+                        <ul>
+                            <li class="fragment roll-in">CoffeeScript - Ruby Like Syntax</li>
+                            <li class="fragment roll-in">TypeScript - Superset of JavaScript</li>
+                            <li class="fragment roll-in">For more check out <a href="Altjs.org">Altjs.org</a></li>
+                        </ul>
+                    </section>                   
+                    <section data-state="soothe">
+                        <h1>Demo: Compilers</h1>
+                        <h2>TypeScript</h2>
+                    </section>
+                    <section data-state="alert">
+                        <h2>Related Session</h2>
+                        <h1>TypeScript to the Max Extreme (JAV 368)</h1>
+                    </section>
+                    <section>
+                        <h2>Modern Day JavaScript Projects: JavaScript Code Today</h2>
+                        <h3>MV* Patterns and Frameworks</h3>
+                        <ul>
+                            <li class="fragment highlight-blue">MVC, Model View Controller</li>
+                            <li class="fragment highlight-blue">MVVM, Model View ViewModel</li>
+                            <li class="fragment highlight-blue">MVP, Model View Presenter</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Modern Day JavaScript Projects: JavaScript Code Today</h2>
+                        <h3>MV* Patterns and Frameworks</h3>
+                        <ul>
+                            <li class="fragment roll-in"><a href="http://backbonejs.org/">Backbone (http://backbonejs.org/)</a></li>
+                            <li class="fragment roll-in"><a href="http://knockoutjs.com/">Knockout (http://knockoutjs.com/)</a></li>
+                            <li class="fragment roll-in"><a href="http://angularjs.org/">AngularJS (http://angularjs.org/)</a></li>
+                        </ul>
+                    </section>
+                    <section data-state="soothe">
+                        <h1>Demo: MV* Patterns and Frameworks</h1>
+                        <h2>KnockoutJS</h2>
+                    </section>
+                    <section data-state="alert">
+                        <h2>Related Session</h2>
+                        <h1>TDD with KnockoutJS (JAV 382)</h1>
+                    </section>
+                    <section data-state="alert">
+                        <h2>Related Session</h2>
+                        <h1>Building a Single Page App with BackboneJS (JAV 398)</h1>
+                    </section>
+                    <section>
+                        <h2>Modern Day JavaScript Projects: JavaScript Code Today</h2>
+                        <h3>On the Server with NodeJS</h3>
+                        <ul>
+                            <li class="fragment highlight-blue">Runs JavaScript on the Server</li>
+                            <li class="fragment highlight-blue">Open Source Technology</li>
+                            <li class="fragment highlight-blue">Provides Asynchronous I/O, i.e. Non-Blocking I/O</li>
+                        </ul>
+                    </section>
+                    <section data-state="soothe">
+                        <h1>Demo: On the Server with NodeJS</h1>
+                        <h2>Walking Through NodeJS</h2>
+                    </section>
+                    <section data-state="alert">
+                        <h2>Related Session</h2>
+                        <h1>Node for Novices (JAV 221)</h1>
+                    </section>
+                </section>
+                
+				<!-- Modern Day JavaScript Projects: Managing Dependencies -->
+				<section>
+					<section>
+						<h1>Modern Day JavaScript Projects: Managing Dependencies </h1>
+					</section>
+					<section>
+						<h2>Modern Day JavaScript Projects: Managing Dependencies</h2>
+                        <h3>RequireJS</h3>
+                        <ul>
+                            <li class="fragment highlight-blue">Allows you to define and load JavaScript modules</li>
+                            <li class="fragment highlight-blue">Removes need for "script" tags to define dependencies</li>
+                            <li class="fragment highlight-blue">Runs JavaScript ONLY when dependencies are loaded</li>
+                        </ul>
+                    </section>
+                    <section data-state="soothe">
+                        <h1>Demo: Managing Dependencies</h1>
+                        <h2>RequireJS</h2>
+                    </section>
+					<section>
+						<h2>Modern Day JavaScript Projects: Managing Dependencies</h2>
+                        <h3>npm, Node Packaged Modules</h3>
+                        <ul>
+                            <li class="fragment highlight-blue">Bundled with NodeJS</li>
+                            <li class="fragment highlight-blue">Define dependencies through package name or git repo</li>
+                            <li class="fragment highlight-blue">Throws errors when dependencies are not loaded properly</li>
+                            <li class="fragment roll-in">Define dependencies in package.json</li>
+                        </ul>
+					</section>
+                    <section data-state="soothe">
+                        <h1>Demo: Managing Dependencies</h1>
+                        <h2>npm, Node Packaged Modules</h2>
+                    </section>
+                    <section data-state="alert">
+                        <h2>Related Session</h2>
+                        <h1>Node for Novices (JAV 221)</h1>
+                    </section>
+				</section>
+                
+                <!-- Modern Day JavaScript Projects: Test, Test, and Test Again -->
+				<section>
+					<section>
+						<h1>Modern Day JavaScript Projects: Test, Test, and Test Again</h1>
+					</section>
+					<section>
+						<h2>Modern Day JavaScript Projects: Test, Test, and Test Again</h2>
+                        <h3>Testing Your JavaScript</h3>
+                        <ul>
+                            <li class="fragment highlight-blue">Large number of frameworks for tests</li>
+                            <li class="fragment highlight-blue">Apply TDD or BDD Practices</li>
+                            <li class="fragment highlight-blue">Mocking frameworks exist as well</li>
+                            <li class="fragment roll-in">Available for both client and server</li>
+                        </ul>
+					</section>
+					<section>
+						<h2>Modern Day JavaScript Projects: Test, Test, and Test Again</h2>
+                        <h3>Testing Your JavaScript: QUnit</h3>
+                        <ul>
+                            <li class="fragment highlight-blue">Developed by jQuery</li>
+                            <li class="fragment highlight-blue">Unit Testing Framework</li>
+                            <li class="fragment highlight-blue">No external dependencies (not even jQuery)</li>
+                        </ul>
+					</section>
+					<section>
+						<h2>Modern Day JavaScript Projects: Test, Test, and Test Again</h2>
+                        <h3>Testing Your JavaScript: Jasmine</h3>
+                        <ul>
+                            <li class="fragment highlight-blue">BDD based framework</li>
+                            <li class="fragment highlight-blue">Resembles RSpec</li>
+                            <li class="fragment highlight-blue">No external dependencies</li>
+                            <li class="fragment highlight-blue">Provides multiple output channels for results</li>
+                        </ul>
+					</section>
+					<section>
+						<h2>Modern Day JavaScript Projects: Test, Test, and Test Again</h2>
+                        <h3>Testing Your JavaScript: Mocha</h3>
+                        <ul>
+                            <li class="fragment highlight-blue">BDD based framework</li>
+                            <li class="fragment highlight-blue">Resembles RSpec</li>
+                            <li class="fragment highlight-blue">Works with both client and server (NodeJS)</li>
+                        </ul>
+					</section>
+                    <section data-state="soothe">
+                        <h1>Demo: Test, Test, and Test Again</h1>
+                        <h2>Jasmine</h2>
+                    </section>
+                    <section data-state="alert">
+                        <h2>Related Session</h2>
+                        <h1>Testable JavaScript (JAV 388)</h1>
+                    </section>
+				</section>
+                
+				<!-- Modern Day JavaScript Projects: Building JavaScript -->
+				<section>
+					<section>
+						<h1>Modern Day JavaScript Projects: Building JavaScript</h1>
+					</section>
+                    <section>
+                        <h2>Modern Day JavaScript Projects: Building JavaScript</h2>
+                        <h1>Why "build" your JavaScript?</h1>
+                        <h3>We aren't really building anything...are we?</h3>
+                    </section>
+                    <section>
+                        <h2>Modern Day JavaScript Projects: Building JavaScript</h2>
+                        <h1>You are now.</h1>
+                    </section>
+                    <section>
+                        <h2>Modern Day JavaScript Projects: Building JavaScript</h2>
+                        <h3>What we can today do today with JavaScript</h3>
+                        <ol>
+                            <li class="fragment roll-in">Get our source</li>
+                            <li class="fragment roll-in">Compile it (from TypeScript)</li>
+                            <li class="fragment roll-in">Setup dependencies</li>
+                            <li class="fragment roll-in">Test it</li>
+                        </ol>
+                    </section>
+					<section>
+						<h2>Modern Day JavaScript Projects: Building JavaScript</h2>
+                        <h3>Some Building Solutions</h3>
+                        <ul>
+                            <li>Travis-CI (Free for Open Source)</li>
+                            <li>Jenkins</li>
+                            <li>Whatever you want to execute CLI commands</li>
+                        </ul>
+					</section>
+                    <section>
+                        <img src="presentations/javascript-revolution/media/travis-ci.png" 
+                            width="1102" height="587" alt="Travis-CI" /> 
+                    </section>
+                    <section data-state="soothe">
+                        <h1>Demo: Building JavaScript</h1>
+                        <h2>Travis-CI</h2>
+                    </section>
+                    <section>
+                        <h2>Modern Day JavaScript Projects: Building JavaScript</h2>
+                        <h3>Grunt: The JavaScript CLI Tool</h3>
+                        <ul>
+                            <li class="fragment roll-in">Open Source</li>
+                            <li class="fragment roll-in">Provides CLI to run common project actions</li>
+                            <li class="fragment roll-in">Allows you to define custom CLI actions</li>  
+                        </ul>
+                    </section>
+                    <section data-state="soothe">
+                        <img height="365" width="1102" alt="gruntjs.org" src='media/grunt.png' />
+                        <h4><a href="http://gruntjs.org" target="_blank">GruntJS.org</a></h4>
+                    </section>
+				</section>
+                              				
+				<!-- Recap -->
+				<section>
+					<section>
+						<h2>Quick Recap: The Plan</h2>
+						<br />
+						<ul>
+							<li class="fragment">
+								<p>Why JavaScript?</p>
+							</li>
+                            <li class="fragment">
+                                <p>Survival Skills for the New Age of JavaScript</p>
+                            </li>
+							<li class="fragment">
+								<p>Modern Day JavaScript Projects</p>
+                                <ul>
+                                    <li class="fragment roll-in">Source Control</li>
+                                    <li class="fragment roll-in">JavaScript Code Today</li>
+                                    <li class="fragment roll-in">Managing Dependencies</li>
+                                    <li class="fragment roll-in">Test, Test, and Test Again</li>
+                                    <li class="fragment roll-in">Building JavaScript</li>
+                                </ul>
+							</li>
+                            <li class="fragment">
+                                <p>Next Steps</p>
+                            </li>
+						</ul>
+					</section>
+					<section>
+						<h2>Quick Recap: The Point</h2>
+						<h3>To leave here with the answer to at least ONE of these points:</h3>
+						<ul>
+							<li class="fragment highlight-blue">To see some new JavaScript tools</li>
+							<li class="fragment highlight-blue">To understand how a JavaScript project can work</li>
+                            <li class="fragment highlight-blue">To bring you up-to-speed with JavaScript</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Quick Recap: The Point</h2>
+						<h3 class="fragment roll-in">Theme for this Presentation</h3>
+						<h1 class="fragment" >To show you that JavaScript <strong>is</strong> a real option</h1>
+					</section>
+				</section>
+				
+				<!-- Next Steps -->
+				<section>
+					<section>
+						<h1>Next Steps</h1>
+						<p>Where do we go from here?</p>
+					</section>
+					<section>
+						<h2>Next Steps</h2>
+						<ul>
+							<li>Go to the other JavaScript/HTML5 Presentations at DevTeach</li>
+							<li>Make Your Own JavaScript Project</li>
+							<li>Leverage one of the tools in your exiting projects</li>
+							<li>Build a JavaScript Project</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Next Steps</h2>
+						<h3>Check out a resource</h3>
+						<ul>
+							<li><a href="http://yuiblog.com/crockford/">Douglas Crockford's Blog</a></li>
+							<li><a href="http://www.amazon.ca/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742/">JavaScript: The Good Parts</a></li>
+							<li><a href="https://npmjs.org">Checkout the npm (http://npmjs.org)</a></li>
+						</ul>
+					</section>
+					<section>
+						<h2>Next Steps</h2>
+						<p>
+							Check out today...
+						</p>
+                        <ul>
+                            <li>Functional JavaScript (JAV 366) with James Kovacs</li>
+                            <li>TypeScript to the Max Extreme (JAV 368) with David Wesst</li>
+                            <li>Node for Novices (JAV 221) with David Wesst</li>
+                        </ul>
+					</section>
+					<section>
+						<h2>Next Steps</h2>
+						<p>
+							Check out later...
+						</p>
+                        <ul>
+                            <li>Beautiful JavaScript with CoffeeScript (JAV 354) with Amir Barylko</li>
+                            <li>Testable JavaScript (JAV 388) with James Kovacs</li>
+                            <li>TDD with KnockoutJS (JAV 382) with Kyle Hodgeson</li>
+                            <li>Building a Single Page App with BackboneJS (JAV 398) with Graham Robertson</li>
+                        </ul>
+					</section>
+				</section>
+				
+				<!-- Who am I? -->
+				<section>
+					<h1>David Wesst</h1>
+                    <h3>From Winnipeg, Manitoba</h3>
+					<h3>Systems Analyst, University of Manitoba (Faculty of Medicine)</h3>
+					<h3>Microsoft MVP, Internet Explorer</h3>
+					<h3>IE User Agent <a href="http://useragents.ie" target="_blank">userAgents.ie</a></h3>
+					<h3>Video Game Producer, Brewpub Games</h3>
+				</section>
+				<section>
+					<h1>David Wesst</h1>
+					<h3>@davidwesst on Twitter</h3>
+					<h3>davidwesst.com on the Web</h3>
+					<h3>dw [at] davidwesst.com on Email</h3>
+                    <h3>davidwesst on Github</h3>
+				</section>
+
 			</div>
+
 		</div>
 
 		<script src="lib/js/head.min.js"></script>

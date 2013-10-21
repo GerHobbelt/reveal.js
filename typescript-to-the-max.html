@@ -36,13 +36,723 @@
 
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
+
 				<section>
 					<h1>TypeScript to the Max Extreme</h1>
+					<h3>The Next Generation of JavaScript</h3>
 					<p>
-						Placeholder
+						<small>An original presentation by <a href="http://www.davidwesst.com">David Wesst</a> / <a href="http://twitter.com/davidwesst">@davidwesst</a></small>
 					</p>
 				</section>
+				
+				<section>
+					<h1>David Wesst</h1>
+					<h3>Systems Analyst, University of Manitoba</h3>
+					<h3>Microsoft MVP, Internet Explorer</h3>
+					<h3>IE User Agent</h3>
+					<h3>Video Game Producer, Brewpub Games</h3>
+				</section>
+				<section>
+					<h1>David Wesst</h1>
+					<h3>@davidwesst on Twitter</h3>
+					<h3>davidwesst.com on the Web</h3>
+					<h3>dw [at] davidwesst [dot] com on Email</h3>
+				</section>
+
+				<!-- The Point -->
+				<section>
+					<section>
+						<h2>The Point</h2>
+						<h3>To leave here with the answer to at least ONE of these questions:</h3>
+						<ul>
+							<li class="fragment highlight-blue">What is TypeScript?</li>
+							<li class="fragment highlight-blue">How do I start using TypeScript?</li>
+							<li class="fragment highlight-blue">What does TypeScript offer me as a language?</li>
+							<li class="fragment highlight-blue">What can TypeScript do?</li>
+						</ul>
+					</section>
+					<section>
+						<h2>The Point</h2>
+						<h3 class="fragment roll-in">Theme for this Presentation</h3>
+						<h1 class="fragment" >Why you should care about TypeScript/JavaScript Compilation?</h1>
+					</section>
+				</section>
+
+				<!-- The Plan -->
+				<section>
+					<section>
+						<h2>The Plan</h2>
+						<h3>A.K.A. The Agenda</h3>
+						<br />
+						<ul>
+							<li class="fragment grow">
+								<p>JavaScript Compilation. Why?</p>
+							</li>
+							<li class="fragment grow">
+								<p>What you need to know about TypeScript</p>
+							</li>
+							<li class="fragment grow">
+								<p>Getting Yourself Setup</p>
+							</li>
+							<li class="fragment grow">
+								<p>Extreme Equipment for TypeScript</p>
+							</li>
+							<li class="fragment grow">
+								<p>Getting Extreme with TypeScript</p>
+							</li>
+							<li class="fragment grow">
+								<p>Let's take this Outside (of the client)</p>
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h2>The Plan</h2>
+						<h3>Setting Your Expectations</h3>
+						<br />
+						<p>This presentation is...</p>
+						<ul>
+							<li class="fragment highlight-blue">A dialogue about TypeScript and JavaScript compilation</li>
+							<li class="fragment highlight-blue">A guide to getting started with TS</li>
+							<li class="fragment highlight-blue">A "how-to" on TypeScript tooling</li>
+							<li class="fragment highlight-blue">A walkthrough of the TypeScript language and feature</li>
+						</ul>
+					</section>
+					<section>
+						<h2>The Plan</h2>
+						<h3>Setting Your Expectations</h3>
+						<br />
+						<p>This presentation <strong>is not</strong>...</p>
+						<ul>
+							<li class="fragment highlight-red">A lesson on JavaScript programming</li>
+							<li class="fragment highlight-red">A "deep-dive" into JavaScript programming</li>
+							<li class="fragment highlight-red">A discussion or tutorial about ECMASCRIPT</li>
+							<li class="fragment highlight-red">A review of JavaScript programming practices</li>
+						</ul>
+					</section>
+				</section>
+				
+				<!-- JavaScript Compilation -->
+				<section>
+					<section>
+						<h1>JavaScript Compilation: Why?</h1>
+					</section>
+					<section>
+						<h1>JavaScript is 16 years old.</h1>
+					</section>
+					<section>
+						<h2>Common Arguments about JavaScript</h2>
+						<h3 class="fragment roll-in highlight-blue"><q>This isn't like C#. I don't like it.</q></h3>
+						<h3 class="fragment roll-in highlight-blue"><q>It's not an OO language, so I can't use it for anything.</q></h3>
+						<h3 class="fragment roll-in highlight-blue"><q>I don't program for the web, so I don't need JavaScript anyway.</q></h3>
+					</section>
+					<section>
+						<img height="500" width="500"
+							alt="Unofficial JavaScript Logo"
+							src="/presentations/typescript-to-the-max/media/500px-Unofficial_JavaScript_logo_svg.png" />
+						<footer><small><a href="http://commons.wikimedia.org/wiki/File:Unofficial_JavaScript_logo.svg">Image Source: Wikimedia Commons</a></small></footer>
+					</section>
+					<section>
+						<h1>JavaScript Compilers help address these "issues"</h1>
+					</section>
+					<section>
+						<blockquote class="fragment fade-out">This isn't like C#. I don't like it.</blockquote>
+						<article class="fragment roll-in">
+							<img height="122" width="500"
+								alt="TypeScript Logo"
+								src="/presentations/typescript-to-the-max/media/TypeScript_Logo.png"
+								style="border: none; padding: 20px 10px;" />
+							<footer><small><a href="http://commons.wikimedia.org/wiki/File:TypeScript_Logo.png">Image Source: Wikimedia Commons</a></small></footer>
+						</article>
+					</section>
+					<section>
+						<blockquote class="fragment fade-out">It's not an OO language, so I can't use it for anything.</blockquote>
+						<article class="fragment roll-in">
+							<img height="122" width="500"
+								alt="TypeScript Logo"
+								src="/presentations/typescript-to-the-max/media/TypeScript_Logo.png"
+								style="border: none; padding: 20px 10px;" />
+							<footer><small><a href="http://commons.wikimedia.org/wiki/File:TypeScript_Logo.png">Image Source: Wikimedia Commons</a></small></footer>
+						</article>
+					</section>
+					<section>
+						<blockquote class="fragment fade-out">I don't program for the web, so I don't need JavaScript anyway.</blockquote>
+						<article class="fragment roll-in">
+							<img height="122" width="500"
+								alt="TypeScript Logo"
+								src="/presentations/typescript-to-the-max/media/TypeScript_Logo.png"
+								style="border: none; padding: 20px 10px;" />
+							<footer><small><a href="http://commons.wikimedia.org/wiki/File:TypeScript_Logo.png">Image Source: Wikimedia Commons</a></small></footer>
+						</article>
+					</section>
+				</section>
+				
+				<!-- What you need to know about TypeScript -->
+				<section>
+					<section>
+						<h1>The 411 on TypeScript</h1>
+						<h3 class="fragment">The "Deets"</h3>
+					</section>
+					<section>
+						<h2>The 411 on TypeScript</h2>
+						<h3>The "Deets"</h3>
+						<br />
+						<ul>
+							<li class="fragment roll-in">Microsoft Open Source Project</li>
+							<li class="fragment roll-in">Design Partially Driven by Chakra Team</li>
+							<li class="fragment roll-in">"Compiles" TypeScript into ECMASCRIPT</li>
+						</ul>
+					</section>
+					<section>
+						<h2>The 411 on TypeScript</h2>
+						<h3>The "Deets"</h3>
+						<br />
+						<ul>
+							<li class="fragment roll-in">Current Version: 0.8.3</li>
+							<li class="fragment roll-in">Preview Version: 0.9 (Early Preview)</li>
+						</ul>
+					</section>
+					<section>
+						<h2>The 411 on TypeScript</h2>
+						<h3>The <strong>Technical</strong> "Deets"</h3>
+						<br />
+						<ul>
+							<li class="fragment roll-in">JavaScript is a Subset of TypeScript</li>
+							<li class="fragment roll-in">Meaning JavaScript <strong>is</strong> valid TypeScript</li>
+							<li class="fragment roll-in">Many features implemented are based on upcoming ECMASCRIPT specification</li>
+							<li class="fragment roll-in">...but there is still some extra magic in TypeScript</li>
+						</ul>
+					</section>
+					<section>
+						<h2>The 411 on TypeScript</h2>
+						<h3>The <strong>Technical</strong> "Deets"</h3>
+						<br />
+						<ul>
+							<li class="fragment roll-in">TypeScript file extension is .ts</li>
+							<li class="fragment roll-in">Compiling produces optimized <strong>human readable</strong> JavaScript</li>
+						</ul>
+					</section>
+				</section>
+				
+				<!-- Getting Yourself Setup -->
+				<section>
+					<section>
+						<h1>Getting Yourself Setup</h1>
+					</section>
+					<section>
+						<h2>Getting Yourself Setup</h2>
+						<h4>The Essentials - Requirements</h4>
+						<br />
+						<ul>
+							<li class="fragment roll-in">Text Editor</li>
+							<li class="fragment roll-in">NodeJS</li>
+							<li class="fragment roll-in">An Internet Connection</li>
+							<li class="fragment roll-in">Command Line / Terminal Window</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Getting Yourself Setup</h2>
+						<h4>The Essentials - Setup</h4>
+						<br />
+						<p>Install package globally through npm</p>
+						<pre>
+							<code>
+npm install -g typescript
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h1>...and that's it. You're done.</h1>
+					</section>
+					<section data-state="soothe">
+						<h2>DEMO: Let's Use It</h2>
+						<h4>Example: Extreme Compiling with tsc</h4>
+						<pre class="fragment">
+							<code data-trim>
+// our FIRST .ts file
+console.log("Hello TypeScript");							
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h2>Important <strong>tsc</strong> Options</h2>
+						<ul>
+							<li>tsc -out [filename.js] | Output to Single File</li>
+							<li>tsc -c or --comment | Emit Comments</li>
+							<li>tsc -e or tsc --exec | Execute</li>
+                            <li>tsc --target ES3 | Target your version of ECMAScript</li>
+							<li>tsc -h or tsc --help | Display Help</li>
+							<li class="fragment roll-in">tsc --sourcemap | Generate corresponding .map file</li>
+						</ul>
+					</section>
+				</section>
+				
+				<!-- Extreme Equipment for TypeScript -->
+				<section>
+					<section>
+						<h1>Extreme Equipment for TypeScript</h1>
+						<h4 class="fragment">a.k.a. The Toolbox</h4>
+					</section>
+					
+					<section>
+						<h2>Extreme Equipment for TypeScript</h2>
+						<h3>Plugins are available for...</h3>
+						<ul>
+							<li><a href="http://blogs.msdn.com/b/interoperability/archive/2012/10/01/sublime-text-vi-emacs-typescript-enabled.aspx">Emacs</a></li>
+							<li><a href="http://blogs.msdn.com/b/interoperability/archive/2012/10/01/sublime-text-vi-emacs-typescript-enabled.aspx">Sublime</a></li>
+							<li><a href="http://blogs.msdn.com/b/interoperability/archive/2012/10/01/sublime-text-vi-emacs-typescript-enabled.aspx">Vim</a></li>
+							<li class="fragment roll-in">...and Visual Studio 2012, of course</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Extreme Equipment for TypeScript</h2>
+						<h3>Setting Up Visual Studio</h3>
+						<ol>
+							<li><a href="http://www.typescriptlang.org/#Download">Go to typescriptlang.org</a></li>
+							<li>Click on "Get the Plugin"</li>
+							<li>Download and Install</li>
+						</ol>
+					</section>
+					<section data-state="soothe">
+						<h2>DEMO: Extreme Equipment for TypeScript</h2>
+						<h4>Example: TypeScripting with Visual Studio</h4>
+					</section>
+					
+				</section>
+				
+				<!-- Getting Extreme with TypeScript -->
+				<section>
+					<section>
+						<h1>Getting Extreme with TypeScript</h1>
+					</section>
+					
+					<section>
+						<h2>Getting Extreme with TypeScript</h2>
+						<h3>Functions</h3>
+						<pre>
+							<code contenteditable data-trim class="javascript">
+							
+function greet(greeting) {
+    return "Hello " + greeting;
+}
+
+							</code>
+							<code contenteditable data-trim class="javascript fragment roll-in">
+							
+var greet = (greeting) => {
+    return "Hello " + greeting;
+}
+
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h2>Getting Extreme with TypeScript</h2>
+						<h3>Types</h3>
+						<pre>
+							<code contenteditable data-trim class="javascript">
+							
+function greet(greeting: string) {
+    return "Hello " + greeting;
+}
+
+							</code>
+							<code contenteditable data-trim class="fragment javascript">
+// call function using lambda
+this.onLoad = () => {
+	this.onLoad
+};
+							</code>
+						</pre>
+						<aside class="notes">
+							Lambdas remove the keyword "function" and provide lexical scoping of this.
+						</aside>
+					</section>
+					<section>
+						<h2>Getting Extreme with TypeScript</h2>
+						<h3>Classes</h3>
+						<pre>
+							<code contenteditable data-trim class="javascript">
+							
+class Greeter {
+    // property
+    greeting: string;
+    
+    // constructor
+    constructor(message: string) {
+        this.greeting = message;
+    }
+    
+    // function
+    greet() {
+        return "Hello, " + this.greeting;
+    }
+}
+							
+							</code>
+						</pre>
+					</section>
+					<section data-state="soothe">
+						<h1>DEMO: Getting Extreme with TypeScript</h1>
+						<h4>The Core</h4>
+						<aside class="notes">
+							This demo shows the following
+							<ul>
+								<li>Classes</li>
+								<li>Constructor</li>
+								<li>Properties</li>
+								<li>Types</li>
+								<li>Functions and Lambdas</li>
+							</ul>
+						</aside>
+					</section>
+					
+					<section>
+						<h2>Getting Extreme with TypeScript</h2>
+						<h3>Access Modifiers</h3>
+						<pre>
+							<code contenteditable data-trim class="javascript">
+							
+class Greeter {
+    public greeting:string;
+    private _name: string;
+    
+    // constructor
+    constructor(msg:string) {
+        this.greeting = message;
+    }
+    
+    // get and set
+    public get name():string {
+    	return _name;
+    }
+    
+    public set name(value:string) {
+    	this._name = value;
+    }
+    
+    // function
+    greet() {
+        return "Hello, " + this.greeting;
+    }
+}
+							
+							</code>
+						</pre>
+					</section>
+					<section data-state="soothe">
+						<h1>DEMO: Getting Extreme with TypeScript</h1>
+						<h4>Access Modifiers</h4>
+						<aside class="notes">
+							This demo shows the following
+							<ul>
+								<li>Public, Private, and Static</li>
+								<li>Getters and Setters</li>
+							</ul>
+						</aside>
+					</section>
+					
+					<section>
+						<h2>Getting Extreme with TypeScript</h2>
+						<h3><strong>Interfaces</strong> and Inheritance</h3>
+						<pre>
+							<code contenteditable data-trim class="javascript">
+interface IGreeter {
+	greeting:string;
+	greet: () => string;
+}
+							
+class Greeter implements IGreeter {
+    public greeting:string;
+    private _name: string;
+    
+    // constructor
+    constructor(msg:string) {
+        this.greeting = message;
+    }
+    
+    // get and set
+    public get name():string {
+    	return _name;
+    }
+    
+    public set name(value:string) {
+    	this._name = value;
+    }
+    
+    // function
+    greet() {
+        return "Hello, " + this.greeting;
+    }
+}
+							
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h2>Getting Extreme with TypeScript</h2>
+						<h3>Interfaces and <strong>Inheritance</strong></h3>
+						<pre>
+							<code contenteditable data-trim class="javascript">
+interface IGreeter {
+	greeting:string;
+	greet: () => string;
+}
+							
+class Greeter implements IGreeter {
+    public greeting:string;
+    private _name: string;
+    
+    // constructor
+    constructor(msg:string) {
+        this.greeting = message;
+    }
+    
+    // get and set
+    public get name():string {
+    	return _name;
+    }
+    
+    public set name(value:string) {
+    	this._name = value;
+    }
+    
+    // function
+    greet() {
+        return "Hello, " + this.greeting;
+    }
+}
+
+class Person extends Greeter {
+	constructor(msg:string) { super(msg); }
+	
+	introduce() {
+		return "My name is " + this.name();
+	}
+}
+							
+							</code>
+						</pre>
+					</section>
+					<section data-state="soothe">
+						<h1>DEMO: Getting Extreme with TypeScript</h1>
+						<h4>Classes, Inheritance, and Interfaces</h4>
+						<aside class="notes">
+							This demo shows the following
+							<ul>
+								<li>How to define a class</li>
+								<li>How to extend it</li>
+								<li>Defining and using interfaces</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<h2>Getting Extreme with TypeScript</h2>
+						<h3>Modules</h3>
+						<pre>
+							<code contenteditable data-trim class="javascript">
+module People {
+    // visible
+    exports interface IGreeter {
+    	greeting:string;
+    	greet: () => string;
+    }
+    
+    // visible							
+    exports class Greeter implements IGreeter {
+        public greeting:string;
+        private _name: string;
+        
+        // constructor
+        constructor(msg:string) {
+            this.greeting = message;
+        }
+        
+        // get and set
+        public get name():string {
+        	return _name;
+        }
+        
+        public set name(value:string) {
+        	this._name = value;
+        }
+        
+        // function
+        greet() {
+            return "Hello, " + this.greeting;
+        }
+    }
+    
+    // visible
+    exports class Person extends Greeter {
+    	constructor(msg:string) { super(msg); }
+    	
+    	introduce() {
+    		return "My name is " + this.name();
+    	}
+    }
+    
+    // not visible
+    class OtherPerson {
+    	constructor() { }
+    	
+    	anotherIntroduction() {
+    		return "My name is OtherPerson";
+    	}
+    }
+}
+							
+							</code>
+						</pre>
+					</section>
+					<section data-state="soothe">
+						<h1>DEMO: Getting Extreme with TypeScript</h1>
+						<h4>Modules</h4>
+						<aside class="notes">
+							This demo shows the following
+							<ul>
+								<li>How to define your own module</li>
+								<li>Create your own definition file and use it</li>
+							</ul>
+						</aside>
+					</section>
+                    <section>
+                        <h2>Getting Extreme with TypeScript</h2>
+                        <h1>How to you handle external libraries without having the source?</h1>
+                    </section>
+                    <section>
+                        <h2>Getting Extreme with TypeScript</h2>
+                        <h1>How do you share your code without giving away the source?</h1>
+                    </section>
+                    <section>
+                        <h2>Getting Extreme with TypeScript</h2>
+                        <h1>Definition Files</h1>
+                    </section>
+                    <section>
+                        <h2>Getting Extreme with TypeScript</h2>
+                        <h3>Definition Files</h3>
+                        <ul>
+                            <li class="fragment highlight-blue">Reference code that you don't have</li>
+                            <li class="fragment highlight-blue">Are created using the TypeScript compiler</li>
+                            <li class="fragment highlight-blue"><a href="https://github.com/borisyankov/DefinitelyTyped" target="_blank">Definitely Typed project</a> on Github provides definition files for common libraries</li>
+                        </ul>
+                    </section>
+				</section>
+				
+				<!-- Let's Take This Outside -->
+				<section>
+					<section>
+						<h1>Let's Take This Outside</h1>
+						<h4>...of the client and into the server!</h4>
+					</section>
+					<section>
+						<h2>Let's Take This Outside (of the client)</h2>
+						<h3>Using TypeScript on the Server</h3>
+						<ul>
+							<li class="fragment roll-in">NodeJS</li>
+							<li class="fragment roll-in">Definition Files</li>
+                            <li class="fragment roll-in">TypeScript is just JavaScript, even on the server</li>
+						</ul>
+					</section>
+					
+				</section>
+				
+				<!-- Recap -->
+				<section>
+					<section>
+						<h2>Quick Recap: The Plan</h2>
+						<br />
+						<ul>
+							<li class="fragment grow">
+								<p>JavaScript Compilation. Why?</p>
+							</li>
+							<li class="fragment grow">
+								<p>What you need to know about TypeScript</p>
+							</li>
+							<li class="fragment grow">
+								<p>Getting Yourself Setup</p>
+							</li>
+							<li class="fragment grow">
+								<p>Extreme Equipment for TypeScript</p>
+							</li>
+							<li class="fragment grow">
+								<p>Getting Extreme with TypeScript</p>
+							</li>
+							<li class="fragment grow">
+								<p>Let's Take This Outside (of the Client)</p>
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Quick Recap: The Point</h2>
+						<h3>To leave here with the answer to at least ONE of these questions:</h3>
+						<ul>
+							<li class="fragment highlight-blue">What is TypeScript?</li>
+							<li class="fragment highlight-blue">How do I start using TypeScript?</li>
+							<li class="fragment highlight-blue">What does TypeScript offer me as a language?</li>
+							<li class="fragment highlight-blue">What can TypeScript do?</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Quick Recap: The Point</h2>
+						<h3 class="fragment roll-in">Theme for this Presentation</h3>
+						<h1 class="fragment" >Why you should care about TypeScript/JavaScript Compilation?</h1>
+					</section>
+				</section>
+				
+				<!-- Next Steps -->
+				<section>
+					<section>
+						<h1>Next Steps</h1>
+						<p>Where do we go from here?</p>
+					</section>
+					<section>
+						<h2>Next Steps</h2>
+						<ul>
+							<li>Install the compiler (with npm or Visual Studio)</li>
+							<li>Write a TypeScript app</li>
+							<li>Use TypeScript in an actual project</li>
+							<li>Make a NodeJS app with TypeScript</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Next Steps</h2>
+						<h3>Check out a resource</h3>
+						<ul>
+							<li><a href="http://typescriptlang.org/">TypeScript Site (http://typescriptlang.org/)</a></li>
+							<li><a href="http://typescript.codeplex.com">TypeScript Project (http://typescript.codeplex.com)</a></li>
+							<li><a href="https://github.com/borisyankov/DefinitelyTyped">DefinitelyTyped on Github (https://github.com/borisyankov/DefinitelyTyped)</a></li>
+							<li>TypeScript Blog on MSDN</li>
+							<li>Script Junkie on MSDN</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Next Steps</h2>
+						<p>
+							Check out...
+						</p>
+						<h1>Beautiful JavaScript with CoffeeScript</h1>
+						<h3>with Amir Barylko</h3>
+					</section>
+				</section>
+				
+				<!-- Who am I? -->
+				<section>
+					<h1>David Wesst</h1>
+					<h3>Systems Analyst, University of Manitoba</h3>
+					<h3>Microsoft MVP, Internet Explorer</h3>
+					<h3>IE User Agent</h3>
+					<h3>Video Game Producer, Brewpub Games</h3>
+				</section>
+				<section>
+					<h1>David Wesst</h1>
+					<h3>@davidwesst on Twitter</h3>
+					<h3>davidwesst.com on the Web</h3>
+					<h3>dw [at] davidwesst [dot] com on the Email</h3>
+				</section>
+
 			</div>
+
 		</div>
 
 		<script src="lib/js/head.min.js"></script>
