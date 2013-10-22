@@ -49,7 +49,9 @@ $heading1TextShadow: 0;
 // ---------------------------------------------
 
 .reveal h1 {
-	color: $ippon-primary;
-	font-family: $brandingFont;
-	text-transform: uppercase;
+	.brand {
+		color: $ippon-primary;
+		font-family: $brandingFont;
+		text-transform: uppercase;
+	}
 }
