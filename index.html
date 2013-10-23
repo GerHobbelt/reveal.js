@@ -135,10 +135,15 @@
           <section>
             <h3>Not Exactly...</h3>
             <p>
+              Continuous Integration can <strong>contain</strong> these practices, but each one individually don't make up the whole CI picture.
+            </p>
+            <p>
               Continuous Integration touches all parties: clients, project managers, system admins, and developers, front and back end. If that’s you, you need to know what CI is.</p>
           </section>
+        </section>
+        <section>
+          <h2 class='static-heading' style='top:-65%;' >10 Principles of Continuous Integration</h2>
           <section>
-            <h3><strong>10 Principles of Continuous Integration</strong></h3>
             <ul>
                 <li>Revision Control</li>
                 <li>Build Automation</li>
@@ -155,22 +160,26 @@
           <section>
             <h3>Revision Control</h3>
             <ul>
-              <li>Should be buildable from a fresh checkout.</li>
               <li>Version Branching should be minimized.</li>
+              <li>Allows your developers to <strong>integrate</strong> their code easily.</li>
+              <li>This is the base of what Continuous Integration is built around.</li>
             </ul>
           </section>
           <section>
             <h3>Build Automation</h3>
             <ul>
-              <li>A single command should have the capability of building a system</li>
+              <li>A single command should have the capability of building a system.</li>
+              <li>Should be buildable from a fresh checkout.</li>
+              <li>Allows rapid development with a fast repeatable automated process.</li>
             </ul>
           </section>
           <section>
             <h3>Automate Deployment</h3>
             <ul>
-              <li>Automated process is faster than manual</li>
+              <li>Build an environment on a trigger.</li>
+              <li>Automated process is faster than manual.</li>
               <li>Less mistakes, always the same.</li>
-              <li>Usually provides an automated contengency plan if it fails.</li>
+              <li>Usually provides an automated contingency plan if it fails.</li>
             </ul>
           </section>
           <section>
@@ -184,13 +193,24 @@
             <ul>
               <li>Environmental changes can lead to failures.</li>
               <li>If a copy cannot be provided, a scalable version reduces risk.</li>
+              <li>Use configuration management tools to configure all builds.</li>
             </ul>
           </section>
           <section>
             <h3>Frequent Commits</h3>
             <ul>
+              <li>Makes debugging easier.</li>
+              <li>Better history.</li>
+              <li>Easier to merge, move, add, and remove changes.</li>
+              <li>Makes Code Consolidation easier.</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Code Consolidation</h3>
+            <ul>
               <li>Every user should commit to a baseline once a day.</li>
               <li>Helps tests catch problems early.</li>
+              <li>Less problems merging code.</li>
               <li>Developers should expect broken features. (process can manage this)</li>
             </ul>
           </section>
@@ -204,42 +224,66 @@
           <section>
             <h3>Build Availability</h3>
             <ul>
-              <li>It is more time effective to have environments prebuilt and "checked out" than building on the fly</li>
-              <li>Builds availiable for Stakeholders is a must.</li>
-              <li>Everyone should be able to access/use the latest build</li>
+              <li>It is more time effective to have environments prebuilt and "checked out" than building on the fly.</li>
+              <li>Builds available for Stakeholders is a must.</li>
+              <li>Everyone should be able to access/use the latest build.</li>
             </ul>
           </section>
           <section>
             <h3>Test Result Availability</h3>
             <ul>
-              <li>Confidence in product</li>
-              <li>Provides a "Warranty"</li>
+              <li>Confidence in product.</li>
+              <li>Provides a "Warranty".</li>
               <li>Developers can find problems earlier.</li>
             </ul>
           </section>
         </section>
         <section>
-          <h2 class='static-heading'>Tools of the Trade</h2>
+          <h2 class='static-heading' style='top:-65%;'>Tools of the Trade</h2>
           <section>
             <h3>Git</h3>
             <p>
             <img src='img/git-flow-timeline.png' class='not-fancy'/>
             </p>
+            <p>
             <small>Courtesy of <a href='http://joefleming.net/posts/git-flow/'>Joefleming.net</a></small>
+            </p>
+            <ul>
+              <li>Popular</li>
+              <li>Free</li>
+              <li>Use it!</li>
+            </ul>
           </section>
           <section>
             <h3>Vagrant</h3>
+            <ul>
+              <li>A way to take an environment and distribute it.</li>
+            </ul>
           </section>
           <section>
             <h3>Chef</h3>
+            <ul>
+              <li>One thing that makes Vagrant configurable.</li>
+              <li>Allows version controlled configuration!</li>
+              <li>Use to build like environments and quickly discern differences</li>
+            </ul>
           </section>
           <section>
             <h3>PHPUnit</h3>
+            <ul>
+              <li>Popular unit testing software.</li>
+              <li>Allows functional and other types of testing.</li>
+              <li>Can be used with other software like Selenium or curl to facilitate other testing.</li>
+            </ul>
           </section>
           <section>
             <h3>Jenkins</h3>
             <img src='img/headshot.png' class='not-fancy'/>
             <ul>
+              <li>Continuous Integration Server software</li>
+              <li>Jobs</li>
+              <li>Hooks</li>
+              <li>Consolidates and standardizes custom scripts</li>
               <li>Git Plugin</li>
             </ul>
           </section>
