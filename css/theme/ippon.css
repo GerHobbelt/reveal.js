@@ -29,6 +29,22 @@
   line-height: 0.9em;
   letter-spacing: 0.02em; }
 
+.reveal h1.brand {
+  color: #e42420;
+  font-family: "ippon-brand", Helvetica, Arial, sans-serif;
+  text-transform: uppercase; }
+
+.reveal a {
+  color: #e42420; }
+
+i {
+  color: #e42420; }
+
+.reveal li {
+  list-style: none;
+  padding-bottom: 0.6em;
+  padding-left: 0; }
+
 /*********************************************
  * GLOBAL STYLES
  *********************************************/
@@ -60,7 +76,7 @@ body {
   margin: 0 0 20px 0;
   color: #10b5c6;
   font-family: "ippon-text", Helvetica, Arial, sans-serif;
-  line-height: 0.9em;
+  line-height: 1.2em;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   text-shadow: 0px; }
@@ -150,8 +166,3 @@ body {
   -ms-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
   -o-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
   transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985); }
-
-.reveal h1.brand {
-  color: #e42420;
-  font-family: "ippon-brand", Helvetica, Arial, sans-serif;
-  text-transform: uppercase; }

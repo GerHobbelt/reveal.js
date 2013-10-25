@@ -14,13 +14,13 @@
 
 // Include theme-specific fonts
 @font-face { 
-  font-family: ippon-brand;
-  src: url(./fonts/gpkn.ttf); 
+	font-family: ippon-brand;
+	src: url(./fonts/gpkn.ttf); 
 }
 
 @font-face { 
-  font-family: ippon-text; 
-  src: url(./fonts/tr-century-gothic.ttf); 
+	font-family: ippon-text; 
+	src: url(./fonts/tr-century-gothic.ttf); 
 }
 
 /*********************************************
@@ -43,15 +43,33 @@
 
 // Override theme settings (see ../template/settings.scss)
 $heading1TextShadow: 0;
+$headingLineHeight: 1.2em;
+
+.reveal h1.brand  {
+	// {
+		color: $ippon-primary;
+		font-family: $brandingFont;
+		text-transform: uppercase;
+	// }
+}
+
+.reveal a {
+	color: $ippon-primary;
+}
+
+i {
+	color: $ippon-primary;
+}
+
+.reveal li {
+	list-style: none;
+	padding-bottom: 0.6em;
+	padding-left: 0;
+}
+
 
 // Theme template ------------------------------
 @import "../template/theme";
 // ---------------------------------------------
 
-.reveal h1 {
-	.brand {
-		color: $ippon-primary;
-		font-family: $brandingFont;
-		text-transform: uppercase;
-	}
-}
+
