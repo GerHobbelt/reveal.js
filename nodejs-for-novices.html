@@ -24,7 +24,6 @@
 		<script>
 			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
 		</script>
-
 		<!--[if lt IE 9]>
 		<script src="lib/js/html5shiv.js"></script>
 		<![endif]-->
@@ -52,12 +51,13 @@
 					<h3>Systems Analyst, University of Manitoba (Faculty of Medicine)</h3>
 					<h3>Microsoft MVP, Internet Explorer</h3>
 					<h3>IE User Agent <a href="http://useragents.ie" target="_blank">userAgents.ie</a></h3>
-					<h3>Video Game Producer, Brewpub Games</h3>
+					<h3>Producer, Brewpub Studios</h3>
 				</section>
 				<section>
 					<h1>David Wesst</h1>
 					<h3>@davidwesst on Twitter</h3>
 					<h3>davidwesst.com on the Web</h3>
+					<h3>davidwesst.com/blog on the Blogosphere</h3>
 					<h3>dw [at] davidwesst.com on Email</h3>
                     <h3>davidwesst on Github</h3>
 				</section>
@@ -90,9 +90,6 @@
     					<br />
     					<ul>
     						<li class="fragment grow">
-    							<p>Why JavaScript on the Server?</p>
-    						</li>
-    						<li class="fragment grow">
     							<p>What is NodeJS?</p>
     						</li>
     						<li class="fragment grow">
@@ -114,61 +111,32 @@
 						<ul>
 							<li class="fragment highlight-blue">An introduction to NodeJS</li>
                             <li class="fragment highlight-blue">A dialogue about NodeJS</li>
+                            <li class="fragment highlight-blue">Comparing NodeJS to ASP.NET</li>
                             <li class="fragment highlight-blue">A review of NodeJS development tools</li>
                             <li class="fragment highlight-blue">A "core sample" of NodeJS fundamentals</li>
 						</ul>
 					</section>
-					<section>
-						<h2>The Plan</h2>
-						<h3>Setting Your Expectations</h3>
-						<br />
-						<p>This presentation <strong>is not</strong>...</p>
-						<ul>
-                            <li class="fragment highlight-red">An introduction to JavaScript</li>
-                            <li class="fragment highlight-red">100% code-centric presentation</li>
-							<li class="fragment highlight-red">A lesson on JavaScript coding practices</li>
-							<li class="fragment highlight-red">A "deep-dive" into how NodeJS works</li>
-						</ul>
-                    </section>
                 </section>
-				
-				<!-- Understanding Server-Side JavaScript -->
-				<section>
-					<section>
-						<h1>Why JavaScript on the Server</h1>
-						<h2 class="fragment roll-in">For real?</h2>
-					</section>
-					<section>
-                        <h1>Yup.</h1>
-					</section>
-                    <section>
-                        <h3>Why would you want JavaScript on the server?</h3>
-                        <h1 class="fragment roll-in">One technology for client and server</h1>
-                    </section>
-                    <section>
-                        <h3>Why would you want JavaScript on the server?</h3>
-                        <h1 class="fragment roll-in">Very active development community</h1>
-                    </section>
-                    <section>
-                        <h3>Why would you want JavaScript on the server?</h3>
-                        <h1 class="fragment roll-in">Built on open standards technology</h1>
-                    </section>
-                    <section>
-                        <h3>Why would you want JavaScript on the server?</h3>
-                        <h1 class="fragment roll-in">True multi-platform technology</h1>
-                    </section>
-				</section>
 				
 				<!-- What is NodeJS? No really..what is it -->
 				<section>
 					<section>
 						<h1>What is NodeJS?</h1>
-						<h3 class="fragment">No really...what is it?</h3>
+						<img src="content/nodejs-for-novices/nodejs-dark.png"
+						        alt="NodeJS Logo" />
 					</section>
                     <section>
                         <h2>What is NodeJS?</h2>
                         <h1 class="fragment roll-in">"Node" = "NodeJS"</h1>
                     </section>
+					<section>
+						<h2>What is NodeJS?</h2>
+						<br />
+						<p>Node is...</p>
+						<blockquote cite="http://nodejs.org/"Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices.blockquote cite="http://nodejs.org/">
+						    Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices.
+						</blockblockquote> 
+			    	</section>
 					<section>
 						<h2>What is NodeJS?</h2>
 						<br />
@@ -185,15 +153,6 @@
 						<br />
 						<p>Node is...</p>
 						<ul>
-							<li class="fragment roll-in">...Supported in Cloud Environments</li>
-							<li class="fragment roll-in">...Actively being developed by the community</li>
-						</ul>
-					</section>
-					<section>
-						<h2>What is NodeJS?</h2>
-						<br />
-						<p>From the technical side, Node is...</p>
-						<ul>
 							<li class="fragment roll-in">...Powered by Google's V8 JavaScript Engine</li>
 							<li class="fragment roll-in">...Provides request-level control</li>
                             <li class="fragment roll-in">...bundled with a package manager (a.k.a npm, node packaged modules)</li>
@@ -202,8 +161,6 @@
 					</section>
 					<section>
 						<h1>Asynchronous I/O?</h1>
-						<h4 class="fragment roll-in">Yep.</h4>
-						<h4 class="fragment roll-in">You heard me right.</h4>
 						<h4 class="fragment roll-in">I/O that <strong>doesn't</strong> block your application</h4>
 					</section>
 					<section>
@@ -273,7 +230,6 @@ myServerFunction(message, theCallback);
 						<h2>Callbacks</h2>
                         <h3>Callback are the secret to non-blocking operations</h3>
                         <ul>
-                            <li class="fragment roll-in">
                             <li class="fragment roll-in">On the client, UI is kept unblocked</li>
                             <li class="fragment roll-in">On the server, Requests are unblocked</li>
                         </ul>
