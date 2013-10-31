@@ -22,7 +22,7 @@
 
 		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
 		<script>
-			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/ ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
 		</script>
 
 		<!--[if lt IE 9]>
@@ -43,30 +43,40 @@
 					<p>
 						<small>An original presentation by <a href="http://www.davidwesst.com">David Wesst</a> / <a href="http://twitter.com/davidwesst">@davidwesst</a></small>
 					</p>
+					<p>
+					    Prarie Dev Con 2013 - Saskatoon, SK
+					</p>
 				</section>
 				
                 <!-- Who am I -->
 				<section>
-					<h1>David Wesst</h1>
+					<h2>David Wesst</h2>
                     <h3>From Winnipeg, Manitoba</h3>
 					<h3>Systems Analyst, University of Manitoba (Faculty of Medicine)</h3>
 					<h3>Microsoft MVP, Internet Explorer</h3>
 					<h3>IE User Agent <a href="http://useragents.ie" target="_blank">userAgents.ie</a></h3>
-					<h3>Video Game Producer, Brewpub Games</h3>
+					<h3>Producer, Brewpub Studios</h3>
 				</section>
 				<section>
-					<h1>David Wesst</h1>
-					<h3>@davidwesst on Twitter</h3>
-					<h3>davidwesst.com on the Web</h3>
+					<h2>David Wesst</h2>
+					<h3><a target="_blank" href="https://www.twitter.com/davidwesst">@davidwesst on Twitter</a></h3>
+					<h3><a target="_blank" href="https://www.davidwesst.com">davidwesst.com on the Web</a></h3>
+                    <h3><a target="_blank" href="https://www.davidwesst.com/blog">davidwesst.com/blog on the Blogosphere</a></h3>
 					<h3>dw [at] davidwesst.com on Email</h3>
-                    <h3>davidwesst on Github</h3>
+				</section>
+				<section>
+				    <h1>Follow Along</h1>
+				    <h3><a href="http://davidwesst.github.io/dw-presentations" target="_blank">http://davidwesst.github.io/dw-presentations</a></h3>
+				</section>
+				<section>
+				    <h2>Slides and demos will be posted afterwards.</h2>
 				</section>
 
 				<!-- The Point -->
 				<section>
 					<section>
 						<h2>The Point</h2>
-						<h3>To leave here with the answer to at least ONE of these points:</h3>
+						<h3>To accomplish ONE of these before you leave:</h3>
 						<ul>
 							<li class="fragment highlight-blue">To see some new JavaScript tools</li>
 							<li class="fragment highlight-blue">To understand how a JavaScript project can work</li>
@@ -182,10 +192,10 @@
                         <h3 class="fragment">JavaScript lives outside of the web</h3>
                         <article class="fragment roll-in">
                             <ul>
-                                <li>Windows 8</li>
+                                <li>Windows Store Apps</li>
+                                <li>Chromium and Firefox Apps</li>
+                                <li>Wii U</li>
                                 <li>PhoneGap</li>
-                                <li>Chromium Apps</li>
-                                <li>Firefox Apps</li>
                             </ul>
                         </article>                  
                     </section>
@@ -212,9 +222,10 @@
                         <h2>Survival Skills for the New Age of JavaScript</h2>
                         <h3>Explore Your Environment(s)</h3>
                         <ul class="fragment roll-in">
-                            <li>Eclipse</li>
-                            <li>Visual Studio 2012</li>
+                            <li>Eclipse (Web Platform Tools, Aptana, Nodeclipse)</li>
+                            <li>Visual Studio 2012/2013</li>
                             <li>WebMatrix</li>
+                            <li>WebStorm</li>
                             <li class="fragment highlight-blue"><a href="http://c9.io">Cloud9 (http://c9.io)</a></li>
                         </ul>
                         <aside class="notes">
@@ -311,14 +322,6 @@
                         <h1>Demo: MV* Patterns and Frameworks</h1>
                         <h2>KnockoutJS</h2>
                     </section>
-                    <section data-state="alert">
-                        <h2>Related Session</h2>
-                        <h1>TDD with KnockoutJS (JAV 382)</h1>
-                    </section>
-                    <section data-state="alert">
-                        <h2>Related Session</h2>
-                        <h1>Building a Single Page App with BackboneJS (JAV 398)</h1>
-                    </section>
                     <section>
                         <h2>Modern Day JavaScript Projects: JavaScript Code Today</h2>
                         <h3>On the Server with NodeJS</h3>
@@ -370,10 +373,6 @@
                         <h1>Demo: Managing Dependencies</h1>
                         <h2>npm, Node Packaged Modules</h2>
                     </section>
-                    <section data-state="alert">
-                        <h2>Related Session</h2>
-                        <h1>Node for Novices (JAV 221)</h1>
-                    </section>
 				</section>
                 
                 <!-- Modern Day JavaScript Projects: Test, Test, and Test Again -->
@@ -421,11 +420,7 @@
 					</section>
                     <section data-state="soothe">
                         <h1>Demo: Test, Test, and Test Again</h1>
-                        <h2>Jasmine</h2>
-                    </section>
-                    <section data-state="alert">
-                        <h2>Related Session</h2>
-                        <h1>Testable JavaScript (JAV 388)</h1>
+                        <h2>Mocha</h2>
                     </section>
 				</section>
                 
@@ -514,7 +509,7 @@
 					</section>
 					<section>
 						<h2>Quick Recap: The Point</h2>
-						<h3>To leave here with the answer to at least ONE of these points:</h3>
+						<h3>To accomplish ONE of these before you leave:</h3>
 						<ul>
 							<li class="fragment highlight-blue">To see some new JavaScript tools</li>
 							<li class="fragment highlight-blue">To understand how a JavaScript project can work</li>
@@ -537,7 +532,7 @@
 					<section>
 						<h2>Next Steps</h2>
 						<ul>
-							<li>Go to the other JavaScript/HTML5 Presentations at DevTeach</li>
+							<li>Go to the other JavaScript/HTML5 Presentations at PrDC</li>
 							<li>Make Your Own JavaScript Project</li>
 							<li>Leverage one of the tools in your exiting projects</li>
 							<li>Build a JavaScript Project</li>
@@ -552,46 +547,22 @@
 							<li><a href="https://npmjs.org">Checkout the npm (http://npmjs.org)</a></li>
 						</ul>
 					</section>
-					<section>
-						<h2>Next Steps</h2>
-						<p>
-							Check out today...
-						</p>
-                        <ul>
-                            <li>Functional JavaScript (JAV 366) with James Kovacs</li>
-                            <li>TypeScript to the Max Extreme (JAV 368) with David Wesst</li>
-                            <li>Node for Novices (JAV 221) with David Wesst</li>
-                        </ul>
-					</section>
-					<section>
-						<h2>Next Steps</h2>
-						<p>
-							Check out later...
-						</p>
-                        <ul>
-                            <li>Beautiful JavaScript with CoffeeScript (JAV 354) with Amir Barylko</li>
-                            <li>Testable JavaScript (JAV 388) with James Kovacs</li>
-                            <li>TDD with KnockoutJS (JAV 382) with Kyle Hodgeson</li>
-                            <li>Building a Single Page App with BackboneJS (JAV 398) with Graham Robertson</li>
-                        </ul>
-					</section>
 				</section>
 				
-				<!-- Who am I? -->
 				<section>
-					<h1>David Wesst</h1>
+					<h2>David Wesst</h2>
                     <h3>From Winnipeg, Manitoba</h3>
 					<h3>Systems Analyst, University of Manitoba (Faculty of Medicine)</h3>
 					<h3>Microsoft MVP, Internet Explorer</h3>
 					<h3>IE User Agent <a href="http://useragents.ie" target="_blank">userAgents.ie</a></h3>
-					<h3>Video Game Producer, Brewpub Games</h3>
+					<h3>Producer, Brewpub Games</h3>
 				</section>
 				<section>
-					<h1>David Wesst</h1>
-					<h3>@davidwesst on Twitter</h3>
-					<h3>davidwesst.com on the Web</h3>
+					<h2>David Wesst</h2>
+					<h3><a target="_blank" href="https://www.twitter.com/davidwesst">@davidwesst on Twitter</a></h3>
+					<h3><a target="_blank" href="https://www.davidwesst.com">davidwesst.com on the Web</a></h3>
+                    <h3><a target="_blank" href="https://www.davidwesst.com/blog">davidwesst.com/blog on the Blogosphere</a></h3>
 					<h3>dw [at] davidwesst.com on Email</h3>
-                    <h3>davidwesst on Github</h3>
 				</section>
 
 			</div>
