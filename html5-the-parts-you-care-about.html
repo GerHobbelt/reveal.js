@@ -6,8 +6,8 @@
 
 		<title>David Wesst | HTML5: The Parts You Care About</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+		<meta name="description" content="Summing up the parts of HTML5 that actually matter to you.">
+		<meta name="author" content="David Wesst">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -22,7 +22,7 @@
 
 		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
 		<script>
-			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/ ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
 		</script>
 
 		<!--[if lt IE 9]>
@@ -36,6 +36,9 @@
 
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
+				<section>
+					<img alt="Microsoft Word Screenshot" src="content/html5-tpyca/images/prdc-title.png" />
+				</section>
 				<section>
 					<h1>HTML5</h1>
 					<h3>The Parts You Care About</h3>
@@ -63,15 +66,8 @@
                     <h3><a target="_blank" href="https://www.davidwesst.com/blog">davidwesst.com/blog on the Blogosphere</a></h3>
 					<h3>dw [at] davidwesst.com on Email</h3>
 				</section>
-				<section>
-				    <h1>Follow Along</h1>
-				    <h3><a href="http://davidwesst.github.io/dw-presentations" target="_blank">http://davidwesst.github.io/dw-presentations</a></h3>
-				</section>
-				<section>
-				    <h2>Slides and demos will be posted afterwards.</h2>
-				</section>
 				
-				<section >
+				<section>
 				    <h2>The Point...</h2>
 				    <p>To answer one of these questions:</p>
 				    <ul>
@@ -82,7 +78,7 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <h2>The Plan</h2>
 				    <p>How are we going to understand these points?</p>
 				    <ul>
@@ -92,37 +88,63 @@
 				    </ul>
 				</section>
 				
+				<section name="prereq">
+					<h2>Demo Prerequisites</h2>
+					<article id="mp3Support" style="color: #00ff00" >HTML Audio (.mp3) is supported</article>
+					<article id="no-mp3Support" style="color: #ff0000"  >HTML Audio (.mp3) is NOT supported</article>
+					
+					<article id="oggSupport" style="color: #00ff00" >HTML Audio (.ogg) is supported</article>
+					<article id="no-oggSupport" style="color: #ff0000"  >HTML Audio (.ogg) is NOT supported</article>
+					
+					<article id="canvasSupport" style="color: #00ff00" >HTML Canvas is supported</article>
+					<article id="no-canvasSupport" style="color: #ff0000"  >HTML Canvas is NOT supported</article>
+					
+					<article id="borderradiusSupport" style="color: #00ff00" >CSS Border Radius is supported</article>
+					<article id="no-borderradiusSupport" style="color: #ff0000"  >CSS Border Radius is NOT supported</article>
+					
+					<article>
+						<br />
+						<small><a href="#/48">Go Back</a></small>
+					</article>
+					
+					<script type="text/javascript" src="content/html5-tpyca/js/modernizr.js"></script>
+					<script type="text/javascript" src="content/html5-tpyca/js/prereq.js"></script>
+				</section>
+				
 				<section class="slide start">
 				    <h1>Documents Evolved</h1>
 				</section>
 				
-				<section >
+				<section>
 				    <h2>Documents Evolved</h2>
 				    <h3>What is a document?</h3>
+			   </section>
+			   <section>
+			   		<h2>Documents Evolved</h2>
 				    <blockquote cite="http://www.brainyquote.com/quotes/keywords/documents.html#lLAIa2OpKVsB6pfx.99">
 				        <p>Documents create a paper reality we call proof.</p>
 				        <p><cite>Mason Cooley</cite></p>
 				    </blockquote>
-				    <img  alt="Real Documents" src="images/documents.jpg" />
+				    <img alt="Real Documents" src="content/html5-tpyca/images/documents.jpg" />
 				</section>
 				
-				<section >
-				    <h2>What is a document?</h2>
-				    <img alt="Microsoft Word Screenshot" src="images/word-document.png" />
+				<section>
+				    <h2>Documents Evolved</h2>
+				    <img alt="Microsoft Word Screenshot" src="content/html5-tpyca/images/word-document.png" />
 				</section>
 				
-				<section >
-				    <h2>What is a document?</h2>
-				    <img alt="First World Wide Web Browser" src="/images/wwwBrowser.gif" />
+				<section>
+				    <h2>Documents Evolved</h2>
+				    <img alt="First World Wide Web Browser" src="content/html5-tpyca/images/wwwBrowser.gif" />
 				</section>
 				
-				<section >
-				    <h2>What is a document?</h2>
-				    <img alt="Online Document Collaboration in OneNote" src="/images/onenote-online-doc.png" />
+				<section>
+				    <h2>Documents Evolved</h2>
+				    <img alt="Online Document Collaboration in OneNote" src="content/html5-tpyca/images/onenote-online-doc.png" />
 				</section>
 				
-				<section >
-				    <h2>What is document?</h2>
+				<section>
+				    <h2>Documents Evolved</h2>
 				    <ul>
 				        <li>...a collection of data (images, text, audio, video, etc.)</li>
 				        <li>...a collection of data sources (references, hyperlinking)</li>
@@ -130,7 +152,14 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
+				    <blockquote cite="Read more at http://www.brainyquote.com/quotes/keywords/documents_2.html#2rZPeyquosWzb1eT.99">
+				        <p>What we did not imagine was a Web of people, but a Web of documents.</p>
+				        <p><cite>Dale Dougherty</cite></p>
+				    </blockquote>
+				</section>
+				
+				<section>
 				    <h2>What does HTML have to do with a document?</h2>
 				    <ul>
 				        <li>HTML has <em>always</em> been for creating and sharing documents.</li>
@@ -138,18 +167,11 @@
 				    </ul>
 				</section>
 				
-				<section >
-				    <blockquote cite="Read more at http://www.brainyquote.com/quotes/keywords/documents_2.html#2rZPeyquosWzb1eT.99">
-				        <p>What we did not imagine was a Web of people, but a Web of documents.</p>
-				        <p><cite>Dale Dougherty</cite></p>
-				    </blockquote>
-				</section>
-				
-				<section >
+				<section>
 				    <h1>Really Defining HTML5</h1>
 				</section>
 				
-				<section >
+				<section>
 				    <h2>Really Defining HTML5</h2>
 				    <ul>
 				        <li>
@@ -161,97 +183,87 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <h2>Really Defining HTML5</h2>
 				    <p>How do you do this with plain old markup?</p>
-				    <h3 ><em>You Don't. (We haven't done that in years)</em></h3>
-				    <section >
-				        <p>HTML5 defines features using three (3) core technologies:</p>
-				        <ul>
-				            <li>
-				                <h3>HTML | for Defining Documents</h3>
-				            </li>
-				            <li>
-				                <h3>CSS | for Styling Documents</h3>
-				            </li>
-				            <li>
-				                <h3>JavaScript | for Making Documents Interactive</h3>
-				            </li>
-				        </ul>
-				    </section>
+				    <br />
+				    <h3 class="fragment">You Don't. (We haven't done that in years)</h3>
 				</section>
 				
-				<section >
+				<section>
+			        <h2>HTML5 defines features using three (3) core technologies:</h2>
+			        <ul>
+			            <li class="fragment">
+			                HTML | for Defining Documents
+			            </li>
+			            <li class="fragment">
+			                CSS | for Styling Documents
+			            </li>
+			            <li class="fragment">
+			                JavaScript | for Making Documents Interactive
+			            </li>
+			        </ul>
+				</section>
+				
+				<section>
 				    <h2>Really Defining HTML5</h2>
 				    <p>HTML5 features are divided into eight (8) separate groups:</p>
 				    <ul>
-				        <li>
-				            <h3>Semantics</h3>
+				        <li class="fragment highlight-blue">
+				            Semantics
 				        </li>
-				        <li>
-				            <h3>Offline &amp; Storage</h3>
+				        <li class="fragment highlight-blue">
+				            Offline &amp; Storage
 				        </li>
-				        <li>
-				            <h3>Device Access</h3>
+				        <li class="fragment highlight-blue">
+				            Device Access
 				        </li>
-				        <li>
-				            <h3>Connectivity</h3>
+				        <li class="fragment highlight-blue">
+				            Connectivity
 				        </li>
-				        <li>
-				            <h3>Multimedia</h3>
+				        <li class="fragment highlight-blue">
+				            Multimedia
 				        </li>
-				        <li>
-				            <h3>3D, Graphics &amp; Effects</h3>
+				        <li class="fragment highlight-blue">
+				            3D, Graphics &amp; Effects
 				        </li>
-				        <li>
-				            <h3>Performance &amp; Integration</h3>
+				        <li class="fragment highlight-blue">
+				            Performance &amp; Integration
 				        </li>
-				        <li>
-				            <h3>CSS3</h3>
+				        <li class="fragment highlight-blue">
+				            CSS3
 				        </li>
 				    </ul>
 				</section>
 				
-				<section >
-				    <h1>HTML5 Tools & Building Materials</h1>
+				<section>
+				    <h1>HTML5 Tools &amp; Building Materials</h1>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 Tools & Building Materials</h2>
+				        <h2>HTML5 Tools &amp; Building Materials</h2>
 				        <h4>Definition | Style | Interaction</h4>
 				    </hgroup>
 				    <ul>
-				        <li>HTML Markup (Definition)</li>
-				        <li>CSS3 (Style)</li>
-				        <li>JavaScript (Interaction)</li>        
+				        <li>HTML Markup | Definition</li>
+				        <li>CSS3 | Style</li>
+				        <li>JavaScript | Interaction</li>        
 				    </ul>
 				</section>
 				
-				<section >
+				<section data-background="#007777">
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Definition | HTML</b></em></h4>
-				    </hgroup>
-				    <p>Your IDE or Editor Experience</p>
-				    <h3>What HTML5 Editor do you use?</h3>
-				    <ul >
-				        <li>-- <i>Your favourite editor here</i> --</li>
-				    </ul>
-				</section>
-				
-				<section >
-				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Definition | HTML</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Definition | HTML</h4>
 				    </hgroup>
 				    <h2>DEMO</h2>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Definition | HTML</b></em> | Style | Interaction</h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Definition | HTML</h4>
 				    </hgroup>
 				    <p>Your IDE or Editor Experience</p>
 				    <h3>Microsoft WebMatrix</h3>
@@ -263,10 +275,10 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Definition | HTML</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Definition | HTML</h4>
 				    </hgroup>
 				    <p>Your IDE or Editor Experience</p>
 				    <h3>Eclipse w/ Nodeclispe, Web Platform Tools, Aptana</h3>
@@ -278,27 +290,26 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Definition | HTML</b></em> | Style | Interaction</h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Definition | HTML</h4>
 				    </hgroup>
 				    <p>Your IDE or Editor Experience</p>
-				    <h3>Cloud 9 (http://c9.io)</h3>
+				    <h3>Cloud 9 (<a href="http://c9.io" target="_blank">http://c9.io</a>)</h3>
 				    <ul >
 				        <li>Hosted IDE</li>
 				        <li>Free & Open Source</li>
 				        <li>HTML5, Ruby, PHP, and Node</li>
-				        <li>Provides Terminal, MySQL, and link to Github & Bitbucket</li>
+				        <li>Provides Terminal, MySQL, and link to Github &amp; Bitbucket</li>
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Definition | HTML</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Definition | HTML</h4>
 				    </hgroup>
-				    <p>Your IDE or Editor Experience</p>
 				    <h3>Visual Studio 2012/2013</h3>
 				    <ul>
 				        <li>Free-ish (Free Editions Available)</li>
@@ -309,10 +320,39 @@
 				    </ul>      
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 Tools & <em><b>Building Materials</b></em></h2>
-				        <h4><em><b>Definition | HTML</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Definition | HTML</h4>
+				    </hgroup>
+				    <h3>A few others...</h3>
+				    <ul>
+				        <li>Webstorm IDE</li>
+				        <li>Notepad++</li>
+				        <li>Sublime Text, Vi, Emacs</li>
+				    </ul> 
+				</section>
+				
+				<section>
+				    <hgroup>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Definition | HTML</h4>
+				    </hgroup>
+				    <h3>What HTML5 Editor do you use?</h3>
+				</section>
+				
+				<section data-state="soothe">
+				    <hgroup>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Definition | HTML</h4>
+				    </hgroup>
+				    <h3>Demo</h3>
+				</section>
+				
+				<section>
+				    <hgroup>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Definition | HTML</h4>
 				    </hgroup>
 				    <h3>Tons of new elements! (for Structure and Semantics)</h3>
 				    <article class="three-col">
@@ -340,10 +380,10 @@
 				    </article>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 Tools & <em><b>Building Materials</b></em></h2>
-				        <h4><em><b>Definition | HTML</b></em></h4>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Definition | HTML</h4>
 				    </hgroup>
 				    <h3>Tons of new elements! (Media)</h3>
 				    <article class="three-col">
@@ -355,10 +395,10 @@
 				    </article>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 Tools & <em><b>Building Materials</b></em></h2>
-				        <h4><em><b>Definition | HTML</b></em></h4>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Definition | HTML</h4>
 				    </hgroup>
 				    <h3>Tons of new elements! (for Drawing)</h3>
 				    <article class="three-col">
@@ -366,10 +406,10 @@
 				    </article>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 Tools & <em><b>Building Materials</b></em></h2>
-				        <h4><em><b>Definition | HTML</b></em></h4>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Definition | HTML</h4>
 				    </hgroup>
 				    <h3>Tons of new elements! (for Form)</h3>
 				    <article class="three-col">
@@ -379,10 +419,10 @@
 				    </article>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 Tools & <em><b>Building Materials</b></em></h2>
-				        <h4><em><b>Definition | HTML</b></em></h4>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Definition | HTML</h4>
 				    </hgroup>
 				    <h3>Removed old timey elements!</h3>
 				    <article class="three-col">
@@ -401,57 +441,63 @@
 				    </article>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 Tools & <em><b>Building Materials</b></em></h2>
-				        <h4><em><b>Definition | HTML</b></em></h4>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Definition | HTML</h4>
 				    </hgroup>
 				    <h3>All you need is the new DOCTYPE</h3>
-				    <img alt="Screenshot of new doctype" src="images/doctype.PNG" style="width: 80%;" />
+				    <img alt="Screenshot of new doctype" src="content/html5-tpyca/images/doctype.PNG" style="width: 80%;" />
 				</section>
 				
 				<!-- Audio Demo -->
-				<section >
+				<section data-state="soothe">
 				    <hgroup>
-				        <h2>HTML5 Tools & <em><b>Building Materials</b></em></h2>
-				        <h4><em><b>Definition | HTML</b></em> - DEMO</h4>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Definition | HTML</h4>
+				    </hgroup>
+				    <h3>Demo: Audio Element</h3>
+				</section>
+				<section>
+				    <hgroup>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Definition | HTML - DEMO</h4>
 				    </hgroup>
 				    <article>
 				        <h3>Audio Element (Part 1) - Default Audio Player</h3>
-				        <audio src="/_demo/media/dotnetrocks.mp3" controls></audio>
+				        <audio src="content/html5-tpyca/media/dotnetrocks.mp3" controls></audio>
 				    </article>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 Tools & <em><b>Building Materials</b></em></h2>
-				        <h4><em><b>Definition | HTML</b></em> - DEMO</h4>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Definition | HTML - DEMO</h4>
 				    </hgroup>
 				    <article>
 				        <h3>Audio Element (Part 2) - Multiple Source Files</h3>
 				        <audio controls>
-				            <source src="/_demo/media/dotnetrocks.mp3" />
-				            <source src="/_demo/media/dotnetrocks.ogg" />
-				            <p>Your browser does not support HTML5 Audio. :(</p>
+				            <source src="content/html5-tpyca/media/dotnetrocks.mp3" />
+				            <source src="content/html5-tpyca/media/dotnetrocks.ogg" />
+				            <p>Your browser does not support HTML5 Audio.</p>
 				        </audio>
 				    </article>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 Tools & <em><b>Building Materials</b></em></h2>
-				        <h4><em><b>Definition | HTML</b></em></h4>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Definition | HTML</h4>
 				    </hgroup>
 				    <h3>What about backwards compatibility? (i.e. Internet Explorer)</h3>
 				    <h3>Coming up later in the presentation, I promise!</h3>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Style | CSS3</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Style | CSS3 - Compilers</h4>
 				    </hgroup>
-				    <p>CSS Compilers</p>
 				    <h3>SASS - Syntactically Awesome Stylesheets</h3>
 				    <ul >
 				        <li>http://sass-lang.com/</li>
@@ -468,12 +514,11 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Style | CSS3</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Style | CSS3 - Compilers</h4>
 				    </hgroup>
-				    <p>CSS Compilers</p>
 				    <h3>LESS - Dynamic Stylesheet Language</h3>
 				    <ul >
 				        <li>http://lesscss.org/</li>
@@ -491,12 +536,31 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section data-state="soothe">
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Style | CSS3</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Style | CSS3 - Compilers</h4>
 				    </hgroup>
-				    <p>CSS Frameworks or Libraries</p>
+				    <h1>DEMO - Less</h1>
+				</section>
+				
+				<section>
+			        <header class="lessdemo">
+			            <h1>This is my header!</h1>
+			        </header>
+			        <article class="lessdemo">
+			            I love this demo and presentation!
+			        </article>
+			        <footer class="lessdemo">
+			            <article>Less is the best just like David Wesst!</article>
+			        </footer>
+				</section>
+				
+				<section>
+				    <hgroup>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Style | CSS3 - Frameworks</h4>
+				    </hgroup>
 				    <ul >
 				        <li><a href="http://960.gs/">960 CSS Framework (http://960.gs/)</a></li>
 				        <li><a href="http://blueprintcss.org/">Blueprint Framework (http://www.blueprintcss.org/)</a></li>
@@ -505,20 +569,24 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 Tools & Building Materials</h2>
-				        <h4><em><b>Style | CSS3</b></em></h4>
+				        <h2>HTML5 Tools &amp; Building Materials</h2>
+				        <h4>Style | CSS3</h4>
 				    </hgroup>
-				    <h1>DEMO - Less</h1>
+				    <ul>
+				    	<li class="fragment highlight-blue">Media Queries</li>
+				    	<li class="fragment highlight-blue">Border-Radius</li>
+				    	<li class="fragment highlight-blue">Background Gradients</li>
+				    	<li class="fragment highlight-blue">CSS Animations and Transitions</li>
+				    </ul>				
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Interaction | JavaScript</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Interaction | JavaScript - Libraries</h4>
 				    </hgroup>
-				    <p>JavaScript Libraries</p>
 				    <h3>Modernizr</h3>
 				    <ul >
 				        <li>http://modernizr.com/</li>
@@ -535,20 +603,20 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section data-state="soothe">
 				    <hgroup>
-				        <h2>HTML5 Tools & Building Materials</h2>
-				        <h4><em><b>Style | CSS3</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Interaction | JavaScript - Libraries</h4>
 				    </hgroup>
 				    <h1>DEMO - Modernizr</h1>
+				    <a href="#/6">Go to the Demo</a>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Interaction | JavaScript</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Interaction | JavaScript - Libraries</h4>
 				    </hgroup>
-				    <p>Open Source JavaScript</p>
 				    <ul >
 				        <li>There are a TON of libraries avilable thanks to the open source community.</li>
 				        <li>
@@ -563,12 +631,11 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Interaction | JavaScript</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Interaction | JavaScript - Compilers </h4>
 				    </hgroup>
-				    <p>JavaScript Compilers</p>
 				    <h3>CoffeeScript</h3>
 				    <ul >
 				        <li>http://coffeescript.org/</li>
@@ -585,12 +652,11 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Interaction | JavaScript</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Interaction | JavaScript - Compilers </h4>
 				    </hgroup>
-				    <p>JavaScript Compilers</p>
 				    <h3>Typescript</h3>
 				    <ul >
 				        <li>http://typescript.org/</li>
@@ -605,32 +671,11 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Interaction | JavaScript</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Interaction | JavaScript - Testing </h4>
 				    </hgroup>
-				    <p>JavaScript Compilers</p>
-				    <h3>JSIL</h3>
-				    <ul >
-				        <li>http://jsil.org/</li>
-				        <li>
-				            <p>Compiles .NET into Standards Compliants JavaScript</p>
-				            <ul>
-				                <li><em>Active</em>Open Source Project</li>
-				                <li>Transforms CIL Bytecode into JavaScript</li>
-				                <li>Can work with other .NET languages</li>
-				            </ul>
-				        </li>
-				    </ul>
-				</section>
-				
-				<section >
-				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Interaction | JavaScript</b></em></h4>
-				    </hgroup>
-				    <p>JavaScript Testing</p>
 				    <h3>Jasmine</h3>
 				    <ul>
 				        <li><a href="https://github.com/pivotal/jasmine/wiki">https://github.com/pivotal/jasmine/wiki</a></li>
@@ -641,12 +686,11 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Interaction | JavaScript</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Interaction | JavaScript - Testing </h4>
 				    </hgroup>
-				    <p>JavaScript Testing</p>
 				    <h3>QUnit</h3>
 				    <ul>
 				        <li><a href="http://qunitjs.com/">http://qunitjs.com/</a></li>
@@ -656,43 +700,79 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Interaction | JavaScript</b></em></h4>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Interaction | JavaScript - Testing </h4>
+				    </hgroup>
+				    <h3>Mocha</h3>
+				    <ul>
+				    	<li><a href="http://visionmedia.github.io/mocha/" target="_blank">http://visionmedia.github.io/mocha/</a></li>
+						<li>BDD based framework</li>
+						<li>Resembles RSpec</li>
+						<li>Works with both client and server (NodeJS)</li>
+                    </ul>
+				</section>
+				
+				<section data-state="soothe">
+				    <hgroup>
+				        <h2>HTML5 <b>Tools</b> &amp; Building Materials</h2>
+				        <h4>Interaction | JavaScript - Testing </h4>
 				    </hgroup>
 				    <h1>DEMO - BDD with Jasmine</h1>
 				</section>
 				
-				<section >
+				<section>
 				    <hgroup>
-				        <h2>HTML5 Tools & <em><b>Building Materials</b></em></h2>
-				        <h4><em><b>Interaction | JavaScript</b></em></h4>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Interaction | JavaScript</h4>
 				    </hgroup>
 				    <p>JavaScript APIs</p>
 				    <ul>
 				        <li>Media (i.e Audio and Video)</li>
 				        <li>Text Track (i.e. Subtitles)</li>
-				        <li>Drag and Drop</li>
+				        <li>Web Crypto</li>
+				        <li>Encrypted Media Extensions (EME)</li>
 				        <li>Offline Web Applications / Application Cache</li>
 				        <li>User Interaction</li>
 				        <li>History</li>
 				    </ul>
 				</section>
 				
-				<section >
+				<section data-state="soothe">
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Interaction | JavaScript</b></em></h4>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Interaction | JavaScript</h4>
 				    </hgroup>
 				    <p>JavaScript APIs</p>
 				    <h1>DEMO - Media API</h1>
 				</section>
 				
-				<section >
+				<section data-state="soothe">
 				    <hgroup>
-				        <h2>HTML5 Tools & <em><b>Building Materials</b></em></h2>
-				        <h4><em><b>Interaction | JavaScript</b></em></h4>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Interaction | JavaScript</h4>
+				    </hgroup>
+				    <article>
+				        <audio id="audioElem" src="content/html5-tpyca/media/dotnetrocks.mp3"></audio>
+				        <ul>
+				            <li><input id="btnPlay" type="button" value="Play" onclick="javascript:player.play();" /></li>
+				            <li><input id="btnPause" type="button" value="Pause" onclick="javascript:player.pause();" /></li>
+				            <li><input id="btnVolumeUp" type="button" value="Volume Up" onclick="javascript:player.volumeUp();" /></li>
+				            <li><input id="btnVolumeDown" type="button" value="Volume Down" onclick="javascript:player.volumeDown();" /></li>
+				        </ul>
+				
+				        <script type="text/javascript" src="content/html5-tpyca/js/AudioPlayer.js"></script>
+				        <script type="text/javascript">
+				        	var player = AudioPlayer("audioElem");
+				        </script>
+				    </article>
+				</section>
+				
+				<section>
+				    <hgroup>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Interaction | JavaScript</h4>
 				    </hgroup>
 				    <p>Non-HTML5 Spec JavaScript APIs</p>
 				    <ul>
@@ -705,100 +785,67 @@
 				    </ul>
 				</section>
 				
-				<section >
+				<section data-state="soothe">
 				    <hgroup>
-				        <h2>HTML5 <em><b>Tools</b></em> & Building Materials</h2>
-				        <h4><em><b>Interaction | JavaScript</b></em></h4>
+				        <h2>HTML5 Tools &amp; <b>Building Materials</b></h2>
+				        <h4>Interaction | JavaScript</h4>
 				    </hgroup>
 				    <p>Non-HTML5 Spec JavaScript APIs</p>
 				    <h1>DEMO - Canvas API</h1>
 				</section>
 				
-				<section >
+				<section data-state="soothe">
+					<canvas id="canvas" width="640" height="320" >
+						Your browser doesn't seem to support the canvas tag...
+					</canvas>
+					<script type="text/javascript" src="content/html5-tpyca/js/game.js"></script>
+				</section>
+				
+				<section>
 				    <h1>A Quick Recap</h1>
 				</section>
 				
-				<section >
-				    <h2>The Point</h2>
+				<section>
+				    <h2>The Point...</h2>
 				    <p>To answer one of these questions:</p>
 				    <ul>
-				        <li>
-				            <h3>What is HTML5 for?</h3>
-				        </li>
-				        <li>
-				            <h3>What makes up HTML5?</h3>
-				        </li>
-				        <li>
-				            <h3>What HTML5 tools are out there for me to use?</h3>
-				        </li>
-				        <li>
-				            <h3>Does HTML5 even matter to you?</h3>
-				        </li>
+				        <li class="fragment highlight-blue">What is HTML5 for?</li>
+				        <li class="fragment highlight-blue">What makes up HTML5?</li>
+				        <li class="fragment highlight-blue">What HTML5 tools are out there for me to use?</li>
+				        <li class="fragment highlight-blue">Does HTML5 even matter to you?</li>
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <h2>The Plan</h2>
 				    <p>How are we going to understand these points?</p>
 				    <ul>
-				        <li>
-				            <h3>What is a Document?</h3>
-				        </li>
-				        <li>
-				            <h3>Really Defining HTML5</h3>
-				        </li>
-				        <li>
-				            <h3>HTML5 Hardware (i.e. The Toolbox)</h3>
-				            <ul >
-				                <li>...with live demonstrations</li>
-				            </ul>
-				        </li>
+				        <li class="fragment highlight-blue">Documents Evolved</li>
+				        <li class="fragment highlight-blue">Really Defining HTML5</li>
+				        <li class="fragment highlight-blue">HTML5 Hardware (i.e. The Toolbox)</li>
 				    </ul>
 				</section>
 				
-				<section >
+				<section>
 				    <h1>Next Steps</h1>
 				</section>
 				
-				<section >
+				<section>
 				    <h2>Next Steps</h2>
-				    <p>Here's what you do:</p>
-				    <ol>
+				    <ul>
+				    	<li>Go to <a href="http://modern.ie" target="_blank">Modern.IE</a> and explore</li>
 				        <li>Read an HTML5 book or Tutorial</li>
 				        <li>Download and run an HTML5 editor (e.g. WebMatrix)</li>
-				        <li>
-				            <h3>Use one of the following in an HTML5 application:</h3>
-				            <ul>
-				                <li>The new DOCTYPE</li>
-				                <li>Modernizr</li>
-				                <li>CSS Framework (e.g. LESS)</li>
-				            </ul>
-				        </li>
-				    </ol>
-				</section>
-				
-				<section >
-				    <h1>Questions</h1>
-				</section>
-				
-				<section >
-				    <h1>Thank you!</h1>
-				</section>
-				
-				<section >
-				    <h2>Who was that guy?</h2>
-				    <h3>David Wesst</h3>
-				    <ul>
-				        <li>From Winnipeg, Manitoba</li>
-				        <li>Systems Analyst @ Faculty of Medicine, University of Manitoba</li>
-				        <li>Internet Explorer MVP since 2011</li>
+				        <li>Upgrade an app with Modernizr and the new DOCTYPE</li>
 				    </ul>
-				    <h3>Contact me via...</h3>
-				    <ul>
-				        <li>Twitter (@davidwesst)</li>
-				        <li>Email (dw@davidwesst.com)</li>
-				        <li>Web (www.davidwesst.com)</li>
-				    </ul>
+				</section>
+				
+				<section>
+					<h2>David Wesst</h2>
+					<h3><a target="_blank" href="https://www.twitter.com/davidwesst">@davidwesst on Twitter</a></h3>
+					<h3><a target="_blank" href="https://www.davidwesst.com">davidwesst.com on the Web</a></h3>
+                    <h3><a target="_blank" href="https://www.davidwesst.com/blog">davidwesst.com/blog on the Blogosphere</a></h3>
+					<h3>dw [at] davidwesst.com on Email</h3>
 				</section>
 			</div>	
 		</div>
