@@ -11,7 +11,7 @@ reveal.js comes with a broad range of features including [nested slides](https:/
 - [Examples](https://github.com/hakimel/reveal.js/wiki/Example-Presentations): Presentations created with reveal.js, add your own!
 - [Browser Support](https://github.com/hakimel/reveal.js/wiki/Browser-Support): Explanation of browser support and fallbacks.
 
-## Slides
+## Online Editor
 
 Presentations are written using HTML or markdown but there's also an online editor for those of you who prefer a graphical interface. Give it a try at [http://slid.es](http://slid.es).
 
@@ -58,6 +58,20 @@ You can write your content as a separate file and have reveal.js load it at runt
 <section data-markdown="example.md" data-separator="^\n\n\n" data-vertical="^\n\n" data-notes="^Note:" data-charset="iso-8859-15"></section>
 ```
 
+#### Element Attributes
+
+Special syntax is available for adding attributes to Markdown elements. This is useful for fragments, amongst other things.
+
+```html
+<section data-markdown>
+	<script type="text/template">
+		- Item 1 {_class="fragment" data-fragment-index="2"}
+		- Item 2 {_class="fragment" data-fragment-index="1"}
+	</script>
+</section>
+```
+
+
 ### Configuration
 
 At the end of your page you need to initialize reveal by running the following code. Note that all config values are optional and will default as specified below.
@@ -77,20 +91,27 @@ Reveal.initialize({
 	// Enable keyboard shortcuts for navigation
 	keyboard: true,
 
-	// Enable touch events for navigation
-	touch: true,
-
 	// Enable the slide overview mode
 	overview: true,
 
 	// Vertical centering of slides
 	center: true,
 
+	// Enables touch navigation on devices with touch input
+	touch: true,
+
 	// Loop the presentation
 	loop: false,
 
 	// Change the presentation direction to be RTL
 	rtl: false,
+
+	// Turns fragments on and off globally
+	fragments: true,
+
+	// Flags if the presentation is running in an embedded mode,
+	// i.e. contained within a limited portion of the screen
+	embedded: false,
 
 	// Number of milliseconds between automatically proceeding to the
 	// next slide, disabled when set to 0, this value can be overwritten
@@ -103,23 +124,29 @@ Reveal.initialize({
 	// Enable slide navigation via mouse wheel
 	mouseWheel: false,
 
+	// Hides the address bar on mobile devices
+	hideAddressBar: true,
+
+	// Opens links in an iframe preview overlay
+	previewLinks: false,
+
 	// Transition style
 	transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
 
 	// Transition speed
 	transitionSpeed: 'default', // default/fast/slow
 
-	// Transition style for full page backgrounds
-	backgroundTransition: 'default' // default/linear/none
+	// Transition style for full page slide backgrounds
+	backgroundTransition: 'default', // default/linear/none
+
+	// Number of slides away from the current that are visible
+	viewDistance: 3,
 
 	// Parallax background image
 	parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
 
 	// Parallax background size
-	parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
-
-	// Number of slides away from the current that are visible
-	viewDistance: 3,
+	parallaxBackgroundSize: '' // CSS syntax, e.g. "2100px 900px"
 
 
 });
@@ -480,6 +507,8 @@ Add `data-autoplay` to your media element if you want it to automatically start 
 <video data-autoplay src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"></video>
 ```
 
+Additionally the framework automatically pushes two [post messages](https://developer.mozilla.org/en-US/docs/Web/API/Window.postMessage) to all iframes, ```slide:start``` when the slide containing the iframe is made visible and ```slide:stop``` when it is hidden.
+
 
 ### Stretching elements
 Sometimes it's desirable to have an element, like an image or video, stretch to consume as much space as possible within a given slide. This can be done by adding the ```.stretch``` class to an element as seen below:
@@ -520,6 +549,7 @@ The framework comes with a few different themes included:
 - night: Black background, thick white text, orange links
 - serif: Cappuccino background, gray text, brown links
 - simple: White background, black text, blue links
+- solarized: Cream-colored background, dark green text, blue links
 
 Each theme is available as a separate stylesheet. To change theme you will need to replace **default** below with your desired theme name in index.html:
 
@@ -858,6 +888,7 @@ If you have personal support questions use [StackOverflow](http://stackoverflow.
   - Single-quoted strings
 - Should be made towards the **dev branch**
 - Should be submitted from a feature/topic branch (not your master)
+- Should not include the minified **reveal.min.js** file
 
 
 ## License

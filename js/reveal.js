@@ -12,7 +12,7 @@ var Reveal = (function(){
 	var SLIDES_SELECTOR = '.reveal .slides section',
 		HORIZONTAL_SLIDES_SELECTOR = '.reveal .slides>section',
 		VERTICAL_SLIDES_SELECTOR = '.reveal .slides>section.present>section',
-		HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-child',
+		HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-of-type',
 
 		// Configurations defaults, can be overridden at initialization time
 		config = {
@@ -44,7 +44,7 @@ var Reveal = (function(){
 			// Enable the slide overview mode
 			overview: true,
 
-			// Vertical centring of slides
+			// Vertical centering of slides
 			center: true,
 
 			// Enables touch navigation on devices with touch input
@@ -191,9 +191,15 @@ var Reveal = (function(){
 		// Force a layout when the whole page, incl fonts, has loaded
 		window.addEventListener( 'load', layout, false );
 
+		var query = Reveal.getQueryHash();
+
+		// Do not accept new dependencies via query config to avoid
+		// the potential of malicious script injection
+		if( typeof query['dependencies'] !== 'undefined' ) delete query['dependencies'];
+
 		// Copy options over to our config object
 		extend( config, options );
-		extend( config, Reveal.getQueryHash() );
+		extend( config, query );
 
 		// Hide the address bar in mobile browsers
 		hideAddressBar();
@@ -1102,7 +1108,7 @@ var Reveal = (function(){
 					continue;
 				}
 
-				if( config.center ) {
+				if( config.center || slide.classList.contains( 'center' ) ) {
 					// Vertical stacks are not centred since their section
 					// children will be
 					if( slide.classList.contains( 'stack' ) ) {
@@ -2003,7 +2009,7 @@ var Reveal = (function(){
 	 */
 	function startEmbeddedContent( slide ) {
 
-		if( slide ) {
+		if( slide && !isSpeakerNotes() ) {
 			// HTML5 media elements
 			toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
 				if( el.hasAttribute( 'data-autoplay' ) ) {
@@ -2011,10 +2017,15 @@ var Reveal = (function(){
 				}
 			} );
 
+			// iframe embeds
+			toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
+				el.contentWindow.postMessage( 'slide:start', '*' );
+			});
+
 			// YouTube embeds
 			toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
 				if( el.hasAttribute( 'data-autoplay' ) ) {
-					el.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+					el.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
 				}
 			});
 		}
@@ -2035,13 +2046,28 @@ var Reveal = (function(){
 				}
 			} );
 
+			// iframe embeds
+			toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
+				el.contentWindow.postMessage( 'slide:stop', '*' );
+			});
+
 			// YouTube embeds
 			toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
 				if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
-					el.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+					el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
 				}
 			});
 		}
+
+	}
+
+	/**
+	 * Checks if this presentation is running inside of the
+	 * speaker notes window.
+	 */
+	function isSpeakerNotes() {
+
+		return !!window.location.search.match( /receiver/gi );
 
 	}
 
