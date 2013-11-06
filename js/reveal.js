@@ -40,7 +40,7 @@
     var SLIDES_SELECTOR = '.reveal .slides section',
         HORIZONTAL_SLIDES_SELECTOR = '.reveal .slides>section',
         VERTICAL_SLIDES_SELECTOR = '.reveal .slides>section.present>section',
-        HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-child',
+		HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-of-type',
         SLIDE_NO_DISPLAY_DISTANCE = 1,
 
         Reveal = null,
@@ -82,7 +82,7 @@
             // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'zoom' | 'scale')
             overview: 'zoom',
 
-            // Vertical centring of slides
+			// Vertical centering of slides
             center: true,
 
             // Enables touch navigation on devices with touch input
@@ -245,9 +245,15 @@
         // Force a layout when the whole page, incl fonts, has loaded
         window.addEventListener( 'load', layout, false );
 
+		var query = Reveal.getQueryHash();
+
+		// Do not accept new dependencies via query config to avoid
+		// the potential of malicious script injection
+		if( typeof query['dependencies'] !== 'undefined' ) delete query['dependencies'];
+
         // Copy options over to our config object
         extend( config, options );
-        extend( config, Reveal.getQueryHash() );
+		extend( config, query );
 
         // Hide the address bar in mobile browsers
         hideAddressBar();
@@ -1343,7 +1349,7 @@
                     continue;
                 }
 
-                if( config.center ) {
+				if( config.center || slide.classList.contains( 'center' ) ) {
                     // Vertical stacks are not centred since their section
                     // children will be
                     if( slide.classList.contains( 'stack' ) ) {
@@ -2331,18 +2337,23 @@
      */
     function startEmbeddedContent( slide ) {
 
-        if( slide ) {
+		if( slide && !isSpeakerNotes() ) {
             // HTML5 media elements
             toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
                 if( el.hasAttribute( 'data-autoplay' ) ) {
                     el.play();
                 }
-            } );
+			} );
+
+			// iframe embeds
+			toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
+				el.contentWindow.postMessage( 'slide:start', '*' );
+			} );
 
             // YouTube embeds
             toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( el.hasAttribute( 'data-autoplay' ) ) {
-                    el.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+					el.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
                 }
             });
         }
@@ -2363,13 +2374,28 @@
                 }
             } );
 
+			// iframe embeds
+			toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
+				el.contentWindow.postMessage( 'slide:stop', '*' );
+			} );
+
             // YouTube embeds
             toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
-                    el.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+					el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
                 }
             });
         }
+
+	}
+
+	/**
+	 * Checks if this presentation is running inside of the
+	 * speaker notes window.
+	 */
+	function isSpeakerNotes() {
+
+		return !!window.location.search.match( /receiver/gi );
 
     }
 
