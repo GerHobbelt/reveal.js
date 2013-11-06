@@ -14,7 +14,7 @@
       }
     };
   }
-  
+
   if ( typeof module === "object" && typeof module.exports === "object" ) {
     // Expose a factory as module.exports in loaders that implement the Node
     // module pattern (including browserify).

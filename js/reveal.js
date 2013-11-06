@@ -8,29 +8,29 @@
 
 (function ( window, factory ) {
 
-  if ( typeof module === "object" && typeof module.exports === "object" ) {
-    // Expose a factory as module.exports in loaders that implement the Node
-    // module pattern (including browserify).
-    // This accentuates the need for a real window in the environment
-    // e.g. var jQuery = require("jquery")(window);
-    module.exports = function( w ) {
-      w = w || window;
-      if ( !w.document ) {
-        throw new Error("jQuery plugin requires a window with a document");
-      }
-      return factory( w, w.document, head );
-    };
-  } else {
-    if ( typeof define === "function" && define.amd ) {
-      // AMD. Register as a named module.
-      define( "reveal", [ "head" ], function(head) {
-        return factory(window, document, head);
-      });
+    if ( typeof module === "object" && typeof module.exports === "object" ) {
+        // Expose a factory as module.exports in loaders that implement the Node
+        // module pattern (including browserify).
+        // This accentuates the need for a real window in the environment
+        // e.g. var jQuery = require("jquery")(window);
+        module.exports = function( w ) {
+            w = w || window;
+            if ( !w.document ) {
+                throw new Error("jQuery plugin requires a window with a document");
+            }
+            return factory( w, w.document, head );
+        };
     } else {
-        // Browser globals
-        window.Reveal = factory(window, document, head);
+        if ( typeof define === "function" && define.amd ) {
+            // AMD. Register as a named module.
+            define( "reveal", [ "head" ], function(head) {
+                return factory(window, document, head);
+            });
+        } else {
+            // Browser globals
+            window.Reveal = factory(window, document, head);
+        }
     }
-  }
 
 // Pass this, window may not be defined yet
 }(this, function ( window, document, head, undefined ) {
@@ -40,7 +40,7 @@
     var SLIDES_SELECTOR = '.reveal .slides section',
         HORIZONTAL_SLIDES_SELECTOR = '.reveal .slides>section',
         VERTICAL_SLIDES_SELECTOR = '.reveal .slides>section.present>section',
-        HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-child',
+		HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-of-type',
         SLIDE_NO_DISPLAY_DISTANCE = 1,
 
         Reveal = null,
@@ -70,8 +70,8 @@
             // Display a presentation progress bar
             progress: true,
 
-			// Display a subtle timer bar (time is in minutes)
-			timeRemaining: 0,
+            // Display a subtle timer bar (time is in minutes)
+            timeRemaining: 0,
 
             // Push each slide change to the browser history
             history: false,
@@ -82,7 +82,7 @@
             // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'zoom' | 'scale')
             overview: 'zoom',
 
-            // Vertical centring of slides
+			// Vertical centering of slides
             center: true,
 
             // Enables touch navigation on devices with touch input
@@ -106,8 +106,8 @@
             // by using a data-autoslide attribute on your slides
             autoSlide: 0,
 
-			// Stop auto-sliding after user input
-			autoSlideStoppable: true,
+            // Stop auto-sliding after user input
+            autoSlideStoppable: true,
 
             // Enable slide navigation via mouse wheel
             mouseWheel: false,
@@ -121,8 +121,8 @@
             // Opens links in an iframe preview overlay
             previewLinks: false,
 
-			// Focuses body when page changes visiblity to ensure keyboard shortcuts work
-			focusBodyOnPageVisiblityChange: true,
+            // Focuses body when page changes visiblity to ensure keyboard shortcuts work
+            focusBodyOnPageVisiblityChange: true,
 
             // Theme (see /css/theme)
             theme: null,
@@ -174,8 +174,8 @@
         // Cached references to DOM elements
         dom = {},
 
-		// Features supported by the browser, see #checkCapabilities()
-		features = {},
+        // Features supported by the browser, see #checkCapabilities()
+        features = {},
 
         // Client is a mobile device, see #checkCapabilities()
         isMobileDevice,
@@ -195,14 +195,14 @@
         // Flags if the interaction event listeners are bound
         eventsAreBound = false,
 
-		// The current auto-slide duration
-		autoSlide = 0,
+        // The current auto-slide duration
+        autoSlide = 0,
 
-		// Auto slide properties
-		autoSlidePlayer,
-		autoSlideTimeout = 0,
-		autoSlideStartTime = -1,
-		autoSlidePaused = false,
+        // Auto slide properties
+        autoSlidePlayer,
+        autoSlideTimeout = 0,
+        autoSlideStartTime = -1,
+        autoSlidePaused = false,
 
         // Holds information about the currently ongoing touch input
         touch = {
@@ -235,7 +235,7 @@
 
         // If the browser doesn't support core features we fall back
         // to a JavaScript-free mode without transforms
-		if( !features.transforms2d && !features.transforms3d ) {
+        if( !features.transforms2d && !features.transforms3d ) {
             if (!dom.viewport.classList.contains('no-transforms')) {
                 dom.viewport.classList.add('no-transforms');
             }
@@ -245,9 +245,15 @@
         // Force a layout when the whole page, incl fonts, has loaded
         window.addEventListener( 'load', layout, false );
 
+		var query = Reveal.getQueryHash();
+
+		// Do not accept new dependencies via query config to avoid
+		// the potential of malicious script injection
+		if( typeof query['dependencies'] !== 'undefined' ) delete query['dependencies'];
+
         // Copy options over to our config object
         extend( config, options );
-		extend( config, Reveal.getQueryHash() );
+		extend( config, query );
 
         // Hide the address bar in mobile browsers
         hideAddressBar();
@@ -263,22 +269,22 @@
      */
     function checkCapabilities() {
 
-		features.transforms3d = 'WebkitPerspective' in document.body.style ||
+        features.transforms3d = 'WebkitPerspective' in document.body.style ||
                                 'MozPerspective' in document.body.style ||
                                 'msPerspective' in document.body.style ||
                                 'OPerspective' in document.body.style ||
                                 'perspective' in document.body.style;
 
-		features.transforms2d = 'WebkitTransform' in document.body.style ||
+        features.transforms2d = 'WebkitTransform' in document.body.style ||
                                 'MozTransform' in document.body.style ||
                                 'msTransform' in document.body.style ||
                                 'OTransform' in document.body.style ||
                                 'transform' in document.body.style;
 
-		features.requestAnimationFrameMethod = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame;
-		features.requestAnimationFrame = typeof features.requestAnimationFrameMethod === 'function';
+        features.requestAnimationFrameMethod = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame;
+        features.requestAnimationFrame = typeof features.requestAnimationFrameMethod === 'function';
 
-		features.canvas = !!document.createElement( 'canvas' ).getContext;
+        features.canvas = !!document.createElement( 'canvas' ).getContext;
 
         isMobileDevice = navigator.userAgent.match( /(iphone|ipod|android)/gi );
 
@@ -441,26 +447,26 @@
 
     }
 
-	function startTimer( minutes ) {
+    function startTimer( minutes ) {
 
-		if ( !minutes ) return;
-		dom.msRemaining = minutes * 60 * 1000;
+        if ( !minutes ) return;
+        dom.msRemaining = minutes * 60 * 1000;
 
-		var stepTimer = function() {
+        var stepTimer = function() {
 
-			dom.msRemaining = dom.msRemaining - 1000;
+            dom.msRemaining = dom.msRemaining - 1000;
 
-			var totalCount = minutes * 60;
-			var pastCount = totalCount - ( dom.msRemaining / 1000 );
-			dom.timeRemainingBar.style.width = ( pastCount / ( totalCount - 1 ) ) * window.innerWidth + 'px';
+            var totalCount = minutes * 60;
+            var pastCount = totalCount - ( dom.msRemaining / 1000 );
+            dom.timeRemainingBar.style.width = ( pastCount / ( totalCount - 1 ) ) * window.innerWidth + 'px';
 
-			if ( dom.msRemaining > 0 ) setTimeout( stepTimer, 1000 );
+            if ( dom.msRemaining > 0 ) setTimeout( stepTimer, 1000 );
 
-		};
+        };
 
-		setTimeout( stepTimer, 1000 );
+        setTimeout( stepTimer, 1000 );
 
-	}
+    }
 
     /**
      * Finds and stores references to DOM elements which are
@@ -498,9 +504,9 @@
         dom.progress = createSingletonNode( dom.wrapper, 'div', 'progress', '<span></span>' );
         dom.progressbar = dom.progress.querySelector( 'span' );
 
-		// Time remaining bar
-		dom.timeRemaining = createSingletonNode( dom.wrapper, 'div', 'time-remaining', '<span></span>');
-		dom.timeRemainingBar = dom.timeRemaining.querySelector( 'span' );
+        // Time remaining bar
+        dom.timeRemaining = createSingletonNode( dom.wrapper, 'div', 'time-remaining', '<span></span>');
+        dom.timeRemainingBar = dom.timeRemaining.querySelector( 'span' );
 
         // Arrow controls
         dom.arrow_controls = createSingletonNode( dom.wrapper, 'aside', 'controls',
@@ -590,7 +596,7 @@
 
             if( data.background ) {
                 // Auto-wrap image urls in url(...)
-				if( /^(http|file|\/\/)/gi.test( data.background ) || /\.(svg|png|jpg|jpeg|gif|bmp)$/gi.test( data.background ) ) {
+                if( /^(http|file|\/\/)/gi.test( data.background ) || /\.(svg|png|jpg|jpeg|gif|bmp)$/gi.test( data.background ) ) {
                     element.style.backgroundImage = 'url(' + data.background + ')';
                 }
                 else {
@@ -613,9 +619,9 @@
         }
 
         // Iterate over all horizontal slides
-		toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).forEach( function( slideh, i ) {
+        toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).forEach( function( slideh, i ) {
             var backgroundStack;
-			var back = null;
+            var back = null;
 
             if( isPrintingPDF() ) {
                 backgroundStack = _createBackground( slideh, slideh );
@@ -668,7 +674,7 @@
      */
     function configure( options ) {
 
-		var numberOfSlides = document.querySelectorAll( SLIDES_SELECTOR ).length;
+        var numberOfSlides = document.querySelectorAll( SLIDES_SELECTOR ).length;
 
         if( dom.wrapper ) {
             dom.wrapper.classList.remove( config.transition );
@@ -679,7 +685,7 @@
         if( typeof options === 'object' ) extend( config, options );
 
         // Force linear transition based on browser capabilities
-		if( features.transforms3d === false ) config.transition = 'linear';
+        if( features.transforms3d === false ) config.transition = 'linear';
 
         if( dom.wrapper ) {
             dom.wrapper.classList.add( config.transition );
@@ -695,9 +701,9 @@
                 dom.progress.style.display = config.progress ? 'block' : 'none';
             }
 
-			if( dom.timeRemaining ) {
-				dom.timeRemaining.style.display = config.timeRemaining ? 'block' : 'none';
-			}
+            if( dom.timeRemaining ) {
+                dom.timeRemaining.style.display = config.timeRemaining ? 'block' : 'none';
+            }
 
             if( config.rtl ) {
                 dom.wrapper.classList.add( 'rtl' );
@@ -738,20 +744,20 @@
         else {
             disablePreviewLinks();
             enablePreviewLinks( '[data-preview-link]' );
-		}
+        }
 
-		// Auto-slide playback controls
-		if( numberOfSlides > 1 && config.autoSlide && config.autoSlideStoppable && features.canvas && features.requestAnimationFrame ) {
-			autoSlidePlayer = new Playback( dom.wrapper, function() {
-				return Math.min( Math.max( ( Date.now() - autoSlideStartTime ) / autoSlide, 0 ), 1 );
-			} );
+        // Auto-slide playback controls
+        if( numberOfSlides > 1 && config.autoSlide && config.autoSlideStoppable && features.canvas && features.requestAnimationFrame ) {
+            autoSlidePlayer = new Playback( dom.wrapper, function() {
+                return Math.min( Math.max( ( Date.now() - autoSlideStartTime ) / autoSlide, 0 ), 1 );
+            } );
 
-			autoSlidePlayer.on( 'click', onAutoSlidePlayerClick );
-			autoSlidePaused = false;
-		}
-		else if( autoSlidePlayer ) {
-			autoSlidePlayer.destroy();
-			autoSlidePlayer = null;
+            autoSlidePlayer.on( 'click', onAutoSlidePlayerClick );
+            autoSlidePaused = false;
+        }
+        else if( autoSlidePlayer ) {
+            autoSlidePlayer.destroy();
+            autoSlidePlayer = null;
         }
 
         // Load the theme in the config, if it's not already loaded
@@ -764,12 +770,12 @@
                 themeURL = themeURL.replace(themeFinder, config.theme);
                 dom.theme.setAttribute( 'href', themeURL );
             }
-		}
+        }
 
-		// Start timer
-		if ( config.timeRemaining ) {
-			var minutesRemaining = parseInt( config.timeRemaining, 10 );
-			startTimer( minutesRemaining );
+        // Start timer
+        if ( config.timeRemaining ) {
+            var minutesRemaining = parseInt( config.timeRemaining, 10 );
+            startTimer( minutesRemaining );
         }
 
         sync();
@@ -797,13 +803,13 @@
             dom.wrapper.addEventListener( 'touchend', onTouchEnd, false );
 
             // Support pointer-style touch interaction as well
-			if( window.navigator.pointerEnabled ) {
-				// IE 11 uses un-prefixed version of pointer events
-				dom.wrapper.addEventListener( 'pointerdown', onPointerDown, false );
-				dom.wrapper.addEventListener( 'pointermove', onPointerMove, false );
-				dom.wrapper.addEventListener( 'pointerup', onPointerUp, false );
-			} else if( window.navigator.msPointerEnabled ) {
-				// IE 10 uses prefixed version of pointer events
+            if( window.navigator.pointerEnabled ) {
+                // IE 11 uses un-prefixed version of pointer events
+                dom.wrapper.addEventListener( 'pointerdown', onPointerDown, false );
+                dom.wrapper.addEventListener( 'pointermove', onPointerMove, false );
+                dom.wrapper.addEventListener( 'pointerup', onPointerUp, false );
+            } else if( window.navigator.msPointerEnabled ) {
+                // IE 10 uses prefixed version of pointer events
                 dom.wrapper.addEventListener( 'MSPointerDown', onPointerDown, false );
                 dom.wrapper.addEventListener( 'MSPointerMove', onPointerMove, false );
                 dom.wrapper.addEventListener( 'MSPointerUp', onPointerUp, false );
@@ -814,27 +820,27 @@
             document.addEventListener( 'keydown', onDocumentKeyDown, false );
         }
 
-		if ( config.progress && dom.progress ) {
+        if ( config.progress && dom.progress ) {
             dom.progress.addEventListener( 'click', onProgressClicked, false );
         }
 
-		if( config.focusBodyOnPageVisiblityChange ) {
-			var visibilityChange;
+        if( config.focusBodyOnPageVisiblityChange ) {
+            var visibilityChange;
 
-			if( 'hidden' in document ) {
-				visibilityChange = 'visibilitychange';
-			}
-			else if( 'msHidden' in document ) {
-				visibilityChange = 'msvisibilitychange';
-			}
-			else if( 'webkitHidden' in document ) {
-				visibilityChange = 'webkitvisibilitychange';
-			}
+            if( 'hidden' in document ) {
+                visibilityChange = 'visibilitychange';
+            }
+            else if( 'msHidden' in document ) {
+                visibilityChange = 'msvisibilitychange';
+            }
+            else if( 'webkitHidden' in document ) {
+                visibilityChange = 'webkitvisibilitychange';
+            }
 
-			if( visibilityChange ) {
-				document.addEventListener( visibilityChange, onPageVisibilityChange, false );
-			}
-		}
+            if( visibilityChange ) {
+                document.addEventListener( visibilityChange, onPageVisibilityChange, false );
+            }
+        }
 
         if ( config.controls && dom.controls ) {
             [ 'touchstart', 'click' ].forEach( function( eventName ) {
@@ -865,18 +871,18 @@
             dom.wrapper.removeEventListener( 'touchmove', onTouchMove, false );
             dom.wrapper.removeEventListener( 'touchend', onTouchEnd, false );
 
-			// IE11
-			if( window.navigator.pointerEnabled ) {
-				dom.wrapper.removeEventListener( 'pointerdown', onPointerDown, false );
-				dom.wrapper.removeEventListener( 'pointermove', onPointerMove, false );
-				dom.wrapper.removeEventListener( 'pointerup', onPointerUp, false );
+            // IE11
+            if( window.navigator.pointerEnabled ) {
+                dom.wrapper.removeEventListener( 'pointerdown', onPointerDown, false );
+                dom.wrapper.removeEventListener( 'pointermove', onPointerMove, false );
+                dom.wrapper.removeEventListener( 'pointerup', onPointerUp, false );
             }
-			// IE10
+            // IE10
             if( window.navigator.msPointerEnabled ) {
                 dom.wrapper.removeEventListener( 'MSPointerDown', onPointerDown, false );
                 dom.wrapper.removeEventListener( 'MSPointerMove', onPointerMove, false );
                 dom.wrapper.removeEventListener( 'MSPointerUp', onPointerUp, false );
-			}
+            }
         }
 
         if ( dom.progress ) {
@@ -1084,7 +1090,7 @@
      */
     function enableRollingLinks() {
 
-		if( features.transforms3d && !( 'msPerspective' in document.body.style ) ) {
+        if( features.transforms3d && !( 'msPerspective' in document.body.style ) ) {
             var anchors = document.querySelectorAll( SLIDES_SELECTOR + ' a:not(.image)' );
 
             for( var i = 0, len = anchors.length; i < len; i++ ) {
@@ -1343,7 +1349,7 @@
                     continue;
                 }
 
-                if( config.center ) {
+				if( config.center || slide.classList.contains( 'center' ) ) {
                     // Vertical stacks are not centred since their section
                     // children will be
                     if( slide.classList.contains( 'stack' ) ) {
@@ -1889,7 +1895,7 @@
         // Update the URL hash
         writeURL();
 
-		cueAutoSlide();
+        cueAutoSlide();
 
     }
 
@@ -2121,7 +2127,7 @@
             mainLoop: for( var i = 0; i < horizontalSlides.length; i++ ) {
 
                 var horizontalSlide = horizontalSlides[i];
-				horizontalSlide.setAttribute( 'data-slide', pastCount );
+                horizontalSlide.setAttribute( 'data-slide', pastCount );
 
                 var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
 
@@ -2147,9 +2153,9 @@
                 }
             }
 
-			if( !isPrintingPDF() ) {
-				dom.viewport.setAttribute( 'data-slide', pastCount );
-			}
+            if( !isPrintingPDF() ) {
+                dom.viewport.setAttribute( 'data-slide', pastCount );
+            }
             dom.progressbar.style.width = ( pastCount / ( totalCount - 1 ) ) * window.innerWidth + 'px';
         }
     }
@@ -2331,18 +2337,23 @@
      */
     function startEmbeddedContent( slide ) {
 
-        if( slide ) {
+		if( slide && !isSpeakerNotes() ) {
             // HTML5 media elements
             toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
                 if( el.hasAttribute( 'data-autoplay' ) ) {
                     el.play();
                 }
-            } );
+			} );
+
+			// iframe embeds
+			toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
+				el.contentWindow.postMessage( 'slide:start', '*' );
+			} );
 
             // YouTube embeds
             toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( el.hasAttribute( 'data-autoplay' ) ) {
-                    el.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+					el.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
                 }
             });
         }
@@ -2363,13 +2374,28 @@
                 }
             } );
 
+			// iframe embeds
+			toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
+				el.contentWindow.postMessage( 'slide:stop', '*' );
+			} );
+
             // YouTube embeds
             toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
-                    el.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+					el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
                 }
             });
         }
+
+	}
+
+	/**
+	 * Checks if this presentation is running inside of the
+	 * speaker notes window.
+	 */
+	function isSpeakerNotes() {
+
+		return !!window.location.search.match( /receiver/gi );
 
     }
 
@@ -2568,34 +2594,34 @@
      */
     function cueAutoSlide() {
 
-		cancelAutoSlide();
+        cancelAutoSlide();
 
-		if( currentSlide ) {
+        if( currentSlide ) {
 
-			// If the current slide has a data-autoslide use that,
-			// otherwise use the config.autoSlide value
-			var slideAutoSlide = currentSlide.getAttribute( 'data-autoslide' );
-			if( slideAutoSlide ) {
-				autoSlide = parseInt( slideAutoSlide, 10 );
-			}
-			else {
-				autoSlide = config.autoSlide;
-			}
+            // If the current slide has a data-autoslide use that,
+            // otherwise use the config.autoSlide value
+            var slideAutoSlide = currentSlide.getAttribute( 'data-autoslide' );
+            if( slideAutoSlide ) {
+                autoSlide = parseInt( slideAutoSlide, 10 );
+            }
+            else {
+                autoSlide = config.autoSlide;
+            }
 
-			// Cue the next auto-slide if:
-			// - There is an autoSlide value
-			// - Auto-sliding isn't paused by the user
-			// - The presentation isn't paused
-			// - The overview isn't active
-			// - The presentation isn't over
-			if( autoSlide && !autoSlidePaused && !isPaused() && !isOverview() && ( !Reveal.isLastSlide() || config.loop === true ) ) {
-				autoSlideTimeout = setTimeout( navigateNext, autoSlide );
-				autoSlideStartTime = Date.now();
-			}
+            // Cue the next auto-slide if:
+            // - There is an autoSlide value
+            // - Auto-sliding isn't paused by the user
+            // - The presentation isn't paused
+            // - The overview isn't active
+            // - The presentation isn't over
+            if( autoSlide && !autoSlidePaused && !isPaused() && !isOverview() && ( !Reveal.isLastSlide() || config.loop === true ) ) {
+                autoSlideTimeout = setTimeout( navigateNext, autoSlide );
+                autoSlideStartTime = Date.now();
+            }
 
-			if( autoSlidePlayer ) {
-				autoSlidePlayer.setPlaying( autoSlideTimeout !== -1 );
-			}
+            if( autoSlidePlayer ) {
+                autoSlidePlayer.setPlaying( autoSlideTimeout !== -1 );
+            }
 
         }
 
@@ -2607,25 +2633,25 @@
     function cancelAutoSlide() {
 
         clearTimeout( autoSlideTimeout );
-		autoSlideTimeout = -1;
+        autoSlideTimeout = -1;
 
-	}
+    }
 
-	function pauseAutoSlide() {
+    function pauseAutoSlide() {
 
-		autoSlidePaused = true;
-		clearTimeout( autoSlideTimeout );
+        autoSlidePaused = true;
+        clearTimeout( autoSlideTimeout );
 
-		if( autoSlidePlayer ) {
-			autoSlidePlayer.setPlaying( false );
-		}
+        if( autoSlidePlayer ) {
+            autoSlidePlayer.setPlaying( false );
+        }
 
-	}
+    }
 
-	function resumeAutoSlide() {
+    function resumeAutoSlide() {
 
-		autoSlidePaused = false;
-		cueAutoSlide();
+        autoSlidePaused = false;
+        cueAutoSlide();
 
     }
 
@@ -2729,17 +2755,17 @@
     // ----------------------------- EVENTS -------------------------------//
     // --------------------------------------------------------------------//
 
-	/**
-	 * Called by all event handlers that are based on user
-	 * input.
-	 */
-	function onUserInput( event ) {
+    /**
+     * Called by all event handlers that are based on user
+     * input.
+     */
+    function onUserInput( event ) {
 
-		if( config.autoSlideStoppable ) {
-			pauseAutoSlide();
-		}
+        if( config.autoSlideStoppable ) {
+            pauseAutoSlide();
+        }
 
-	}
+    }
 
     /**
      * Handler for the document level 'keydown' event.
@@ -2748,7 +2774,7 @@
      */
     function onDocumentKeyDown( event ) {
 
-		onUserInput( event );
+        onUserInput( event );
 
         // Check if there's a focused element that could be using
         // the keyboard
@@ -2870,13 +2896,13 @@
             event.preventDefault();
         }
         // ESC or O key
-		else if ( ( event.keyCode === 27 || event.keyCode === 79 ) && features.transforms3d ) {
-			if( dom.preview ) {
-				closePreview();
-			}
-			else {
-				toggleOverview();
-			}
+        else if ( ( event.keyCode === 27 || event.keyCode === 79 ) && features.transforms3d ) {
+            if( dom.preview ) {
+                closePreview();
+            }
+            else {
+                toggleOverview();
+            }
 
             event.preventDefault();
         }
@@ -2918,7 +2944,7 @@
 
         // Each touch should only trigger one action
         if( !touch.captured ) {
-			onUserInput( event );
+            onUserInput( event );
 
             var currentX = event.touches[0].clientX;
             var currentY = event.touches[0].clientY;
@@ -3012,7 +3038,7 @@
      */
     function onPointerDown( event ) {
 
-		if(( event.pointerType === event.MSPOINTER_TYPE_TOUCH ) || ( event.pointerType === "touch" )) {
+        if(( event.pointerType === event.MSPOINTER_TYPE_TOUCH ) || ( event.pointerType === "touch" )) {
             event.touches = [{ clientX: event.clientX, clientY: event.clientY }];
             onTouchStart( event );
         }
@@ -3024,7 +3050,7 @@
      */
     function onPointerMove( event ) {
 
-		if(( event.pointerType === event.MSPOINTER_TYPE_TOUCH ) || ( event.pointerType === "touch" ))  {
+        if(( event.pointerType === event.MSPOINTER_TYPE_TOUCH ) || ( event.pointerType === "touch" ))  {
             event.touches = [{ clientX: event.clientX, clientY: event.clientY }];
             onTouchMove( event );
         }
@@ -3036,7 +3062,7 @@
      */
     function onPointerUp( event ) {
 
-		if(( event.pointerType === event.MSPOINTER_TYPE_TOUCH ) || ( event.pointerType === "touch" ))  {
+        if(( event.pointerType === event.MSPOINTER_TYPE_TOUCH ) || ( event.pointerType === "touch" ))  {
             event.touches = [{ clientX: event.clientX, clientY: event.clientY }];
             onTouchEnd( event );
         }
@@ -3074,7 +3100,7 @@
      */
     function onProgressClicked( event ) {
 
-		onUserInput( event );
+        onUserInput( event );
 
         event.preventDefault();
 
@@ -3122,12 +3148,12 @@
     /**
      * Event handler for navigation control buttons.
      */
-	function onNavigateLeftClicked( event ) { event.preventDefault(); onUserInput(); navigateLeft(); }
-	function onNavigateRightClicked( event ) { event.preventDefault(); onUserInput(); navigateRight(); }
-	function onNavigateUpClicked( event ) { event.preventDefault(); onUserInput(); navigateUp(); }
-	function onNavigateDownClicked( event ) { event.preventDefault(); onUserInput(); navigateDown(); }
-	function onNavigatePrevClicked( event ) { event.preventDefault(); onUserInput(); navigatePrev(); }
-	function onNavigateNextClicked( event ) { event.preventDefault(); onUserInput(); navigateNext(); }
+    function onNavigateLeftClicked( event ) { event.preventDefault(); onUserInput(); navigateLeft(); }
+    function onNavigateRightClicked( event ) { event.preventDefault(); onUserInput(); navigateRight(); }
+    function onNavigateUpClicked( event ) { event.preventDefault(); onUserInput(); navigateUp(); }
+    function onNavigateDownClicked( event ) { event.preventDefault(); onUserInput(); navigateDown(); }
+    function onNavigatePrevClicked( event ) { event.preventDefault(); onUserInput(); navigatePrev(); }
+    function onNavigateNextClicked( event ) { event.preventDefault(); onUserInput(); navigateNext(); }
 
     /**
      * Handler for the window level 'hashchange' event.
@@ -3145,23 +3171,23 @@
 
         layout();
 
-	}
+    }
 
-	/**
-	 * Handle for the window level 'visibilitychange' event.
-	 */
-	function onPageVisibilityChange( event ) {
+    /**
+     * Handle for the window level 'visibilitychange' event.
+     */
+    function onPageVisibilityChange( event ) {
 
-		var isHidden =  document.webkitHidden ||
-						document.msHidden ||
-						document.hidden;
+        var isHidden =  document.webkitHidden ||
+                        document.msHidden ||
+                        document.hidden;
 
-		// If, after clicking a link or similar and we're coming back,
-		// focus the document.body to ensure we can use keyboard shortcuts
-		if( isHidden === false && document.activeElement !== document.body ) {
-			document.activeElement.blur();
-			document.body.focus();
-		}
+        // If, after clicking a link or similar and we're coming back,
+        // focus the document.body to ensure we can use keyboard shortcuts
+        if( isHidden === false && document.activeElement !== document.body ) {
+            document.activeElement.blur();
+            document.body.focus();
+        }
 
     }
 
@@ -3211,190 +3237,190 @@
 
     }
 
-	/**
-	 * Handles click on the auto-sliding controls element.
-	 */
-	function onAutoSlidePlayerClick( event ) {
+    /**
+     * Handles click on the auto-sliding controls element.
+     */
+    function onAutoSlidePlayerClick( event ) {
 
-		// Replay
-		if( Reveal.isLastSlide() && config.loop === false ) {
-			slide( 0, 0 );
-			resumeAutoSlide();
-		}
-		// Resume
-		else if( autoSlidePaused ) {
-			resumeAutoSlide();
-		}
-		// Pause
-		else {
-			pauseAutoSlide();
-		}
+        // Replay
+        if( Reveal.isLastSlide() && config.loop === false ) {
+            slide( 0, 0 );
+            resumeAutoSlide();
+        }
+        // Resume
+        else if( autoSlidePaused ) {
+            resumeAutoSlide();
+        }
+        // Pause
+        else {
+            pauseAutoSlide();
+        }
 
-	}
-
-
-	// --------------------------------------------------------------------//
-	// ------------------------ PLAYBACK COMPONENT ------------------------//
-	// --------------------------------------------------------------------//
+    }
 
 
-	/**
-	 * Constructor for the playback component, which displays
-	 * play/pause/progress controls.
-	 *
-	 * @param {HTMLElement} container The component will append
-	 * itself to this
-	 * @param {Function} progressCheck A method which will be
-	 * called frequently to get the current progress on a range
-	 * of 0-1
-	 */
-	function Playback( container, progressCheck ) {
+    // --------------------------------------------------------------------//
+    // ------------------------ PLAYBACK COMPONENT ------------------------//
+    // --------------------------------------------------------------------//
 
-		// Cosmetics
-		this.diameter = 50;
-		this.thickness = 3;
 
-		// Flags if we are currently playing
-		this.playing = false;
+    /**
+     * Constructor for the playback component, which displays
+     * play/pause/progress controls.
+     *
+     * @param {HTMLElement} container The component will append
+     * itself to this
+     * @param {Function} progressCheck A method which will be
+     * called frequently to get the current progress on a range
+     * of 0-1
+     */
+    function Playback( container, progressCheck ) {
 
-		// Current progress on a 0-1 range
-		this.progress = 0;
+        // Cosmetics
+        this.diameter = 50;
+        this.thickness = 3;
 
-		// Used to loop the animation smoothly
-		this.progressOffset = 1;
+        // Flags if we are currently playing
+        this.playing = false;
 
-		this.container = container;
-		this.progressCheck = progressCheck;
+        // Current progress on a 0-1 range
+        this.progress = 0;
 
-		this.canvas = document.createElement( 'canvas' );
-		this.canvas.className = 'playback';
-		this.canvas.width = this.diameter;
-		this.canvas.height = this.diameter;
-		this.context = this.canvas.getContext( '2d' );
+        // Used to loop the animation smoothly
+        this.progressOffset = 1;
 
-		this.container.appendChild( this.canvas );
+        this.container = container;
+        this.progressCheck = progressCheck;
 
-		this.render();
+        this.canvas = document.createElement( 'canvas' );
+        this.canvas.className = 'playback';
+        this.canvas.width = this.diameter;
+        this.canvas.height = this.diameter;
+        this.context = this.canvas.getContext( '2d' );
 
-	}
+        this.container.appendChild( this.canvas );
 
-	Playback.prototype.setPlaying = function( value ) {
+        this.render();
 
-		var wasPlaying = this.playing;
+    }
 
-		this.playing = value;
+    Playback.prototype.setPlaying = function( value ) {
 
-		// Start repainting if we weren't already
-		if( !wasPlaying && this.playing ) {
-			this.animate();
-		}
-		else {
-			this.render();
-		}
+        var wasPlaying = this.playing;
 
-	};
+        this.playing = value;
 
-	Playback.prototype.animate = function() {
+        // Start repainting if we weren't already
+        if( !wasPlaying && this.playing ) {
+            this.animate();
+        }
+        else {
+            this.render();
+        }
 
-		var progressBefore = this.progress;
+    };
 
-		this.progress = this.progressCheck();
+    Playback.prototype.animate = function() {
 
-		// When we loop, offset the progress so that it eases
-		// smoothly rather than immediately resetting
-		if( progressBefore > 0.8 && this.progress < 0.2 ) {
-			this.progressOffset = this.progress;
-		}
+        var progressBefore = this.progress;
 
-		this.render();
+        this.progress = this.progressCheck();
 
-		if( this.playing ) {
-			features.requestAnimationFrameMethod.call( window, this.animate.bind( this ) );
-		}
+        // When we loop, offset the progress so that it eases
+        // smoothly rather than immediately resetting
+        if( progressBefore > 0.8 && this.progress < 0.2 ) {
+            this.progressOffset = this.progress;
+        }
 
-	};
+        this.render();
 
-	/**
-	 * Renders the current progress and playback state.
-	 */
-	Playback.prototype.render = function() {
+        if( this.playing ) {
+            features.requestAnimationFrameMethod.call( window, this.animate.bind( this ) );
+        }
 
-		var progress = this.playing ? this.progress : 0,
-			radius = ( this.diameter / 2 ) - this.thickness,
-			x = this.diameter / 2,
-			y = this.diameter / 2,
-			iconSize = 14;
+    };
 
-		// Ease towards 1
-		this.progressOffset += ( 1 - this.progressOffset ) * 0.1;
+    /**
+     * Renders the current progress and playback state.
+     */
+    Playback.prototype.render = function() {
 
-		var endAngle = ( - Math.PI / 2 ) + ( progress * ( Math.PI * 2 ) );
-		var startAngle = ( - Math.PI / 2 ) + ( this.progressOffset * ( Math.PI * 2 ) );
+        var progress = this.playing ? this.progress : 0,
+            radius = ( this.diameter / 2 ) - this.thickness,
+            x = this.diameter / 2,
+            y = this.diameter / 2,
+            iconSize = 14;
 
-		this.context.save();
-		this.context.clearRect( 0, 0, this.diameter, this.diameter );
+        // Ease towards 1
+        this.progressOffset += ( 1 - this.progressOffset ) * 0.1;
 
-		// Solid background color
-		this.context.beginPath();
-		this.context.arc( x, y, radius + 2, 0, Math.PI * 2, false );
-		this.context.fillStyle = 'rgba( 0, 0, 0, 0.4 )';
-		this.context.fill();
+        var endAngle = ( - Math.PI / 2 ) + ( progress * ( Math.PI * 2 ) );
+        var startAngle = ( - Math.PI / 2 ) + ( this.progressOffset * ( Math.PI * 2 ) );
 
-		// Draw progress track
-		this.context.beginPath();
-		this.context.arc( x, y, radius, 0, Math.PI * 2, false );
-		this.context.lineWidth = this.thickness;
-		this.context.strokeStyle = '#666';
-		this.context.stroke();
+        this.context.save();
+        this.context.clearRect( 0, 0, this.diameter, this.diameter );
 
-		if( this.playing ) {
-			// Draw progress on top of track
-			this.context.beginPath();
-			this.context.arc( x, y, radius, startAngle, endAngle, false );
-			this.context.lineWidth = this.thickness;
-			this.context.strokeStyle = '#fff';
-			this.context.stroke();
-		}
+        // Solid background color
+        this.context.beginPath();
+        this.context.arc( x, y, radius + 2, 0, Math.PI * 2, false );
+        this.context.fillStyle = 'rgba( 0, 0, 0, 0.4 )';
+        this.context.fill();
 
-		this.context.translate( x - ( iconSize / 2 ), y - ( iconSize / 2 ) );
+        // Draw progress track
+        this.context.beginPath();
+        this.context.arc( x, y, radius, 0, Math.PI * 2, false );
+        this.context.lineWidth = this.thickness;
+        this.context.strokeStyle = '#666';
+        this.context.stroke();
 
-		// Draw play/pause icons
-		if( this.playing ) {
-			this.context.fillStyle = '#fff';
-			this.context.fillRect( 0, 0, iconSize / 2 - 2, iconSize );
-			this.context.fillRect( iconSize / 2 + 2, 0, iconSize / 2 - 2, iconSize );
-		}
-		else {
-			this.context.beginPath();
-			this.context.translate( 2, 0 );
-			this.context.moveTo( 0, 0 );
-			this.context.lineTo( iconSize - 2, iconSize / 2 );
-			this.context.lineTo( 0, iconSize );
-			this.context.fillStyle = '#fff';
-			this.context.fill();
-		}
+        if( this.playing ) {
+            // Draw progress on top of track
+            this.context.beginPath();
+            this.context.arc( x, y, radius, startAngle, endAngle, false );
+            this.context.lineWidth = this.thickness;
+            this.context.strokeStyle = '#fff';
+            this.context.stroke();
+        }
 
-		this.context.restore();
+        this.context.translate( x - ( iconSize / 2 ), y - ( iconSize / 2 ) );
 
-	};
+        // Draw play/pause icons
+        if( this.playing ) {
+            this.context.fillStyle = '#fff';
+            this.context.fillRect( 0, 0, iconSize / 2 - 2, iconSize );
+            this.context.fillRect( iconSize / 2 + 2, 0, iconSize / 2 - 2, iconSize );
+        }
+        else {
+            this.context.beginPath();
+            this.context.translate( 2, 0 );
+            this.context.moveTo( 0, 0 );
+            this.context.lineTo( iconSize - 2, iconSize / 2 );
+            this.context.lineTo( 0, iconSize );
+            this.context.fillStyle = '#fff';
+            this.context.fill();
+        }
 
-	Playback.prototype.on = function( type, listener ) {
-		this.canvas.addEventListener( type, listener, false );
-	};
+        this.context.restore();
 
-	Playback.prototype.off = function( type, listener ) {
-		this.canvas.removeEventListener( type, listener, false );
-	};
+    };
 
-	Playback.prototype.destroy = function() {
+    Playback.prototype.on = function( type, listener ) {
+        this.canvas.addEventListener( type, listener, false );
+    };
 
-		this.playing = false;
+    Playback.prototype.off = function( type, listener ) {
+        this.canvas.removeEventListener( type, listener, false );
+    };
 
-		if( this.canvas.parentNode ) {
-			this.container.removeChild( this.canvas );
-		}
+    Playback.prototype.destroy = function() {
 
-	};
+        this.playing = false;
+
+        if( this.canvas.parentNode ) {
+            this.container.removeChild( this.canvas );
+        }
+
+    };
 
 
     // --------------------------------------------------------------------//
@@ -3494,14 +3520,14 @@
                 query[ a.split( '=' ).shift() ] = a.split( '=' ).pop();
             } );
 
-			// Basic deserialization
-			for( var i in query ) {
-				var value = query[ i ];
-				if( value === 'null' ) query[ i ] = null;
-				else if( value === 'true' ) query[ i ] = true;
-				else if( value === 'false' ) query[ i ] = false;
-				else if( !isNaN( parseFloat( value ) ) ) query[ i ] = parseFloat( value );
-			}
+            // Basic deserialization
+            for( var i in query ) {
+                var value = query[ i ];
+                if( value === 'null' ) query[ i ] = null;
+                else if( value === 'true' ) query[ i ] = true;
+                else if( value === 'false' ) query[ i ] = false;
+                else if( !isNaN( parseFloat( value ) ) ) query[ i ] = parseFloat( value );
+            }
 
             return query;
         },

@@ -69,7 +69,7 @@ footer.joli {
 /*********************************************
  * GLOBAL STYLES
  *********************************************/
-body {
+.reveal-viewport {
   background: #050607;
   background: -moz-radial-gradient(center, circle cover, #272a2d 0%, #050607 100%);
   background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, #272a2d), color-stop(100%, #050607));

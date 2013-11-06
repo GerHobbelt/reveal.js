@@ -13,7 +13,7 @@ reveal.js comes with a broad range of features including [nested slides](https:/
 - [Browser Support](https://github.com/hakimel/reveal.js/wiki/Browser-Support): Explanation of browser support and fallbacks.
 
 
-## Slides
+## Online Editor
 
 Presentations are written using HTML or markdown but there's also an online editor for those of you who prefer a graphical interface. Give it a try at [http://slid.es](http://slid.es).
 
@@ -62,6 +62,19 @@ You can write your content as a separate file and have reveal.js load it at runt
 <section data-markdown="example.md" data-separator="^\n\n\n" data-vertical="^\n\n" data-notes="^Note:" data-charset="iso-8859-15"></section>
 ```
 
+#### Element Attributes
+
+Special syntax is available for adding attributes to Markdown elements. This is useful for fragments, amongst other things.
+
+```html
+<section data-markdown>
+	<script type="text/template">
+		- Item 1 {_class="fragment" data-fragment-index="2"}
+		- Item 2 {_class="fragment" data-fragment-index="1"}
+	</script>
+</section>
+```
+
 
 ### Configuration
 
@@ -82,20 +95,27 @@ Reveal.initialize({
     // Enable keyboard shortcuts for navigation
     keyboard: true,
 
-    // Enable touch events for navigation
-    touch: true,
-
     // Enable the slide overview mode
     overview: true,
 
     // Vertical centering of slides
     center: true,
 
+	// Enables touch navigation on devices with touch input
+	touch: true,
+
     // Loop the presentation
     loop: false,
 
     // Change the presentation direction to be RTL
     rtl: false,
+
+	// Turns fragments on and off globally
+	fragments: true,
+
+	// Flags if the presentation is running in an embedded mode,
+	// i.e. contained within a limited portion of the screen
+	embedded: false,
 
     // Number of milliseconds between automatically proceeding to the
     // next slide, disabled when set to 0, this value can be overwritten
@@ -109,7 +129,13 @@ Reveal.initialize({
     mouseWheel: false,
 
     // Apply a 3D roll to links on hover
-    rollingLinks: true,
+    rollingLinks: true, 
+    
+	// Hides the address bar on mobile devices
+	hideAddressBar: true,
+
+	// Opens links in an iframe preview overlay
+	previewLinks: false,
 
     // Transition style
     transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
@@ -117,17 +143,17 @@ Reveal.initialize({
     // Transition speed
     transitionSpeed: 'default', // default/fast/slow
 
-    // Transition style for full page backgrounds
+	// Transition style for full page slide backgrounds
     backgroundTransition: 'default', // default/linear/none
+
+	// Number of slides away from the current that are visible
+	viewDistance: 3,
 
     // Parallax background image
     parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
 
     // Parallax background size
-    parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
-
-    // Number of slides away from the current that are visible
-    viewDistance: 3,
+	parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
 
     // Transition style for full page backgrounds
     backgroundTransition: 'default', // default/linear/none
@@ -502,6 +528,8 @@ Add `data-autoplay` to your media element if you want it to automatically start 
 <video data-autoplay src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"></video>
 ```
 
+Additionally the framework automatically pushes two [post messages](https://developer.mozilla.org/en-US/docs/Web/API/Window.postMessage) to all iframes, ```slide:start``` when the slide containing the iframe is made visible and ```slide:stop``` when it is hidden.
+
 
 ### Stretching elements
 
@@ -532,7 +560,7 @@ Limitations:
   On that same subject, also check out http://responsejs.com/labs/dimensions/ , http://verge.airve.com/ and http://www.quirksmode.org/mobile/viewports2.html for the low-down about viewport dimensions and ways to get at them.
 
   **Note**: when you have loaded [verge](http://verge.airve.com/) or [response.js](http://responsejs.com/) then we use their proven methods to obtain the viewport dimensions and the above-mentioned &lt;html> width/height styles are not required any longer.
-  
+
 
 ## PDF Export
 
@@ -559,6 +587,7 @@ The framework comes with a few different themes included:
 - night: Black background, thick white text, orange links
 - serif: Cappuccino background, gray text, brown links
 - simple: White background, black text, blue links
+- solarized: Cream-colored background, dark green text, blue links
 
 Each theme is available as a separate stylesheet. To change theme you will need to replace **default** below with your desired theme name in index.html:
 
@@ -896,7 +925,7 @@ Some reveal.js features, like external markdown, require that presentations run 
 
 4. Clone the reveal.js repository
 ```sh
-$ git clone git@github.com:hakimel/reveal.js.git
+$ git clone https://github.com/hakimel/reveal.js.git
 ```
 
 5. Navigate to the reveal.js folder
@@ -929,20 +958,19 @@ You can change the port by using `grunt serve --port 8001`.
 
 ### Contributing
 
-Please keep the [issue tracker](github.com/hakimel/reveal.js/issues) limited to **bug reports**, **feature requests** and **pull requests**. If you are reporting a bug make sure to include information about which browser and operating system you are using as well as the necessary steps to reproduce the issue.
+Please keep the [issue tracker](http://github.com/hakimel/reveal.js/issues) limited to **bug reports**, **feature requests** and **pull requests**. If you are reporting a bug make sure to include information about which browser and operating system you are using as well as the necessary steps to reproduce the issue.
 
 If you have personal support questions use [StackOverflow](http://stackoverflow.com/questions/tagged/reveal.js).
 
 
 #### Pull requests
 
-- Should follow the coding style
+- Should follow the coding style of the file you work in, most importantly:
   - Tabs to indent
   - Single-quoted strings
-  - No space between function name and opening argument parenthesis
-  - One space after opening and before closing parenthesis 
 - Should be made towards the **dev branch**
 - Should be submitted from a feature/topic branch (not your master)
+- Should not include the minified **reveal.min.js** file
 
 
 ## License
