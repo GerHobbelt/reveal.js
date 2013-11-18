@@ -122,6 +122,8 @@ var Reveal = (function(){
 		previousSlide,
 		currentSlide,
 
+		previousBackground,
+
 		// Slides may hold a data-state attribute which we pick up and apply
 		// as a class to the body. This list contains the combined state of
 		// all current slides.
@@ -307,6 +309,9 @@ var Reveal = (function(){
 		// Read the initial hash
 		readURL();
 
+		// Update all backgrounds
+		updateBackground( true );
+
 		// Notify listeners that the presentation is ready but use a 1ms
 		// timeout to ensure it's not fired synchronously after #initialize()
 		setTimeout( function() {
@@ -452,6 +457,10 @@ var Reveal = (function(){
 				else {
 					element.style.background = data.background;
 				}
+			}
+
+			if( data.background || data.backgroundColor || data.backgroundImage ) {
+				element.setAttribute( 'data-background-hash', data.background + data.backgroundSize + data.backgroundImage + data.backgroundColor + data.backgroundRepeat + data.backgroundPosition + data.backgroundTransition );
 			}
 
 			// Additional and optional background properties
@@ -1637,7 +1646,7 @@ var Reveal = (function(){
 
 		updateControls();
 		updateProgress();
-		updateBackground();
+		updateBackground( true );
 
 	}
 
@@ -1690,16 +1699,23 @@ var Reveal = (function(){
 				if( i < index ) {
 					// Any element previous to index is given the 'past' class
 					element.classList.add( reverse ? 'future' : 'past' );
+
+					var pastFragments = toArray( element.querySelectorAll( '.fragment' ) );
+
+					// Show all fragments on prior slides
+					while( pastFragments.length ) {
+						pastFragments.pop().classList.add( 'visible' );
+					}
 				}
 				else if( i > index ) {
 					// Any element subsequent to index is given the 'future' class
 					element.classList.add( reverse ? 'past' : 'future' );
 
-					var fragments = toArray( element.querySelectorAll( '.fragment.visible' ) );
+					var futureFragments = toArray( element.querySelectorAll( '.fragment.visible' ) );
 
 					// No fragments in future slides should be visible ahead of time
-					while( fragments.length ) {
-						fragments.pop().classList.remove( 'visible' );
+					while( futureFragments.length ) {
+						futureFragments.pop().classList.remove( 'visible' );
 					}
 				}
 
@@ -1888,26 +1904,67 @@ var Reveal = (function(){
 	/**
 	 * Updates the background elements to reflect the current
 	 * slide.
+	 *
+	 * @param {Boolean} includeAll If true, the backgrounds of
+	 * all vertical slides (not just the present) will be updated.
 	 */
-	function updateBackground() {
+	function updateBackground( includeAll ) {
+
+		var currentBackground = null;
+
+		// Reverse past/future classes when in RTL mode
+		var horizontalPast = config.rtl ? 'future' : 'past',
+			horizontalFuture = config.rtl ? 'past' : 'future';
 
 		// Update the classes of all backgrounds to match the
 		// states of their slides (past/present/future)
 		toArray( dom.background.childNodes ).forEach( function( backgroundh, h ) {
 
-			// Reverse past/future classes when in RTL mode
-			var horizontalPast = config.rtl ? 'future' : 'past',
-				horizontalFuture = config.rtl ? 'past' : 'future';
+			if( h < indexh ) {
+				backgroundh.className = 'slide-background ' + horizontalPast;
+			}
+			else if ( h > indexh ) {
+				backgroundh.className = 'slide-background ' + horizontalFuture;
+			}
+			else {
+				backgroundh.className = 'slide-background present';
 
-			backgroundh.className = 'slide-background ' + ( h < indexh ? horizontalPast : h > indexh ? horizontalFuture : 'present' );
+				// Store a reference to the current background element
+				currentBackground = backgroundh;
+			}
 
-			toArray( backgroundh.childNodes ).forEach( function( backgroundv, v ) {
+			if( includeAll || h === indexh ) {
+				toArray( backgroundh.childNodes ).forEach( function( backgroundv, v ) {
 
-				backgroundv.className = 'slide-background ' + ( v < indexv ? 'past' : v > indexv ? 'future' : 'present' );
+					if( v < indexv ) {
+						backgroundv.className = 'slide-background past';
+					}
+					else if ( v > indexv ) {
+						backgroundv.className = 'slide-background future';
+					}
+					else {
+						backgroundv.className = 'slide-background present';
 
-			} );
+						// Only if this is the present horizontal and vertical slide
+						if( h === indexh ) currentBackground = backgroundv;
+					}
+
+				} );
+			}
 
 		} );
+
+		// Don't transition between identical backgrounds. This
+		// prevents unwanted flicker.
+		if( currentBackground ) {
+			var previousBackgroundHash = previousBackground ? previousBackground.getAttribute( 'data-background-hash' ) : null;
+			var currentBackgroundHash = currentBackground.getAttribute( 'data-background-hash' );
+			if( currentBackgroundHash && currentBackgroundHash === previousBackgroundHash && currentBackground !== previousBackground ) {
+				dom.background.classList.add( 'no-transition' );
+			}
+
+			previousBackground = currentBackground;
+		}
 
 		// Allow the first background to apply without transition
 		setTimeout( function() {
@@ -2270,11 +2327,18 @@ var Reveal = (function(){
 
 		if( currentSlide ) {
 
-			// If the current slide has a data-autoslide use that,
-			// otherwise use the config.autoSlide value
+			var parentAutoSlide = currentSlide.parentNode ? currentSlide.parentNode.getAttribute( 'data-autoslide' ) : null;
 			var slideAutoSlide = currentSlide.getAttribute( 'data-autoslide' );
+
+			// Pick value in the following priority order:
+			// 1. Current slide's data-autoslide
+			// 2. Parent slide's data-autoslide
+			// 3. Global autoSlide setting
 			if( slideAutoSlide ) {
 				autoSlide = parseInt( slideAutoSlide, 10 );
+			}
+			else if( parentAutoSlide ) {
+				autoSlide = parseInt( parentAutoSlide, 10 );
 			}
 			else {
 				autoSlide = config.autoSlide;
