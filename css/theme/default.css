@@ -35,7 +35,7 @@ body.print-pdf {
 .reveal {
   font-family: "Ubuntu", sans-serif;
   font-size: 36px;
-  font-weight: 200;
+  font-weight: normal;
   letter-spacing: -0.02em;
   color: #eeeeee; }
 
@@ -205,6 +205,13 @@ body.print-pdf .titlebar {
 
 .reveal .controls div.navigate-down.enabled:hover {
   border-top-color: #71e9f4; }
+
+/*********************************************
+ * SLIDE NUMBER
+ *********************************************/
+.reveal .slide-number {
+  color: #13daec;
+}
 
 /*********************************************
  * PROGRESS BAR
