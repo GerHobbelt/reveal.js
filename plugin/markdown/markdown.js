@@ -194,7 +194,7 @@
                 sectionStack[i].forEach( function( child ) {
 					matchAttributes = slideAttributesSeparatorRegex.exec( child );
 					slideAttributes = matchAttributes ? matchAttributes[1] : "";
-					child = matchAttributes ? child.replace( slideAttributesSeparatorRegex,"" ) : child
+					child = matchAttributes ? child.replace( slideAttributesSeparatorRegex,"" ) : child;
 					markdownSections += '<section ' + slideAttributes + ' data-markdown>' +  createMarkdownSlide( child, options ) + '</section>';
                 } );
 
@@ -203,7 +203,7 @@
             else {
 				matchAttributes = slideAttributesSeparatorRegex.exec( sectionStack[i] );
 				slideAttributes = matchAttributes ? matchAttributes[1] : "";
-				content = matchAttributes ? sectionStack[i].replace( slideAttributesSeparatorRegex,"" ) : sectionStack[i]
+				content = matchAttributes ? sectionStack[i].replace( slideAttributesSeparatorRegex,"" ) : sectionStack[i];
 				markdownSections += '<section '+ options.attributes + ' ' + slideAttributes +' data-markdown>' + createMarkdownSlide( content, options ) + '</section>';
             }
         }
@@ -245,7 +245,7 @@
                                 verticalSeparator: section.getAttribute( 'data-vertical' ),
                                 notesSeparator: section.getAttribute( 'data-notes' ),
 								attributes: getForwardedAttributes( section ),
-								slideAttributesSeparator: section.getAttribute( 'data-attributes' ),
+								slideAttributesSeparator: section.getAttribute( 'data-attributes' )
                             });
 
                         }
@@ -278,7 +278,7 @@
                     verticalSeparator: section.getAttribute( 'data-vertical' ),
                     notesSeparator: section.getAttribute( 'data-notes' ),
 					attributes: getForwardedAttributes( section ),
-					slideAttributesSeparator: section.getAttribute( 'data-attributes' ),
+					slideAttributesSeparator: section.getAttribute( 'data-attributes' )
                 });
 
             }
@@ -288,7 +288,7 @@
 				var matchAttributes = slideAttributesSeparatorRegex.exec( content );
 				if ( matchAttributes ) {
 				  var slideAttributes = matchAttributes[1];
-				  content = content.replace( slideAttributesSeparatorRegex,"" );
+				  content = content.replace( slideAttributesSeparatorRegex, "" );
 					var slideAttributesRegex = new RegExp( "([^\"= ]+?)=\"([^\"=]+?)\"", 'mg' );
 					while( matchesAttributes = slideAttributesRegex.exec( slideAttributes ) ) {
 						section.setAttribute( matchesAttributes[1], matchesAttributes[2] );
@@ -347,7 +347,7 @@
 			addAttributeInElement( element, element.parentNode, separator );
 		}
 		if( element.nodeType == Node.ELEMENT_NODE && element.attributes.length > 0 ) {
-			for( var j = 0; j < element.attributes.length; j++ ){
+			for( var j = 0; j < element.attributes.length; j++ ) {
 				var attr = element.attributes[j];
 				addAttributeInElement( attr, element, separator );
 			}
