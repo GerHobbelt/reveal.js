@@ -61,10 +61,10 @@ You can write your content as a separate file and have reveal.js load it at runt
 When used locally, this feature requires that reveal.js [runs from a local web server](#full-setup).
 
 ```html
-<section data-markdown="example.md"  
-         data-separator="^\n\n\n"  
-         data-vertical="^\n\n"  
-         data-notes="^Note:"  
+<section data-markdown="example.md"
+         data-separator="^\n\n\n"
+         data-vertical="^\n\n"
+         data-notes="^Note:"
          data-charset="iso-8859-15">
 </section>
 ```
@@ -75,10 +75,10 @@ Special syntax (in html comment) is available for adding attributes to Markdown 
 
 ```html
 <section data-markdown>
-	<script type="text/template">
-		- Item 1 <!-- .element: class="fragment" data-fragment-index="2" -->
-		- Item 2 <!-- .element: class="fragment" data-fragment-index="1" -->
-	</script>
+    <script type="text/template">
+        - Item 1 <!-- .element: class="fragment" data-fragment-index="2" -->
+        - Item 2 <!-- .element: class="fragment" data-fragment-index="1" -->
+    </script>
 </section>
 ```
 
@@ -88,10 +88,10 @@ Special syntax (in html comment) is available for adding attributes to the slide
 
 ```html
 <section data-markdown>
-	<script type="text/template">
-	<!-- .slide: data-background="#ff0000" -->
-		Mardown content
-	</script>
+    <script type="text/template">
+    <!-- .slide: data-background="#ff0000" -->
+        Mardown content
+    </script>
 </section>
 ```
 
@@ -124,8 +124,8 @@ Reveal.initialize({
     // Vertical centering of slides
     center: true,
 
-	// Enables touch navigation on devices with touch input
-	touch: true,
+    // Enables touch navigation on devices with touch input
+    touch: true,
 
     // Loop the presentation
     loop: false,
@@ -133,12 +133,12 @@ Reveal.initialize({
     // Change the presentation direction to be RTL
     rtl: false,
 
-	// Turns fragments on and off globally
-	fragments: true,
+    // Turns fragments on and off globally
+    fragments: true,
 
-	// Flags if the presentation is running in an embedded mode,
-	// i.e. contained within a limited portion of the screen
-	embedded: false,
+    // Flags if the presentation is running in an embedded mode,
+    // i.e. contained within a limited portion of the screen
+    embedded: false,
 
     // Number of milliseconds between automatically proceeding to the
     // next slide, disabled when set to 0, this value can be overwritten
@@ -152,13 +152,13 @@ Reveal.initialize({
     mouseWheel: false,
 
     // Apply a 3D roll to links on hover
-    rollingLinks: true, 
-    
-	// Hides the address bar on mobile devices
-	hideAddressBar: true,
+    rollingLinks: true,
 
-	// Opens links in an iframe preview overlay
-	previewLinks: false,
+    // Hides the address bar on mobile devices
+    hideAddressBar: true,
+
+    // Opens links in an iframe preview overlay
+    previewLinks: false,
 
     // Transition style
     transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
@@ -166,17 +166,17 @@ Reveal.initialize({
     // Transition speed
     transitionSpeed: 'default', // default/fast/slow
 
-	// Transition style for full page slide backgrounds
-	backgroundTransition: 'default', // default/none/slide/concave/convex/zoom
+    // Transition style for full page slide backgrounds
+    backgroundTransition: 'default', // default/none/slide/concave/convex/zoom
 
-	// Number of slides away from the current that are visible
-	viewDistance: 3,
+    // Number of slides away from the current that are visible
+    viewDistance: 3,
 
     // Parallax background image
     parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
 
     // Parallax background size
-	parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
+    parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
 
     // Transition style for full page backgrounds
     backgroundTransition: 'default', // default/linear/none

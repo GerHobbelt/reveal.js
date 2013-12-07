@@ -33,9 +33,9 @@
     var isEnabled = true;
 
     document.querySelector( '.reveal' ).addEventListener( 'mousedown', function( event ) {
-		var modifier = ( Reveal.getConfig().zoomKey ? Reveal.getConfig().zoomKey : 'alt' ) + 'Key';
+        var modifier = ( Reveal.getConfig().zoomKey ? Reveal.getConfig().zoomKey : 'alt' ) + 'Key';
 
-		if( event[ modifier ] && isEnabled ) {
+        if( event[ modifier ] && isEnabled ) {
             event.preventDefault();
             zoom.to({ element: event.target, pan: false });
         }

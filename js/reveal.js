@@ -40,7 +40,7 @@
     var SLIDES_SELECTOR = '.reveal .slides section',
         HORIZONTAL_SLIDES_SELECTOR = '.reveal .slides>section',
         VERTICAL_SLIDES_SELECTOR = '.reveal .slides>section.present>section',
-		HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-of-type',
+        HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-of-type',
         SLIDE_NO_DISPLAY_DISTANCE = 1,
 
         Reveal = null,
@@ -73,8 +73,8 @@
             // Display a subtle timer bar (time is in minutes)
             timeRemaining: 0,
 
-			// Display the page number of the current slide
-			slideNumber: false,
+            // Display the page number of the current slide
+            slideNumber: false,
 
             // Push each slide change to the browser history
             history: false,
@@ -85,7 +85,7 @@
             // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'zoom' | 'scale')
             overview: 'zoom',
 
-			// Vertical centering of slides
+            // Vertical centering of slides
             center: true,
 
             // Enables touch navigation on devices with touch input
@@ -164,7 +164,7 @@
         previousSlide = null,
         currentSlide /* = undefined */,
 
-		previousBackground,
+        previousBackground,
 
         // Slides may hold a data-state attribute which we pick up and apply
         // as a class to the body. This list contains the combined state of
@@ -251,15 +251,15 @@
         // Force a layout when the whole page, incl fonts, has loaded
         window.addEventListener( 'load', layout, false );
 
-		var query = Reveal.getQueryHash();
+        var query = Reveal.getQueryHash();
 
-		// Do not accept new dependencies via query config to avoid
-		// the potential of malicious script injection
-		if( typeof query['dependencies'] !== 'undefined' ) delete query['dependencies'];
+        // Do not accept new dependencies via query config to avoid
+        // the potential of malicious script injection
+        if( typeof query['dependencies'] !== 'undefined' ) delete query['dependencies'];
 
         // Copy options over to our config object
         extend( config, options );
-		extend( config, query );
+        extend( config, query );
 
         // Hide the address bar in mobile browsers
         hideAddressBar();
@@ -309,34 +309,34 @@
     function load() {
 
         var scripts = [],
-			scriptsAsync = [],
-			scriptsToPreload = 0;
+            scriptsAsync = [],
+            scriptsToPreload = 0;
 
-		// Called once synchronous scripts finish loading
+        // Called once synchronous scripts finish loading
         //
         // Return FALSE when the function failed to run to completion.
-		function proceed() {
-			if( scriptsAsync.length ) {
-				// Load asynchronous scripts
-				head.js.apply( null, scriptsAsync );
-			}
+        function proceed() {
+            if( scriptsAsync.length ) {
+                // Load asynchronous scripts
+                head.js.apply( null, scriptsAsync );
+            }
 
-			return start();
-		}
+            return start();
+        }
 
-		function loadScript( s ) {
-			head.ready( s.src.match( /([\w\d_\-]*)\.?js$|[^\\\/]*$/i )[0], function() {
-				// Extension may contain callback functions
-				if( typeof s.callback === 'function' ) {
-					s.callback.apply( this );
-				}
+        function loadScript( s ) {
+            head.ready( s.src.match( /([\w\d_\-]*)\.?js$|[^\\\/]*$/i )[0], function() {
+                // Extension may contain callback functions
+                if( typeof s.callback === 'function' ) {
+                    s.callback.apply( this );
+                }
 
-				if( --scriptsToPreload === 0 ) {
+                if( --scriptsToPreload === 0 ) {
                     // TODO: handle FALSE return value (= fail)
-					proceed();
-				}
-			});
-		}
+                    proceed();
+                }
+            });
+        }
 
         for( var i = 0, len = config.dependencies.length; i < len; i++ ) {
             var s = config.dependencies[i];
@@ -350,12 +350,12 @@
                     scripts.push( s.src );
                 }
 
-				loadScript( s );
-			}
-		}
+                loadScript( s );
+            }
+        }
 
         if( scripts.length ) {
-			scriptsToPreload = scripts.length;
+            scriptsToPreload = scripts.length;
 
             // Load synchronous scripts
             head.js.apply( null, scripts );
@@ -379,8 +379,8 @@
         // Make sure we've got all the DOM elements we need
         if (!setupDOM()) return false;
 
-		// Resets all vertical slides so that only the first is visible
-		resetVerticalSlides();
+        // Resets all vertical slides so that only the first is visible
+        resetVerticalSlides();
 
         // Updates the presentation to match the current configuration values
         configure();
@@ -388,8 +388,8 @@
         // Read the initial hash
         readURL();
 
-		// Update all backgrounds
-		updateBackground( true );
+        // Update all backgrounds
+        updateBackground( true );
 
         // Notify listeners that the presentation is ready but use a 1ms
         // timeout to ensure it's not fired synchronously after #initialize()
@@ -523,8 +523,8 @@
             dom.arrow_controls.setAttribute( 'tabindex', '9999' );
         }
 
-		// Slide number
-		dom.slideNumber = createSingletonNode( dom.wrapper, 'div', 'slide-number', '' );
+        // Slide number
+        dom.slideNumber = createSingletonNode( dom.wrapper, 'div', 'slide-number', '' );
 
         // State background element [DEPRECATED]
         createSingletonNode( dom.wrapper, 'div', 'state-background', null );
@@ -608,10 +608,10 @@
                 else {
                     element.style.background = data.background;
                 }
-			}
+            }
 
-			if( data.background || data.backgroundColor || data.backgroundImage ) {
-				element.setAttribute( 'data-background-hash', data.background + data.backgroundSize + data.backgroundImage + data.backgroundColor + data.backgroundRepeat + data.backgroundPosition + data.backgroundTransition );
+            if( data.background || data.backgroundColor || data.backgroundImage ) {
+                element.setAttribute( 'data-background-hash', data.background + data.backgroundSize + data.backgroundImage + data.backgroundColor + data.backgroundRepeat + data.backgroundPosition + data.backgroundTransition );
             }
 
             // Additional and optional background properties
@@ -630,6 +630,7 @@
 
         // Iterate over all horizontal slides
         toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).forEach( function( slideh, i ) {
+
             var backgroundStack;
             var back = null;
 
@@ -818,8 +819,8 @@
                 dom.wrapper.addEventListener( 'pointerdown', onPointerDown, false );
                 dom.wrapper.addEventListener( 'pointermove', onPointerMove, false );
                 dom.wrapper.addEventListener( 'pointerup', onPointerUp, false );
-			}
-			else if( window.navigator.msPointerEnabled ) {
+            }
+            else if( window.navigator.msPointerEnabled ) {
                 // IE 10 uses prefixed version of pointer events
                 dom.wrapper.addEventListener( 'MSPointerDown', onPointerDown, false );
                 dom.wrapper.addEventListener( 'MSPointerMove', onPointerMove, false );
@@ -968,6 +969,7 @@
             element.style.OTransformOrigin = origin;
             element.style.transformOrigin = origin;
         }
+
     }
 
     /**
@@ -1305,7 +1307,8 @@
                 else {
                     transformElement( dom.slides_wrapper, 'scale('+ overviewScale +')', '50% 25%' );
                 }
-            } else {
+            }
+            else {
                 // reset wrapper scale for slingle sheet view
                 if( typeof dom.slides_wrapper.style.zoom !== 'undefined' && !navigator.userAgent.match( /(iphone|ipod|ipad|android|chrome)/gi ) ) {
                     dom.slides_wrapper.style.zoom = null;
@@ -1314,7 +1317,6 @@
                 else {
                     transformElement( dom.slides_wrapper, '' );
                 }
-
             }
 
             // Select all slides, vertical and horizontal
@@ -1328,7 +1330,7 @@
                     continue;
                 }
 
-				if( config.center || slide.classList.contains( 'center' ) ) {
+                if( config.center || slide.classList.contains( 'center' ) ) {
                     // Vertical stacks are not centred since their section
                     // children will be
                     if( slide.classList.contains( 'stack' ) ) {
@@ -1601,7 +1603,7 @@
     }
 
     /**
-     * Return theoverview rendering mode:
+     * Return the overview rendering mode:
      *
      * 0: default. Uses CSS3 translateZ style. This mode does not work well with large presentations and/or subelements which have been tweaked using CSS z-index
      * 1: outer DIV zoom
@@ -1810,7 +1812,7 @@
 
         // Show fragment, if specified
         if( typeof f !== 'undefined' ) {
-			navigateFragment( f );
+            navigateFragment( f );
         }
 
         // Dispatch an event if the slide changed
@@ -1861,7 +1863,7 @@
         updateProgress();
         updateBackground();
         updateParallax();
-		updateSlideNumber();
+        updateSlideNumber();
 
         // Update the URL hash
         writeURL();
@@ -1893,58 +1895,58 @@
         // Re-create the slide backgrounds
         createBackgrounds();
 
-		sortAllFragments();
+        sortAllFragments();
 
         updateControls();
         updateProgress();
-		updateBackground( true );
-		updateSlideNumber();
+        updateBackground( true );
+        updateSlideNumber();
 
-	}
+    }
 
-	/**
-	 * Resets all vertical slides so that only the first
-	 * is visible.
-	 */
-	function resetVerticalSlides() {
+    /**
+     * Resets all vertical slides so that only the first
+     * is visible.
+     */
+    function resetVerticalSlides() {
 
-		var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
-		horizontalSlides.forEach( function( horizontalSlide ) {
+        var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+        horizontalSlides.forEach( function( horizontalSlide ) {
 
-			var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
-			verticalSlides.forEach( function( verticalSlide, y ) {
+            var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
+            verticalSlides.forEach( function( verticalSlide, y ) {
 
-				if( y > 0 ) {
-					verticalSlide.classList.remove( 'present' );
-					verticalSlide.classList.remove( 'past' );
-					verticalSlide.classList.add( 'future' );
-				}
+                if( y > 0 ) {
+                    verticalSlide.classList.remove( 'present' );
+                    verticalSlide.classList.remove( 'past' );
+                    verticalSlide.classList.add( 'future' );
+                }
 
-			} );
+            } );
 
-		} );
+        } );
 
-	}
+    }
 
-	/**
-	 * Sorts and formats all of fragments in the
-	 * presentation.
-	 */
-	function sortAllFragments() {
+    /**
+     * Sorts and formats all of fragments in the
+     * presentation.
+     */
+    function sortAllFragments() {
 
-		var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
-		horizontalSlides.forEach( function( horizontalSlide ) {
+        var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+        horizontalSlides.forEach( function( horizontalSlide ) {
 
-			var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
-			verticalSlides.forEach( function( verticalSlide, y ) {
+            var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
+            verticalSlides.forEach( function( verticalSlide, y ) {
 
-				sortFragments( verticalSlide.querySelectorAll( '.fragment' ) );
+                sortFragments( verticalSlide.querySelectorAll( '.fragment' ) );
 
-			} );
+            } );
 
-			if( verticalSlides.length === 0 ) sortFragments( horizontalSlide.querySelectorAll( '.fragment' ) );
+            if( verticalSlides.length === 0 ) sortFragments( horizontalSlide.querySelectorAll( '.fragment' ) );
 
-		} );
+        } );
 
     }
 
@@ -2011,26 +2013,26 @@
                     // Any element previous to index is given the 'past' class
                     element.classList.add( reverse ? 'future' : 'past' );
 
-					var pastFragments = toArray( element.querySelectorAll( '.fragment' ) );
+                    var pastFragments = toArray( element.querySelectorAll( '.fragment' ) );
 
-					// Show all fragments on prior slides
-					while( pastFragments.length ) {
-						var pastFragment = pastFragments.pop();
-						pastFragment.classList.add( 'visible' );
-						pastFragment.classList.remove( 'current-fragment' );
-					}
+                    // Show all fragments on prior slides
+                    while( pastFragments.length ) {
+                        var pastFragment = pastFragments.pop();
+                        pastFragment.classList.add( 'visible' );
+                        pastFragment.classList.remove( 'current-fragment' );
+                    }
                 }
                 else if( i > index ) {
                     // Any element subsequent to index is given the 'future' class
                     element.classList.add( reverse ? 'past' : 'future' );
 
-					var futureFragments = toArray( element.querySelectorAll( '.fragment.visible' ) );
+                    var futureFragments = toArray( element.querySelectorAll( '.fragment.visible' ) );
 
                     // No fragments in future slides should be visible ahead of time
-					while( futureFragments.length ) {
-						var futureFragment = futureFragments.pop();
-						futureFragment.classList.remove( 'visible' );
-						futureFragment.classList.remove( 'current-fragment' );
+                    while( futureFragments.length ) {
+                        var futureFragment = futureFragments.pop();
+                        futureFragment.classList.remove( 'visible' );
+                        futureFragment.classList.remove( 'current-fragment' );
                     }
                 }
 
@@ -2192,25 +2194,25 @@
     }
 
     /**
-	 * Updates the slide number div to reflect the current slide.
-	 */
-	function updateSlideNumber() {
+     * Updates the slide number div to reflect the current slide.
+     */
+    function updateSlideNumber() {
 
-		// Update slide number if enabled
-		if( config.slideNumber && dom.slideNumber) {
+        // Update slide number if enabled
+        if( config.slideNumber && dom.slideNumber) {
 
-			// Display the number of the page using 'indexh - indexv' format
-			var indexString = indexh;
-			if( indexv > 0 ) {
-				indexString += ' - ' + indexv;
-			}
+            // Display the number of the page using 'indexh - indexv' format
+            var indexString = indexh;
+            if( indexv > 0 ) {
+                indexString += ' - ' + indexv;
+            }
 
-			dom.slideNumber.innerHTML = indexString;
-		}
+            dom.slideNumber.innerHTML = indexString;
+        }
 
-	}
+    }
 
-	/**
+    /**
      * Updates the state of all control/navigation arrows.
      */
     function updateControls() {
@@ -2266,67 +2268,67 @@
     /**
      * Updates the background elements to reflect the current
      * slide.
-	 *
-	 * @param {Boolean} includeAll If true, the backgrounds of
-	 * all vertical slides (not just the present) will be updated.
+     *
+     * @param {Boolean} includeAll If true, the backgrounds of
+     * all vertical slides (not just the present) will be updated.
      */
-	function updateBackground( includeAll ) {
+    function updateBackground( includeAll ) {
 
-		var currentBackground = null;
+        var currentBackground = null;
 
-		// Reverse past/future classes when in RTL mode
-		var horizontalPast = config.rtl ? 'future' : 'past',
-			horizontalFuture = config.rtl ? 'past' : 'future';
+        // Reverse past/future classes when in RTL mode
+        var horizontalPast = config.rtl ? 'future' : 'past',
+            horizontalFuture = config.rtl ? 'past' : 'future';
 
-		// Update the classes of all backgrounds to match the
-		// states of their slides (past/present/future)
-		toArray( dom.background.childNodes ).forEach( function( backgroundh, h ) {
+        // Update the classes of all backgrounds to match the
+        // states of their slides (past/present/future)
+        toArray( dom.background.childNodes ).forEach( function( backgroundh, h ) {
 
-			if( h < indexh ) {
-				backgroundh.className = 'slide-background ' + horizontalPast;
-			}
-			else if ( h > indexh ) {
-				backgroundh.className = 'slide-background ' + horizontalFuture;
-			}
-			else {
-				backgroundh.className = 'slide-background present';
+            if( h < indexh ) {
+                backgroundh.className = 'slide-background ' + horizontalPast;
+            }
+            else if ( h > indexh ) {
+                backgroundh.className = 'slide-background ' + horizontalFuture;
+            }
+            else {
+                backgroundh.className = 'slide-background present';
 
-				// Store a reference to the current background element
-				currentBackground = backgroundh;
-			}
+                // Store a reference to the current background element
+                currentBackground = backgroundh;
+            }
 
-			if( includeAll || h === indexh ) {
-				toArray( backgroundh.childNodes ).forEach( function( backgroundv, v ) {
+            if( includeAll || h === indexh ) {
+                toArray( backgroundh.childNodes ).forEach( function( backgroundv, v ) {
 
-					if( v < indexv ) {
-						backgroundv.className = 'slide-background past';
-					}
-					else if ( v > indexv ) {
-						backgroundv.className = 'slide-background future';
-					}
-					else {
-						backgroundv.className = 'slide-background present';
+                    if( v < indexv ) {
+                        backgroundv.className = 'slide-background past';
+                    }
+                    else if ( v > indexv ) {
+                        backgroundv.className = 'slide-background future';
+                    }
+                    else {
+                        backgroundv.className = 'slide-background present';
 
-						// Only if this is the present horizontal and vertical slide
-						if( h === indexh ) currentBackground = backgroundv;
-					}
+                        // Only if this is the present horizontal and vertical slide
+                        if( h === indexh ) currentBackground = backgroundv;
+                    }
 
-				} );
-			}
+                } );
+            }
 
         } );
 
-		// Don't transition between identical backgrounds. This
-		// prevents unwanted flicker.
-		if( currentBackground ) {
-			var previousBackgroundHash = previousBackground ? previousBackground.getAttribute( 'data-background-hash' ) : null;
-			var currentBackgroundHash = currentBackground.getAttribute( 'data-background-hash' );
-			if( currentBackgroundHash && currentBackgroundHash === previousBackgroundHash && currentBackground !== previousBackground ) {
-				dom.background.classList.add( 'no-transition' );
-			}
+        // Don't transition between identical backgrounds. This
+        // prevents unwanted flicker.
+        if( currentBackground ) {
+            var previousBackgroundHash = previousBackground ? previousBackground.getAttribute( 'data-background-hash' ) : null;
+            var currentBackgroundHash = currentBackground.getAttribute( 'data-background-hash' );
+            if( currentBackgroundHash && currentBackgroundHash === previousBackgroundHash && currentBackground !== previousBackground ) {
+                dom.background.classList.add( 'no-transition' );
+            }
 
-			previousBackground = currentBackground;
-		}
+            previousBackground = currentBackground;
+        }
 
         // Allow the first background to apply without transition
         setTimeout( function() {
@@ -2428,25 +2430,25 @@
      */
     function startEmbeddedContent( slide ) {
 
-		if( slide && !isSpeakerNotes() ) {
+        if( slide && !isSpeakerNotes() ) {
             // HTML5 media elements
             toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
                 if( el.hasAttribute( 'data-autoplay' ) ) {
                     el.play();
                 }
-			} );
+            } );
 
-			// iframe embeds
-			toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
-				el.contentWindow.postMessage( 'slide:start', '*' );
-			} );
+            // iframe embeds
+            toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
+                el.contentWindow.postMessage( 'slide:start', '*' );
+            } );
 
             // YouTube embeds
             toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( el.hasAttribute( 'data-autoplay' ) ) {
-					el.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
+                    el.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
                 }
-            });
+            } );
         }
 
     }
@@ -2465,28 +2467,28 @@
                 }
             } );
 
-			// iframe embeds
-			toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
-				el.contentWindow.postMessage( 'slide:stop', '*' );
-			} );
+            // iframe embeds
+            toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
+                el.contentWindow.postMessage( 'slide:stop', '*' );
+            } );
 
             // YouTube embeds
             toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
-					el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
+                    el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
                 }
-            });
+            } );
         }
 
-	}
+    }
 
-	/**
-	 * Checks if this presentation is running inside of the
-	 * speaker notes window.
-	 */
-	function isSpeakerNotes() {
+    /**
+     * Checks if this presentation is running inside of the
+     * speaker notes window.
+     */
+    function isSpeakerNotes() {
 
-		return !!window.location.search.match( /receiver/gi );
+        return !!window.location.search.match( /receiver/gi );
 
     }
 
@@ -2604,7 +2606,7 @@
             var hasFragments = currentSlide.querySelectorAll( '.fragment' ).length > 0;
             if( hasFragments ) {
                 var visibleFragments = currentSlide.querySelectorAll( '.fragment.visible' );
-				f = visibleFragments.length - 1;
+                f = visibleFragments.length - 1;
             }
         }
 
@@ -2612,174 +2614,174 @@
 
     }
 
-	/**
-	 * Return a sorted fragments list, ordered by an increasing
-	 * "data-fragment-index" attribute.
-	 *
-	 * Fragments will be revealed in the order that they are returned by
-	 * this function, so you can use the index attributes to control the
-	 * order of fragment appearance.
-	 *
-	 * To maintain a sensible default fragment order, fragments are presumed
-	 * to be passed in document order. This function adds a "fragment-index"
-	 * attribute to each node if such an attribute is not already present,
-	 * and sets that attribute to an integer value which is the position of
-	 * the fragment within the fragments list.
-	 */
-	function sortFragments( fragments ) {
+    /**
+     * Return a sorted fragments list, ordered by an increasing
+     * "data-fragment-index" attribute.
+     *
+     * Fragments will be revealed in the order that they are returned by
+     * this function, so you can use the index attributes to control the
+     * order of fragment appearance.
+     *
+     * To maintain a sensible default fragment order, fragments are presumed
+     * to be passed in document order. This function adds a "fragment-index"
+     * attribute to each node if such an attribute is not already present,
+     * and sets that attribute to an integer value which is the position of
+     * the fragment within the fragments list.
+     */
+    function sortFragments( fragments ) {
 
-		fragments = toArray( fragments );
+        fragments = toArray( fragments );
 
-		var ordered = [],
-			unordered = [],
-			sorted = [];
+        var ordered = [],
+            unordered = [],
+            sorted = [];
 
-		// Group ordered and unordered elements
-		fragments.forEach( function( fragment, i ) {
-			if( fragment.hasAttribute( 'data-fragment-index' ) ) {
-				var index = parseInt( fragment.getAttribute( 'data-fragment-index' ), 10 );
+        // Group ordered and unordered elements
+        fragments.forEach( function( fragment, i ) {
+            if( fragment.hasAttribute( 'data-fragment-index' ) ) {
+                var index = parseInt( fragment.getAttribute( 'data-fragment-index' ), 10 );
 
-				if( !ordered[index] ) {
-					ordered[index] = [];
-				}
+                if( !ordered[index] ) {
+                    ordered[index] = [];
+                }
 
-				ordered[index].push( fragment );
-			}
-			else {
-				unordered.push( [ fragment ] );
-			}
-		} );
+                ordered[index].push( fragment );
+            }
+            else {
+                unordered.push( [ fragment ] );
+            }
+        } );
 
-		// Append fragments without explicit indices in their
-		// DOM order
-		ordered = ordered.concat( unordered );
+        // Append fragments without explicit indices in their
+        // DOM order
+        ordered = ordered.concat( unordered );
 
-		// Manually count the index up per group to ensure there
-		// are no gaps
-		var index = 0;
+        // Manually count the index up per group to ensure there
+        // are no gaps
+        var index = 0;
 
-		// Push all fragments in their sorted order to an array,
-		// this flattens the groups
-		ordered.forEach( function( group ) {
-			group.forEach( function( fragment ) {
-				sorted.push( fragment );
-				fragment.setAttribute( 'data-fragment-index', index );
-			} );
+        // Push all fragments in their sorted order to an array,
+        // this flattens the groups
+        ordered.forEach( function( group ) {
+            group.forEach( function( fragment ) {
+                sorted.push( fragment );
+                fragment.setAttribute( 'data-fragment-index', index );
+            } );
 
-			index ++;
-		} );
+            index ++;
+        } );
 
-		return sorted;
+        return sorted;
 
-	}
+    }
 
-	/**
-	 * Navigate to the specified slide fragment.
-	 *
-	 * @param {Number} index The index of the fragment that
-	 * should be shown, -1 means all are invisible
-	 * @param {Number} offset Integer offset to apply to the
-	 * fragment index
-	 *
-	 * @return {Boolean} true if a change was made in any
-	 * fragments visibility as part of this call
-	 */
-	function navigateFragment( index, offset ) {
+    /**
+     * Navigate to the specified slide fragment.
+     *
+     * @param {Number} index The index of the fragment that
+     * should be shown, -1 means all are invisible
+     * @param {Number} offset Integer offset to apply to the
+     * fragment index
+     *
+     * @return {Boolean} true if a change was made in any
+     * fragments visibility as part of this call
+     */
+    function navigateFragment( index, offset ) {
 
-		if( currentSlide && config.fragments ) {
+        if( currentSlide && config.fragments ) {
 
-			var fragments = sortFragments( currentSlide.querySelectorAll( '.fragment' ) );
-			if( fragments.length ) {
+            var fragments = sortFragments( currentSlide.querySelectorAll( '.fragment' ) );
+            if( fragments.length ) {
 
-				// If no index is specified, find the current
-				if( typeof index !== 'number' ) {
-					var lastVisibleFragment = sortFragments( currentSlide.querySelectorAll( '.fragment.visible' ) ).pop();
+                // If no index is specified, find the current
+                if( typeof index !== 'number' ) {
+                    var lastVisibleFragment = sortFragments( currentSlide.querySelectorAll( '.fragment.visible' ) ).pop();
 
-					if( lastVisibleFragment ) {
-						index = parseInt( lastVisibleFragment.getAttribute( 'data-fragment-index' ) || 0, 10 );
-					}
-					else {
-						index = -1;
-					}
-				}
+                    if( lastVisibleFragment ) {
+                        index = parseInt( lastVisibleFragment.getAttribute( 'data-fragment-index' ) || 0, 10 );
+                    }
+                    else {
+                        index = -1;
+                    }
+                }
 
-				// If an offset is specified, apply it to the index
-				if( typeof offset === 'number' ) {
-					index += offset;
-				}
+                // If an offset is specified, apply it to the index
+                if( typeof offset === 'number' ) {
+                    index += offset;
+                }
 
-				var fragmentsShown = [],
-					fragmentsHidden = [];
+                var fragmentsShown = [],
+                    fragmentsHidden = [];
 
-				toArray( fragments ).forEach( function( element, i ) {
+                toArray( fragments ).forEach( function( element, i ) {
 
-					if( element.hasAttribute( 'data-fragment-index' ) ) {
-						i = parseInt( element.getAttribute( 'data-fragment-index' ), 10 );
-					}
+                    if( element.hasAttribute( 'data-fragment-index' ) ) {
+                        i = parseInt( element.getAttribute( 'data-fragment-index' ), 10 );
+                    }
 
-					// Visible fragments
-					if( i <= index ) {
-						if( !element.classList.contains( 'visible' ) ) fragmentsShown.push( element );
-						element.classList.add( 'visible' );
-						element.classList.remove( 'current-fragment' );
+                    // Visible fragments
+                    if( i <= index ) {
+                        if( !element.classList.contains( 'visible' ) ) fragmentsShown.push( element );
+                        element.classList.add( 'visible' );
+                        element.classList.remove( 'current-fragment' );
 
-						if( i === index ) {
-							element.classList.add( 'current-fragment' );
-						}
-					}
-					// Hidden fragments
-					else {
-						if( element.classList.contains( 'visible' ) ) fragmentsHidden.push( element );
-						element.classList.remove( 'visible' );
-						element.classList.remove( 'current-fragment' );
-					}
+                        if( i === index ) {
+                            element.classList.add( 'current-fragment' );
+                        }
+                    }
+                    // Hidden fragments
+                    else {
+                        if( element.classList.contains( 'visible' ) ) fragmentsHidden.push( element );
+                        element.classList.remove( 'visible' );
+                        element.classList.remove( 'current-fragment' );
+                    }
 
 
-				} );
+                } );
 
-				if( fragmentsHidden.length ) {
-					dispatchEvent( 'fragmenthidden', { fragment: fragmentsHidden[0], fragments: fragmentsHidden } );
-				}
+                if( fragmentsHidden.length ) {
+                    dispatchEvent( 'fragmenthidden', { fragment: fragmentsHidden[0], fragments: fragmentsHidden } );
+                }
 
-				if( fragmentsShown.length ) {
-					dispatchEvent( 'fragmentshown', { fragment: fragmentsShown[0], fragments: fragmentsShown } );
-				}
+                if( fragmentsShown.length ) {
+                    dispatchEvent( 'fragmentshown', { fragment: fragmentsShown[0], fragments: fragmentsShown } );
+                }
 
-				updateControls();
+                updateControls();
 
-				return !!( fragmentsShown.length || fragmentsHidden.length );
+                return !!( fragmentsShown.length || fragmentsHidden.length );
 
-			}
+            }
 
-		}
+        }
 
-		return false;
+        return false;
 
-	}
+    }
 
-	/**
-	 * Navigate to the next slide fragment.
-	 *
-	 * @return {Boolean} true if there was a next fragment,
-	 * false otherwise
-	 */
-	function nextFragment() {
+    /**
+     * Navigate to the next slide fragment.
+     *
+     * @return {Boolean} true if there was a next fragment,
+     * false otherwise
+     */
+    function nextFragment() {
 
-		return navigateFragment( null, 1 );
+        return navigateFragment( null, 1 );
 
-	}
+    }
 
-	/**
-	 * Navigate to the previous slide fragment.
-	 *
-	 * @return {Boolean} true if there was a previous fragment,
-	 * false otherwise
-	 */
-	function previousFragment() {
+    /**
+     * Navigate to the previous slide fragment.
+     *
+     * @return {Boolean} true if there was a previous fragment,
+     * false otherwise
+     */
+    function previousFragment() {
 
-		return navigateFragment( null, -1 );
+        return navigateFragment( null, -1 );
 
-	}
+    }
 
     /**
      * Cues a new automated slide if enabled in the config.
@@ -2790,33 +2792,33 @@
 
         if( currentSlide ) {
 
-			var parentAutoSlide = currentSlide.parentNode ? currentSlide.parentNode.getAttribute( 'data-autoslide' ) : null;
+            var parentAutoSlide = currentSlide.parentNode ? currentSlide.parentNode.getAttribute( 'data-autoslide' ) : null;
             var slideAutoSlide = currentSlide.getAttribute( 'data-autoslide' );
 
-			// Pick value in the following priority order:
-			// 1. Current slide's data-autoslide
-			// 2. Parent slide's data-autoslide
-			// 3. Global autoSlide setting
+            // Pick value in the following priority order:
+            // 1. Current slide's data-autoslide
+            // 2. Parent slide's data-autoslide
+            // 3. Global autoSlide setting
             if( slideAutoSlide ) {
                 autoSlide = parseInt( slideAutoSlide, 10 );
-			}
-			else if( parentAutoSlide ) {
-				autoSlide = parseInt( parentAutoSlide, 10 );
+            }
+            else if( parentAutoSlide ) {
+                autoSlide = parseInt( parentAutoSlide, 10 );
             }
             else {
                 autoSlide = config.autoSlide;
             }
 
-			// If there are media elements with data-autoplay,
-			// automatically set the autoSlide duration to the
-			// length of that media
-			toArray( currentSlide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
-				if( el.hasAttribute( 'data-autoplay' ) ) {
-					if( autoSlide && el.duration * 1000 > autoSlide ) {
-						autoSlide = ( el.duration * 1000 ) + 1000;
-					}
-				}
-			} );
+            // If there are media elements with data-autoplay,
+            // automatically set the autoSlide duration to the
+            // length of that media
+            toArray( currentSlide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
+                if( el.hasAttribute( 'data-autoplay' ) ) {
+                    if( autoSlide && el.duration * 1000 > autoSlide ) {
+                        autoSlide = ( el.duration * 1000 ) + 1000;
+                    }
+                }
+            } );
 
             // Cue the next auto-slide if:
             // - There is an autoSlide value
@@ -2949,7 +2951,8 @@
         if( nextFragment() === false ) {
             if (availableRoutes().down) {
                 navigateDown();
-            } else {
+            }
+            else {
                 navigateRight();
             }
         }
@@ -3076,9 +3079,11 @@
                 case 32:
                     if (isOverview()) {
                         deactivateOverview();
-                    } else if (event.shiftKey) {
+                    }
+                    else if (event.shiftKey) {
                         navigatePrev();
-                    } else {
+                    }
+                    else {
                         navigateNext();
                     }
                 break;
@@ -3086,7 +3091,8 @@
                 case 13:
                     if (isOverview()) {
                         deactivateOverview();
-                    } else {
+                    }
+                    else {
                         triggered = false;
                     }
                     break;
@@ -3248,7 +3254,7 @@
      */
     function onPointerDown( event ) {
 
-		if( event.pointerType === event.MSPOINTER_TYPE_TOUCH || event.pointerType === "touch" ) {
+        if( event.pointerType === event.MSPOINTER_TYPE_TOUCH || event.pointerType === "touch" ) {
             event.touches = [{ clientX: event.clientX, clientY: event.clientY }];
             onTouchStart( event );
         }
@@ -3260,7 +3266,7 @@
      */
     function onPointerMove( event ) {
 
-		if( event.pointerType === event.MSPOINTER_TYPE_TOUCH || event.pointerType === "touch" )  {
+        if( event.pointerType === event.MSPOINTER_TYPE_TOUCH || event.pointerType === "touch" )  {
             event.touches = [{ clientX: event.clientX, clientY: event.clientY }];
             onTouchMove( event );
         }
@@ -3272,7 +3278,7 @@
      */
     function onPointerUp( event ) {
 
-		if( event.pointerType === event.MSPOINTER_TYPE_TOUCH || event.pointerType === "touch" )  {
+        if( event.pointerType === event.MSPOINTER_TYPE_TOUCH || event.pointerType === "touch" )  {
             event.touches = [{ clientX: event.clientX, clientY: event.clientY }];
             onTouchEnd( event );
         }
@@ -3653,8 +3659,8 @@
         prev: navigatePrev,
         next: navigateNext,
 
-		// Fragment methods
-		navigateFragment: navigateFragment,
+        // Fragment methods
+        navigateFragment: navigateFragment,
         prevFragment: previousFragment,
         nextFragment: nextFragment,
 
@@ -3729,7 +3735,7 @@
         getQueryHash: function() {
             var query = {};
 
-			location.search.replace( /[A-Z0-9]+?=([\w\.%-]*)/gi, function(a) {
+            location.search.replace( /[A-Z0-9]+?=([\w\.%-]*)/gi, function(a) {
                 query[ a.split( '=' ).shift() ] = a.split( '=' ).pop();
             } );
 
@@ -3737,12 +3743,12 @@
             for( var i in query ) {
                 var value = query[ i ];
 
-				query[ i ] = unescape( value );
+                query[ i ] = unescape( value );
 
                 if( value === 'null' ) query[ i ] = null;
                 else if( value === 'true' ) query[ i ] = true;
                 else if( value === 'false' ) query[ i ] = false;
-				else if( value.match( /^\d+$/ ) ) query[ i ] = parseFloat( value );
+                else if( value.match( /^\d+$/ ) ) query[ i ] = parseFloat( value );
             }
 
             return query;

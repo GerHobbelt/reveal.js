@@ -15,7 +15,7 @@
  *********************************************/
 .reveal-viewport {
   background-image: url("img/rvl-bg-large.jpg");
-  background-position: left bottom; 
+  background-position: left bottom;
   background-repeat: no-repeat;
   background-attachment: fixed;
   -webkit-background-size: cover;
