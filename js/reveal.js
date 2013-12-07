@@ -818,7 +818,8 @@
                 dom.wrapper.addEventListener( 'pointerdown', onPointerDown, false );
                 dom.wrapper.addEventListener( 'pointermove', onPointerMove, false );
                 dom.wrapper.addEventListener( 'pointerup', onPointerUp, false );
-            } else if( window.navigator.msPointerEnabled ) {
+			}
+			else if( window.navigator.msPointerEnabled ) {
                 // IE 10 uses prefixed version of pointer events
                 dom.wrapper.addEventListener( 'MSPointerDown', onPointerDown, false );
                 dom.wrapper.addEventListener( 'MSPointerMove', onPointerMove, false );
@@ -3247,7 +3248,7 @@
      */
     function onPointerDown( event ) {
 
-        if(( event.pointerType === event.MSPOINTER_TYPE_TOUCH ) || ( event.pointerType === "touch" )) {
+		if( event.pointerType === event.MSPOINTER_TYPE_TOUCH || event.pointerType === "touch" ) {
             event.touches = [{ clientX: event.clientX, clientY: event.clientY }];
             onTouchStart( event );
         }
@@ -3259,7 +3260,7 @@
      */
     function onPointerMove( event ) {
 
-        if(( event.pointerType === event.MSPOINTER_TYPE_TOUCH ) || ( event.pointerType === "touch" ))  {
+		if( event.pointerType === event.MSPOINTER_TYPE_TOUCH || event.pointerType === "touch" )  {
             event.touches = [{ clientX: event.clientX, clientY: event.clientY }];
             onTouchMove( event );
         }
@@ -3271,7 +3272,7 @@
      */
     function onPointerUp( event ) {
 
-        if(( event.pointerType === event.MSPOINTER_TYPE_TOUCH ) || ( event.pointerType === "touch" ))  {
+		if( event.pointerType === event.MSPOINTER_TYPE_TOUCH || event.pointerType === "touch" )  {
             event.touches = [{ clientX: event.clientX, clientY: event.clientY }];
             onTouchEnd( event );
         }
