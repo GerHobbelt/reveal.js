@@ -296,6 +296,7 @@
 
     }
 
+
     /**
      * Loads the dependencies of reveal.js. Dependencies are
      * defined via the configuration option 'dependencies'
@@ -308,7 +309,34 @@
     function load() {
 
         var scripts = [],
-            scriptsAsync = [];
+			scriptsAsync = [],
+			scriptsToPreload = 0;
+
+		// Called once synchronous scripts finish loading
+        //
+        // Return FALSE when the function failed to run to completion.
+		function proceed() {
+			if( scriptsAsync.length ) {
+				// Load asynchronous scripts
+				head.js.apply( null, scriptsAsync );
+			}
+
+			return start();
+		}
+
+		function loadScript( s ) {
+			head.ready( s.src.match( /([\w\d_\-]*)\.?js$|[^\\\/]*$/i )[0], function() {
+				// Extension may contain callback functions
+				if( typeof s.callback === 'function' ) {
+					s.callback.apply( this );
+				}
+
+				if( --scriptsToPreload === 0 ) {
+                    // TODO: handle FALSE return value (= fail)
+					proceed();
+				}
+			});
+		}
 
         for( var i = 0, len = config.dependencies.length; i < len; i++ ) {
             var s = config.dependencies[i];
@@ -322,27 +350,12 @@
                     scripts.push( s.src );
                 }
 
-                // Extension may contain callback functions
-                if( typeof s.callback === 'function' ) {
-                    head.ready( s.src.match( /([\w\d_\-]*)\.?js$|[^\\\/]*$/i )[0], s.callback );
-                }
-            }
-        }
-
-        // Called once synchronous scripts finish loading
-        //
-        // Return FALSE when the function failed to run to completion.
-        function proceed() {
-            if( scriptsAsync.length ) {
-                // Load asynchronous scripts
-                head.js.apply( null, scriptsAsync );
-            }
-
-            return start();
-        }
+				loadScript( s );
+			}
+		}
 
         if( scripts.length ) {
-            head.ready( proceed );
+			scriptsToPreload = scripts.length;
 
             // Load synchronous scripts
             head.js.apply( null, scripts );
@@ -367,7 +380,7 @@
         if (!setupDOM()) return false;
 
         // Decorate the slide DOM elements with state classes (past/future)
-        setupSlides();
+		formatSlides();
 
         // Updates the presentation to match the current configuration values
         configure();
@@ -436,25 +449,6 @@
         return start();
     }
 
-    /**
-     * Iterates through and decorates slides DOM elements with
-     * appropriate classes.
-     */
-    function setupSlides() {
-
-        var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
-        horizontalSlides.forEach( function( horizontalSlide ) {
-
-            var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
-            verticalSlides.forEach( function( verticalSlide, y ) {
-
-                if( y > 0 ) verticalSlide.classList.add( 'future' );
-
-            } );
-
-        } );
-
-    }
 
     function startTimer( minutes ) {
 
@@ -1232,38 +1226,6 @@
     }
 
     /**
-     * Return a sorted fragments list, ordered by an increasing
-     * "data-fragment-index" attribute.
-     *
-     * Fragments will be revealed in the order that they are returned by
-     * this function, so you can use the index attributes to control the
-     * order of fragment appearance.
-     *
-     * To maintain a sensible default fragment order, fragments are presumed
-     * to be passed in document order. This function adds a "fragment-index"
-     * attribute to each node if such an attribute is not already present,
-     * and sets that attribute to an integer value which is the position of
-     * the fragment within the fragments list.
-     */
-    function sortFragments( fragments ) {
-
-        var a = toArray( fragments );
-
-        a.forEach( function( el, idx ) {
-            if( !el.hasAttribute( 'data-fragment-index' ) ) {
-                el.setAttribute( 'data-fragment-index', idx );
-            }
-        } );
-
-        a.sort( function( l, r ) {
-            return l.getAttribute( 'data-fragment-index' ) - r.getAttribute( 'data-fragment-index');
-        } );
-
-        return a;
-
-    }
-
-    /**
      * Applies JavaScript-controlled layout rules to the
      * presentation.
      */
@@ -1847,16 +1809,7 @@
 
         // Show fragment, if specified
         if( typeof f !== 'undefined' ) {
-            var fragments = sortFragments( currentSlide.querySelectorAll( '.fragment' ) );
-
-            toArray( fragments ).forEach( function( fragment, indexf ) {
-                if( indexf < f ) {
-                    fragment.classList.add( 'visible' );
-                }
-                else {
-                    fragment.classList.remove( 'visible' );
-                }
-            } );
+			navigateFragment( f );
         }
 
         // Dispatch an event if the slide changed
@@ -1939,10 +1892,36 @@
         // Re-create the slide backgrounds
         createBackgrounds();
 
+		formatSlides();
+
         updateControls();
         updateProgress();
 		updateBackground( true );
 		updateSlideNumber();
+
+	}
+
+	/**
+	 * Iterates through and decorates slides DOM elements with
+	 * appropriate classes.
+	 */
+	function formatSlides() {
+
+		var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+		horizontalSlides.forEach( function( horizontalSlide ) {
+
+			var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
+			verticalSlides.forEach( function( verticalSlide, y ) {
+
+				if( y > 0 ) verticalSlide.classList.add( 'future' );
+
+				sortFragments( verticalSlide.querySelectorAll( '.fragment' ) );
+
+			} );
+
+			if( verticalSlides.length === 0 ) sortFragments( horizontalSlide.querySelectorAll( '.fragment' ) );
+
+		} );
 
     }
 
@@ -2013,7 +1992,9 @@
 
 					// Show all fragments on prior slides
 					while( pastFragments.length ) {
-						pastFragments.pop().classList.add( 'visible' );
+						var pastFragment = pastFragments.pop();
+						pastFragment.classList.add( 'visible' );
+						pastFragment.classList.remove( 'current-fragment' );
 					}
                 }
                 else if( i > index ) {
@@ -2024,7 +2005,9 @@
 
                     // No fragments in future slides should be visible ahead of time
 					while( futureFragments.length ) {
-						futureFragments.pop().classList.remove( 'visible' );
+						var futureFragment = futureFragments.pop();
+						futureFragment.classList.remove( 'visible' );
+						futureFragment.classList.remove( 'current-fragment' );
                     }
                 }
 
@@ -2598,7 +2581,7 @@
             var hasFragments = currentSlide.querySelectorAll( '.fragment' ).length > 0;
             if( hasFragments ) {
                 var visibleFragments = currentSlide.querySelectorAll( '.fragment.visible' );
-                f = visibleFragments.length;
+				f = visibleFragments.length - 1;
             }
         }
 
@@ -2606,73 +2589,174 @@
 
     }
 
-    /**
-     * Navigate to the next slide fragment.
-     *
-     * @return {Boolean} true if there was a next fragment,
-     * false otherwise
-     */
-    function nextFragment() {
+	/**
+	 * Return a sorted fragments list, ordered by an increasing
+	 * "data-fragment-index" attribute.
+	 *
+	 * Fragments will be revealed in the order that they are returned by
+	 * this function, so you can use the index attributes to control the
+	 * order of fragment appearance.
+	 *
+	 * To maintain a sensible default fragment order, fragments are presumed
+	 * to be passed in document order. This function adds a "fragment-index"
+	 * attribute to each node if such an attribute is not already present,
+	 * and sets that attribute to an integer value which is the position of
+	 * the fragment within the fragments list.
+	 */
+	function sortFragments( fragments ) {
 
-        if( currentSlide && config.fragments ) {
-            var fragments = sortFragments( currentSlide.querySelectorAll( '.fragment:not(.visible)' ) );
+		fragments = toArray( fragments );
 
-            if( fragments.length ) {
-                // Find the index of the next fragment
-                var index = fragments[0].getAttribute( 'data-fragment-index' );
+		var ordered = [],
+			unordered = [],
+			sorted = [];
 
-                // Find all fragments with the same index
-                fragments = currentSlide.querySelectorAll( '.fragment[data-fragment-index="'+ index +'"]' );
+		// Group ordered and unordered elements
+		fragments.forEach( function( fragment, i ) {
+			if( fragment.hasAttribute( 'data-fragment-index' ) ) {
+				var index = parseInt( fragment.getAttribute( 'data-fragment-index' ), 10 );
 
-                toArray( fragments ).forEach( function( element ) {
-                    element.classList.add( 'visible' );
-                } );
+				if( !ordered[index] ) {
+					ordered[index] = [];
+				}
 
-                // Notify subscribers of the change
-                dispatchEvent( 'fragmentshown', { fragment: fragments[0], fragments: fragments } );
+				ordered[index].push( fragment );
+			}
+			else {
+				unordered.push( [ fragment ] );
+			}
+		} );
 
-                updateControls();
-                return true;
-            }
-        }
+		// Append fragments without explicit indices in their
+		// DOM order
+		ordered = ordered.concat( unordered );
 
-        return false;
+		// Manually count the index up per group to ensure there
+		// are no gaps
+		var index = 0;
 
-    }
+		// Push all fragments in their sorted order to an array,
+		// this flattens the groups
+		ordered.forEach( function( group ) {
+			group.forEach( function( fragment ) {
+				sorted.push( fragment );
+				fragment.setAttribute( 'data-fragment-index', index );
+			} );
 
-    /**
-     * Navigate to the previous slide fragment.
-     *
-     * @return {Boolean} true if there was a previous fragment,
-     * false otherwise
-     */
-    function previousFragment() {
+			index ++;
+		} );
 
-        if( currentSlide && config.fragments ) {
-            var fragments = sortFragments( currentSlide.querySelectorAll( '.fragment.visible' ) );
+		return sorted;
 
-            if( fragments.length ) {
-                // Find the index of the previous fragment
-                var index = fragments[ fragments.length - 1 ].getAttribute( 'data-fragment-index' );
+	}
 
-                // Find all fragments with the same index
-                fragments = currentSlide.querySelectorAll( '.fragment[data-fragment-index="'+ index +'"]' );
+	/**
+	 * Navigate to the specified slide fragment.
+	 *
+	 * @param {Number} index The index of the fragment that
+	 * should be shown, -1 means all are invisible
+	 * @param {Number} offset Integer offset to apply to the
+	 * fragment index
+	 *
+	 * @return {Boolean} true if a change was made in any
+	 * fragments visibility as part of this call
+	 */
+	function navigateFragment( index, offset ) {
 
-                toArray( fragments ).forEach( function( f ) {
-                    f.classList.remove( 'visible' );
-                } );
+		if( currentSlide && config.fragments ) {
 
-                // Notify subscribers of the change
-                dispatchEvent( 'fragmenthidden', { fragment: fragments[0], fragments: fragments } );
+			var fragments = sortFragments( currentSlide.querySelectorAll( '.fragment' ) );
+			if( fragments.length ) {
 
-                updateControls();
-                return true;
-            }
-        }
+				// If no index is specified, find the current
+				if( typeof index !== 'number' ) {
+					var lastVisibleFragment = sortFragments( currentSlide.querySelectorAll( '.fragment.visible' ) ).pop();
 
-        return false;
+					if( lastVisibleFragment ) {
+						index = parseInt( lastVisibleFragment.getAttribute( 'data-fragment-index' ) || 0, 10 );
+					}
+					else {
+						index = -1;
+					}
+				}
 
-    }
+				// If an offset is specified, apply it to the index
+				if( typeof offset === 'number' ) {
+					index += offset;
+				}
+
+				var fragmentsShown = [],
+					fragmentsHidden = [];
+
+				toArray( fragments ).forEach( function( element, i ) {
+
+					if( element.hasAttribute( 'data-fragment-index' ) ) {
+						i = parseInt( element.getAttribute( 'data-fragment-index' ), 10 );
+					}
+
+					// Visible fragments
+					if( i <= index ) {
+						if( !element.classList.contains( 'visible' ) ) fragmentsShown.push( element );
+						element.classList.add( 'visible' );
+						element.classList.remove( 'current-fragment' );
+
+						if( i === index ) {
+							element.classList.add( 'current-fragment' );
+						}
+					}
+					// Hidden fragments
+					else {
+						if( element.classList.contains( 'visible' ) ) fragmentsHidden.push( element );
+						element.classList.remove( 'visible' );
+						element.classList.remove( 'current-fragment' );
+					}
+
+
+				} );
+
+				if( fragmentsHidden.length ) {
+					dispatchEvent( 'fragmenthidden', { fragment: fragmentsHidden[0], fragments: fragmentsHidden } );
+				}
+
+				if( fragmentsShown.length ) {
+					dispatchEvent( 'fragmentshown', { fragment: fragmentsShown[0], fragments: fragmentsShown } );
+				}
+
+				updateControls();
+
+				return !!( fragmentsShown.length || fragmentsHidden.length );
+
+			}
+
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * Navigate to the next slide fragment.
+	 *
+	 * @return {Boolean} true if there was a next fragment,
+	 * false otherwise
+	 */
+	function nextFragment() {
+
+		return navigateFragment( null, 1 );
+
+	}
+
+	/**
+	 * Navigate to the previous slide fragment.
+	 *
+	 * @return {Boolean} true if there was a previous fragment,
+	 * false otherwise
+	 */
+	function previousFragment() {
+
+		return navigateFragment( null, -1 );
+
+	}
 
     /**
      * Cues a new automated slide if enabled in the config.
@@ -2699,6 +2783,17 @@
             else {
                 autoSlide = config.autoSlide;
             }
+
+			// If there are media elements with data-autoplay,
+			// automatically set the autoSlide duration to the
+			// length of that media
+			toArray( currentSlide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
+				if( el.hasAttribute( 'data-autoplay' ) ) {
+					if( autoSlide && el.duration * 1000 > autoSlide ) {
+						autoSlide = ( el.duration * 1000 ) + 1000;
+					}
+				}
+			} );
 
             // Cue the next auto-slide if:
             // - There is an autoSlide value
@@ -3534,6 +3629,9 @@
         down: navigateDown,
         prev: navigatePrev,
         next: navigateNext,
+
+		// Fragment methods
+		navigateFragment: navigateFragment,
         prevFragment: previousFragment,
         nextFragment: nextFragment,
 

@@ -310,6 +310,8 @@ function linkify( selector ) {
                         <p class="fragment highlight-red">highlight-red</p>
                         <p class="fragment highlight-green">highlight-green</p>
                         <p class="fragment highlight-blue">highlight-blue</p>
+						<p class="fragment current-visible">current-visible</p>
+						<p class="fragment highlight-current-blue">highlight-current-blue</p>
                     </section>
                 </section>
 
@@ -408,8 +410,8 @@ function linkify( selector ) {
                     { src: 'lib/js/classList/classList.js', condition: function() { return !document.body.classList; } },
                     { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
                     { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-                    //{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-                    //{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
                     { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
                     // { src: 'plugin/leap/leap.js', async: true },
                     { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
