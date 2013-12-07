@@ -379,8 +379,8 @@
         // Make sure we've got all the DOM elements we need
         if (!setupDOM()) return false;
 
-        // Decorate the slide DOM elements with state classes (past/future)
-		formatSlides();
+		// Resets all vertical slides so that only the first is visible
+		resetVerticalSlides();
 
         // Updates the presentation to match the current configuration values
         configure();
@@ -1892,7 +1892,7 @@
         // Re-create the slide backgrounds
         createBackgrounds();
 
-		formatSlides();
+		sortAllFragments();
 
         updateControls();
         updateProgress();
@@ -1902,10 +1902,10 @@
 	}
 
 	/**
-	 * Iterates through and decorates slides DOM elements with
-	 * appropriate classes.
+	 * Resets all vertical slides so that only the first
+	 * is visible.
 	 */
-	function formatSlides() {
+	function resetVerticalSlides() {
 
 		var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
 		horizontalSlides.forEach( function( horizontalSlide ) {
@@ -1913,7 +1913,29 @@
 			var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
 			verticalSlides.forEach( function( verticalSlide, y ) {
 
-				if( y > 0 ) verticalSlide.classList.add( 'future' );
+				if( y > 0 ) {
+					verticalSlide.classList.remove( 'present' );
+					verticalSlide.classList.remove( 'past' );
+					verticalSlide.classList.add( 'future' );
+				}
+
+			} );
+
+		} );
+
+	}
+
+	/**
+	 * Sorts and formats all of fragments in the
+	 * presentation.
+	 */
+	function sortAllFragments() {
+
+		var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+		horizontalSlides.forEach( function( horizontalSlide ) {
+
+			var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
+			verticalSlides.forEach( function( verticalSlide, y ) {
 
 				sortFragments( verticalSlide.querySelectorAll( '.fragment' ) );
 
@@ -3706,17 +3728,20 @@
         getQueryHash: function() {
             var query = {};
 
-            location.search.replace( /[A-Z0-9]+?=(\w*)/gi, function(a) {
+			location.search.replace( /[A-Z0-9]+?=([\w\.%-]*)/gi, function(a) {
                 query[ a.split( '=' ).shift() ] = a.split( '=' ).pop();
             } );
 
             // Basic deserialization
             for( var i in query ) {
                 var value = query[ i ];
+
+				query[ i ] = unescape( value );
+
                 if( value === 'null' ) query[ i ] = null;
                 else if( value === 'true' ) query[ i ] = true;
                 else if( value === 'false' ) query[ i ] = false;
-                else if( !isNaN( parseFloat( value ) ) ) query[ i ] = parseFloat( value );
+				else if( value.match( /^\d+$/ ) ) query[ i ] = parseFloat( value );
             }
 
             return query;

@@ -72,7 +72,8 @@ module.exports = function(grunt) {
                     head: false,
                     module: false,
                     console: false,
-                    define: false
+                    define: false,
+                    unescape: false
                 }
             },
             files: [ 'Gruntfile.js', 'js/reveal.js' ]
