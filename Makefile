@@ -13,7 +13,7 @@ LOCAL_GRUNT = node_modules/grunt-cli/bin/grunt
 
 
 all: $(LOCAL_GRUNT)
-	$(LOCAL_GRUNT)
+	$(LOCAL_GRUNT) --force
 
 
 # did 'npm install' run before?

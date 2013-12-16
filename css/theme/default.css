@@ -207,13 +207,6 @@ body.print-pdf .titlebar {
   border-top-color: #71e9f4; }
 
 /*********************************************
- * SLIDE NUMBER
- *********************************************/
-.reveal .slide-number {
-  color: #13daec;
-}
-
-/*********************************************
  * PROGRESS BAR
  *********************************************/
 .reveal .progress {
@@ -228,15 +221,7 @@ body.print-pdf .titlebar {
   transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985); }
 
 /*********************************************
- * PROGRESS BAR
+ * SLIDE NUMBER
  *********************************************/
-.reveal .time-remaining {
-    background: rgba(0, 0, 0, 0.2); }
-
-.reveal .time-remaining span {
-    background: #8767a6;
-    -webkit-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
-    -moz-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
-    -ms-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
-    -o-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
-    transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985); }
+.reveal .slide-number {
+  color: #13daec; }
