@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="height: 100%;">
 
     <head>
         <meta charset="utf-8">
@@ -14,7 +14,7 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        <link rel="stylesheet" href="css/reveal.min.css">
+        <link rel="stylesheet" href="css/reveal.css">
         <link rel="stylesheet" href="css/theme/default.css" id="theme">
 
         <!-- For syntax highlighting -->
@@ -30,13 +30,13 @@
         <![endif]-->
     </head>
 
-    <body>
+    <body class="reveal-viewport">
 
         <div class="reveal">
 
             <!-- Any section element inside of this container is displayed as a slide -->
             <div class="slides">
-                <section>
+                <section contenteditable="true">
                     <h1>Reveal.js</h1>
                     <h3>HTML Presentations Made Easy</h3>
                     <p>
@@ -44,7 +44,7 @@
                     </p>
                 </section>
 
-                <section>
+                <section contenteditable="true">
                     <h2>Heads Up</h2>
                     <p>
                         reveal.js is a framework for easily creating beautiful presentations using HTML. You'll need a browser with
@@ -58,7 +58,7 @@
 
                 <!-- Example of nested vertical slides -->
                 <section>
-                    <section>
+                    <section contenteditable="true">
                         <h2>Vertical Slides</h2>
                         <p>
                             Slides can be nested inside of other slides,
@@ -68,18 +68,18 @@
                             <img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
                         </a>
                     </section>
-                    <section>
+                    <section contenteditable="true">
                         <h2>Basement Level 1</h2>
                         <p>Press down or up to navigate.</p>
                     </section>
-                    <section>
+                    <section contenteditable="true">
                         <h2>Basement Level 2</h2>
                         <p>Cornify</p>
                         <a class="test" href="http://cornify.com">
                             <img width="280" height="326" src="https://s3.amazonaws.com/hakim-static/reveal-js/cornify.gif" alt="Unicorn">
                         </a>
                     </section>
-                    <section>
+                    <section contenteditable="true">
                         <h2>Basement Level 3</h2>
                         <p>That's it, time to go back up.</p>
                         <a href="#/2" class="image">
@@ -88,14 +88,14 @@
                     </section>
                 </section>
 
-                <section>
+                <section contenteditable="true">
                     <h2>Slides</h2>
                     <p>
                         Not a coder? No problem. There's a fully-featured visual editor for authoring these, try it out at <a href="http://slid.es" target="_blank">http://slid.es</a>.
                     </p>
                 </section>
 
-                <section>
+                <section contenteditable="true">
                     <h2>Point of View</h2>
                     <p>
                         Press <strong>ESC</strong> to enter the slide overview.
@@ -174,7 +174,12 @@
                         <a href="?theme=serif#/themes">Serif</a> -
                         <a href="?theme=night#/themes">Night</a> <br>
                         <a href="?theme=moon#/themes">Moon</a> -
-                        <a href="?theme=solarized#/themes">Solarized</a>
+                        <a href="?theme=solarized#/themes">Solarized</a> -
+                        <a href="?theme=aerogear#/themes">Aerogear</a> <br>
+                        <a href="?theme=blood#/themes">Blood</a> -
+                        <a href="?theme=jolicode#/themes">Jolicode</a> -
+                        <a href="?theme=one-mozilla#/themes">One::Mozilla</a> -
+                        <a href="?theme=openbossa#/themes">Openbossa</a>
                     </p>
                     <p>
                         <small>
@@ -214,11 +219,11 @@ Reveal.addEventListener( 'customevent', function() {
                             <img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
                         </a>
                     </section>
-                    <section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png">
+                    <section data-background="assets/arrow.png">
                         <h2>Image Backgrounds</h2>
                         <pre><code>&lt;section data-background="image.png"&gt;</code></pre>
                     </section>
-                    <section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" data-background-repeat="repeat" data-background-size="100px">
+                    <section data-background="assets/arrow.png" data-background-repeat="repeat" data-background-size="100px">
                         <h2>Repeated Image Backgrounds</h2>
                         <pre><code style="word-wrap: break-word;">&lt;section data-background="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
                     </section>
@@ -334,6 +339,25 @@ function linkify( selector ) {
                 </section>
 
                 <section>
+                    <h2>Examples and Test Pages</h2>
+                    <ul>
+                        <li><a href="./examples/barebones.html">Examples :: barebones</a></li>
+                        <li><a href="./examples/embedded-media.html">Examples :: embedded-media</a></li>
+                        <li><a href="./examples/math.html">Examples :: math</a></li>
+                        <li><a href="./examples/slide-backgrounds.html">Examples :: slide-backgrounds</a></li>
+                        <li><a href="./plugin/markdown/example.html"> Plugin :: markdown/example</a></li>
+                        <li><a href="./plugin/notes/notes.html"> Plugin :: notes/notes</a></li>
+                        <li><a href="./plugin/notes-server/notes.html"> Plugin :: notes-server/notes</a></li>
+                        <li><a href="./plugin/postmessage/example.html"> Plugin :: postmessage/example</a></li>
+                        <li><a href="./test/examples/barebones.html"> Test :: Examples :: barebones</a></li>
+                        <li><a href="./test/examples/embedded-media.html"> Test :: Examples :: embedded-media</a></li>
+                        <li><a href="./test/examples/math.html"> Test :: Examples :: math</a></li>
+                        <li><a href="./test/examples/slide-backgrounds.html"> Test :: Examples :: slide-backgrounds</a></li>
+                        <li><a href="./test/test-markdown.html"> Test :: test-markdown</a></li>
+                        <li><a href="./test/test.html"> Test :: test</a></li>
+                    </ul>
+                </section>
+                <section>
                     <h2>Stellar Links</h2>
                     <ul>
                         <li><a href="http://slid.es">Try the online editor</a></li>
@@ -351,14 +375,23 @@ function linkify( selector ) {
 
         </div>
 
-        <script src="lib/js/head.min.js"></script>
-        <script src="js/reveal.min.js"></script>
+        <script src="lib/js/head/dist/head.js"></script>
+        <script src="js/reveal.js"></script>
 
         <script>
+
+            head.load("lib/plugins/zoom/js/zoom.js", function() {
+                console.log("zoom library loaded.", arguments);
+            });
+            head.load("lib/plugins/highlight/src/highlight.js", function() {
+                console.log("highlight library loaded.", arguments);
+            });
 
             // Full list of configuration options available here:
             // https://github.com/hakimel/reveal.js#configuration
             Reveal.initialize({
+                // width: 960,
+                // height: 700,
                 controls: true,
                 progress: true,
                 history: true,
@@ -368,17 +401,20 @@ function linkify( selector ) {
                 transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
 
                 // Parallax scrolling
-                // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
-                // parallaxBackgroundSize: '2100px 900px',
+                parallaxBackgroundImage: 'assets/reveal-parallax-1.jpg', // 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+                parallaxBackgroundSize: '2100px 900px',
 
                 // Optional libraries used to extend on reveal.js
                 dependencies: [
-                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'lib/js/classList/classList.js', condition: function() { return !document.body.classList; } },
                     { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
                     { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
                     { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
                     { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+                    // { src: 'plugin/leap/leap.js', async: true },
+                    { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+                    // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
                 ]
             });
 

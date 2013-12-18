@@ -48,7 +48,9 @@ module.exports = function(grunt) {
                     'css/theme/sky.css': 'css/theme/source/sky.scss',
                     'css/theme/moon.css': 'css/theme/source/moon.scss',
                     'css/theme/solarized.css': 'css/theme/source/solarized.scss',
-                    'css/theme/blood.css': 'css/theme/source/blood.scss'
+                    'css/theme/blood.css': 'css/theme/source/blood.scss',
+                    'css/theme/jolicode.css': 'css/theme/source/jolicode.scss',
+                    'css/theme/openbossa.css': 'css/theme/source/openbossa.scss'
                 }
             }
         },
@@ -70,6 +72,7 @@ module.exports = function(grunt) {
                     head: false,
                     module: false,
                     console: false,
+                    define: false,
                     unescape: false
                 }
             },

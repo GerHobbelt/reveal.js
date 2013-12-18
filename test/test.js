@@ -145,7 +145,7 @@ Reveal.addEventListener( 'ready', function() {
     test( 'Reveal.next', function() {
         Reveal.slide( 0, 0 );
 
-        // Step through vertical child slides
+        // Step through the vertical child slides
         Reveal.next();
         deepEqual( Reveal.getIndices(), { h: 1, v: 0, f: undefined } );
 
@@ -155,7 +155,7 @@ Reveal.addEventListener( 'ready', function() {
         Reveal.next();
         deepEqual( Reveal.getIndices(), { h: 1, v: 2, f: undefined } );
 
-        // Step through fragments
+        // There's fragments on this slide
         Reveal.next();
         deepEqual( Reveal.getIndices(), { h: 2, v: 0, f: -1 } );
 
@@ -167,6 +167,9 @@ Reveal.addEventListener( 'ready', function() {
 
         Reveal.next();
         deepEqual( Reveal.getIndices(), { h: 2, v: 0, f: 2 } );
+
+        Reveal.next();
+        deepEqual( Reveal.getIndices(), { h: 2, v: 0, f: 3 } );
     });
 
     test( 'Reveal.next at end', function() {

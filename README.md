@@ -6,10 +6,12 @@ reveal.js comes with a broad range of features including [nested slides](https:/
 
 
 #### More reading:
+
 - [Installation](#installation): Step-by-step instructions for getting reveal.js running on your computer.
 - [Changelog](https://github.com/hakimel/reveal.js/releases): Up-to-date version history.
 - [Examples](https://github.com/hakimel/reveal.js/wiki/Example-Presentations): Presentations created with reveal.js, add your own!
 - [Browser Support](https://github.com/hakimel/reveal.js/wiki/Browser-Support): Explanation of browser support and fallbacks.
+
 
 ## Online Editor
 
@@ -34,6 +36,7 @@ Markup hierarchy needs to be ``<div class="reveal"> <div class="slides"> <sectio
 </div>
 ```
 
+
 ### Markdown
 
 It's possible to write your slides using Markdown. To enable Markdown, add the ```data-markdown``` attribute to your ```<section>``` elements and wrap the contents in a ```<script type="text/template">``` like the example below.
@@ -49,6 +52,7 @@ This is based on [data-markdown](https://gist.github.com/1343518) from [Paul Iri
     </script>
 </section>
 ```
+
 
 #### External Markdown
 
@@ -147,6 +151,9 @@ Reveal.initialize({
     // Enable slide navigation via mouse wheel
     mouseWheel: false,
 
+    // Apply a 3D roll to links on hover
+    rollingLinks: true,
+
     // Hides the address bar on mobile devices
     hideAddressBar: true,
 
@@ -169,8 +176,13 @@ Reveal.initialize({
     parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
 
     // Parallax background size
-    parallaxBackgroundSize: '' // CSS syntax, e.g. "2100px 900px"
+    parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
 
+    // Transition style for full page backgrounds
+    backgroundTransition: 'default', // default/linear/none
+
+    // Display a subtle timer bar (time is in minutes)
+    timeRemaining: 0
 
 });
 ```
@@ -197,7 +209,7 @@ Reveal.js doesn't _rely_ on any third party scripts to work but a few optional l
 Reveal.initialize({
     dependencies: [
         // Cross-browser shim that fully implements classList - https://github.com/eligrey/classList.js/
-        { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+        { src: 'lib/js/classList/classList.js', condition: function() { return !document.body.classList; } },
 
         // Interpret Markdown in <section> elements
         { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
@@ -322,6 +334,7 @@ Reveal.isOverview();
 Reveal.isPaused();
 ```
 
+
 ### Ready Event
 
 The 'ready' event is fired when reveal.js has loaded all (synchronous) dependencies and is ready to start navigating.
@@ -331,6 +344,7 @@ Reveal.addEventListener( 'ready', function( event ) {
     // event.currentSlide, event.indexh, event.indexv
 } );
 ```
+
 
 ### Slide Changed Event
 
@@ -356,6 +370,7 @@ Reveal.addEventListener( 'somestate', function() {
     // TODO: Sprinkle magic
 }, false );
 ```
+
 
 ### Slide Backgrounds
 
@@ -437,6 +452,7 @@ You can also add relative navigation links, similar to the built in reveal.js co
 
 
 ### Fragments
+
 Fragments are used to highlight individual elements on a slide. Every element with the class ```fragment``` will be stepped through before moving on to the next slide. Here's an example: http://lab.hakim.se/reveal-js/#/fragments
 
 The default fragment style is to start out invisible and fade in. This style can be changed by appending a different class to the fragment:
@@ -475,6 +491,7 @@ The display order of fragments can be controlled using the ```data-fragment-inde
 </section>
 ```
 
+
 ### Fragment events
 
 When a slide fragment is either shown or hidden reveal.js will dispatch an event.
@@ -489,6 +506,7 @@ Reveal.addEventListener( 'fragmenthidden', function( event ) {
     // event.fragment = the fragment DOM element
 } );
 ```
+
 
 ### Code syntax highlighting
 
@@ -527,11 +545,14 @@ Reveal.addEventListener( 'overviewhidden', function( event ) { /* ... */ } );
 Reveal.toggleOverview();
 ```
 
+
 ### Fullscreen mode
+
 Just press »F« on your keyboard to show your presentation in fullscreen mode. Press the »ESC« key to exit fullscreen mode.
 
 
 ### Embedded media
+
 Embedded HTML5 `<video>`/`<audio>` and YouTube iframes are automatically paused when you navigate away from a slide. This can be disabled by decorating your element with a `data-ignore` attribute.
 
 Add `data-autoplay` to your media element if you want it to automatically start playing when the slide is shown:
@@ -544,6 +565,7 @@ Additionally the framework automatically pushes two [post messages](https://deve
 
 
 ### Stretching elements
+
 Sometimes it's desirable to have an element, like an image or video, stretch to consume as much space as possible within a given slide. This can be done by adding the ```.stretch``` class to an element as seen below:
 
 ```html
@@ -556,6 +578,21 @@ Sometimes it's desirable to have an element, like an image or video, stretch to 
 Limitations:
 - Only direct descendants of a slide section can be stretched
 - Only one descendant per slide section can be stretched
+
+
+### Caveats
+
+- Make sure you have the outer container (generally that would be the `\<html>` tag) spans the entire viewport as Reveal performs some calculations based off the size of the container element. Hence code the start of your presentation like this:
+
+  ```
+  <!doctype html>
+  <html lang="en" style="height: 100%; width: 100%;">
+  ...
+  ```
+
+  On that same subject, also check out http://responsejs.com/labs/dimensions/ , http://verge.airve.com/ and http://www.quirksmode.org/mobile/viewports2.html for the low-down about viewport dimensions and ways to get at them.
+
+  **Note**: when you have loaded [verge](http://verge.airve.com/) or [response.js](http://responsejs.com/) then we use their proven methods to obtain the viewport dimensions and the above-mentioned &lt;html> width/height styles are not required any longer.
 
 
 ## PDF Export
@@ -571,6 +608,7 @@ Here's an example of an exported presentation that's been uploaded to SlideShare
 6. Click **Save**.
 
 ![Chrome Print Settings](https://s3.amazonaws.com/hakim-static/reveal-js/pdf-print-settings.png)
+
 
 ## Theming
 
@@ -617,6 +655,7 @@ If you're using the external Markdown plugin, you can add notes with the help of
 <section data-markdown="example.md" data-separator="^\n\n\n" data-vertical="^\n\n" data-notes="^Note:"></section>
 
 # Title
+
 ## Sub-title
 
 Here is some content...
@@ -624,6 +663,7 @@ Here is some content...
 Note:
 This will only display in the notes window.
 ```
+
 
 ## Server Side Speaker Notes
 
@@ -659,7 +699,9 @@ The multiplex plugin needs the following 3 things to operate:
 
 More details:
 
+
 #### Master presentation
+
 Served from a static file server accessible (preferably) only to the presenter. This need only be on your (the presenter's) computer. (It's safer to run the master presentation from your own computer, so if the venue's Internet goes down it doesn't stop the show.) An example would be to execute the following commands in the directory of your master presentation:
 
 1. ```npm install node-static```
@@ -670,19 +712,24 @@ If you want to use the speaker notes plugin with your master presentation then m
 You can then access your master presentation at ```http://localhost:1947```
 
 Example configuration:
+*(don't forget to add the dependencies)*
+
 ```javascript
 Reveal.initialize({
     // other options...
 
     multiplex: {
         // Example values. To generate your own, see the socket.io server instructions.
-        secret: '13652805320794272084', // Obtained from the socket.io server. Gives this (the master) control of the presentation
-        id: '1ea875674b17ca76', // Obtained from socket.io server
+        secret: '13652805320794272084', // Obtained from the socket.io server (revealjs.jit.su/token). Gives this (the master) control of the presentation
+        id: '1ea875674b17ca76', // Obtained from socket.io server (revealjs.jit.su/token)
         url: 'revealjs.jit.su:80' // Location of socket.io server
     },
 
-    // Don't forget to add the dependencies
+    // Optional libraries used to extend on reveal.js
     dependencies: [
+        //...
+        // other deps
+        //...
         { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/master.js', async: true },
 
@@ -694,10 +741,14 @@ Reveal.initialize({
 });
 ```
 
+
 #### Client presentation
+
 Served from a publicly accessible static file server. Examples include: GitHub Pages, Amazon S3, Dreamhost, Akamai, etc. The more reliable, the better. Your audience can then access the client presentation via ```http://example.com/path/to/presentation/client/index.html```, with the configuration below causing them to connect to the socket.io server as clients.
 
 Example configuration:
+*(don't forget to add the dependencies)*
+
 ```javascript
 Reveal.initialize({
     // other options...
@@ -705,12 +756,15 @@ Reveal.initialize({
     multiplex: {
         // Example values. To generate your own, see the socket.io server instructions.
         secret: null, // null so the clients do not have control of the master presentation
-        id: '1ea875674b17ca76', // id, obtained from socket.io server
+        id: '1ea875674b17ca76', // id, obtained from socket.io server (revealjs.jit.su/token)
         url: 'revealjs.jit.su:80' // Location of socket.io server
     },
 
-    // Don't forget to add the dependencies
+    // Optional libraries used to extend on reveal.js
     dependencies: [
+        //...
+        // other deps
+        //...
         { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
 
@@ -719,7 +773,9 @@ Reveal.initialize({
 });
 ```
 
+
 #### Socket.io server
+
 Server that receives the slideChanged events from the master presentation and broadcasts them out to the connected client presentations. This needs to be publicly accessible. You can run your own socket.io server with the commands:
 
 1. ```npm install```
@@ -730,6 +786,7 @@ Or you use the socket.io server at [http://revealjs.jit.su](http://revealjs.jit.
 You'll need to generate a unique secret and token pair for your master and client presentations. To do so, visit ```http://example.com/token```, where ```http://example.com``` is the location of your socket.io server. Or if you're going to use the socket.io server at [http://revealjs.jit.su](http://revealjs.jit.su), visit [http://revealjs.jit.su/token](http://revealjs.jit.su/token).
 
 You are very welcome to point your presentations at the Socket.io server running at [http://revealjs.jit.su](http://revealjs.jit.su), but availability and stability are not guaranteed. For anything mission critical I recommend you run your own server. It is simple to deploy to nodejitsu, heroku, your own environment, etc.
+
 
 ##### socket.io server as file static server
 
@@ -743,12 +800,15 @@ Reveal.initialize({
     multiplex: {
         // Example values. To generate your own, see the socket.io server instructions.
         secret: null, // null so the clients do not have control of the master presentation
-        id: '1ea875674b17ca76', // id, obtained from socket.io server
+        id: '1ea875674b17ca76', // id, obtained from socket.io server (example.com/token)
         url: 'example.com:80' // Location of your socket.io server
     },
 
     // Don't forget to add the dependencies
     dependencies: [
+        //...
+        // other deps
+        //...
         { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
 
@@ -765,13 +825,16 @@ Reveal.initialize({
 
     multiplex: {
         // Example values. To generate your own, see the socket.io server instructions.
-        secret: '13652805320794272084', // Obtained from the socket.io server. Gives this (the master) control of the presentation
-        id: '1ea875674b17ca76', // Obtained from socket.io server
+        secret: '13652805320794272084', // Obtained from the socket.io server (example.com/token). Gives this (the master) control of the presentation
+        id: '1ea875674b17ca76', // Obtained from socket.io server (example.com/token)
         url: 'example.com:80' // Location of your socket.io server
     },
 
     // Don't forget to add the dependencies
     dependencies: [
+        //...
+        // other deps
+        //...
         { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/master.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
@@ -781,19 +844,36 @@ Reveal.initialize({
 });
 ```
 
+
 ## Leap Motion
+
 The Leap Motion plugin lets you utilize your [Leap Motion](https://www.leapmotion.com/) device to control basic navigation of your presentation. The gestures currently supported are:
 
-##### 1 to 2 fingers
-Pointer &mdash; Point to anything on screen. Move your finger past the device to expand the pointer.
 
-##### 1 hand + 3 or more fingers (left/right/up/down)
+##### 1 to 2 fingers
+
+* Pointer &mdash; Point to anything on screen. Move your finger past the device to expand the pointer.
+
+
+##### 1 hand + 3 or more fingers
+
+* Left
+* Right
+* Up
+* down
+
 Navigate through your slides. See config options to invert movements.
 
-##### 2 hands upwards
+
+##### 2 hands
+
+* Up
+
 Toggle the overview mode. Do it a second time to exit the overview.
 
+
 #### Config Options
+
 You can edit the following options:
 
 | Property          | Default           | Description
@@ -820,7 +900,7 @@ Reveal.initialize({
     },
 
     dependencies: [
-        { src: 'plugin/leap/leap.js', async: true }
+    { src: 'plugin/leap/leap.js', async: true }
     ]
 
 });
@@ -857,6 +937,7 @@ Read MathJax's documentation if you need [HTTPS delivery](http://docs.mathjax.or
 ## Installation
 
 The **basic setup** is for authoring presentations only. The **full setup** gives you access to all reveal.js features and plugins such as speaker notes as well as the development tasks needed to make changes to the source.
+
 
 ### Basic setup
 
@@ -903,6 +984,7 @@ You can change the port by using `grunt serve --port 8001`.
 
 
 ### Folder Structure
+
 - **css/** Core styles without which the project does not function
 - **js/** Like above but for JavaScript
 - **plugin/** Components that have been developed as extensions to reveal.js

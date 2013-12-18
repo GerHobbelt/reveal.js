@@ -1,0 +1,24 @@
+[submodule "lib/plugins/zoom"]
+	path = lib/plugins/zoom
+	url = git@github.com:GerHobbelt/zoom.js.git
+[submodule "lib/plugins/highlight"]
+	path = lib/plugins/highlight
+	url = git://github.com/GerHobbelt/highlight.js.git
+[submodule "lib/js/verge"]
+	path = lib/js/verge
+	url = git@github.com:GerHobbelt/verge.git
+[submodule "lib/js/response.js"]
+	path = lib/js/response.js
+	url = git@github.com:GerHobbelt/response.js.git
+[submodule "lib/js/head"]
+	path = lib/js/head
+	url = git@github.com:GerHobbelt/headjs.git
+[submodule "lib/plugins/SyntaxHighlighter"]
+	path = lib/plugins/SyntaxHighlighter
+	url = git@github.com:GerHobbelt/SyntaxHighlighter.git
+[submodule "lib/js/classList"]
+	path = lib/js/classList
+	url = git@github.com:GerHobbelt/classList.js.git
+[submodule "lib/js/zoom"]
+	path = lib/js/zoom
+	url = git@github.com:GerHobbelt/zoom.js.git

@@ -13,7 +13,7 @@
  * RESET STYLES
  *********************************************/
 
-html, body, .reveal div, .reveal span, .reveal applet, .reveal object, .reveal iframe,
+.reveal-viewport, .reveal div, .reveal span, .reveal applet, .reveal object, .reveal iframe,
 .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6, .reveal p, .reveal blockquote, .reveal pre,
 .reveal a, .reveal abbr, .reveal acronym, .reveal address, .reveal big, .reveal cite, .reveal code,
 .reveal del, .reveal dfn, .reveal em, .reveal img, .reveal ins, .reveal kbd, .reveal q, .reveal s, .reveal samp,
@@ -44,15 +44,11 @@ html, body, .reveal div, .reveal span, .reveal applet, .reveal object, .reveal i
  * GLOBAL STYLES
  *********************************************/
 
-html,
-body {
+.reveal-viewport {
+    position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
-}
-
-body {
-    position: relative;
     line-height: 1;
 }
 
@@ -403,7 +399,7 @@ body {
 
 .reveal .controls {
     display: none;
-    position: fixed;
+    position: absolute;
     width: 110px;
     height: 110px;
     z-index: 30;
@@ -440,7 +436,7 @@ body {
         top: 42px;
 
         border-right-width: 22px;
-        border-right-color: #eee;
+        border-right-color: #ddd;
     }
         .reveal .controls div.navigate-left.fragmented {
             opacity: 0.3;
@@ -451,7 +447,7 @@ body {
         top: 42px;
 
         border-left-width: 22px;
-        border-left-color: #eee;
+        border-left-color: #ddd;
     }
         .reveal .controls div.navigate-right.fragmented {
             opacity: 0.3;
@@ -461,7 +457,7 @@ body {
         left: 42px;
 
         border-bottom-width: 22px;
-        border-bottom-color: #eee;
+        border-bottom-color: #ddd;
     }
         .reveal .controls div.navigate-up.fragmented {
             opacity: 0.3;
@@ -472,7 +468,7 @@ body {
         top: 74px;
 
         border-top-width: 22px;
-        border-top-color: #eee;
+        border-top-color: #ddd;
     }
         .reveal .controls div.navigate-down.fragmented {
             opacity: 0.3;
@@ -484,7 +480,7 @@ body {
  *********************************************/
 
 .reveal .progress {
-    position: fixed;
+    position: absolute;
     display: none;
     height: 3px;
     width: 100%;
@@ -513,6 +509,124 @@ body {
     }
 
 /*********************************************
+ * ROLLING LINKS
+ *********************************************/
+
+.reveal .roll {
+    display: inline-block;
+    line-height: 1.2;
+    overflow: hidden;
+
+    vertical-align: top;
+
+    -webkit-perspective: 400px;
+       -moz-perspective: 400px;
+        -ms-perspective: 400px;
+            perspective: 400px;
+
+    -webkit-perspective-origin: 50% 50%;
+       -moz-perspective-origin: 50% 50%;
+        -ms-perspective-origin: 50% 50%;
+            perspective-origin: 50% 50%;
+}
+    .reveal .roll:hover {
+        background: none;
+        text-shadow: none;
+    }
+.reveal .roll span {
+    display: block;
+    position: relative;
+    padding: 0 2px;
+
+    pointer-events: none;
+
+    -webkit-transition: all 400ms ease;
+       -moz-transition: all 400ms ease;
+        -ms-transition: all 400ms ease;
+            transition: all 400ms ease;
+
+    -webkit-transform-origin: 50% 0%;
+       -moz-transform-origin: 50% 0%;
+        -ms-transform-origin: 50% 0%;
+            transform-origin: 50% 0%;
+
+    -webkit-transform-style: preserve-3d;
+       -moz-transform-style: preserve-3d;
+        -ms-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+
+    -webkit-backface-visibility: hidden;
+       -moz-backface-visibility: hidden;
+            backface-visibility: hidden;
+}
+    .reveal .roll:hover span {
+        background: rgba(0,0,0,0.5);
+
+        -webkit-transform: translate3d( 0px, 0px, -45px ) rotateX( 90deg );
+           -moz-transform: translate3d( 0px, 0px, -45px ) rotateX( 90deg );
+            -ms-transform: translate3d( 0px, 0px, -45px ) rotateX( 90deg );
+                transform: translate3d( 0px, 0px, -45px ) rotateX( 90deg );
+    }
+.reveal .roll span:after {
+    content: attr(data-title);
+
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 0 2px;
+
+    -webkit-backface-visibility: hidden;
+       -moz-backface-visibility: hidden;
+            backface-visibility: hidden;
+
+    -webkit-transform-origin: 50% 0%;
+       -moz-transform-origin: 50% 0%;
+        -ms-transform-origin: 50% 0%;
+            transform-origin: 50% 0%;
+
+    -webkit-transform: translate3d( 0px, 110%, 0px ) rotateX( -90deg );
+       -moz-transform: translate3d( 0px, 110%, 0px ) rotateX( -90deg );
+        -ms-transform: translate3d( 0px, 110%, 0px ) rotateX( -90deg );
+            transform: translate3d( 0px, 110%, 0px ) rotateX( -90deg );
+}
+
+
+/*********************************************
+ * TIME REMAINING BAR
+ *********************************************/
+
+.reveal .time-remaining {
+    position: fixed;
+    display: none;
+    height: 3px;
+    width: 100%;
+    bottom: 3px;
+    left: 0;
+    z-index: 10;
+}
+    .reveal .time-remaining:after {
+        content: '';
+        display: 'block';
+        position: absolute;
+        height: 20px;
+        width: 100%;
+        top: -20px;
+    }
+    .reveal .time-remaining span {
+        display: block;
+        height: 100%;
+        width: 0px;
+
+        -webkit-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
+           -moz-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
+            -ms-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
+             -o-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
+                transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
+    }
+
+
+/*********************************************
  * SLIDE NUMBER
  *********************************************/
 
@@ -536,7 +650,7 @@ body {
     height: 100%;
 
     -ms-touch-action: none;
-        touch-action: none;
+    touch-action: none;
 }
 
 .reveal .slides {
