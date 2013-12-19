@@ -82,8 +82,8 @@
             // Enable keyboard shortcuts for navigation
             keyboard: true,
 
-            // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'zoom' | 'scale')
-            overview: 'zoom',
+            // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'translate3d' | 'zoom' | 'scale')
+            overview: 'translate3d',
 
             // Vertical centering of slides
             center: true,
@@ -1473,7 +1473,7 @@
                     hslide.setAttribute( 'data-index-h', i );
 
                     // Apply CSS transform
-                    transformElement( hslide, 'translate3d( ' + ( ( i - indexh ) * hoffset ) + '%, 0px, '+ (!getSpecialOverviewMode() ? depth : 0) + 'px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                    transformElement( hslide, 'translate3d( ' + ( ( i - indexh ) * hoffset ) + '%, 0px, '+ (!getSpecialOverviewMode() ? -depth : 0) + 'px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
 
                     if( hslide.classList.contains( 'stack' ) ) {
 
@@ -1489,7 +1489,7 @@
                             vslide.setAttribute( 'data-index-v', j );
 
                             // Apply CSS transform
-                            transformElement( vslide, 'translate3d( 0px, ' + ( ( j - verticalIndex ) * 105 ) + '%, ' + (!getSpecialOverviewMode() ? depth : 0) + 'px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                            transformElement( vslide, 'translate3d( 0px, ' + ( ( j - verticalIndex ) * 105 ) + '%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
 
                             // Navigate to this slide on click
                             vslide.addEventListener( 'click', onOverviewSlideClicked, true );
@@ -1614,7 +1614,7 @@
     /**
      * Return the overview rendering mode:
      *
-     * 0: default. Uses CSS3 translateZ style. This mode does not work well with large presentations and/or subelements which have been tweaked using CSS z-index
+     * 0: default. Uses CSS3 translateZ style. This mode does not work well subelements which have been tweaked using CSS z-index
      * 1: outer DIV zoom
      * 2: outer DIV scale
      */
@@ -1626,6 +1626,7 @@
         default:
         case true:
         case 'translateZ':
+        case 'translate3d':
             return 0;
 
         case 'zoom':
