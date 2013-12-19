@@ -142,8 +142,8 @@
             // Parallax background image
             parallaxBackgroundImage: '', // CSS syntax, e.g. "a.jpg"
 
-            // Parallax background size
-            parallaxBackgroundSize: '', // CSS syntax, e.g. "3000px 2000px"
+            // // Parallax background size [DEPRECATED]
+            // parallaxBackgroundSize: '', // CSS syntax, e.g. "3000px 2000px"
 
             // Number of slides away from the current that are visible
             viewDistance: 3,
@@ -552,6 +552,24 @@
     }
 
     /**
+     * Obtain the currently active CSS style (not just the value available in the DOMnode.style property!)
+     *
+     * See also http://www.quirksmode.org/dom/getstyles.html
+     */
+    function getStyle(el, styleProp)
+    {
+        var rv;
+        if (el.currentStyle) {
+            rv = el.currentStyle[styleProp];
+        }
+        else if (window.getComputedStyle) {
+            rv = document.defaultView.getComputedStyle(el, null).getPropertyValue(styleProp);
+        }
+        return rv;
+    }
+
+
+    /**
      * Creates an HTML element and returns a reference to it.
      * If the element already exists the existing instance will
      * be returned.
@@ -659,25 +677,11 @@
         } );
 
         // Add parallax background if specified
-        if( config.parallaxBackgroundImage ) {
-
+        if( config.parallaxBackgroundImage && typeof config.parallaxBackgroundImage === 'string' ) {
             dom.background.style.backgroundImage = 'url("' + config.parallaxBackgroundImage + '")';
-            dom.background.style.backgroundSize = config.parallaxBackgroundSize;
-
-            // Make sure the below properties are set on the element - these properties are
-            // needed for proper transitions to be set on the element via CSS. To remove
-            // annoying background slide-in effect when the presentation starts, apply
-            // these properties after short time delay
-            setTimeout( function() {
-                dom.wrapper.classList.add( 'has-parallax-background' );
-            }, 1 );
-
-        }
+        } 
         else {
-
             dom.background.style.backgroundImage = '';
-            dom.wrapper.classList.remove( 'has-parallax-background' );
-
         }
 
     }
@@ -2378,31 +2382,42 @@
      */
     function updateParallax() {
 
-        if( config.parallaxBackgroundImage ) {
+        // Check if background has an image: it may have come from us via config.parallaxBackgroundImage or via the stylesheet
+        var bgimg = new Image();
+        var imgsrc = getStyle(dom.background, "background-image");
+        bgimg.src = (imgsrc || '').replace(/url\(|\)$|"/ig, '');
+        console.log(bgimg, imgsrc);
+
+        if (bgimg.width && bgimg.height) {
+
+            // Make sure the below properties are set on the element - these properties are
+            // needed for proper transitions to be set on the element via CSS. To remove
+            // annoying background slide-in effect when the presentation starts, apply
+            // these properties after short time delay
+            setTimeout( function() {
+                dom.wrapper.classList.add( 'has-parallax-background' );
+            }, 1 );
 
             var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ),
                 verticalSlides = document.querySelectorAll( VERTICAL_SLIDES_SELECTOR );
 
-            var backgroundSize = dom.background.style.backgroundSize.split( ' ' ),
-                backgroundWidth, backgroundHeight;
-
-            if( backgroundSize.length === 1 ) {
-                backgroundWidth = backgroundHeight = parseInt( backgroundSize[0], 10 );
-            }
-            else {
-                backgroundWidth = parseInt( backgroundSize[0], 10 );
-                backgroundHeight = parseInt( backgroundSize[1], 10 );
-            }
+            var backgroundWidth = parseInt( bgimg.width, 10 ),
+                backgroundHeight = parseInt( bgimg.height, 10 );
 
             var slideWidth = dom.background.offsetWidth;
             var horizontalSlideCount = horizontalSlides.length;
-            var horizontalOffset = -( backgroundWidth - slideWidth ) / ( horizontalSlideCount-1 ) * indexh;
+            var horizontalOffset = -( backgroundWidth - slideWidth ) / ( horizontalSlideCount - 1 ) * indexh;
 
             var slideHeight = dom.background.offsetHeight;
             var verticalSlideCount = verticalSlides.length;
             var verticalOffset = verticalSlideCount > 0 ? -( backgroundHeight - slideHeight ) / ( verticalSlideCount-1 ) * indexv : 0;
 
             dom.background.style.backgroundPosition = horizontalOffset + 'px ' + verticalOffset + 'px';
+
+        }
+        else {
+
+            dom.wrapper.classList.remove( 'has-parallax-background' );
 
         }
 
