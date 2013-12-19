@@ -919,19 +919,19 @@
 
 .reveal .slides>section>section[data-transition=zoom].past,
 .reveal.zoom .slides>section>section.past {
-    -webkit-transform: translate(0, -150%);
-       -moz-transform: translate(0, -150%);
-        -ms-transform: translate(0, -150%);
-         -o-transform: translate(0, -150%);
-            transform: translate(0, -150%);
+    -webkit-transform: translate3d(0, -150%, 0);
+       -moz-transform: translate3d(0, -150%, 0);
+        -ms-transform: translate3d(0, -150%, 0);
+         -o-transform: translate3d(0, -150%, 0);
+            transform: translate3d(0, -150%, 0);
 }
 .reveal .slides>section>section[data-transition=zoom].future,
 .reveal.zoom .slides>section>section.future {
-    -webkit-transform: translate(0, 150%);
-       -moz-transform: translate(0, 150%);
-        -ms-transform: translate(0, 150%);
-         -o-transform: translate(0, 150%);
-            transform: translate(0, 150%);
+    -webkit-transform: translate3d(0, 150%, 0);
+       -moz-transform: translate3d(0, 150%, 0);
+        -ms-transform: translate3d(0, 150%, 0);
+         -o-transform: translate3d(0, 150%, 0);
+            transform: translate3d(0, 150%, 0);
 }
 
 
@@ -948,36 +948,36 @@
 
 .reveal .slides>section[data-transition=linear].past,
 .reveal.linear .slides>section.past {
-    -webkit-transform: translate(-150%, 0);
-       -moz-transform: translate(-150%, 0);
-        -ms-transform: translate(-150%, 0);
-         -o-transform: translate(-150%, 0);
-            transform: translate(-150%, 0);
+    -webkit-transform: translate3d(-150%, 0, 0);
+       -moz-transform: translate3d(-150%, 0, 0);
+        -ms-transform: translate3d(-150%, 0, 0);
+         -o-transform: translate3d(-150%, 0, 0);
+            transform: translate3d(-150%, 0, 0);
 }
 .reveal .slides>section[data-transition=linear].future,
 .reveal.linear .slides>section.future {
-    -webkit-transform: translate(150%, 0);
-       -moz-transform: translate(150%, 0);
-        -ms-transform: translate(150%, 0);
-         -o-transform: translate(150%, 0);
-            transform: translate(150%, 0);
+    -webkit-transform: translate3d(150%, 0, 0)
+       -moz-transform: translate3d(150%, 0, 0)
+        -ms-transform: translate3d(150%, 0, 0)
+         -o-transform: translate3d(150%, 0, 0)
+            transform: translate3d(150%, 0, 0)
 }
 
 .reveal .slides>section>section[data-transition=linear].past,
 .reveal.linear .slides>section>section.past {
-    -webkit-transform: translate(0, -150%);
-       -moz-transform: translate(0, -150%);
-        -ms-transform: translate(0, -150%);
-         -o-transform: translate(0, -150%);
-            transform: translate(0, -150%);
+    -webkit-transform: translate3d(0, -150%, 0);
+       -moz-transform: translate3d(0, -150%, 0);
+        -ms-transform: translate3d(0, -150%, 0);
+         -o-transform: translate3d(0, -150%, 0);
+            transform: translate3d(0, -150%, 0);
 }
 .reveal .slides>section>section[data-transition=linear].future,
 .reveal.linear .slides>section>section.future {
-    -webkit-transform: translate(0, 150%);
-       -moz-transform: translate(0, 150%);
-        -ms-transform: translate(0, 150%);
-         -o-transform: translate(0, 150%);
-            transform: translate(0, 150%);
+    -webkit-transform: translate3d(0, 150%, 0);
+       -moz-transform: translate3d(0, 150%, 0);
+        -ms-transform: translate3d(0, 150%, 0);
+         -o-transform: translate3d(0, 150%, 0);
+            transform: translate3d(0, 150%, 0);
 }
 
 
@@ -1515,36 +1515,36 @@
 }
     .reveal[data-background-transition=slide]>.backgrounds .slide-background.past,
     .reveal>.backgrounds .slide-background.past[data-background-transition=slide] {
-        -webkit-transform: translate(-100%, 0);
-           -moz-transform: translate(-100%, 0);
-            -ms-transform: translate(-100%, 0);
-             -o-transform: translate(-100%, 0);
-                transform: translate(-100%, 0);
+        -webkit-transform: translate3d(-100%, 0, 0);
+           -moz-transform: translate3d(-100%, 0, 0);
+            -ms-transform: translate3d(-100%, 0, 0);
+             -o-transform: translate3d(-100%, 0, 0);
+                transform: translate3d(-100%, 0, 0);
     }
     .reveal[data-background-transition=slide]>.backgrounds .slide-background.future,
     .reveal>.backgrounds .slide-background.future[data-background-transition=slide] {
-        -webkit-transform: translate(100%, 0);
-           -moz-transform: translate(100%, 0);
-            -ms-transform: translate(100%, 0);
-             -o-transform: translate(100%, 0);
-                transform: translate(100%, 0);
+        -webkit-transform: translate3d(100%, 0, 0);
+           -moz-transform: translate3d(100%, 0, 0);
+            -ms-transform: translate3d(100%, 0, 0);
+             -o-transform: translate3d(100%, 0, 0);
+                transform: translate3d(100%, 0, 0);
     }
 
     .reveal[data-background-transition=slide]>.backgrounds .slide-background>.slide-background.past,
     .reveal>.backgrounds .slide-background>.slide-background.past[data-background-transition=slide] {
-        -webkit-transform: translate(0, -100%);
-           -moz-transform: translate(0, -100%);
-            -ms-transform: translate(0, -100%);
-             -o-transform: translate(0, -100%);
-                transform: translate(0, -100%);
+        -webkit-transform: translate3d(0, -100%, 0);
+           -moz-transform: translate3d(0, -100%, 0);
+            -ms-transform: translate3d(0, -100%, 0);
+             -o-transform: translate3d(0, -100%, 0);
+                transform: translate3d(0, -100%, 0);
     }
     .reveal[data-background-transition=slide]>.backgrounds .slide-background>.slide-background.future,
     .reveal>.backgrounds .slide-background>.slide-background.future[data-background-transition=slide] {
-        -webkit-transform: translate(0, 100%);
-           -moz-transform: translate(0, 100%);
-            -ms-transform: translate(0, 100%);
-             -o-transform: translate(0, 100%);
-                transform: translate(0, 100%);
+        -webkit-transform: translate3d(0, 100%, 0);
+           -moz-transform: translate3d(0, 100%, 0);
+            -ms-transform: translate3d(0, 100%, 0);
+             -o-transform: translate3d(0, 100%, 0);
+                transform: translate3d(0, 100%, 0);
     }
 
 

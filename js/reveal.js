@@ -1464,7 +1464,7 @@
                     hslide.setAttribute( 'data-index-h', i );
 
                     // Apply CSS transform
-                    transformElement( hslide, (!getSpecialOverviewMode() ? 'translateZ(-'+ depth +'px) ' : '') + 'translate(' + ( ( i - indexh ) * hoffset ) + '%, 0%)' );
+                    transformElement( hslide, 'translate3d( ' + ( ( i - indexh ) * hoffset ) + '%, 0px, '+ (!getSpecialOverviewMode() ? depth : 0) + 'px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
 
                     if( hslide.classList.contains( 'stack' ) ) {
 
@@ -1480,7 +1480,7 @@
                             vslide.setAttribute( 'data-index-v', j );
 
                             // Apply CSS transform
-                            transformElement( vslide, 'translate(0%, ' + ( ( j - verticalIndex ) * 105 ) + '%)' );
+                            transformElement( vslide, 'translate3d( 0px, ' + ( ( j - verticalIndex ) * 105 ) + '%, ' + (!getSpecialOverviewMode() ? depth : 0) + 'px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
 
                             // Navigate to this slide on click
                             vslide.addEventListener( 'click', onOverviewSlideClicked, true );
