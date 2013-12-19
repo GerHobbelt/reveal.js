@@ -1302,7 +1302,7 @@
                 var totalSlidesHeight = slideHeight * vcount * 1.05;
 
                 // Determine scale of content to fit within available space
-                var overviewScale = Math.max( availableWidth / totalSlidesWidth, availableHeight / totalSlidesHeight );
+                var overviewScale = Math.min( availableWidth / totalSlidesWidth, availableHeight / totalSlidesHeight );
                 overviewScale /= scale;
 
                 // Respect max/min scale settings
