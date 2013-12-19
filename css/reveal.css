@@ -1408,6 +1408,9 @@
     height: 100%;
     top: 0;
     left: 0;
+
+    z-index: -1; /* otherwise this overlay will obscure the slides from the mouse pointer in overview mode */
+    
     background: rgba( 0, 0, 0, 0 );
 
     -webkit-transition: background 800ms ease;
