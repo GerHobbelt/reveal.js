@@ -44,14 +44,14 @@
     Reveal.addEventListener( 'overviewshown', function() { isEnabled = false; } );
     Reveal.addEventListener( 'overviewhidden', function() { isEnabled = true; } );
 
-    return {
-        isEnabled: function() {
-            return isEnabled;
-        },
-
-        zoom: function() {
-            return zoom;
-        }
+    Reveal.isZoomEnabled = function() {
+        return isEnabled;
     };
+
+    Reveal.zoom = function() {
+        return zoom;
+    };
+    
+    return Reveal;
 }));
 
