@@ -57,11 +57,11 @@
             margin: 0.1,
 
             // Bounds for smallest/largest possible scale to apply to content
-            minScale: 0.2,
+            minScale: 0.1,
             maxScale: 1.0,
 
             // Bounds for smallest/largest possible scale to apply to overview display
-            overviewMinScale: 0.05,
+            overviewMinScale: 0.01,
             overviewMaxScale: 1.0,
 
             // Display controls in the bottom right corner
@@ -147,6 +147,9 @@
 
             // Number of slides away from the current that are visible
             viewDistance: 3,
+
+            // Number of slides away from the current that are visible in overview mode
+            overviewViewDistance: 10,
 
             // Script dependencies to load
             dependencies: []
@@ -1289,8 +1292,14 @@
 
             // When overview mode is active (and the relevant data available), do scale the slides' collective too:
             if (overview_slides_info) {
-                var totalSlidesWidth = slideWidth * overview_slides_info.horizontal_count * 1.05; // Reveal uses 5% spacing between slides in the overview display
-                var totalSlidesHeight = slideHeight * overview_slides_info.vertical_count * 1.05;
+
+                // The number of steps away from the present slide that will be visible
+                var viewDistance = getViewDistance();
+                var hcount = Math.min(overview_slides_info.horizontal_count, viewDistance * 2 + 1);
+                var vcount = Math.min(overview_slides_info.vertical_count, viewDistance * 2 + 1);
+
+                var totalSlidesWidth = slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
+                var totalSlidesHeight = slideHeight * vcount * 1.05;
 
                 // Determine scale of content to fit within available space
                 var overviewScale = Math.max( availableWidth / totalSlidesWidth, availableHeight / totalSlidesHeight );
@@ -2088,6 +2097,30 @@
     }
 
     /**
+     * Return the number of slides (in any direction) next to the current slide which must be
+     * 'visible' in the current view mode.
+     *
+     * Note that 'being visible' does not imply that these are actually visible to the
+     * user but it rather measn that technically these slides are NOT display:none and
+     * thus part of the actual DOM.
+     */
+    function getViewDistance() {
+
+        // The number of steps away from the present slide that will
+        // be visible
+        var viewDistance = isOverview() ? config.overviewViewDistance : config.viewDistance;
+
+        // Limit view distance on weaker devices
+        if( isMobileDevice ) {
+            viewDistance = isOverview() ? 6 : 1;
+        }
+
+        return viewDistance;
+
+    }
+
+
+    /**
      * Optimization method; hide all slides that are far away
      * from the present slide.
      */
@@ -2104,12 +2137,7 @@
 
             // The number of steps away from the present slide that will
             // be visible
-            var viewDistance = isOverview() ? 10 : config.viewDistance;
-
-            // Limit view distance on weaker devices
-            if( isMobileDevice ) {
-                viewDistance = isOverview() ? 6 : 1;
-            }
+            var viewDistance = getViewDistance();
 
             for( var x = 0; x < horizontalSlidesLength; x++ ) {
                 var horizontalSlide = horizontalSlides[x];
