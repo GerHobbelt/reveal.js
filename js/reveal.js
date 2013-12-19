@@ -82,7 +82,7 @@
             // Enable keyboard shortcuts for navigation
             keyboard: true,
 
-            // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'translate3d' | 'zoom' | 'scale')
+            // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'translate3d' | 'zoom' | 'perspective' | 'scale')
             overview: 'translate3d',
 
             // Vertical centering of slides
@@ -149,7 +149,7 @@
             viewDistance: 3,
 
             // Number of slides away from the current that are visible in overview mode
-            overviewViewDistance: 10,
+            overviewViewDistance: 6,
 
             // Script dependencies to load
             dependencies: []
@@ -1293,21 +1293,26 @@
             // When overview mode is active (and the relevant data available), do scale the slides' collective too:
             if (overview_slides_info) {
 
-                // The number of steps away from the present slide that will be visible
-                var viewDistance = getViewDistance();
-                var hcount = Math.min(overview_slides_info.horizontal_count, viewDistance * 2 + 1);
-                var vcount = Math.min(overview_slides_info.vertical_count, viewDistance * 2 + 1);
+                var overviewScale = 1.0;
 
-                var totalSlidesWidth = slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
-                var totalSlidesHeight = slideHeight * vcount * 1.05;
+                // 'zoom/perspective' mode uses the perspective to zoom out and show the overview; all others rely on CSS3 scale() one way or another.
+                if (getSpecialOverviewMode() !== 1) {
+                    // The number of steps away from the present slide that will be visible
+                    var viewDistance = getViewDistance();
+                    var hcount = Math.min(overview_slides_info.horizontal_count, viewDistance * 2 + 1);
+                    var vcount = Math.min(overview_slides_info.vertical_count, viewDistance * 2 + 1);
 
-                // Determine scale of content to fit within available space
-                var overviewScale = Math.min( availableWidth / totalSlidesWidth, availableHeight / totalSlidesHeight );
-                overviewScale /= scale;
+                    var totalSlidesWidth = slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
+                    var totalSlidesHeight = slideHeight * vcount * 1.05;
 
-                // Respect max/min scale settings
-                overviewScale = Math.max( overviewScale, config.overviewMinScale );
-                overviewScale = Math.min( overviewScale, config.overviewMaxScale );
+                    // Determine scale of content to fit within available space
+                    overviewScale = Math.min( availableWidth / totalSlidesWidth, availableHeight / totalSlidesHeight );
+                    overviewScale /= scale;
+
+                    // Respect max/min scale settings
+                    overviewScale = Math.max( overviewScale, config.overviewMinScale );
+                    overviewScale = Math.min( overviewScale, config.overviewMaxScale );
+                }
 
                 if( typeof dom.slides_wrapper.style.zoom !== 'undefined' && !navigator.userAgent.match( /(iphone|ipod|ipad|android|chrome)/gi ) ) {
                     dom.slides_wrapper.style.zoom = overviewScale;
@@ -1473,7 +1478,7 @@
                     hslide.setAttribute( 'data-index-h', i );
 
                     // Apply CSS transform
-                    transformElement( hslide, 'translate3d( ' + ( ( i - indexh ) * hoffset ) + '%, 0px, '+ (!getSpecialOverviewMode() ? -depth : 0) + 'px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                    transformElement( hslide, 'translate3d( ' + ( ( i - indexh ) * hoffset ) + '%, 0px, '+ (getSpecialOverviewMode() === 1 ? -depth : 0) + 'px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
 
                     if( hslide.classList.contains( 'stack' ) ) {
 
@@ -1630,6 +1635,7 @@
             return 0;
 
         case 'zoom':
+        case 'perspective':
             return 1;
 
         case 'scale':
