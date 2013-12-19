@@ -9,7 +9,7 @@
         console.log("Dummy HighLight.js initializing...");
       },
 
-      highlightBlock = function(a) {
+      highlightBlock: function(a) {
         console.log("Dummy HighLight.js highlightBlock() API invoked.", arguments);
       }
     };
