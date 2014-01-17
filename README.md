@@ -278,14 +278,19 @@ Reveal.configure({
   autoSlide: 5000
 });
 ```
+When this is turned on a control element will appear that enables users to pause and resume auto-sliding. Alternatively, sliding can be paused or resumed by pressing »a« on the keyboard. Sliding is paused automatically as soon as the user starts navigating. You can disable these controls by specifying ```autoSlideStoppable: false``` in your reveal.js config.
 
-When this is turned on a control element will appear that enables users to pause and resume auto-sliding. Sliding is also paused automatically as soon as the user starts navigating. You can disable these controls by specifying ```autoSlideStoppable: false``` in your reveal.js config.
-
-You can also override the slide duration for individual slides by using the ```data-autoslide``` attribute on individual sections:
+You can also override the slide duration for individual slides and fragments by using the ```data-autoslide``` attribute:
 
 ```html
-<section data-autoslide="10000">This will remain on screen for 10 seconds</section>
+<section data-autoslide="2000">
+	<p>After 2 seconds the first fragment will be shown.</p>
+	<p class="fragment" data-autoslide="10000">After 10 seconds the next fragment will be shown.</p>
+	<p class="fragment">Now, the fragment is displayed for 2 seconds before the next slide is shown.</p>
+</section>
 ```
+
+Whenever the auto-slide mode is resumed or paused the ```autoslideresumed``` and ```autoslidepaused``` events are fired.
 
 
 ### Keyboard Bindings
@@ -320,6 +325,7 @@ Reveal.prevFragment();
 Reveal.nextFragment();
 Reveal.toggleOverview();
 Reveal.togglePause();
+Reveal.toggleAutoSlide();
 
 // Retrieves the previous and current slide elements
 Reveal.getPreviousSlide();
@@ -332,6 +338,7 @@ Reveal.isFirstSlide();
 Reveal.isLastSlide();
 Reveal.isOverview();
 Reveal.isPaused();
+Reveal.isAutoSliding();
 ```
 
 
@@ -989,23 +996,6 @@ You can change the port by using `grunt serve --port 8001`.
 - **js/** Like above but for JavaScript
 - **plugin/** Components that have been developed as extensions to reveal.js
 - **lib/** All other third party assets (JavaScript, CSS, fonts)
-
-
-### Contributing
-
-Please keep the [issue tracker](http://github.com/hakimel/reveal.js/issues) limited to **bug reports**, **feature requests** and **pull requests**. If you are reporting a bug make sure to include information about which browser and operating system you are using as well as the necessary steps to reproduce the issue.
-
-If you have personal support questions use [StackOverflow](http://stackoverflow.com/questions/tagged/reveal.js).
-
-
-#### Pull requests
-
-- Should follow the coding style of the file you work in, most importantly:
-  - Tabs to indent
-  - Single-quoted strings
-- Should be made towards the **dev branch**
-- Should be submitted from a feature/topic branch (not your master)
-- Should not include the minified **reveal.min.js** or **reveal.min.css** files
 
 
 ## License
