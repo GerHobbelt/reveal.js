@@ -518,7 +518,6 @@
         dom.arrow_controls = createSingletonNode( dom.wrapper, 'aside', 'controls',
             '<div class="navigate-left"></div>' +
             '<div class="navigate-right"></div>' +
-            '<span id="current-slide"></span>' +
             '<div class="navigate-up"></div>' +
             '<div class="navigate-down"></div>' );
         if (dom.arrow_controls) {
