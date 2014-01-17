@@ -50,7 +50,8 @@ module.exports = function(grunt) {
                     'css/theme/solarized.css': 'css/theme/source/solarized.scss',
                     'css/theme/blood.css': 'css/theme/source/blood.scss',
                     'css/theme/jolicode.css': 'css/theme/source/jolicode.scss',
-                    'css/theme/openbossa.css': 'css/theme/source/openbossa.scss'
+                    'css/theme/openbossa.css': 'css/theme/source/openbossa.scss',
+                    'css/theme/fourkitchens.css': 'css/theme/source/fourkitchens.scss'
                 }
             }
         },

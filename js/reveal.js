@@ -518,6 +518,7 @@
         dom.arrow_controls = createSingletonNode( dom.wrapper, 'aside', 'controls',
             '<div class="navigate-left"></div>' +
             '<div class="navigate-right"></div>' +
+            '<span id="current-slide"></span>' +
             '<div class="navigate-up"></div>' +
             '<div class="navigate-down"></div>' );
         if (dom.arrow_controls) {
@@ -679,7 +680,7 @@
         // Add parallax background if specified
         if( config.parallaxBackgroundImage && typeof config.parallaxBackgroundImage === 'string' ) {
             dom.background.style.backgroundImage = 'url("' + config.parallaxBackgroundImage + '")';
-        } 
+        }
         else {
             dom.background.style.backgroundImage = '';
         }
@@ -1749,7 +1750,7 @@
     /**
 	 * Toggles the auto slide mode on and off.
 	 *
-	 * @param {Boolean} override Optional flag which sets the desired state. 
+	 * @param {Boolean} override Optional flag which sets the desired state.
 	 * True means autoplay starts, false means it stops.
 	 */
 
