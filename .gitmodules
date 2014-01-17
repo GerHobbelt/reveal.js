@@ -22,3 +22,6 @@
 [submodule "lib/js/zoom"]
 	path = lib/js/zoom
 	url = git@github.com:GerHobbelt/zoom.js.git
+[submodule "lib/plugins/marked"]
+	path = lib/plugins/marked
+	url = git@github.com:GerHobbelt/marked.git

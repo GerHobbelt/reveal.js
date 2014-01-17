@@ -425,6 +425,9 @@ function linkify( selector ) {
             head.load("lib/plugins/highlight/dist/highlight-umd.js", function() {
                 console.log("highlight library loaded.", arguments);
             });
+            head.load("lib/plugins/marked/lib/marked.js", function() {
+                console.log("markdown library loaded.", arguments);
+            });
 
             // Full list of configuration options available here:
             // https://github.com/hakimel/reveal.js#configuration
@@ -447,7 +450,6 @@ function linkify( selector ) {
                 // Optional libraries used to extend on reveal.js
                 dependencies: [
                     { src: 'lib/js/classList/classList.js', condition: function() { return !document.body.classList; } },
-                    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
                     { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
                     { src: 'plugin/highlight/highlight.js', async: true, callback: function() { if (typeof hljs !== 'undefined') { hljs.initHighlightingOnLoad(); } } },
                     { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },

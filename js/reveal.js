@@ -2413,7 +2413,7 @@
         var bgimg = new Image();
         var imgsrc = getStyle(dom.background, "background-image");
         bgimg.src = (imgsrc || '').replace(/url\(|\)$|"/ig, '');
-        console.log(bgimg, imgsrc);
+        console.log("updateParallax: ", bgimg, imgsrc);
 
         if (bgimg.width && bgimg.height) {
 
@@ -3175,7 +3175,7 @@
                     else {
                         navigateNext();
                     }
-                break;
+                    break;
                 // return
                 case 13:
                     if (isOverview()) {
@@ -3190,7 +3190,22 @@
                 // f
                 case 70: enterFullscreen(); break;
 				// a
-				case 65: if ( config.autoSlideStoppable ) toggleAutoSlide( autoSlideWasPaused ); break;
+				case 65: 
+                    if ( config.autoSlideStoppable ) {
+                        toggleAutoSlide( autoSlideWasPaused ); 
+                    }
+                    break;
+                // 0: toggle background image
+                case 48:
+                    if ( config.parallaxBackgroundImage ) {
+                        config.__parallaxBackgroundImage_backup = config.parallaxBackgroundImage;
+                        config.parallaxBackgroundImage = '';
+                    } else if ( config.__parallaxBackgroundImage_backup ) {
+                        config.parallaxBackgroundImage = config.__parallaxBackgroundImage_backup;
+                        delete config.__parallaxBackgroundImage_backup;
+                    }
+                    sync();
+                    break;
                 default:
                     triggered = false;
             }

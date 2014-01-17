@@ -5,7 +5,7 @@
  */
 (function( root, factory ) {
     if( typeof exports === 'object' ) {
-        module.exports = factory( require( './marked' ) );
+        module.exports = factory( require( '../../lib/plugins/marked/lib/marked' ) );
     }
     else {
         // Browser globals (root is window)
