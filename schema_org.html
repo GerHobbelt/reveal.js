@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Structuring data on the web with schema.org</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body vocab="http://schema.org/" typeof="WebPage">
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1 property="name">Structuring data on the web with schema.org</h1>
+					<h3><span typeof="EducationEvent" url="https://www.atendy.com/event/gdg-waterloo-devfest-80954845">GDG DevFest Can-Am</span> <span property="copyrightYear">2013</span></h3>
+					<p property="author creator" typeof="Person">
+						<small><a href="http://coffeecode.net" property="url">Dan Scott</a> / <a href="https://plus.google.com/116747292129029460979?rel=author">+Dan Scott</a></small>
+					</p>
+                    <p><small><span property="jobTitle">Systems Librarian</span>, <span property="affiliation worksFor">Laurentian University</span></small></p>
+				</section>
+
+                <section>
+                <h2>By “web”, I mean HTML documents</h2>
+                <pre><code data-trim contenteditable>&lt;!DOCTYPE html>
+&lt;h1&gt;House of Cards&lt;/h1&gt;
+&lt;p&gt;A political drama produced by Kevin Spacey
+   and released in 2013 directly to Netflix, starring:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Kevin Spacey&lt;/li&gt;
+  &lt;li&gt;Robin Wright&lt;/li&gt;
+  &lt;li&gt;Kate Mara&lt;/li&gt;
+  &lt;li&gt;...&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+                </section>
+
+                <section>
+                    <h2>HTML as presentation</h2>
+                    <p>The above code renders in normal browsers roughly as:</p>
+<div style="text-align: left; border: thin solid white; padding: 1em;">
+<p><strong>House of Cards</strong></p>
+<p>A political drama produced by Kevin Spacey and released in 2013 directly to Netflix, starring:</p>
+<ul>
+<li>Kevin Spacey</li>
+<li>Robin Wright</li>
+<li>Kate Mara</li>
+<li>...</li>
+</ul>
+</div>
+                </section>
+
+                <section>
+                    <h2>HTML as a linked web of documents</h2>
+                    <p>For example:</p>
+					<pre><code data-trim contenteditable>&lt;!DOCTYPE html>
+<li>
+  <a href="http://example.com/id/kspacey">
+    Kevin Spacey
+  </a>
+</li>
+</code></pre>
+                    <p>In this case, pointing off to some other web page, presumably about <strong>Kevin Spacey</strong>.</p>
+
+                    <aside class="notes">
+                        <p>
+                        But, without fetching and digesting them all, we don't really
+                        know what those documents are. The link could lead to a photo
+                        collection from paparazzi or a biography page or a
+                        rumour mongering web site.
+                        </p>
+                    </aside>
+                </section>
+
+                <section data-background="images/double_rainbow.jpg">
+                        <h2>But what does it <em>mean</em>?</h2>
+                </section>
+
+                <section>
+                    <h2>Better than a bag of words</h2>
+                    <ul>
+                        <li class="fragment"><strong>Challenge</strong>: derive meaning from a (largely) presentation-oriented medium</li>
+                        <li class="fragment">Search engines use font size, font weight, above-the-fold content, etc for relevance</li>
+                        <li class="fragment">Early attempts to embed metadata via <code>&lt;meta&gt;</code> tags were quickly gamed: see <em>"spider food"</em></li>
+                        <li class="fragment">Early efforts to build a parallel semantic web based on RDF/XML were... complex and largely academic</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Semantic fail! (Via <a href="http://inkdroid.org/journal/2013/01/30/genealogy-of-a-braeburn/">Ed Summers</a>)</h2>
+                    <img src="images/braeburn_google_header.png">
+                    <img src="images/braeburn_google.png">
+                </section>
+
+                <section>
+                    <h2>Structured data in HTML</h2>
+                    <p style="text-align: left">If you love OO, and you love HTML, you're going to love structured data!</p>
+                    <ul>
+                        <li>Geniuses<a href="#genius_footnote">*</a> figured out how to decorate HTML using attributes to represent types, properties, and relationships</li>
+                        <li>The semantic web and the document web can be united!</li>
+                        <li>Search engines can derive direct relationships between the properties and the text that is displayed to actual humans with much more certainty</li>
+                    </ul>
+                    <p id="genius_footnote" style="text-align: left"><br /><small>* <em>Not me. Very much not me.</em></small></p>
+                    
+                </section>
+
+                <section>
+                <h2>RDFa Lite: basic concepts</h2>
+                <p>Delineate structured data in HTML using attributes.</p>
+                </section>
+
+                <section>
+                <h2>RDFa Lite: HTML attributes</h2>
+                <ul>
+                    <li><code><strong>vocab</strong></code>: the vocabulary that defines the referenced types and their properties</li>
+                    <li><code><strong>typeof</strong></code>: the type of the thing being described</li>
+                    <li><code><strong>property</strong></code>: the property of the described thing</li>
+                    <li><code><strong>resource</strong></code>: an identifier for a given thing on the page</li>
+                    <li><code><strong>prefix</strong></code>: if you have to mix multiple vocabularies, you can</li>
+                </ul>
+                </section>
+                <section>
+                <h2>Scope</h2>
+                <p>The <code><strong>typeof</strong></code> property creates a new scope, which is (normally) limited to the HTML element on which it is defined, and children of that element.</p>
+                <pre><code data-trim contenteditable>&lt;!DOCTYPE html>
+&lt;div typeof="Example"&gt;The scope starts here
+    &lt;p&gt;and continues
+        &lt;span&gt;through all of the nested
+            &lt;em&gt;child&lt;/em&gt;
+        &lt;/span&gt;
+        &lt;span&gt;elements&lt;/span&gt;
+    &lt;/p&gt;
+&lt;/div&gt;</code></pre>
+                </section>
+
+                <section>
+                <h2>House of Cards: Plain HTML</h2>
+                <pre><code data-trim contenteditable>&lt;!DOCTYPE html>
+&lt;h1&gt;House of Cards&lt;/h1&gt;
+&lt;p&gt;A political drama produced by Kevin Spacey
+   and released in 2013 directly to Netflix, starring:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Kevin Spacey&lt;/li&gt;
+  &lt;li&gt;Robin Wright&lt;/li&gt;
+  &lt;li&gt;Kate Mara&lt;/li&gt;
+  &lt;li&gt;...&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+                </section>
+
+                <section>
+                    <h2>HTML + RDFa (basic)</h2>
+                <pre><code data-trim contenteditable>&lt;!DOCTYPE html>
+&lt;div vocab="http://schema.org/" typeof="TVSeries"&gt;
+&lt;h1 property="name"&gt;House of Cards&lt;/h1&gt;
+&lt;p&gt;A political drama produced by 
+  &lt;span property="producer"&gt;Kevin Spacey&lt;/span&gt; and released in
+  &lt;span property="copyrightYear"&gt;2013&lt;/span&gt; directly to Netflix,
+  starring:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li property="actor"&gt;Kevin Spacey&lt;/li&gt;
+  &lt;li property="actor"&gt;Robin Wright&lt;/li&gt;
+  &lt;li property="actor"&gt;Kate Mara&lt;/li&gt;
+  &lt;li&gt;...&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</code></pre>
+                    <p>A <code>TVSeries</code> and its attributes</p>
+                </section>
+
+                <section>
+                    <h2>HTML + RDFa (nested types)</h2>
+                <pre><code data-trim contenteditable>&lt;!DOCTYPE html>
+&lt;div vocab="http://schema.org/" typeof="TVSeries"&gt;
+&lt;h1 property="name"&gt;House of Cards&lt;/h1&gt;
+&lt;p&gt;A political drama produced by
+  &lt;span property="producer" typeof="Person"&gt;
+    &lt;span property="name"&gt;Kevin Spacey&lt;/span&gt;
+  &lt;/span&gt; and released in
+  &lt;span property="copyrightYear"&gt;2013&lt;/span&gt;
+  directly to Netflix, starring:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li property="actor" typeof="Person"&gt;
+    &lt;span property="name"&gt;Kevin Spacey&lt;/span&gt;
+  &lt;/li&gt;
+  &lt;li property="actor" typeof="Person"&gt;
+    &lt;span property="name"&gt;Robin Wright&lt;/span&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</code></pre>
+                    <p>A <code>Person</code> can have attributes other than just <code>name</code></p>
+                </section>
+
+                <section>
+                    <h2>HTML + RDFa (@resource)</h2>
+                <pre><code data-trim contenteditable>&lt;!DOCTYPE html>
+&lt;div vocab="http://schema.org/" typeof="TVSeries"
+     resource="#house_of_cards"&gt;
+&lt;h1 property="name"&gt;House of Cards&lt;/h1&gt;
+&lt;p&gt;A political drama produced by
+  &lt;span property="producer" typeof="Person" resource="#kspacey"&gt;
+    &lt;span property="name"&gt;Kevin Spacey&lt;/span&gt;
+  &lt;/span&gt; and released in
+  &lt;span property="copyrightYear"&gt;2013&lt;/span&gt;
+  directly to Netflix, starring:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li property="actor" resource="#kspacey"&gt;Kevin Spacey&lt;/li&gt;
+  &lt;li property="actor" typeof="Person"&gt;
+    &lt;span property="name"&gt;Robin Wright&lt;/span&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</code></pre>
+                    <p>Avoiding redundant redundancies!</p>
+
+                    <aside class="notes">
+                    <p>
+                        Defining two separate <strong>Person</strong> types for
+                        the identical Kevin Spacey is unnecessary. Using
+                        <code>@resource</code> to set an identifier for the
+                        first instance enables us to simply reference it the
+                        second time it comes up.
+                    </p>
+                    <p>
+                        Note that <code>@resource</code> can point at external
+                        URLs entirely, and in a real application that would
+                        likely be the pattern.
+                    </p>
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>HTML + RDFa (@prefix)</h2>
+                <pre><code data-trim contenteditable>&lt;!DOCTYPE html>
+&lt;div vocab="http://schema.org/" prefix="foaf: http://xmlns.com/foaf/0.1/"
+     typeof="TVSeries" resource="#house_of_cards"&gt;
+&lt;h1 property="name"&gt;House of Cards&lt;/h1&gt;
+&lt;p&gt;A political drama produced by
+  &lt;span property="producer" typeof="Person" resource="#kspacey"&gt;
+    &lt;span property="name foaf:account"&gt;
+        &lt;a href="https://plus.google.com/+KevinSpacey"
+           typeof="foaf:OnlineAccount"&gt;Kevin Spacey&lt;/a&gt;
+    &lt;/span&gt;
+  &lt;/span&gt; and released in
+  &lt;span property="copyrightYear"&gt;2013&lt;/span&gt;
+  directly to Netflix, starring:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li property="actor" resource="#kspacey"&gt;Kevin Spacey&lt;/li&gt;
+  &lt;li property="actor" typeof="Person"&gt;
+    &lt;span property="name"&gt;Robin Wright&lt;/span&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</code></pre>
+                <p>Because the world is described by more than one ontology.</p>
+
+                <aside class="notes">
+                    <p>
+                        Here we want to provide a link to Kevin Spacey's Google+ account.
+                        schema.org does not provide a clear method of identifying specific
+                        online accounts, while FOAF (Friend of a Friend) was designed to
+                        do exactly that. While the <code>foaf</code> prefix is built into
+                        RDFa Lite, it is instructive to demonstrate how it can be declared
+                        using the <code>@prefix</code> attribute and subsequently used.
+                    </p>
+                    <p>
+                        Note that we also have the ability to use multiple
+                        values in each <code>@property</code> or
+                        <code>@typeof</code> attribute, with a mix of vocabularies.
+                    </p>
+                </aside>
+                </section>
+
+                <section>
+                    <h2>RDFa: extracting structured data</h2>
+                    <img src="images/rdfa_play.png">
+                    <p>Image generated by <a href="http://rdfa.info/play">http://rdfa.info/play</a></p>
+                </section>
+
+                <section>
+                    <h2>schema.org for structured data</h2>
+                    <ul>
+                        <li class="fragment">There are <em>many</em> different vocabularies
+                        <ul>
+                            <li>Mixing vocabularies is the norm…</li>
+                            <li>But can also be painful for publishers and consumers</li>
+                        </ul></li>
+                        <li class="fragment">schema.org launched in 2011 as a joint effort between Google, Yahoo, and Yandex
+                        <ul>
+                            <li>A single vocabulary for all the things! Well, all the things search engines really cared about</li>
+                            <li>Ergo, it immediately became the only vocabulary SEO community cared about</li>
+                        </ul></li>
+                        <li class="fragment">In 2013, schema.org development moved to W3.org for open discussion</li>
+                    </ul>
+
+                </section>
+
+                <section>
+                    <h2>Now, publish structured data!</h2>
+                    <ul>
+                        <li>Your web applications:
+                        <ul>
+                            <li>Likely use a database of some kind, with well-defined types and properties</li>
+                            <li>With a little bit of extra effort, you can map those types and properties to schema.org types and properties</li>
+                        </ul></li>
+                        <li>And <strong>Boom!</strong>
+                        <ul>
+                            <li>You've just enriched the knowledge graph</li>
+                            <li>And enabled other applications to easily build on your data</li>
+                            <li>And likely improved your search ranking<a href="#now_publish">*</a></li>
+                        </ul></li>
+                    </ul>
+                    <p style="text-align: left;" class="fragment"><br /><small>* <em>I am not an SEO consultant and this does not constitute SEO advice</em></small></p>
+                    
+                </section>
+
+                <section>
+                    <h2>Resources</h2>
+                    <h3 style="text-align:left;">RDFa</h3>
+                    <ul>
+                        <li>Overview and tools: <a href="http://rdfa.info">http://rdfa.info</a></li>
+                        <li>RDFa Lite specification: <a href="http://www.w3.org/TR/rdfa-lite/">http://www.w3.org/TR/rdfa-lite/</a></li>
+                    </ul>
+
+                    <h3 style="text-align:left;">Schema.org vocabulary</h3>
+                    <ul>
+                        <li>Specification and intro: <a href="http://schema.org">http://schema.org</a></li>
+                        <li>W3 home: <a href="http://www.w3.org/wiki/WebSchemas">http://www.w3.org/wiki/WebSchemas</a></li>
+                        <li>Mailing list: <a href="http://lists.w3.org/Archives/Public/public-vocabs/">http://lists.w3.org/Archives/Public/public-vocabs/</a></li>
+                    </ul>
+                </section>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
