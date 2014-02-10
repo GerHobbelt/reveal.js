@@ -107,6 +107,11 @@ function register_remote {
 
 register_remote lib/js/classList                                              local-original                           ../../../../classlist-shim/                                                      $# $@
 register_remote lib/js/head                                                   local-original                           ../../../../headjs/                                                              $# $@
+register_remote lib/js/require-domReady                                       local_original                           ../../../../require-domReady                                                     $# $@
+register_remote lib/js/require-less                                           local_original                           ../../../../require-less                                                         $# $@
+register_remote lib/js/require-plugins                                        local_original                           ../../../../require-plugins                                                      $# $@
+register_remote lib/js/requireCSS                                             local_original                           ../../../../requireCSS                                                           $# $@
+register_remote lib/js/requireJS                                              local_original                           ../../../../requireJS                                                            $# $@
 register_remote lib/js/response.js                                            local-original                           ../../../../response.js/                                                         $# $@
 register_remote lib/js/verge                                                  local-2-original                         ../../../../jquery-verge/                                                        $# $@
 register_remote lib/js/verge                                                  local-original                           ../../../../verge-screendimensions/                                              $# $@
