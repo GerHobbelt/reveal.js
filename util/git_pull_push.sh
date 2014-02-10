@@ -143,7 +143,7 @@ c )
     git gc
     git fsck --full --unreachable --strict
     git reflog expire --expire=0 --all
-    git update-ref
+    #git update-ref
     git gc --aggressive --prune=2018-08-08
     git remote update --prune
     git remote prune origin
@@ -153,14 +153,14 @@ c )
   git gc
   git fsck --full
   git reflog expire --expire=0 --all
-  git update-ref
+  #git update-ref
   git gc --aggressive
   git remote update --prune
   git remote prune origin
   ;;
 
 s )
-  echo "--- for all submodules: set upstream ref for each local branch and push the repo ---"
+  echo "--- for all submodules + base repo: set upstream ref for each local branch and push the repo ---"
   for (( i=OPTIND; i > 1; i-- )) do
     shift
   done
@@ -171,9 +171,12 @@ s )
     cd $f
     #echo $@
     $@
+    # https://github.com/Visyond/visyond/wiki/Using-GIT-~-handy-commands-and-general-policies
     git push -u origin --all
     popd                                                                  2> /dev/null  > /dev/null
   done
+  $@
+  git push -u origin --all
   ;;
 
 * )

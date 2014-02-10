@@ -1,27 +1,60 @@
 [submodule "lib/plugins/zoom"]
 	path = lib/plugins/zoom
 	url = git@github.com:GerHobbelt/zoom.js.git
+	ignore = dirty
 [submodule "lib/plugins/highlight"]
 	path = lib/plugins/highlight
 	url = git://github.com/GerHobbelt/highlight.js.git
+	ignore = dirty
 [submodule "lib/js/verge"]
 	path = lib/js/verge
 	url = git@github.com:GerHobbelt/verge.git
+	ignore = dirty
 [submodule "lib/js/response.js"]
 	path = lib/js/response.js
 	url = git@github.com:GerHobbelt/response.js.git
+	ignore = dirty
 [submodule "lib/js/head"]
 	path = lib/js/head
 	url = git@github.com:GerHobbelt/headjs.git
+	ignore = dirty
 [submodule "lib/plugins/SyntaxHighlighter"]
 	path = lib/plugins/SyntaxHighlighter
 	url = git@github.com:GerHobbelt/SyntaxHighlighter.git
+	ignore = dirty
 [submodule "lib/js/classList"]
 	path = lib/js/classList
 	url = git@github.com:GerHobbelt/classList.js.git
+	ignore = dirty
 [submodule "lib/js/zoom"]
 	path = lib/js/zoom
 	url = git@github.com:GerHobbelt/zoom.js.git
+	ignore = dirty
 [submodule "lib/plugins/marked"]
 	path = lib/plugins/marked
 	url = git@github.com:GerHobbelt/marked.git
+	ignore = dirty
+[submodule "lib/js/requireJS"]
+	path = lib/js/requireJS
+	url = git@github.com:GerHobbelt/requirejs.git
+	ignore = dirty
+[submodule "lib/js/requireCSS"]
+	path = lib/js/requireCSS
+	url = git@github.com:GerHobbelt/require-css.git
+	ignore = dirty
+[submodule "lib/js/require-less"]
+	path = lib/js/require-less
+	url = git@github.com:GerHobbelt/require-less.git
+	ignore = dirty
+[submodule "lib/js/require-domReady"]
+	path = lib/js/require-domReady
+	url = git@github.com:GerHobbelt/requireJS-domReady.git
+	ignore = dirty
+[submodule "lib/js/require-text"]
+	path = lib/js/require-text
+	url = git@github.com:GerHobbelt/text.git
+	ignore = dirty
+[submodule "lib/js/require-plugins"]
+	path = lib/js/require-plugins
+	url = git@github.com:GerHobbelt/requirejs-plugins.git
+	ignore = dirty
