@@ -3,7 +3,7 @@
  * http://lab.hakim.se/reveal-js
  * MIT licensed
  *
- * Copyright (C) 2013 Hakim El Hattab, http://hakim.se
+ * Copyright (C) 2014 Hakim El Hattab, http://hakim.se
  */
 
 (function ( window, factory ) {
@@ -764,7 +764,13 @@
             enablePreviewLinks( '[data-preview-link]' );
         }
 
-        // Auto-slide playback controls
+		// Remove existing auto-slide controls
+		if( autoSlidePlayer ) {
+			autoSlidePlayer.destroy();
+			autoSlidePlayer = null;
+		}
+
+		// Generate auto-slide controls if needed
         if( numberOfSlides > 1 && config.autoSlide && config.autoSlideStoppable && features.canvas && features.requestAnimationFrame ) {
             autoSlidePlayer = new Playback( dom.wrapper, function() {
                 return Math.min( Math.max( ( Date.now() - autoSlideStartTime ) / autoSlide, 0 ), 1 );
@@ -772,10 +778,6 @@
 
             autoSlidePlayer.on( 'click', onAutoSlidePlayerClick );
             autoSlidePaused = false;
-        }
-        else if( autoSlidePlayer ) {
-            autoSlidePlayer.destroy();
-            autoSlidePlayer = null;
         }
 
         // Load the theme in the config, if it's not already loaded
@@ -1111,7 +1113,7 @@
     function enableRollingLinks() {
 
         if( features.transforms3d && !( 'msPerspective' in document.body.style ) ) {
-            var anchors = document.querySelectorAll( SLIDES_SELECTOR + ' a:not(.image)' );
+			var anchors = document.querySelectorAll( SLIDES_SELECTOR + ' a' );
 
             for( var i = 0, len = anchors.length; i < len; i++ ) {
                 var anchor = anchors[i];
@@ -2437,7 +2439,7 @@
 
             var slideHeight = dom.background.offsetHeight;
             var verticalSlideCount = verticalSlides.length;
-            var verticalOffset = verticalSlideCount > 0 ? -( backgroundHeight - slideHeight ) / ( verticalSlideCount-1 ) * indexv : 0;
+			var verticalOffset = verticalSlideCount > 1 ? -( backgroundHeight - slideHeight ) / ( verticalSlideCount-1 ) * indexv : 0;
 
             dom.background.style.backgroundPosition = horizontalOffset + 'px ' + verticalOffset + 'px';
 

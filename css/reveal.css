@@ -5,7 +5,7 @@
  * http://lab.hakim.se/reveal-js
  * MIT licensed
  *
- * Copyright (C) 2013 Hakim El Hattab, http://hakim.se
+ * Copyright (C) 2014 Hakim El Hattab, http://hakim.se
  */
 
 
@@ -50,6 +50,9 @@
     height: 100%;
     overflow: hidden;
     line-height: 1;
+
+	background-color: #fff;
+	color: #000;
 }
 
 ::selection {
@@ -92,8 +95,6 @@
 
     -webkit-transition: all .2s ease;
        -moz-transition: all .2s ease;
-        -ms-transition: all .2s ease;
-         -o-transition: all .2s ease;
             transition: all .2s ease;
 }
     .reveal .slides section .fragment.visible {
@@ -429,8 +430,6 @@
 
     -webkit-transition: all 0.2s ease;
        -moz-transition: all 0.2s ease;
-        -ms-transition: all 0.2s ease;
-         -o-transition: all 0.2s ease;
             transition: all 0.2s ease;
 }
 
@@ -447,7 +446,7 @@
         top: 42px;
 
         border-right-width: 22px;
-        border-right-color: #ddd;
+		border-right-color: #000;
     }
         .reveal .controls div.navigate-left.fragmented {
             opacity: 0.3;
@@ -458,7 +457,7 @@
         top: 42px;
 
         border-left-width: 22px;
-        border-left-color: #ddd;
+		border-left-color: #000;
     }
         .reveal .controls div.navigate-right.fragmented {
             opacity: 0.3;
@@ -468,7 +467,7 @@
         left: 42px;
 
         border-bottom-width: 22px;
-        border-bottom-color: #ddd;
+		border-bottom-color: #000;
     }
         .reveal .controls div.navigate-up.fragmented {
             opacity: 0.3;
@@ -479,7 +478,7 @@
         top: 74px;
 
         border-top-width: 22px;
-        border-top-color: #ddd;
+		border-top-color: #000;
     }
         .reveal .controls div.navigate-down.fragmented {
             opacity: 0.3;
@@ -498,6 +497,8 @@
     bottom: 0;
     left: 0;
     z-index: 10;
+
+	background-color: rgba( 0, 0, 0, 0.2 );
 }
     .reveal .progress:after {
         content: '';
@@ -512,10 +513,10 @@
         height: 100%;
         width: 0px;
 
+		background-color: #000;
+
         -webkit-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
            -moz-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-            -ms-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-             -o-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
                 transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
     }
 
@@ -677,8 +678,6 @@
 
     -webkit-transition: -webkit-perspective .4s ease;
        -moz-transition: -moz-perspective .4s ease;
-        -ms-transition: -ms-perspective .4s ease;
-         -o-transition: -o-perspective .4s ease;
             transition: perspective .4s ease;
 
     -webkit-perspective: 600px;
@@ -720,14 +719,6 @@
                         -moz-transform 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
                         visibility 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
                         opacity 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-        -ms-transition: -ms-transform-origin 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        -ms-transform 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        visibility 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        opacity 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-         -o-transition: -o-transform-origin 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        -o-transform 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        visibility 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        opacity 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
             transition: transform-origin 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
                         transform 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
                         visibility 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
@@ -738,13 +729,11 @@
 .reveal[data-transition-speed="fast"] .slides section {
     -webkit-transition-duration: 400ms;
        -moz-transition-duration: 400ms;
-        -ms-transition-duration: 400ms;
             transition-duration: 400ms;
 }
 .reveal[data-transition-speed="slow"] .slides section {
     -webkit-transition-duration: 1200ms;
        -moz-transition-duration: 1200ms;
-        -ms-transition-duration: 1200ms;
             transition-duration: 1200ms;
 }
 
@@ -752,13 +741,11 @@
 .reveal .slides section[data-transition-speed="fast"] {
     -webkit-transition-duration: 400ms;
        -moz-transition-duration: 400ms;
-        -ms-transition-duration: 400ms;
             transition-duration: 400ms;
 }
 .reveal .slides section[data-transition-speed="slow"] {
     -webkit-transition-duration: 1200ms;
        -moz-transition-duration: 1200ms;
-        -ms-transition-duration: 1200ms;
             transition-duration: 1200ms;
 }
 
@@ -896,8 +883,6 @@
 .reveal.zoom .slides>section:not([data-transition]) {
     -webkit-transition-timing-function: ease;
        -moz-transition-timing-function: ease;
-        -ms-transition-timing-function: ease;
-         -o-transition-timing-function: ease;
             transition-timing-function: ease;
 }
 
@@ -1234,8 +1219,6 @@
 
     -webkit-transition: opacity 0.5s;
        -moz-transition: opacity 0.5s;
-        -ms-transition: opacity 0.5s;
-         -o-transition: opacity 0.5s;
             transition: opacity 0.5s;
 }
 
@@ -1246,8 +1229,6 @@
 .reveal.fade.overview-deactivating .slides>section>section {
     -webkit-transition: none;
        -moz-transition: none;
-        -ms-transition: none;
-         -o-transition: none;
             transition: none;
 }
 
@@ -1266,8 +1247,6 @@
 
     -webkit-transition: none;
        -moz-transition: none;
-        -ms-transition: none;
-         -o-transition: none;
             transition: none;
 }
 
@@ -1339,8 +1318,6 @@
 
     -webkit-transition: all 1s ease;
        -moz-transition: all 1s ease;
-        -ms-transition: all 1s ease;
-         -o-transition: all 1s ease;
             transition: all 1s ease;
 }
 .reveal.paused .pause-overlay {
@@ -1397,8 +1374,6 @@
 .reveal .no-transition * {
     -webkit-transition: none !important;
        -moz-transition: none !important;
-        -ms-transition: none !important;
-         -o-transition: none !important;
             transition: none !important;
 }
 
@@ -1420,8 +1395,6 @@
 
     -webkit-transition: background 800ms ease;
        -moz-transition: background 800ms ease;
-        -ms-transition: background 800ms ease;
-         -o-transition: background 800ms ease;
             transition: background 800ms ease;
 }
 .alert .reveal .state-background {
@@ -1487,8 +1460,6 @@
 
         -webkit-transition: all 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
            -moz-transition: all 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-            -ms-transition: all 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-             -o-transition: all 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
                 transition: all 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
     }
     .reveal .slide-background.present {
@@ -1506,8 +1477,6 @@
 .reveal>.backgrounds .slide-background[data-background-transition=none] {
     -webkit-transition: none;
        -moz-transition: none;
-        -ms-transition: none;
-         -o-transition: none;
             transition: none;
 }
 
@@ -1640,8 +1609,6 @@
 .reveal>.backgrounds .slide-background[data-background-transition=zoom] {
     -webkit-transition-timing-function: ease;
        -moz-transition-timing-function: ease;
-        -ms-transition-timing-function: ease;
-         -o-transition-timing-function: ease;
             transition-timing-function: ease;
 }
 
@@ -1696,13 +1663,11 @@
 .reveal[data-transition-speed="fast"]>.backgrounds .slide-background {
     -webkit-transition-duration: 400ms;
        -moz-transition-duration: 400ms;
-        -ms-transition-duration: 400ms;
             transition-duration: 400ms;
 }
 .reveal[data-transition-speed="slow"]>.backgrounds .slide-background {
     -webkit-transition-duration: 1200ms;
        -moz-transition-duration: 1200ms;
-        -ms-transition-duration: 1200ms;
             transition-duration: 1200ms;
 }
 
@@ -1743,7 +1708,6 @@
 .reveal.has-parallax-background .backgrounds {
     -webkit-transition: all 0.8s ease;
        -moz-transition: all 0.8s ease;
-        -ms-transition: all 0.8s ease;
             transition: all 0.8s ease;
 }
 
@@ -1751,13 +1715,11 @@
 .reveal.has-parallax-background[data-transition-speed="fast"] .backgrounds {
     -webkit-transition-duration: 400ms;
        -moz-transition-duration: 400ms;
-        -ms-transition-duration: 400ms;
             transition-duration: 400ms;
 }
 .reveal.has-parallax-background[data-transition-speed="slow"] .backgrounds {
     -webkit-transition-duration: 1200ms;
        -moz-transition-duration: 1200ms;
-        -ms-transition-duration: 1200ms;
             transition-duration: 1200ms;
 }
 
@@ -1779,7 +1741,6 @@
 
     -webkit-transition: all 0.3s ease;
        -moz-transition: all 0.3s ease;
-        -ms-transition: all 0.3s ease;
             transition: all 0.3s ease;
 }
     .reveal .preview-link-overlay.visible {
@@ -1803,7 +1764,6 @@
 
         -webkit-transition: all 0.3s ease;
            -moz-transition: all 0.3s ease;
-            -ms-transition: all 0.3s ease;
                 transition: all 0.3s ease;
     }
 
@@ -1865,7 +1825,6 @@
 
         -webkit-transition: all 0.3s ease;
            -moz-transition: all 0.3s ease;
-            -ms-transition: all 0.3s ease;
                 transition: all 0.3s ease;
     }
 
@@ -1899,7 +1858,6 @@
 
     -webkit-transition: all 400ms ease;
        -moz-transition: all 400ms ease;
-        -ms-transition: all 400ms ease;
             transition: all 400ms ease;
 }
 
@@ -1943,7 +1901,6 @@
 
     -webkit-transition: all 400ms ease;
        -moz-transition: all 400ms ease;
-        -ms-transition: all 400ms ease;
             transition: all 400ms ease;
 
     -webkit-transform-origin: 50% 0%;
