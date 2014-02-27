@@ -40,7 +40,7 @@ $headingColor: $joli-yellow;
 $headingLineHeight: 1.1em;
 
 // Links and actions
-$linkColor: $joli-dark-yellow;
+$linkColor: $complementary;
 $linkColorHover: $joli-yellow;
 
 // Text selection
@@ -53,7 +53,7 @@ footer.joli {
     margin-left: 20px;
     z-index: 20;
     font-family: $mainFont;
-    color:#8d8d8d
+    color: $complementary;
 }
 
 .jolistate .reveal .state-background {
@@ -74,7 +74,7 @@ footer.joli {
 .reveal section .footnote {
     margin-top: 100px;
     font-size: 0.6em;
-    color:#bcbcbc;
+    color: #bcbcbc;
     text-align: right;
 }
 
@@ -87,7 +87,7 @@ footer.joli {
         text-transform: none;
     }
     .no-border {
-        border:none;
+        border: none;
         box-shadow: none;
         background: transparent;
     }
@@ -105,18 +105,42 @@ footer.joli {
         padding: 10px 0;
     }
     pre {
-        width:100%;
+        width: 100%;
 
         code {
             font-size: 1.4em;
             line-height: 1em;
         }
     }
+
+    blockquote {
+	    border-left: 10px solid $complementary;
+	    padding-left: 20px;
+	    margin: 50px auto;
+	    quotes: "\201C""\201D""\2018""\2019";
+	    text-align: left;
+	    font-style: normal;
+    }
+    blockquote:before {
+	    color: $complementary;
+	    content: open-quote;
+	    font-size: 4em;
+	    line-height: 0.1em;
+	    margin-right: 0.25em;
+	    vertical-align: -0.4em;
+    }
+
+    &.present[data-background] {
+	    h1, h2, h3, h4, h5, h6 {
+	        @extend .big-shadow;
+	    }
+    }
 }
 
 // Background generator
 @mixin bodyBackground() {
-	@include radial-gradient( rgb(5, 6, 7), rgb(39, 42, 45));
+    background-color: #171717!important;
+    // @include radial-gradient( rgb(5, 6, 7), rgb(39, 42, 45));
 }
 
 // Theme template ------------------------------
