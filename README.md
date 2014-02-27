@@ -63,8 +63,8 @@ When used locally, this feature requires that reveal.js [runs from a local web s
 ```html
 <section data-markdown="example.md"
          data-separator="^\n\n\n"
-         data-separator-vertical="^\n\n"  
-         data-separator-notes="^Note:"  
+         data-separator-vertical="^\n\n"
+         data-separator-notes="^Note:"
          data-charset="iso-8859-15">
 </section>
 ```
@@ -284,9 +284,9 @@ You can also override the slide duration for individual slides and fragments by 
 
 ```html
 <section data-autoslide="2000">
-	<p>After 2 seconds the first fragment will be shown.</p>
-	<p class="fragment" data-autoslide="10000">After 10 seconds the next fragment will be shown.</p>
-	<p class="fragment">Now, the fragment is displayed for 2 seconds before the next slide is shown.</p>
+    <p>After 2 seconds the first fragment will be shown.</p>
+    <p class="fragment" data-autoslide="10000">After 10 seconds the next fragment will be shown.</p>
+    <p class="fragment">Now, the fragment is displayed for 2 seconds before the next slide is shown.</p>
 </section>
 ```
 

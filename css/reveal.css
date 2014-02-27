@@ -51,8 +51,8 @@
     overflow: hidden;
     line-height: 1;
 
-	background-color: #fff;
-	color: #000;
+    background-color: #fff;
+    color: #000;
 }
 
 ::selection {
@@ -290,11 +290,11 @@
 }
 
 .reveal dt {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .reveal dd {
-	margin-left: 40px;
+    margin-left: 40px;
 }
 
 .reveal p {
@@ -446,7 +446,7 @@
         top: 42px;
 
         border-right-width: 22px;
-		border-right-color: #000;
+        border-right-color: #000;
     }
         .reveal .controls div.navigate-left.fragmented {
             opacity: 0.3;
@@ -457,7 +457,7 @@
         top: 42px;
 
         border-left-width: 22px;
-		border-left-color: #000;
+        border-left-color: #000;
     }
         .reveal .controls div.navigate-right.fragmented {
             opacity: 0.3;
@@ -467,7 +467,7 @@
         left: 42px;
 
         border-bottom-width: 22px;
-		border-bottom-color: #000;
+        border-bottom-color: #000;
     }
         .reveal .controls div.navigate-up.fragmented {
             opacity: 0.3;
@@ -478,7 +478,7 @@
         top: 74px;
 
         border-top-width: 22px;
-		border-top-color: #000;
+        border-top-color: #000;
     }
         .reveal .controls div.navigate-down.fragmented {
             opacity: 0.3;
@@ -498,7 +498,7 @@
     left: 0;
     z-index: 10;
 
-	background-color: rgba( 0, 0, 0, 0.2 );
+    background-color: rgba( 0, 0, 0, 0.2 );
 }
     .reveal .progress:after {
         content: '';
@@ -513,7 +513,7 @@
         height: 100%;
         width: 0px;
 
-		background-color: #000;
+        background-color: #000;
 
         -webkit-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
            -moz-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
@@ -799,7 +799,7 @@
 .reveal .slides>section.future,
 .reveal .slides>section>section.past,
 .reveal .slides>section>section.future {
-	opacity: 0;
+    opacity: 0;
 }
 
 
@@ -1390,7 +1390,7 @@
     left: 0;
 
     z-index: -1; /* otherwise this overlay will obscure the slides from the mouse pointer in overview mode */
-    
+
     background: rgba( 0, 0, 0, 0 );
 
     -webkit-transition: background 800ms ease;

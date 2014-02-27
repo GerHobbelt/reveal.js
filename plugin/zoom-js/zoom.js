@@ -51,7 +51,7 @@
     Reveal.zoom = function() {
         return zoom;
     };
-    
+
     return Reveal;
 }));
 

@@ -764,13 +764,13 @@
             enablePreviewLinks( '[data-preview-link]' );
         }
 
-		// Remove existing auto-slide controls
-		if( autoSlidePlayer ) {
-			autoSlidePlayer.destroy();
-			autoSlidePlayer = null;
-		}
+        // Remove existing auto-slide controls
+        if( autoSlidePlayer ) {
+            autoSlidePlayer.destroy();
+            autoSlidePlayer = null;
+        }
 
-		// Generate auto-slide controls if needed
+        // Generate auto-slide controls if needed
         if( numberOfSlides > 1 && config.autoSlide && config.autoSlideStoppable && features.canvas && features.requestAnimationFrame ) {
             autoSlidePlayer = new Playback( dom.wrapper, function() {
                 return Math.min( Math.max( ( Date.now() - autoSlideStartTime ) / autoSlide, 0 ), 1 );
@@ -1113,7 +1113,7 @@
     function enableRollingLinks() {
 
         if( features.transforms3d && !( 'msPerspective' in document.body.style ) ) {
-			var anchors = document.querySelectorAll( SLIDES_SELECTOR + ' a' );
+            var anchors = document.querySelectorAll( SLIDES_SELECTOR + ' a' );
 
             for( var i = 0, len = anchors.length; i < len; i++ ) {
                 var anchor = anchors[i];
@@ -1749,33 +1749,33 @@
     }
 
     /**
-	 * Toggles the auto slide mode on and off.
-	 *
-	 * @param {Boolean} override Optional flag which sets the desired state.
-	 * True means autoplay starts, false means it stops.
-	 */
+     * Toggles the auto slide mode on and off.
+     *
+     * @param {Boolean} override Optional flag which sets the desired state.
+     * True means autoplay starts, false means it stops.
+     */
 
-	function toggleAutoSlide( override ) {
+    function toggleAutoSlide( override ) {
 
-		if( typeof override === 'boolean' ) {
-			override ? resumeAutoSlide() : pauseAutoSlide();
-		}
-		else {
-			autoSlidePaused ? resumeAutoSlide() : pauseAutoSlide();
-		}
+        if( typeof override === 'boolean' ) {
+            override ? resumeAutoSlide() : pauseAutoSlide();
+        }
+        else {
+            autoSlidePaused ? resumeAutoSlide() : pauseAutoSlide();
+        }
 
-	}
+    }
 
-	/**
-	 * Checks if the auto slide mode is currently on.
-	 */
-	function isAutoSliding() {
+    /**
+     * Checks if the auto slide mode is currently on.
+     */
+    function isAutoSliding() {
 
-		return !!( autoSlide && !autoSlidePaused );
+        return !!( autoSlide && !autoSlidePaused );
 
-	}
+    }
 
-	/**
+    /**
      * Steps from the current point in the presentation to the
      * slide which matches the specified horizontal and vertical
      * indices.
@@ -2439,7 +2439,7 @@
 
             var slideHeight = dom.background.offsetHeight;
             var verticalSlideCount = verticalSlides.length;
-			var verticalOffset = verticalSlideCount > 1 ? -( backgroundHeight - slideHeight ) / ( verticalSlideCount-1 ) * indexv : 0;
+            var verticalOffset = verticalSlideCount > 1 ? -( backgroundHeight - slideHeight ) / ( verticalSlideCount-1 ) * indexv : 0;
 
             dom.background.style.backgroundPosition = horizontalOffset + 'px ' + verticalOffset + 'px';
 
@@ -2871,21 +2871,21 @@
 
         if( currentSlide ) {
 
-			var currentFragment = currentSlide.querySelector( '.current-fragment' );
+            var currentFragment = currentSlide.querySelector( '.current-fragment' );
 
-			var fragmentAutoSlide = currentFragment ? currentFragment.getAttribute( 'data-autoslide' ) : null;
+            var fragmentAutoSlide = currentFragment ? currentFragment.getAttribute( 'data-autoslide' ) : null;
             var parentAutoSlide = currentSlide.parentNode ? currentSlide.parentNode.getAttribute( 'data-autoslide' ) : null;
             var slideAutoSlide = currentSlide.getAttribute( 'data-autoslide' );
 
             // Pick value in the following priority order:
-			// 1. Current fragment's data-autoslide
-			// 2. Current slide's data-autoslide
-			// 3. Parent slide's data-autoslide
-			// 4. Global autoSlide setting
-			if( fragmentAutoSlide ) {
-				autoSlide = parseInt( fragmentAutoSlide, 10 );
-			}
-			else if( slideAutoSlide ) {
+            // 1. Current fragment's data-autoslide
+            // 2. Current slide's data-autoslide
+            // 3. Parent slide's data-autoslide
+            // 4. Global autoSlide setting
+            if( fragmentAutoSlide ) {
+                autoSlide = parseInt( fragmentAutoSlide, 10 );
+            }
+            else if( slideAutoSlide ) {
                 autoSlide = parseInt( slideAutoSlide, 10 );
             }
             else if( parentAutoSlide ) {
@@ -2938,7 +2938,7 @@
     function pauseAutoSlide() {
 
         autoSlidePaused = true;
-		dispatchEvent( 'autoslidepaused' );
+        dispatchEvent( 'autoslidepaused' );
         clearTimeout( autoSlideTimeout );
 
         if( autoSlidePlayer ) {
@@ -2950,7 +2950,7 @@
     function resumeAutoSlide() {
 
         autoSlidePaused = false;
-		dispatchEvent( 'autoslideresumed' );
+        dispatchEvent( 'autoslideresumed' );
         cueAutoSlide();
 
     }
@@ -3075,8 +3075,8 @@
      */
     function onDocumentKeyDown( event ) {
 
-		// Remember if auto-sliding was paused so we can toggle it
-		var autoSlideWasPaused = autoSlidePaused;
+        // Remember if auto-sliding was paused so we can toggle it
+        var autoSlideWasPaused = autoSlidePaused;
 
         onUserInput( event );
 
@@ -3191,10 +3191,10 @@
                 case 66: case 190: case 191: togglePause(); break;
                 // f
                 case 70: enterFullscreen(); break;
-				// a
-				case 65: 
+                // a
+                case 65:
                     if ( config.autoSlideStoppable ) {
-                        toggleAutoSlide( autoSlideWasPaused ); 
+                        toggleAutoSlide( autoSlideWasPaused );
                     }
                     break;
                 // 0: toggle background image
@@ -3796,13 +3796,13 @@
         // Toggles the "black screen" mode on/off
         togglePause: togglePause,
 
-		// Toggles the auto slide mode on/off
-		toggleAutoSlide: toggleAutoSlide,
+        // Toggles the auto slide mode on/off
+        toggleAutoSlide: toggleAutoSlide,
 
         // State checks
         isOverview: isOverview,
         isPaused: isPaused,
-		isAutoSliding: isAutoSliding,
+        isAutoSliding: isAutoSliding,
 
         // Adds or removes all internal event listeners (such as keyboard)
         addEventListeners: addEventListeners,

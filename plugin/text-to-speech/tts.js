@@ -4,22 +4,22 @@
 
     Text to speech plugin
 
-    Adds automated speech to your presentation. 
-    
+    Adds automated speech to your presentation.
+
     If you want to incude speech when a new section of your presentation is loaded simply add the attribute 'text-to-speech' to the section .
 
     ***Note you must have internet connection as the text to speech trsanslation is powered by googles text to speeech API's ***
 
     all the heavy lifting courtesy of the following open source projects:
-        
-        Ramesh Nair    : https://github.com/hiddentao/google-tts 
+
+        Ramesh Nair    : https://github.com/hiddentao/google-tts
         Scott Schiller:  http://schillmania.com/projects/soundmanager2/
 
-    
+
     Example:
                 <section text-to-speech='Welcome to my presentation'>
                     <h1>Your title</h1>
-                    
+
                     <p>
                         <small>Welcome to my presentation!</small>
                     </p>
