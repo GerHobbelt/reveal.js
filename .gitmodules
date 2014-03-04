@@ -26,10 +26,6 @@
 	path = lib/js/classList
 	url = git@github.com:GerHobbelt/classList.js.git
 	ignore = dirty
-[submodule "lib/js/zoom"]
-	path = lib/js/zoom
-	url = git@github.com:GerHobbelt/zoom.js.git
-	ignore = dirty
 [submodule "lib/plugins/marked"]
 	path = lib/plugins/marked
 	url = git@github.com:GerHobbelt/marked.git
@@ -57,4 +53,8 @@
 [submodule "lib/js/require-plugins"]
 	path = lib/js/require-plugins
 	url = git@github.com:GerHobbelt/requirejs-plugins.git
+	ignore = dirty
+[submodule "util/wsclean"]
+	path = util/wsclean
+	url = git@github.com:GerHobbelt/whitespace-cleaner.git
 	ignore = dirty
