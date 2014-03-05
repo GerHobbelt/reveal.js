@@ -18,22 +18,22 @@
             if ( !w.document ) {
                 throw new Error("jQuery plugin requires a window with a document");
             }
-            return factory( w, w.document, head );
+            return factory( w, w.document );
         };
     } else {
         if ( typeof define === "function" && define.amd ) {
             // AMD. Register as a named module.
-            define( "reveal", [ "head" ], function(head) {
-                return factory(window, document, head);
+            define( "reveal", [], function(head) {
+                return factory(window, document);
             });
         } else {
             // Browser globals
-            window.Reveal = factory(window, document, head);
+            window.Reveal = factory(window, document);
         }
     }
 
 // Pass this, window may not be defined yet
-}(this, function ( window, document, head, undefined ) {
+}(this, function ( window, document, undefined ) {
 
     'use strict';
 
@@ -311,34 +311,63 @@
      */
     function load() {
 
-        var scripts = [],
-            scriptsAsync = [],
-            scriptsToPreload = 0;
+        var scriptsAsync = [],
+            scriptsToPreload = 0,
+            asyncScriptsToLoad = 0;
 
         // Called once synchronous scripts finish loading
         //
         // Return FALSE when the function failed to run to completion.
         function proceed() {
-            if( scriptsAsync.length ) {
-                // Load asynchronous scripts
-                head.js.apply( null, scriptsAsync );
+            if( scriptsToPreload === 0 ) {
+                loadAsyncScripts();
+
+                return start();
+            }
+            return true;
+        }
+
+        function loadAsyncScripts() {
+            asyncScriptsToLoad = scriptsAsync.length;
+            for (var i = 0, len = scriptsAsync.length; i < len; i++) {
+                loadOne(scriptsAsync[i]);         // making sure this instance sticks around in the require(...) closure
             }
 
-            return start();
+            // closure:
+            function loadOne(s) {
+                require([s.src].concat(s.dependencies || []), function () {
+                    // Extension may contain callback function
+                    if( typeof s.callback === 'function' ) {
+                        s.callback.apply( this, arguments );
+                    }
+
+                    // and check whether we got them all...
+                    if (--asyncScriptsToLoad === 0) {
+                        dispatchEvent( 'asyncscriptsloaded' );
+                    }
+                });
+            }
         }
 
         function loadScript( s ) {
-            head.ready( s.src.match( /([\w\d_\-]*)\.?js$|[^\\\/]*$/i )[0], function() {
-                // Extension may contain callback functions
-                if( typeof s.callback === 'function' ) {
-                    s.callback.apply( this );
-                }
+            if( !s.async ) {
+                scriptsToPreload++;
 
-                if( --scriptsToPreload === 0 ) {
-                    // TODO: handle FALSE return value (= fail)
-                    proceed();
-                }
-            });
+                require([s.src].concat(s.dependencies || []), function () {
+                    // Extension may contain callback function
+                    if( typeof s.callback === 'function' ) {
+                        s.callback.apply( this, arguments );
+                    }
+
+                    // async scripts may take longer, the 'synchronous' ones are required to complete loading and initializing before we can truly start:
+                    if( --scriptsToPreload === 0 ) {
+                        proceed();
+                    }
+                });
+            } else {
+                // make the async scripts wait till we're done loading the more important synchronous ones:
+                scriptsAsync.push(s);
+            }
         }
 
         for( var i = 0, len = config.dependencies.length; i < len; i++ ) {
@@ -346,27 +375,11 @@
 
             // Load if there's no condition or the condition is truthy
             if( !s.condition || s.condition() ) {
-                if( s.async ) {
-                    scriptsAsync.push( s.src );
-                }
-                else {
-                    scripts.push( s.src );
-                }
-
                 loadScript( s );
             }
         }
 
-        if( scripts.length ) {
-            scriptsToPreload = scripts.length;
-
-            // Load synchronous scripts
-            head.js.apply( null, scripts );
-            return true;
-        }
-        else {
-            return proceed();
-        }
+        return proceed();
     }
 
 

@@ -28,6 +28,12 @@
         <!--[if lt IE 9]>
         <script src="lib/js/html5shiv.js"></script>
         <![endif]-->
+
+        <link rel='stylesheet' href='lib/js/nprogress/nprogress.css'>
+
+        <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,700,400italic'>
+
+        <script src='lib/js/nprogress/nprogress.js'></script>
     </head>
 
     <body class="reveal-viewport">
@@ -356,10 +362,12 @@ function linkify( selector ) {
                 <section>
                     <h2>Export to PDF</h2>
                     <p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>, below is an example that's been uploaded to SlideShare.</p>
+                    <!--
                     <iframe id="slideshare" src="http://www.slideshare.net/slideshow/embed_code/13872948" width="455" height="356" style="margin:0;overflow:hidden;border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe>
                     <script>
                         document.getElementById('slideshare').attributeName = 'allowfullscreen';
                     </script>
+                    -->
                 </section>
 
                 <section>
@@ -414,53 +422,45 @@ function linkify( selector ) {
             <div class="progress"><span></span></div>
         </div>
 
-        <script src="lib/js/head/dist/head.js"></script>
-        <script src="js/reveal.js"></script>
-
         <script>
+            var body = document.getElementsByTagName('body')[0];
+            body.style.display = 'block'; // $('body').show();
+            var version_el = body.getElementsByClassName('version');
+            for (var i = version_el.length; i-- > 0; ) {
+              version_el[i].innerHTML = NProgress.version; // $('.version').text(NProgress.version);
+            }
+            NProgress.start("Loading the presentation...");
 
-            head.load("lib/plugins/zoom/js/zoom.js", function() {
-                console.log("zoom library loaded.", arguments);
-            });
-            head.load("lib/plugins/highlight/dist/highlight-umd.js", function() {
-                console.log("highlight library loaded.", arguments);
-            });
-            head.load("lib/plugins/marked/lib/marked.js", function() {
-                console.log("markdown library loaded.", arguments);
-            });
+            NProgress.settings.onDoneBegin = slow_fade_all_ends_all;
 
-            // Full list of configuration options available here:
-            // https://github.com/hakimel/reveal.js#configuration
-            Reveal.initialize({
-                // width: 960,
-                // height: 700,
-                controls: true,
-                progress: true,
-                history: true,
-                center: true,
-                slideNumber: true,
+            function tick() { 
+              // NProgress.inc() will never arrive at 'done'all by itself as it won't push the .status beyond the 0.994 mark:
+              if (NProgress.status > 0.99) {
+                NProgress.done(false, "Done. Ready when you are!"); 
 
-                theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-                transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+                // slow_fade_all_ends_all(); <-- executed via NProgress.settings.onDoneBegin instead
+              } else {
+                NProgress.inc();
+                setTimeout(tick, 200);
+              }
+            }
+            tick();
 
-                // Parallax scrolling
-                parallaxBackgroundImage: 'assets/reveal-parallax-1.jpg', // 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
-                //parallaxBackgroundSize: '2100px 900px',
-
-                // Optional libraries used to extend on reveal.js
-                dependencies: [
-                    { src: 'lib/js/classList/classList.js', condition: function() { return !document.body.classList; } },
-                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { if (typeof hljs !== 'undefined') { hljs.initHighlightingOnLoad(); } } },
-                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
-                    // { src: 'plugin/leap/leap.js', async: true },
-                    { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
-                    // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
-                ]
-            });
-
+            function slow_fade_all_ends_all() {
+              function slow_fade_one(el, i) {
+                setTimeout(function() { 
+                  NProgress.Internals.removeClass(el, 'out'); 
+                }, i * 500);
+              }
+              var fade_el = body.getElementsByClassName('fade');
+              for (var i = fade_el.length; i-- > 0; ) {
+                slow_fade_one(fade_el[i], i);
+              }
+            }
         </script>
 
+        <!-- data-main attribute tells require.js to load
+             scripts/main.js after require.js loads. -->
+        <script data-main="js/require-reveal-init.js" src="lib/js/requireJS/require.js"></script>
     </body>
 </html>

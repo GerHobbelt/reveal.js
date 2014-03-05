@@ -58,3 +58,6 @@
 	path = util/wsclean
 	url = git@github.com:GerHobbelt/whitespace-cleaner.git
 	ignore = dirty
+[submodule "lib/js/nprogress"]
+	path = lib/js/nprogress
+	url = git@github.com:GerHobbelt/nprogress.git
