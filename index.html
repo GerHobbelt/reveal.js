@@ -433,10 +433,10 @@ function linkify( selector ) {
 
             NProgress.settings.onDoneBegin = slow_fade_all_ends_all;
 
-            function tick() { 
-              // NProgress.inc() will never arrive at 'done'all by itself as it won't push the .status beyond the 0.994 mark:
+            function tick() {
+              // NProgress.inc() will never arrive at 'done' all by itself as it won't push the .status beyond the 0.994 mark:
               if (NProgress.status > 0.99) {
-                NProgress.done(false, "Done. Ready when you are!"); 
+                NProgress.done(false, "Done. Ready when you are!");
 
                 // slow_fade_all_ends_all(); <-- executed via NProgress.settings.onDoneBegin instead
               } else {
@@ -448,8 +448,8 @@ function linkify( selector ) {
 
             function slow_fade_all_ends_all() {
               function slow_fade_one(el, i) {
-                setTimeout(function() { 
-                  NProgress.Internals.removeClass(el, 'out'); 
+                setTimeout(function() {
+                  NProgress.Internals.removeClass(el, 'out');
                 }, i * 500);
               }
               var fade_el = body.getElementsByClassName('fade');
