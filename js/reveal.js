@@ -958,6 +958,22 @@
     }
 
     /**
+	 * Utility for deserializing a value.
+	 */
+	function deserialize( value ) {
+
+		if( typeof value === 'string' ) {
+			if( value === 'null' ) return null;
+			else if( value === 'true' ) return true;
+			else if( value === 'false' ) return false;
+			else if( value.match( /^\d+$/ ) ) return parseFloat( value );
+		}
+
+		return value;
+
+	}
+
+	/**
      * Measures the distance in pixels between point a
      * and point b.
      *
@@ -2231,46 +2247,7 @@
         // Update progress if enabled
         if( config.progress && dom.progress ) {
 
-            var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
-
-            // The number of past and total slides
-            var totalCount = document.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
-            var pastCount = 0;
-
-            // Step through all slides and count the past ones
-            mainLoop: for( var i = 0; i < horizontalSlides.length; i++ ) {
-
-                var horizontalSlide = horizontalSlides[i];
-                horizontalSlide.setAttribute( 'data-slide', pastCount );
-
-                var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
-
-                for( var j = 0; j < verticalSlides.length; j++ ) {
-
-                    // Stop as soon as we arrive at the present
-                    if( verticalSlides[j].classList.contains( 'present' ) ) {
-                        break mainLoop;
-                    }
-
-                    pastCount++;
-
-                }
-
-                // Stop as soon as we arrive at the present
-                if( horizontalSlide.classList.contains( 'present' ) ) {
-                    break;
-                }
-
-                // Don't count the wrapping section for vertical slides
-                if( horizontalSlide.classList.contains( 'stack' ) === false ) {
-                    pastCount++;
-                }
-            }
-
-            if( !isPrintingPDF() ) {
-                dom.viewport.setAttribute( 'data-slide', pastCount );
-            }
-            dom.progressbar.style.width = ( pastCount / ( totalCount - 1 ) ) * window.innerWidth + 'px';
+			dom.progressbar.style.width = getProgress() * window.innerWidth + 'px';
         }
     }
 
@@ -2575,6 +2552,70 @@
     }
 
     /**
+	 * Returns a value ranging from 0-1 that represents
+	 * how far into the presentation we have navigated.
+	 */
+	function getProgress() {
+
+		var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+
+		// The number of past and total slides
+		var totalCount = document.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
+		var pastCount = 0;
+
+		// Step through all slides and count the past ones
+		mainLoop: for( var i = 0; i < horizontalSlides.length; i++ ) {
+
+			var horizontalSlide = horizontalSlides[i];
+			var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
+
+			for( var j = 0; j < verticalSlides.length; j++ ) {
+
+				// Stop as soon as we arrive at the present
+				if( verticalSlides[j].classList.contains( 'present' ) ) {
+					break mainLoop;
+				}
+
+				pastCount++;
+
+			}
+
+			// Stop as soon as we arrive at the present
+			if( horizontalSlide.classList.contains( 'present' ) ) {
+				break;
+			}
+
+			// Don't count the wrapping section for vertical slides
+			if( horizontalSlide.classList.contains( 'stack' ) === false ) {
+				pastCount++;
+			}
+
+		}
+
+		if( currentSlide ) {
+
+			var allFragments = currentSlide.querySelectorAll( '.fragment' );
+
+			// If there are fragments in the current slide those should be
+			// accounted for in the progress.
+			if( allFragments.length > 0 ) {
+				var visibleFragments = currentSlide.querySelectorAll( '.fragment.visible' );
+
+				// This value represents how big a portion of the slide progress
+				// that is made up by its fragments (0-1)
+				var fragmentWeight = 0.9;
+
+				// Add fragment progress to the past slide count
+				pastCount += ( visibleFragments.length / allFragments.length ) * fragmentWeight;
+			}
+
+		}
+
+		return pastCount / ( totalCount - 1 );
+
+	}
+
+	/**
      * Checks if this presentation is running inside of the
      * speaker notes window.
      */
@@ -2733,9 +2774,9 @@
 	function setState( state ) {
 
 		if( typeof state === 'object' ) {
-			slide( state.indexh, state.indexv, state.indexf );
-			togglePause( state.paused );
-			toggleOverview( state.overview );
+			slide( deserialize( state.indexh ), deserialize( state.indexv ), deserialize( state.indexf ) );
+			togglePause( deserialize( state.paused ) );
+			toggleOverview( deserialize( state.overview ) );
 		}
 
 	}
@@ -2874,6 +2915,7 @@
                 }
 
                 updateControls();
+				updateProgress();
 
                 return !!( fragmentsShown.length || fragmentsHidden.length );
 
@@ -3859,6 +3901,9 @@
 		getState: getState,
 		setState: setState,
 
+		// Presentation progress on range of 0-1
+		getProgress: getProgress,
+
         // Returns the indices of the current, or specified, slide
         getIndices: getIndices,
 
@@ -3906,12 +3951,7 @@
             for( var i in query ) {
                 var value = query[ i ];
 
-                query[ i ] = unescape( value );
-
-                if( value === 'null' ) query[ i ] = null;
-                else if( value === 'true' ) query[ i ] = true;
-                else if( value === 'false' ) query[ i ] = false;
-                else if( value.match( /^\d+$/ ) ) query[ i ] = parseFloat( value );
+				query[ i ] = deserialize( unescape( value ) );
             }
 
             return query;
