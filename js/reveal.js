@@ -195,12 +195,6 @@
         // Delays updates to the URL due to a Chrome thumbnailer bug
         writeURLTimeout = 0,
 
-        // A delay used to activate the overview mode
-        activateOverviewTimeout = 0,
-
-        // A delay used to deactivate the overview mode
-        deactivateOverviewTimeout = 0,
-
         // Flags if the interaction event listeners are bound
         eventsAreBound = false,
 
@@ -793,6 +787,14 @@
             autoSlidePaused = false;
         }
 
+		// When fragments are turned off they should be visible
+		if( config.fragments === false ) {
+			toArray( dom.slides.querySelectorAll( '.fragment' ) ).forEach( function( element ) {
+				element.classList.add( 'visible' );
+				element.classList.remove( 'current-fragment' );
+			} );
+		}
+
         // Load the theme in the config, if it's not already loaded
         if( config.theme && dom.theme ) {
             var themeURL = dom.theme.getAttribute( 'href' );
@@ -1047,40 +1049,26 @@
 
     /**
      * Returns the remaining height within the parent of the
-     * target element after subtracting the height of all
-     * siblings.
+	 * target element.
      *
-     * remaining height = [parent height] - [ siblings height]
+	 * remaining height = [ configured parent height ] - [ current parent height ]
      */
     function getRemainingHeight( element, height ) {
 
         height = height || 0;
 
         if( element ) {
-            var parent = element.parentNode;
-            var siblings = parent.childNodes;
+			var newHeight, oldHeight = element.style.height;
 
-            // Subtract the height of each sibling
-            toArray( siblings ).forEach( function( sibling ) {
+			// Change the .stretch element height to 0 in order find the height of all
+			// the other elements
+			element.style.height = '0px';
+			newHeight = height - element.parentNode.offsetHeight;
 
-                if( typeof sibling.offsetHeight === 'number' && sibling !== element ) {
+			// Restore the old height, just in case
+			element.style.height = oldHeight + 'px';
 
-                    var styles = window.getComputedStyle( sibling ),
-                        marginTop = parseInt( styles.marginTop, 10 ),
-                        marginBottom = parseInt( styles.marginBottom, 10 );
-
-                    height -= sibling.offsetHeight + marginTop + marginBottom;
-
-                }
-
-            } );
-
-            var elementStyles = window.getComputedStyle( element );
-
-            // Subtract the margins of the target element
-            height -= parseInt( elementStyles.marginTop, 10 ) +
-                        parseInt( elementStyles.marginBottom, 10 );
-
+			return newHeight;
         }
 
         return height;
@@ -1411,7 +1399,7 @@
         toArray( dom.slides.querySelectorAll( 'section > .stretch' ) ).forEach( function( element ) {
 
             // Determine how much vertical space we can use
-            var remainingHeight = getRemainingHeight( element, ( height - ( padding * 2 ) ) );
+			var remainingHeight = getRemainingHeight( element, height );
 
             // Consider the aspect ratio of media elements
             if( /(img|video)/gi.test( element.nodeName ) ) {
@@ -1492,14 +1480,6 @@
             dom.wrapper.classList.add( 'overview' );
             dom.wrapper.classList.remove( 'overview-deactivating' );
 
-            clearTimeout( activateOverviewTimeout );
-            clearTimeout( deactivateOverviewTimeout );
-
-            // Not the prettiest solution, but need to let the overview
-            // class apply first so that slides are measured accurately
-            // before we can position them
-            activateOverviewTimeout = setTimeout( function() {
-
                 var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
                 overview_slides_info = {
                     horizontal_count: horizontalSlides.length,
@@ -1560,8 +1540,6 @@
                     } );
                 }
 
-            }, 10 );
-
         }
 
     }
@@ -1575,8 +1553,6 @@
         // Only proceed if enabled in config
         if( config.overview && dom.wrapper ) {
 
-            clearTimeout( activateOverviewTimeout );
-            clearTimeout( deactivateOverviewTimeout );
 
             overview_slides_info = null;
 
@@ -1587,7 +1563,7 @@
             // moving from slide to slide
             dom.wrapper.classList.add( 'overview-deactivating' );
 
-            deactivateOverviewTimeout = setTimeout( function () {
+			setTimeout( function () {
                 dom.wrapper.classList.remove( 'overview-deactivating' );
             }, 1 );
 
@@ -1709,7 +1685,7 @@
                             element.webkitRequestFullscreen ||
                             element.webkitRequestFullScreen ||
                             element.mozRequestFullScreen ||
-                            element.msRequestFullScreen;
+                            element.msRequestFullscreen;
 
         if( requestMethod ) {
             requestMethod.apply( element );
@@ -2091,6 +2067,7 @@
                     // Any element previous to index is given the 'past' class
                     element.classList.add( reverse ? 'future' : 'past' );
 
+					if( config.fragments ) {
                     var pastFragments = toArray( element.querySelectorAll( '.fragment' ) );
 
                     // Show all fragments on prior slides
@@ -2100,10 +2077,12 @@
                         pastFragment.classList.remove( 'current-fragment' );
                     }
                 }
+				}
                 else if( i > index ) {
                     // Any element subsequent to index is given the 'future' class
                     element.classList.add( reverse ? 'past' : 'future' );
 
+					if( config.fragments ) {
                     var futureFragments = toArray( element.querySelectorAll( '.fragment.visible' ) );
 
                     // No fragments in future slides should be visible ahead of time
@@ -2111,6 +2090,7 @@
                         var futureFragment = futureFragments.pop();
                         futureFragment.classList.remove( 'visible' );
                         futureFragment.classList.remove( 'current-fragment' );
+						}
                     }
                 }
 
@@ -2639,8 +2619,16 @@
         // If the first bit is invalid and there is a name we can
         // assume that this is a named link
         if( isNaN( parseInt( bits[0], 10 ) ) && name.length ) {
-            // Find the slide with the specified name
-            var element = document.querySelector( '#' + name );
+			var element;
+
+			try {
+				// Find the slide with the specified name
+				element = document.querySelector( '#' + name );
+			}
+			catch( e ) {
+				// If the ID is an invalid selector a harmless SyntaxError
+				// may be thrown here.
+			}
 
             if( element ) {
                 // Find the position of the named slide and navigate to it
@@ -2685,9 +2673,16 @@
             else {
                 var url = '/';
 
+				// Attempt to create a named link based on the slide's ID
+				var id = currentSlide.getAttribute( 'id' );
+				if( id ) {
+					id = id.toLowerCase();
+					id = id.replace( /[^a-zA-Z0-9\-\_\:\.]/g, '' );
+				}
+
                 // If the current slide has an ID, use that as a named link
-                if( currentSlide && typeof currentSlide.getAttribute( 'id' ) === 'string' ) {
-                    url = '/' + currentSlide.getAttribute( 'id' );
+				if( currentSlide && typeof id === 'string' && id.length ) {
+					url = '/' + id;
                 }
                 // Otherwise use the /h/v index
                 else {
@@ -3276,8 +3271,8 @@
                         triggered = false;
                     }
                     break;
-                // b, period, Logitech presenter tools "black screen" button
-                case 66: case 190: case 191: togglePause(); break;
+				// two-spot, semicolon, b, period, Logitech presenter tools "black screen" button
+				case 58: case 59: case 66: case 190: case 191: togglePause(); break;
                 // f
                 case 70: enterFullscreen(); break;
                 // a

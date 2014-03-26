@@ -18,7 +18,7 @@
 .reveal a, .reveal abbr, .reveal acronym, .reveal address, .reveal big, .reveal cite, .reveal code,
 .reveal del, .reveal dfn, .reveal em, .reveal img, .reveal ins, .reveal kbd, .reveal q, .reveal s, .reveal samp,
 .reveal small, .reveal strike, .reveal strong, .reveal sub, .reveal sup, .reveal tt, .reveal var,
-.reveal b, .reveal u, .reveal i, .reveal center,
+.reveal b, .reveal u, .reveal center,
 .reveal dl, .reveal dt, .reveal dd, .reveal ol, .reveal ul, .reveal li,
 .reveal fieldset, .reveal form, .reveal label, .reveal legend,
 .reveal table, .reveal caption, .reveal tbody, .reveal tfoot, .reveal thead, .reveal tr, .reveal th, .reveal td,
@@ -92,6 +92,7 @@
 
 .reveal .slides section .fragment {
     opacity: 0;
+	visibility: hidden;
 
     -webkit-transition: all .2s ease;
        -moz-transition: all .2s ease;
@@ -99,10 +100,12 @@
 }
     .reveal .slides section .fragment.visible {
         opacity: 1;
+		visibility: visible;
     }
 
 .reveal .slides section .fragment.grow {
     opacity: 1;
+	visibility: visible;
 }
     .reveal .slides section .fragment.grow.visible {
         -webkit-transform: scale( 1.3 );
@@ -114,6 +117,7 @@
 
 .reveal .slides section .fragment.shrink {
     opacity: 1;
+	visibility: visible;
 }
     .reveal .slides section .fragment.shrink.visible {
         -webkit-transform: scale( 0.7 );
@@ -124,8 +128,6 @@
     }
 
 .reveal .slides section .fragment.zoom-in {
-    opacity: 0;
-
     -webkit-transform: scale( 0.1 );
        -moz-transform: scale( 0.1 );
         -ms-transform: scale( 0.1 );
@@ -134,8 +136,6 @@
 }
 
     .reveal .slides section .fragment.zoom-in.visible {
-        opacity: 1;
-
         -webkit-transform: scale( 1 );
            -moz-transform: scale( 1 );
             -ms-transform: scale( 1 );
@@ -144,8 +144,6 @@
     }
 
 .reveal .slides section .fragment.roll-in {
-    opacity: 0;
-
     -webkit-transform: rotateX( 90deg );
        -moz-transform: rotateX( 90deg );
         -ms-transform: rotateX( 90deg );
@@ -153,8 +151,6 @@
             transform: rotateX( 90deg );
 }
     .reveal .slides section .fragment.roll-in.visible {
-        opacity: 1;
-
         -webkit-transform: rotateX( 0 );
            -moz-transform: rotateX( 0 );
             -ms-transform: rotateX( 0 );
@@ -164,23 +160,29 @@
 
 .reveal .slides section .fragment.fade-out {
     opacity: 1;
+	visibility: visible;
 }
     .reveal .slides section .fragment.fade-out.visible {
         opacity: 0;
+		visibility: hidden;
     }
 
 .reveal .slides section .fragment.semi-fade-out {
     opacity: 1;
+	visibility: visible;
 }
     .reveal .slides section .fragment.semi-fade-out.visible {
         opacity: 0.5;
+		visibility: visible;
     }
 
 .reveal .slides section .fragment.current-visible {
     opacity: 0;
+	visibility: hidden;
 }
     .reveal .slides section .fragment.current-visible.current-fragment {
         opacity: 1;
+		visibility: visible;
     }
 
 .reveal .slides section .fragment.highlight-red,
@@ -190,6 +192,7 @@
 .reveal .slides section .fragment.highlight-blue,
 .reveal .slides section .fragment.highlight-current-blue {
     opacity: 1;
+	visibility: visible;
 }
     .reveal .slides section .fragment.highlight-red.visible {
         color: #ff2c2d
@@ -251,8 +254,7 @@
     font-weight: bold;
 }
 
-.reveal em,
-.reveal i {
+.reveal em {
     font-style: italic;
 }
 
@@ -346,10 +348,13 @@
     font-family: Consolas, "Lucida Console", monospace;
 }
 .reveal pre code {
+	display: block;
     padding: 5px;
     overflow: auto;
     max-height: 400px;
     word-wrap: normal;
+	background: #3F3F3F;
+	color: #DCDCDC;
 }
 .reveal pre.stretch code {
     height: 100%;
@@ -373,7 +378,7 @@
 .reveal table th,
 .reveal table td {
   text-align: left;
-  padding: 0.2em 1em 0.2em 0;
+  padding: 0.2em 0.5em 0.2em 0.5em;
   border-bottom: 1px solid;
 }
 
@@ -1224,9 +1229,7 @@
 
 
 .reveal.fade.overview .slides section,
-.reveal.fade.overview .slides>section>section,
-.reveal.fade.overview-deactivating .slides section,
-.reveal.fade.overview-deactivating .slides>section>section {
+.reveal.fade.overview .slides>section>section {
     -webkit-transition: none;
        -moz-transition: none;
             transition: none;
@@ -1275,6 +1278,12 @@
     visibility: visible !important;
     cursor: pointer;
     background: rgba(0,0,0,0.1);
+}
+.reveal.overview .slides section,
+.reveal.overview-deactivating .slides section {
+	-webkit-transition: none !important;
+	   -moz-transition: none !important;
+	        transition: none !important;
 }
 .reveal.overview .slides section .fragment {
     opacity: 1;
