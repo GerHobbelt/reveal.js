@@ -1341,6 +1341,25 @@
                     // Respect max/min scale settings
                     overviewScale = Math.max( overviewScale, config.overviewMinScale );
                     overviewScale = Math.min( overviewScale, config.overviewMaxScale );
+                } else {
+                    // The number of steps away from the present slide that will be visible
+                    var viewDistance = getViewDistance();
+                    var hcount = Math.min(overview_slides_info.horizontal_count, viewDistance * 2 + 1);
+                    var vcount = Math.min(overview_slides_info.vertical_count, viewDistance * 2 + 1);
+
+                    var totalSlidesWidth = slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
+                    var totalSlidesHeight = slideHeight * vcount * 1.05;
+
+                    // Determine scale of content to fit within available space
+                    overviewScale = Math.min( availableWidth / totalSlidesWidth, availableHeight / totalSlidesHeight );
+                    overviewScale /= scale;
+
+                    // compensate for the 3D depth (heuristic)                    
+                    overviewScale *= 50 / Math.max(1, Math.min(getViewDistance(), overview_slides_info.horizontal_count));
+
+                    // Respect max/min scale settings
+                    overviewScale = Math.max( overviewScale, config.overviewMinScale );
+                    overviewScale = Math.min( overviewScale, config.overviewMaxScale );
                 }
 
                 if( typeof dom.slides_wrapper.style.zoom !== 'undefined' && !navigator.userAgent.match( /(iphone|ipod|ipad|android|chrome)/gi ) ) {
@@ -1352,7 +1371,7 @@
                 }
             }
             else {
-                // reset wrapper scale for slingle sheet view
+                // reset wrapper scale for single sheet view
                 if( typeof dom.slides_wrapper.style.zoom !== 'undefined' && !navigator.userAgent.match( /(iphone|ipod|ipad|android|chrome)/gi ) ) {
                     dom.slides_wrapper.style.zoom = null;
                 }
@@ -1489,7 +1508,7 @@
 			clearTimeout( activateOverviewTimeout );
 			clearTimeout( deactivateOverviewTimeout );
 
-			// Not the pretties solution, but need to let the overview
+			// Not the prettiest solution, but need to let the overview
 			// class apply first so that slides are measured accurately
 			// before we can position them
 			activateOverviewTimeout = setTimeout( function() {
@@ -2214,7 +2233,7 @@
                     verticalSlidesLength = verticalSlides.length;
 
                 // Loops so that it measures 1 between the first and last slides
-                distanceX = Math.abs( ( indexh - x ) % ( horizontalSlidesLength - viewDistance ) ) || 0;
+                distanceX = Math.abs( indexh - x ) || 0;
 
                 // Show the horizontal slide if it's within the view distance
                 horizontalSlide.style.display = distanceX > viewDistance ? 'none' : 'block';
@@ -2228,7 +2247,7 @@
 
                         distanceY = x === indexh ? Math.abs( indexv - y ) : Math.abs( y - oy );
 
-                        verticalSlide.style.display = ( distanceX + distanceY ) > viewDistance ? 'none' : 'block';
+                        verticalSlide.style.display = (distanceX > viewDistance || distanceY > viewDistance) ? 'none' : 'block';
                     }
 
                 }
@@ -3311,8 +3330,56 @@
                     }
                     sync();
                     break;
+
+                // 1..3: overview modes A .. C; 9: restore original
+                case 49:
+                case 50:
+                case 51:
+                case 57:
+                    if (isOverview()) {
+                        if ( config.__overview_backup == null ) {
+                            config.__overview_backup = config.overview;
+                        }
+                        var overview_modes = [
+                        'translate3d',
+                        'perspective',
+                        'scale'
+                        ];
+                        var new_mode = overview_modes[event.keyCode - 49];
+                        if ( !new_mode ) {
+                            config.overview = config.__overview_backup;
+                        } else {
+                            config.overview = new_mode;
+                        }
+                        activateOverview();
+                    }
+                    break;
+
+                // 7: overview shows all; 8: overview is restricted to configured distance limits
+                case 55:
+                    if (isOverview()) {
+                        if ( config.__overviewViewDistance_backup == null ) {
+                            config.__overviewViewDistance_backup = config.overviewViewDistance;
+                        }
+                        // set a ridiculous distance equivalent to 'infinity'
+                        config.overviewViewDistance = 1E3;
+                        activateOverview();
+                    }
+                    break;
+
+                case 56:
+                    if ( config.__overviewViewDistance_backup == null ) {
+                        config.__overviewViewDistance_backup = config.overviewViewDistance;
+                    }
+                    config.overviewViewDistance = config.__overviewViewDistance_backup;
+                    if (isOverview()) {
+                        activateOverview();
+                    }
+                    break;
+
                 default:
                     triggered = false;
+                    break;
             }
 
         }
