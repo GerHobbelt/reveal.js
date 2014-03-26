@@ -2265,7 +2265,9 @@
         // Update progress if enabled
         if( config.progress && dom.progress ) {
 
-			dom.progressbar.style.width = getProgress() * window.innerWidth + 'px';
+            if ( dom.progressbar ) {
+			    dom.progressbar.style.width = getProgress() * window.innerWidth + 'px';
+            }
         }
     }
 
