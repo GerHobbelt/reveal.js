@@ -3,16 +3,27 @@
  * markdown inside of presentations as well as loading
  * of external markdown documents.
  */
-(function( root, factory ) {
-    if( typeof exports === 'object' ) {
-        module.exports = factory( require( '../../lib/plugins/marked/lib/marked' ) );
-    }
-    else {
-        // Browser globals (root is window)
-        root.RevealMarkdown = factory( root.marked );
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['marked', 'highlight'], function (marked, hljs) {
+            root.RevealMarkdown = factory(marked, hljs);
+            root.RevealMarkdown.initialize();
+            return root.RevealMarkdown;
+        });
+    } else if (typeof exports === 'object') {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        var rvl;
+        module.exports = rvl = factory(require('marked'), require('highlight'));
+        rvl.initialize();
+    } else {
+        // Browser globals
+        root.RevealMarkdown = factory(root.marked, root.hljs);
         root.RevealMarkdown.initialize();
     }
-}( this, function( marked ) {
+}(this, function (marked, hljs) {
 
     if( typeof marked === 'undefined' ) {
         throw 'The reveal.js Markdown plugin requires marked to be loaded';

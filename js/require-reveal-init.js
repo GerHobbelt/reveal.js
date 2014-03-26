@@ -40,7 +40,7 @@ require(['head', 'zoom', 'highlight', 'marked', 'classList', 'verge', 'reveal'],
         dependencies: [
             { src: 'lib/js/classList/classList.js', condition: function() { return !document.body.classList; } },
             { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-            { src: 'plugin/highlight/highlight.js', async: true, callback: function() { if (typeof hljs !== 'undefined') { hljs.initHighlightingOnLoad(); } } },
+            { src: 'plugin/highlight/highlight.js', async: true, callback: function() { if (typeof highlight !== 'undefined') { highlight.initHighlightingOnLoad(); } } },
             { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
             { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
             // { src: 'plugin/leap/leap.js', async: true },
