@@ -195,6 +195,12 @@
         // Delays updates to the URL due to a Chrome thumbnailer bug
         writeURLTimeout = 0,
 
+		// A delay used to activate the overview mode
+		activateOverviewTimeout = 0,
+
+		// A delay used to deactivate the overview mode
+		deactivateOverviewTimeout = 0,
+
         // Flags if the interaction event listeners are bound
         eventsAreBound = false,
 
@@ -1480,6 +1486,14 @@
             dom.wrapper.classList.add( 'overview' );
             dom.wrapper.classList.remove( 'overview-deactivating' );
 
+			clearTimeout( activateOverviewTimeout );
+			clearTimeout( deactivateOverviewTimeout );
+
+			// Not the pretties solution, but need to let the overview
+			// class apply first so that slides are measured accurately
+			// before we can position them
+			activateOverviewTimeout = setTimeout( function() {
+
                 var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
                 overview_slides_info = {
                     horizontal_count: horizontalSlides.length,
@@ -1540,6 +1554,8 @@
                     } );
                 }
 
+			}, 10 );
+
         }
 
     }
@@ -1556,6 +1572,9 @@
 
             overview_slides_info = null;
 
+			clearTimeout( activateOverviewTimeout );
+			clearTimeout( deactivateOverviewTimeout );
+
             dom.wrapper.classList.remove( 'overview' );
 
             // Temporarily add a class so that transitions can do different things
@@ -1563,7 +1582,7 @@
             // moving from slide to slide
             dom.wrapper.classList.add( 'overview-deactivating' );
 
-			setTimeout( function () {
+			deactivateOverviewTimeout = setTimeout( function () {
                 dom.wrapper.classList.remove( 'overview-deactivating' );
             }, 1 );
 
