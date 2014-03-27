@@ -38,9 +38,10 @@
     'use strict';
 
     var SLIDES_SELECTOR = '.reveal .slides section',
-        HORIZONTAL_SLIDES_SELECTOR = '.reveal .slides>section',
-        VERTICAL_SLIDES_SELECTOR = '.reveal .slides>section.present>section',
-        HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-of-type',
+        HORIZONTAL_SLIDES_SELECTOR = '.reveal .slides > section',
+        VERTICAL_SLIDES_SELECTOR = '.reveal .slides > section.present > section',
+        HOME_SLIDE_SELECTOR = '.reveal .slides > section:first-of-type',
+        SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR = ':scope > section',
         SLIDE_NO_DISPLAY_DISTANCE = 1,
 
         Reveal = null,
@@ -676,7 +677,7 @@
             }
 
             // Iterate over all vertical slides
-            toArray( slideh.querySelectorAll( 'section' ) ).forEach( function( slidev ) {
+            toArray( slideh.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).forEach( function( slidev ) {
 
                 if( isPrintingPDF() ) {
                     _createBackground( slidev, slidev );
@@ -1530,7 +1531,7 @@
 
                     if( hslide.classList.contains( 'stack' ) ) {
 
-                        var verticalSlides = hslide.querySelectorAll( 'section' );
+                        var verticalSlides = hslide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
                         overview_slides_info.vertical_count = Math.max(overview_slides_info.vertical_count, verticalSlides.length);
 
                         for( var j = 0, len2 = verticalSlides.length; j < len2; j++ ) {
@@ -1897,7 +1898,7 @@
         // Find the current horizontal slide and any possible vertical slides
         // within it
         var currentHorizontalSlide = horizontalSlides[ indexh ],
-            currentVerticalSlides = currentHorizontalSlide.querySelectorAll( 'section' );
+            currentVerticalSlides = currentHorizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
 
         // Store references to the previous and current slides
         currentSlide = currentVerticalSlides[ indexv ] || currentHorizontalSlide;
@@ -2005,7 +2006,7 @@
         var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
         horizontalSlides.forEach( function( horizontalSlide ) {
 
-            var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
+            var verticalSlides = toArray( horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) );
             verticalSlides.forEach( function( verticalSlide, y ) {
 
                 if( y > 0 ) {
@@ -2029,7 +2030,7 @@
         var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
         horizontalSlides.forEach( function( horizontalSlide ) {
 
-            var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
+            var verticalSlides = toArray( horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) );
             verticalSlides.forEach( function( verticalSlide, y ) {
 
                 sortFragments( verticalSlide.querySelectorAll( '.fragment' ) );
@@ -2133,7 +2134,7 @@
                 }
 
                 // If this element contains vertical slides
-                if( element.querySelector( 'section' ) ) {
+                if( element.querySelector( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ) {
                     element.classList.add( 'stack' );
 
                     // Solves an edge case where the previous slide maintains the
@@ -2229,7 +2230,7 @@
             for( var x = 0; x < horizontalSlidesLength; x++ ) {
                 var horizontalSlide = horizontalSlides[x];
 
-                var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) ),
+                var verticalSlides = toArray( horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ),
                     verticalSlidesLength = verticalSlides.length;
 
                 // Loops so that it measures 1 between the first and last slides
@@ -2587,7 +2588,7 @@
 		mainLoop: for( var i = 0; i < horizontalSlides.length; i++ ) {
 
 			var horizontalSlide = horizontalSlides[i];
-			var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
+			var verticalSlides = toArray( horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) );
 
 			for( var j = 0; j < verticalSlides.length; j++ ) {
 
@@ -2766,7 +2767,7 @@
 
             // If this is a vertical slide, grab the vertical index
             if( isVertical ) {
-                v = Math.max( toArray( slide.parentNode.querySelectorAll( 'section' ) ).indexOf( slide ), 0 );
+                v = Math.max( toArray( slide.parentNode.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).indexOf( slide ), 0 );
             }
         }
 
@@ -3145,7 +3146,7 @@
                 var previousSlide = document.querySelector( HORIZONTAL_SLIDES_SELECTOR + '.past:nth-child(' + indexh + ')' );
 
                 if( previousSlide ) {
-                    var v = ( previousSlide.querySelectorAll( 'section' ).length - 1 ) || undefined;
+                    var v = ( previousSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ).length - 1 ) || undefined;
                     var h = indexh - 1;
                     slide( h, v );
                 }
@@ -3619,7 +3620,7 @@
             }
 
             var horizontalSlide = horizontalSlides[i];
-            var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
+            var verticalSlides = toArray( horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) );
 
             for( var j = 0; j < verticalSlides.length; j++ ) {
                 if (pastCount === slideIndex) {
@@ -3993,7 +3994,7 @@
         // Returns the slide at the specified index, y is optional
         getSlide: function( x, y ) {
             var horizontalSlide = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR )[ x ];
-            var verticalSlides = horizontalSlide && horizontalSlide.querySelectorAll( 'section' );
+            var verticalSlides = horizontalSlide && horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
 
             if( typeof y !== 'undefined' ) {
                 return verticalSlides ? verticalSlides[ y ] : undefined;

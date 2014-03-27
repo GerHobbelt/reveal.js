@@ -61,3 +61,6 @@
 [submodule "lib/js/nprogress"]
 	path = lib/js/nprogress
 	url = git@github.com:GerHobbelt/nprogress.git
+[submodule "lib/scopedQuerySelectorShim"]
+	path = lib/scopedQuerySelectorShim
+	url = git@github.com:GerHobbelt/scopedQuerySelectorShim.git
