@@ -44,52 +44,20 @@
 					<h2>DIY Continuous Integration</h2>
 					<h3>With Drupal</h3>
           <br />
-          <h5>Promet Webinar</h5>
-          <h5>Thursday, December 19, 2013</h5>
+          <h5>MidCamp</h5>
+          <h5>University Center, Chicago, IL
+          <h5>Saturday, March 29, 2014</h5>
 				</section>
 
 				<section>
-					<h2 class='static-heading' style='top:-65%'>What I'm Gonna Hollar Bout!</h2>
+					<h2 class='static-heading' style='top:-65%'>What We Are Hollarin Bout!</h2>
           <section>
-            <ul>
-              <li><strong>What is Continuous Integration</strong> and why should you care.
-              </li>
-              <li><strong>Continuous Integration's 10 Principles</strong>
-                <ul>
-                  <li>Revision Control</li>
-                  <li>Build Automation</li>
-                  <li>Automate Deployment</li>
-                  <li>Self-Testing Build</li>
-                  <li>Testing in a Clone of Production</li>
-                  <li>Frequent Commits</li>
-                  <li>Code Consolidation</li>
-                  <li>Fast Builds</li>
-                  <li>Build Availability</li>
-                  <li>Test Result Availability</li>
-                </ul>
-              </li>
+            <ul style='width:100%;'>
+              <li>What is Continuous Integration.</li>
+              <li>Why you should care. A LOT.</li>
+              <li>Wait. What exactly is continuous integration again?</li>
+              <li>How we do it.</li>
             </ul>
-          </section>
-          <section>
-            <ul>
-              <li><strong>Tools of the trade</strong>
-                <ul>
-                  <li>Git</li>
-                  <li>Vagrant</li>
-                  <li>Chef</li>
-                  <li>PHPUnit</li>
-                  <li>Jenkins</li>
-                </ul>
-              </li>
-            </ul>
-          </section>
-          <section>
-            <h3>This session has three goals:</h3>
-            <ol>
-              <li>explain what continuous integration means relative to Drupal.</li>
-              <li>introduce the tools available to implement CI now.</li>
-              <li>demonstrate what a CI implementation looks like in practice</li>
-            </ol>
           </section>
 				</section>
 
@@ -121,35 +89,40 @@
 					<h4 class='tag'>&lt;/SHAMELESS SELF PROMOTION&gt;</h4>
 				</section>
         <section>
-          <h2 class='static-heading' style='top:-65%;' >Credits</h2>
+          <h2 class='static-heading' style='top:-65%;' >And then there's</h2>
           <h3>Michelle Krejci</h3>
-          <p>Thanks and props to my friend and co-worker for helping me get this presentation going and challenging me to make it better</p>
           <img src='http://www.prometsource.com/sites/default/files/styles/people-large/public/Michelle2.jpg' class='not-fancy' />
           <br />
-          Find <a href='http://drupal.org/user/1190096'>Craychee</a> on Drupal.org
+          <p>Find <a href='http://drupal.org/user/1190096'>Craychee</a> on Drupal.org</p>
+          <p>Twitter: <strong>@dev_meshev</strong></p>
         </section>
 				<section>
           <h2 class='static-heading' style='top:-65%;' >What is Continuous Integration</h2>
           <section>
-            <h3>And Why Should You Care</h3>
-            <ul>
-              <li>Is it automated testing?</li>
-              <li>Automated deployment?</li>
-              <li>Test-driven development?</li>
-              <li><strong>↝↝↝↝</strong>INSERT BUZZ WORD HERE<strong>↜↜↜↜</strong></li>
-            </ul>
-          </section>
-          <section>
-            <h3>Not Exactly...</h3>
-            <p>
-              Continuous Integration can <strong>contain</strong> these practices, but each one individually don't make up the whole CI picture.
-            </p>
-            <p>
-              Continuous Integration touches all parties: clients, project managers, system admins, and developers, front and back end. If that’s you, you need to know what CI is.</p>
+            <p>Systematically integrating small pieces of</p>
+            <p><strong>quality control</strong></p> 
+            <p>throughout</p>
+            <p><strong>every stage</strong></p>
+            <p>of development.</p>
           </section>
         </section>
         <section>
-          <h2 class='static-heading' style='top:-65%;' >10 Principles of Continuous Integration</h2>
+          <h2 class='static-heading' style='top:-65%;' >LMGTFY</h2>
+          <section>
+            <img src='http://upload.wikimedia.org/wikipedia/en/7/74/Continuous_Delivery_process_diagram.png' />
+          </section>
+        </section>
+        <section>
+          <h2 class='static-heading' style='top:-65%;' >Why Should I Care?</h2>
+          <section>
+            <img src='img/katamari.png' />
+          </section>
+        </section>
+        <section>
+          <h2 class='static-heading' style='top:-65%;' >Wait. What exactly is it again?</h2>
+          <section>
+          <img src='http://guardianlv.com/wp-content/uploads/2013/11/kanye-west.jpg' />
+          </section>
           <section>
             <ul>
                 <li>Revision Control</li>
@@ -165,7 +138,13 @@
             </ul>
           </section>
           <section>
-            <h3>Revision Control</h3>
+            <h3 style='margin:25px;'>Revision Control</h3>
+            <p>
+            <img src='img/git-flow-timeline.png' width=50% class='not-fancy'/>
+            </p>
+            <p>
+            <small>Courtesy of <a href='http://joefleming.net/posts/git-flow/'>Joefleming.net</a></small>
+            </p>
             <ul>
               <li>Version Branching should be minimized.</li>
               <li>Allows your developers to <strong>integrate</strong> their code easily.</li>
@@ -188,11 +167,19 @@
               <li>Less mistakes, always the same.</li>
               <li>Usually provides an automated contingency plan if it fails.</li>
             </ul>
+            <h3>Jenkins</h3>
+            <img src='img/headshot.png' class='not-fancy'/>
           </section>
           <section>
             <h3>Self-testing Build</h3>
             <ul>
               <li>When a build is created, tests should run to confirm that it behaves the way developers expect it to.</li>
+            </ul>
+            <h3>PHPUnit</h3>
+            <ul>
+              <li>Popular unit testing software.</li>
+              <li>Allows functional and other types of testing.</li>
+              <li>Can be used with other software like Selenium or curl to facilitate other testing.</li>
             </ul>
           </section>
           <section>
@@ -201,6 +188,12 @@
               <li>Environmental changes can lead to failures.</li>
               <li>If a copy cannot be provided, a scalable version reduces risk.</li>
               <li>Use configuration management tools to configure all builds.</li>
+            </ul>
+            <h3>Chef</h3>
+            <ul>
+              <li>One thing that makes Vagrant configurable.</li>
+              <li>Allows version controlled configuration!</li>
+              <li>Use to build like environments and quickly discern differences</li>
             </ul>
           </section>
           <section>
@@ -246,125 +239,7 @@
           </section>
         </section>
         <section>
-          <h2 class='static-heading' style='top:-65%;'>Tools of the Trade</h2>
-          <section>
-            <h3>Git</h3>
-            <p>
-            <img src='img/git-flow-timeline.png' class='not-fancy'/>
-            </p>
-            <p>
-            <small>Courtesy of <a href='http://joefleming.net/posts/git-flow/'>Joefleming.net</a></small>
-            </p>
-            <ul>
-              <li>Popular</li>
-              <li>Free</li>
-              <li>Use it!</li>
-            </ul>
-          </section>
-          <section>
-            <h3>Vagrant</h3>
-            <ul>
-              <li>A way to take an environment and distribute it.</li>
-            </ul>
-          </section>
-          <section>
-            <h3>Chef</h3>
-            <ul>
-              <li>One thing that makes Vagrant configurable.</li>
-              <li>Allows version controlled configuration!</li>
-              <li>Use to build like environments and quickly discern differences</li>
-            </ul>
-          </section>
-          <section>
-            <h3>PHPUnit</h3>
-            <ul>
-              <li>Popular unit testing software.</li>
-              <li>Allows functional and other types of testing.</li>
-              <li>Can be used with other software like Selenium or curl to facilitate other testing.</li>
-            </ul>
-          </section>
-          <section>
-            <h3>Jenkins</h3>
-            <img src='img/headshot.png' class='not-fancy'/>
-            <ul>
-              <li>Continuous Integration Server software</li>
-              <li>Jobs</li>
-              <li>Hooks</li>
-              <li>Consolidates and standardizes custom scripts</li>
-              <li>Git Plugin</li>
-            </ul>
-          </section>
-        </section>
-        <section>
           <h2 class='static-heading' style='top:-65%'>Demonstration</h2>
-            <section>
-                <h3>Principles Relationship with Tools and Processes</h3>
-                <ul>
-                  <li>Revision Control
-                    <ul>
-                      <li>Git</li>
-                      <li>Gitflow</li>
-                    </ul>
-                  </li>
-                  <li>Build Automation
-                    <ul>
-                      <li>Build Script</li>
-                    </ul>
-                  </li>
-                  <li>Automate Deployment
-                    <ul>
-                      <li>Jenkins</li>
-                      <li>Build Script</li>
-                    </ul>
-                  </li>
-                  <li>Self-Testing Build
-                    <ul>
-                      <li>PHPUnit</li>
-                      <li>Build Script</li>
-                    </ul>
-                  </li>
-                  <li>Testing in a Clone of Production
-                    <ul>
-                      <li>Chef</li>
-                      <li>Vagrant</li>
-                      <li>Jenkins</li>
-                    </ul>
-                  </li>
-                </ul>
-            </section>
-            <section>
-                <h3>Principles Relationship with Tools and Processes Continued</h3>
-              <ul>
-                  <li>Frequent Commits
-                    <ul>
-                      <li>Git</li>
-                      <li>Gitflow</li>
-                    </ul>
-                  </li>
-                  <li>Code Consolidation
-                    <ul>
-                      <li>Git</li>
-                      <li>Gitflow</li>
-                    </ul>
-                  </li>
-                  <li>Fast Builds
-                    <ul>
-                      <li>Build Script</li>
-                      <li>Vagrant</li>
-                      <li>Jenkins</li>
-                    </ul>
-                  </li>
-                  <li>Build Availability
-                    <ul>
-                      <li>Jenkins</li>
-                    </ul>
-                  </li>
-                  <li>Test Result Availability
-                      <li>Jenkins</li>
-                      <li>PHPUnit</li>
-                  </li>
-              </ul>
-            </section>
         </section>
         <section>
           <h2>Links</h2>
@@ -375,6 +250,7 @@
             <li><a href='http://jenkins-ci.org/'>Jenkins</a></li>
             <li><a href='https://drupal.org/node/670460'>Using drush to synchronize and deploy sites</a></li>
             <li><a href='https://github.com/generalredneck/headless-selenium'>Headless Selenium</a>
+            <li><a href='http://behat.org/'>Behat</a>
           </ul>
         </section>
         <section>
