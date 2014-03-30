@@ -73,10 +73,11 @@ esac
 
 
 
-git_submod_add   git://github.com/GerHobbelt/highlight.js.git                            lib/plugins/highlight
+git_submod_add   git@github.com:GerHobbelt/LocalConnection.js.git                        lib/LocalConnection
 git_submod_add   git@github.com:GerHobbelt/SyntaxHighlighter.git                         lib/plugins/SyntaxHighlighter
 git_submod_add   git@github.com:GerHobbelt/classList.js.git                              lib/js/classList
 git_submod_add   git@github.com:GerHobbelt/headjs.git                                    lib/js/head
+git_submod_add   git@github.com:GerHobbelt/highlight.js.git                              lib/plugins/highlight
 git_submod_add   git@github.com:GerHobbelt/marked.git                                    lib/plugins/marked
 git_submod_add   git@github.com:GerHobbelt/nprogress.git                                 lib/js/nprogress
 git_submod_add   git@github.com:GerHobbelt/require-css.git                               lib/js/requireCSS

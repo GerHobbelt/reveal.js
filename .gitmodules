@@ -64,3 +64,6 @@
 [submodule "lib/scopedQuerySelectorShim"]
 	path = lib/scopedQuerySelectorShim
 	url = git@github.com:GerHobbelt/scopedQuerySelectorShim.git
+[submodule "lib/LocalConnection"]
+	path = lib/LocalConnection
+	url = git@github.com:GerHobbelt/LocalConnection.js.git

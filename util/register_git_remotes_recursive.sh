@@ -105,6 +105,7 @@ function register_remote {
 
 
 
+register_remote lib/LocalConnection                                           jeremyharris-original                    git@github.com:jeremyharris/LocalConnection.js.git                               $# $@
 register_remote lib/js/classList                                              local-original                           ../../../../classlist-shim/                                                      $# $@
 register_remote lib/js/head                                                   local-original                           ../../../../headjs/                                                              $# $@
 register_remote lib/js/nprogress                                              GerHobbelt-original                      git@github.com:GerHobbelt/nprogress.git                                          $# $@
