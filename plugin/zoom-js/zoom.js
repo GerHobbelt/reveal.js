@@ -18,7 +18,7 @@
   } else {
     if ( typeof define === "function" && define.amd ) {
       // AMD. Register as a named module.
-      define( "reveal.zoom", [ "reveal", "zoom" ], function(Reveal, zoom) {
+      define( [ "reveal", "zoom" ], function(Reveal, zoom) {
         return factory(window, document, Reveal, zoom);
       });
     } else {
