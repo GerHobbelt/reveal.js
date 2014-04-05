@@ -618,14 +618,57 @@
         dom.background.innerHTML = '';
         dom.background.classList.add( 'no-transition' );
 
-        // Helper method for creating a background element for the
-        // given slide
-        function _createBackground( slide, container ) {
+        // Iterate over all horizontal slides
+        toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).forEach( function( slideh, i ) {
+
+            var backgroundStack;
+            var back = null;
+
+            if( isPrintingPDF() ) {
+                backgroundStack = createBackground( slideh, slideh );
+            }
+            else {
+                backgroundStack = createBackground( slideh, dom.background );
+            }
+
+            // Iterate over all vertical slides
+            toArray( slideh.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).forEach( function( slidev, j ) {
+
+                if( isPrintingPDF() ) {
+                    createBackground( slidev, slidev );
+                }
+                else {
+                    createBackground( slidev, backgroundStack );
+                }
+
+            } );
+
+        } );
+
+        // Add parallax background if specified
+        if( config.parallaxBackgroundImage && typeof config.parallaxBackgroundImage === 'string' ) {
+            dom.background.style.backgroundImage = 'url("' + config.parallaxBackgroundImage + '")';
+        }
+        else {
+            dom.background.style.backgroundImage = '';
+        }
+
+    }
+
+    /**
+     * Creates a background for the given slide.
+     *
+     * @param {HTMLElement} slide
+     * @param {HTMLElement} container The element that the background
+     * should be appended to
+     */
+        function createBackground( slide, container ) {
 
             var data = {
                 background: slide.getAttribute( 'data-background' ),
                 backgroundSize: slide.getAttribute( 'data-background-size' ),
                 backgroundImage: slide.getAttribute( 'data-background-image' ),
+            backgroundVideo: slide.getAttribute( 'data-background-video' ),
                 backgroundColor: slide.getAttribute( 'data-background-color' ),
                 backgroundRepeat: slide.getAttribute( 'data-background-repeat' ),
                 backgroundPosition: slide.getAttribute( 'data-background-position' ),
@@ -645,8 +688,11 @@
                 }
             }
 
-            if( data.background || data.backgroundColor || data.backgroundImage ) {
-                element.setAttribute( 'data-background-hash', data.background + data.backgroundSize + data.backgroundImage + data.backgroundColor + data.backgroundRepeat + data.backgroundPosition + data.backgroundTransition );
+        // Create a hash for this combination of background settings.
+        // This is used to determine when two slide backgrounds are
+        // the same.
+        if( data.background || data.backgroundColor || data.backgroundImage || data.backgroundVideo ) {
+                element.setAttribute( 'data-background-hash', data.background + data.backgroundSize + data.backgroundImage + data.backgroundVideo + data.backgroundColor + data.backgroundRepeat + data.backgroundPosition + data.backgroundTransition );
             }
 
             // Additional and optional background properties
@@ -657,48 +703,24 @@
             if( data.backgroundPosition ) element.style.backgroundPosition = data.backgroundPosition;
             if( data.backgroundTransition ) element.setAttribute( 'data-background-transition', data.backgroundTransition );
 
+        // Create video background element
+        if( data.backgroundVideo ) {
+            var video = document.createElement( 'video' );
+
+            // Support comma separated lists of video sources
+            data.backgroundVideo.split( ',' ).forEach( function( source ) {
+                video.innerHTML += '<source src="'+ source +'">';
+            } );
+
+            element.appendChild( video );
+        }
+
             container.appendChild( element );
 
             return element;
 
         }
 
-        // Iterate over all horizontal slides
-        toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).forEach( function( slideh, i ) {
-
-            var backgroundStack;
-            var back = null;
-
-            if( isPrintingPDF() ) {
-                backgroundStack = _createBackground( slideh, slideh );
-            }
-            else {
-                backgroundStack = _createBackground( slideh, dom.background );
-            }
-
-            // Iterate over all vertical slides
-            toArray( slideh.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).forEach( function( slidev ) {
-
-                if( isPrintingPDF() ) {
-                    _createBackground( slidev, slidev );
-                }
-                else {
-                    _createBackground( slidev, backgroundStack );
-                }
-
-            } );
-
-        } );
-
-        // Add parallax background if specified
-        if( config.parallaxBackgroundImage && typeof config.parallaxBackgroundImage === 'string' ) {
-            dom.background.style.backgroundImage = 'url("' + config.parallaxBackgroundImage + '")';
-        }
-        else {
-            dom.background.style.backgroundImage = '';
-        }
-
-    }
 
     /**
      * Applies the configuration settings from the config
@@ -2780,6 +2802,15 @@
         }
 
         return { h: h, v: v, f: f };
+
+    }
+
+    /**
+     * Retrieves the total number of slides in this presentation.
+     */
+    function getTotalSlides() {
+
+        return document.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
 
     }
 
