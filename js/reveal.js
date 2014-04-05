@@ -196,11 +196,11 @@
         // Delays updates to the URL due to a Chrome thumbnailer bug
         writeURLTimeout = 0,
 
-		// A delay used to activate the overview mode
-		activateOverviewTimeout = 0,
+        // A delay used to activate the overview mode
+        activateOverviewTimeout = 0,
 
-		// A delay used to deactivate the overview mode
-		deactivateOverviewTimeout = 0,
+        // A delay used to deactivate the overview mode
+        deactivateOverviewTimeout = 0,
 
         // Flags if the interaction event listeners are bound
         eventsAreBound = false,
@@ -816,13 +816,13 @@
             autoSlidePaused = false;
         }
 
-		// When fragments are turned off they should be visible
-		if( config.fragments === false ) {
-			toArray( dom.slides.querySelectorAll( '.fragment' ) ).forEach( function( element ) {
-				element.classList.add( 'visible' );
-				element.classList.remove( 'current-fragment' );
-			} );
-		}
+        // When fragments are turned off they should be visible
+        if( config.fragments === false ) {
+            toArray( dom.slides.querySelectorAll( '.fragment' ) ).forEach( function( element ) {
+                element.classList.add( 'visible' );
+                element.classList.remove( 'current-fragment' );
+            } );
+        }
 
         // Load the theme in the config, if it's not already loaded
         if( config.theme && dom.theme ) {
@@ -989,22 +989,22 @@
     }
 
     /**
-	 * Utility for deserializing a value.
-	 */
-	function deserialize( value ) {
+     * Utility for deserializing a value.
+     */
+    function deserialize( value ) {
 
-		if( typeof value === 'string' ) {
-			if( value === 'null' ) return null;
-			else if( value === 'true' ) return true;
-			else if( value === 'false' ) return false;
-			else if( value.match( /^\d+$/ ) ) return parseFloat( value );
-		}
+        if( typeof value === 'string' ) {
+            if( value === 'null' ) return null;
+            else if( value === 'true' ) return true;
+            else if( value === 'false' ) return false;
+            else if( value.match( /^\d+$/ ) ) return parseFloat( value );
+        }
 
-		return value;
+        return value;
 
-	}
+    }
 
-	/**
+    /**
      * Measures the distance in pixels between point a
      * and point b.
      *
@@ -1078,26 +1078,26 @@
 
     /**
      * Returns the remaining height within the parent of the
-	 * target element.
+     * target element.
      *
-	 * remaining height = [ configured parent height ] - [ current parent height ]
+     * remaining height = [ configured parent height ] - [ current parent height ]
      */
     function getRemainingHeight( element, height ) {
 
         height = height || 0;
 
         if( element ) {
-			var newHeight, oldHeight = element.style.height;
+            var newHeight, oldHeight = element.style.height;
 
-			// Change the .stretch element height to 0 in order find the height of all
-			// the other elements
-			element.style.height = '0px';
-			newHeight = height - element.parentNode.offsetHeight;
+            // Change the .stretch element height to 0 in order find the height of all
+            // the other elements
+            element.style.height = '0px';
+            newHeight = height - element.parentNode.offsetHeight;
 
-			// Restore the old height, just in case
-			element.style.height = oldHeight + 'px';
+            // Restore the old height, just in case
+            element.style.height = oldHeight + 'px';
 
-			return newHeight;
+            return newHeight;
         }
 
         return height;
@@ -1377,7 +1377,7 @@
                     overviewScale = Math.min( availableWidth / totalSlidesWidth, availableHeight / totalSlidesHeight );
                     overviewScale /= scale;
 
-                    // compensate for the 3D depth (heuristic)                    
+                    // compensate for the 3D depth (heuristic)
                     overviewScale *= 50 / Math.max(1, Math.min(getViewDistance(), overview_slides_info.horizontal_count));
 
                     // Respect max/min scale settings
@@ -1447,7 +1447,7 @@
         toArray( dom.slides.querySelectorAll( 'section > .stretch' ) ).forEach( function( element ) {
 
             // Determine how much vertical space we can use
-			var remainingHeight = getRemainingHeight( element, height );
+            var remainingHeight = getRemainingHeight( element, height );
 
             // Consider the aspect ratio of media elements
             if( /(img|video)/gi.test( element.nodeName ) ) {
@@ -1528,13 +1528,13 @@
             dom.wrapper.classList.add( 'overview' );
             dom.wrapper.classList.remove( 'overview-deactivating' );
 
-			clearTimeout( activateOverviewTimeout );
-			clearTimeout( deactivateOverviewTimeout );
+            clearTimeout( activateOverviewTimeout );
+            clearTimeout( deactivateOverviewTimeout );
 
-			// Not the prettiest solution, but need to let the overview
-			// class apply first so that slides are measured accurately
-			// before we can position them
-			activateOverviewTimeout = setTimeout( function() {
+            // Not the prettiest solution, but need to let the overview
+            // class apply first so that slides are measured accurately
+            // before we can position them
+            activateOverviewTimeout = setTimeout( function() {
 
                 var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
                 overview_slides_info = {
@@ -1596,7 +1596,7 @@
                     } );
                 }
 
-			}, 10 );
+            }, 10 );
 
         }
 
@@ -1614,8 +1614,8 @@
 
             overview_slides_info = null;
 
-			clearTimeout( activateOverviewTimeout );
-			clearTimeout( deactivateOverviewTimeout );
+            clearTimeout( activateOverviewTimeout );
+            clearTimeout( deactivateOverviewTimeout );
 
             dom.wrapper.classList.remove( 'overview' );
 
@@ -1624,7 +1624,7 @@
             // moving from slide to slide
             dom.wrapper.classList.add( 'overview-deactivating' );
 
-			deactivateOverviewTimeout = setTimeout( function () {
+            deactivateOverviewTimeout = setTimeout( function () {
                 dom.wrapper.classList.remove( 'overview-deactivating' );
             }, 1 );
 
@@ -1794,13 +1794,13 @@
     /**
      * Toggles the paused mode on and off.
      */
-	function togglePause( override ) {
+    function togglePause( override ) {
 
-		if( typeof override === 'boolean' ) {
-			override ? pause() : resume();
+        if( typeof override === 'boolean' ) {
+            override ? pause() : resume();
         }
         else {
-			isPaused() ? resume() : pause();
+            isPaused() ? resume() : pause();
         }
 
     }
@@ -2128,30 +2128,30 @@
                     // Any element previous to index is given the 'past' class
                     element.classList.add( reverse ? 'future' : 'past' );
 
-					if( config.fragments ) {
-                    var pastFragments = toArray( element.querySelectorAll( '.fragment' ) );
+                    if( config.fragments ) {
+                        var pastFragments = toArray( element.querySelectorAll( '.fragment' ) );
 
-                    // Show all fragments on prior slides
-                    while( pastFragments.length ) {
-                        var pastFragment = pastFragments.pop();
-                        pastFragment.classList.add( 'visible' );
-                        pastFragment.classList.remove( 'current-fragment' );
+                        // Show all fragments on prior slides
+                        while( pastFragments.length ) {
+                            var pastFragment = pastFragments.pop();
+                            pastFragment.classList.add( 'visible' );
+                            pastFragment.classList.remove( 'current-fragment' );
+                        }
                     }
                 }
-				}
                 else if( i > index ) {
                     // Any element subsequent to index is given the 'future' class
                     element.classList.add( reverse ? 'past' : 'future' );
 
-					if( config.fragments ) {
-                    var futureFragments = toArray( element.querySelectorAll( '.fragment.visible' ) );
+                    if( config.fragments ) {
+                        var futureFragments = toArray( element.querySelectorAll( '.fragment.visible' ) );
 
-                    // No fragments in future slides should be visible ahead of time
-                    while( futureFragments.length ) {
-                        var futureFragment = futureFragments.pop();
-                        futureFragment.classList.remove( 'visible' );
-                        futureFragment.classList.remove( 'current-fragment' );
-						}
+                        // No fragments in future slides should be visible ahead of time
+                        while( futureFragments.length ) {
+                            var futureFragment = futureFragments.pop();
+                            futureFragment.classList.remove( 'visible' );
+                            futureFragment.classList.remove( 'current-fragment' );
+                        }
                     }
                 }
 
@@ -2289,7 +2289,7 @@
         if( config.progress && dom.progress ) {
 
             if ( dom.progressbar ) {
-			    dom.progressbar.style.width = getProgress() * window.innerWidth + 'px';
+                dom.progressbar.style.width = getProgress() * window.innerWidth + 'px';
             }
         }
     }
@@ -2595,70 +2595,70 @@
     }
 
     /**
-	 * Returns a value ranging from 0-1 that represents
-	 * how far into the presentation we have navigated.
-	 */
-	function getProgress() {
+     * Returns a value ranging from 0-1 that represents
+     * how far into the presentation we have navigated.
+     */
+    function getProgress() {
 
-		var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+        var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
 
-		// The number of past and total slides
-		var totalCount = document.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
-		var pastCount = 0;
+        // The number of past and total slides
+        var totalCount = document.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
+        var pastCount = 0;
 
-		// Step through all slides and count the past ones
-		mainLoop: for( var i = 0; i < horizontalSlides.length; i++ ) {
+        // Step through all slides and count the past ones
+        mainLoop: for( var i = 0; i < horizontalSlides.length; i++ ) {
 
-			var horizontalSlide = horizontalSlides[i];
-			var verticalSlides = toArray( horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) );
+            var horizontalSlide = horizontalSlides[i];
+            var verticalSlides = toArray( horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) );
 
-			for( var j = 0; j < verticalSlides.length; j++ ) {
+            for( var j = 0; j < verticalSlides.length; j++ ) {
 
-				// Stop as soon as we arrive at the present
-				if( verticalSlides[j].classList.contains( 'present' ) ) {
-					break mainLoop;
-				}
+                // Stop as soon as we arrive at the present
+                if( verticalSlides[j].classList.contains( 'present' ) ) {
+                    break mainLoop;
+                }
 
-				pastCount++;
+                pastCount++;
 
-			}
+            }
 
-			// Stop as soon as we arrive at the present
-			if( horizontalSlide.classList.contains( 'present' ) ) {
-				break;
-			}
+            // Stop as soon as we arrive at the present
+            if( horizontalSlide.classList.contains( 'present' ) ) {
+                break;
+            }
 
-			// Don't count the wrapping section for vertical slides
-			if( horizontalSlide.classList.contains( 'stack' ) === false ) {
-				pastCount++;
-			}
+            // Don't count the wrapping section for vertical slides
+            if( horizontalSlide.classList.contains( 'stack' ) === false ) {
+                pastCount++;
+            }
 
-		}
+        }
 
-		if( currentSlide ) {
+        if( currentSlide ) {
 
-			var allFragments = currentSlide.querySelectorAll( '.fragment' );
+            var allFragments = currentSlide.querySelectorAll( '.fragment' );
 
-			// If there are fragments in the current slide those should be
-			// accounted for in the progress.
-			if( allFragments.length > 0 ) {
-				var visibleFragments = currentSlide.querySelectorAll( '.fragment.visible' );
+            // If there are fragments in the current slide those should be
+            // accounted for in the progress.
+            if( allFragments.length > 0 ) {
+                var visibleFragments = currentSlide.querySelectorAll( '.fragment.visible' );
 
-				// This value represents how big a portion of the slide progress
-				// that is made up by its fragments (0-1)
-				var fragmentWeight = 0.9;
+                // This value represents how big a portion of the slide progress
+                // that is made up by its fragments (0-1)
+                var fragmentWeight = 0.9;
 
-				// Add fragment progress to the past slide count
-				pastCount += ( visibleFragments.length / allFragments.length ) * fragmentWeight;
-			}
+                // Add fragment progress to the past slide count
+                pastCount += ( visibleFragments.length / allFragments.length ) * fragmentWeight;
+            }
 
-		}
+        }
 
-		return pastCount / ( totalCount - 1 );
+        return pastCount / ( totalCount - 1 );
 
-	}
+    }
 
-	/**
+    /**
      * Checks if this presentation is running inside of the
      * speaker notes window.
      */
@@ -2682,16 +2682,16 @@
         // If the first bit is invalid and there is a name we can
         // assume that this is a named link
         if( isNaN( parseInt( bits[0], 10 ) ) && name.length ) {
-			var element;
+            var element;
 
-			try {
-				// Find the slide with the specified name
-				element = document.querySelector( '#' + name );
-			}
-			catch( e ) {
-				// If the ID is an invalid selector a harmless SyntaxError
-				// may be thrown here.
-			}
+            try {
+                // Find the slide with the specified name
+                element = document.querySelector( '#' + name );
+            }
+            catch( e ) {
+                // If the ID is an invalid selector a harmless SyntaxError
+                // may be thrown here.
+            }
 
             if( element ) {
                 // Find the position of the named slide and navigate to it
@@ -2736,16 +2736,16 @@
             else {
                 var url = '/';
 
-				// Attempt to create a named link based on the slide's ID
-				var id = currentSlide.getAttribute( 'id' );
-				if( id ) {
-					id = id.toLowerCase();
-					id = id.replace( /[^a-zA-Z0-9\-\_\:\.]/g, '' );
-				}
+                // Attempt to create a named link based on the slide's ID
+                var id = currentSlide.getAttribute( 'id' );
+                if( id ) {
+                    id = id.toLowerCase();
+                    id = id.replace( /[^a-zA-Z0-9\-\_\:\.]/g, '' );
+                }
 
                 // If the current slide has an ID, use that as a named link
-				if( currentSlide && typeof id === 'string' && id.length ) {
-					url = '/' + id;
+                if( currentSlide && typeof id === 'string' && id.length ) {
+                    url = '/' + id;
                 }
                 // Otherwise use the /h/v index
                 else {
@@ -2815,40 +2815,40 @@
     }
 
     /**
-	 * Retrieves the current state of the presentation as
-	 * an object. This state can then be restored at any
-	 * time.
-	 */
-	function getState() {
+     * Retrieves the current state of the presentation as
+     * an object. This state can then be restored at any
+     * time.
+     */
+    function getState() {
 
-		var indices = getIndices();
+        var indices = getIndices();
 
-		return {
-			indexh: indices.h,
-			indexv: indices.v,
-			indexf: indices.f,
-			paused: isPaused(),
-			overview: isOverview()
-		};
+        return {
+            indexh: indices.h,
+            indexv: indices.v,
+            indexf: indices.f,
+            paused: isPaused(),
+            overview: isOverview()
+        };
 
-	}
+    }
 
-	/**
-	 * Restores the presentation to the given state.
-	 *
-	 * @param {Object} state As generated by getState()
-	 */
-	function setState( state ) {
+    /**
+     * Restores the presentation to the given state.
+     *
+     * @param {Object} state As generated by getState()
+     */
+    function setState( state ) {
 
-		if( typeof state === 'object' ) {
-			slide( deserialize( state.indexh ), deserialize( state.indexv ), deserialize( state.indexf ) );
-			togglePause( deserialize( state.paused ) );
-			toggleOverview( deserialize( state.overview ) );
-		}
+        if( typeof state === 'object' ) {
+            slide( deserialize( state.indexh ), deserialize( state.indexv ), deserialize( state.indexf ) );
+            togglePause( deserialize( state.paused ) );
+            toggleOverview( deserialize( state.overview ) );
+        }
 
-	}
+    }
 
-	/**
+    /**
      * Return a sorted fragments list, ordered by an increasing
      * "data-fragment-index" attribute.
      *
@@ -2982,7 +2982,7 @@
                 }
 
                 updateControls();
-				updateProgress();
+                updateProgress();
 
                 return !!( fragmentsShown.length || fragmentsHidden.length );
 
@@ -3343,8 +3343,8 @@
                         triggered = false;
                     }
                     break;
-				// two-spot, semicolon, b, period, Logitech presenter tools "black screen" button
-				case 58: case 59: case 66: case 190: case 191: togglePause(); break;
+                // two-spot, semicolon, b, period, Logitech presenter tools "black screen" button
+                case 58: case 59: case 66: case 190: case 191: togglePause(); break;
                 // f
                 case 70: enterFullscreen(); break;
                 // a
@@ -4012,17 +4012,17 @@
         addEventListeners: addEventListeners,
         removeEventListeners: removeEventListeners,
 
-		// Facility for persisting and restoring the presentation state
-		getState: getState,
-		setState: setState,
+        // Facility for persisting and restoring the presentation state
+        getState: getState,
+        setState: setState,
 
-		// Presentation progress on range of 0-1
-		getProgress: getProgress,
+        // Presentation progress on range of 0-1
+        getProgress: getProgress,
 
         // Returns the indices of the current, or specified, slide
         getIndices: getIndices,
 
-		getTotalSlides: getTotalSlides,
+        getTotalSlides: getTotalSlides,
 
         // Returns the slide at the specified index, y is optional
         getSlide: function( x, y ) {
@@ -4068,7 +4068,7 @@
             for( var i in query ) {
                 var value = query[ i ];
 
-				query[ i ] = deserialize( unescape( value ) );
+                query[ i ] = deserialize( unescape( value ) );
             }
 
             return query;

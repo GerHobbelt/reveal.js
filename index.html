@@ -20,16 +20,16 @@
         <!-- For syntax highlighting -->
         <link rel="stylesheet" href="lib/css/highlight/zenburn.css">
 
-		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+        <!-- If the query includes 'print-pdf', include the PDF print sheet -->
         <script>
-			if( window.location.search.match( /print-pdf/gi ) ) {
-				var link = document.createElement( 'link' );
-				link.rel = 'stylesheet';
-				link.type = 'text/css';
-				link.href = 'css/print/pdf.css';
-				// media="print"; alternative is 'css/print/paper.css'
-				document.getElementsByTagName( 'head' )[0].appendChild( link );
-			}
+            if( window.location.search.match( /print-pdf/gi ) ) {
+                var link = document.createElement( 'link' );
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = 'css/print/pdf.css';
+                // media="print"; alternative is 'css/print/paper.css'
+                document.getElementsByTagName( 'head' )[0].appendChild( link );
+            }
         </script>
 
         <!--[if lt IE 9]>

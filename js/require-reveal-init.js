@@ -16,7 +16,7 @@ require.config({
 });
 
 
-require(['head', 'zoom', 'highlight', 'marked', 'classList', 'verge', 'reveal'], 
+require(['head', 'zoom', 'highlight', 'marked', 'classList', 'verge', 'reveal'],
             function (head, zoom, highlight, marked, classList, verge, Reveal) {
     // Full list of configuration options available here:
     // https://github.com/hakimel/reveal.js#configuration

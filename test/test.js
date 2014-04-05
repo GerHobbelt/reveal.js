@@ -81,9 +81,9 @@ Reveal.addEventListener( 'ready', function() {
         strictEqual( Reveal.isLastSlide(), false, 'false after Reveal.slide( 0, 0 )' );
     });
 
-	test( 'Reveal.getTotalSlides', function() {
-		strictEqual( Reveal.getTotalSlides(), 8, 'eight slides in total' );
-	});
+    test( 'Reveal.getTotalSlides', function() {
+        strictEqual( Reveal.getTotalSlides(), 8, 'eight slides in total' );
+    });
 
     test( 'Reveal.getIndices', function() {
         var indices = Reveal.getIndices();
@@ -120,15 +120,15 @@ Reveal.addEventListener( 'ready', function() {
         equal( Reveal.getCurrentSlide(), secondSlide, 'current is slide #1' );
     });
 
-	test( 'Reveal.getProgress', function() {
-		Reveal.slide( 0, 0 );
-		strictEqual( Reveal.getProgress(), 0, 'progress is 0 on first slide' );
+    test( 'Reveal.getProgress', function() {
+        Reveal.slide( 0, 0 );
+        strictEqual( Reveal.getProgress(), 0, 'progress is 0 on first slide' );
 
-		var lastSlideIndex = document.querySelectorAll( '.reveal .slides>section' ).length - 1;
+        var lastSlideIndex = document.querySelectorAll( '.reveal .slides>section' ).length - 1;
 
-		Reveal.slide( lastSlideIndex, 0 );
-		strictEqual( Reveal.getProgress(), 1, 'progress is 1 on last slide' );
-	});
+        Reveal.slide( lastSlideIndex, 0 );
+        strictEqual( Reveal.getProgress(), 1, 'progress is 1 on last slide' );
+    });
 
     test( 'Reveal.getScale', function() {
         ok( typeof Reveal.getScale() === 'number', 'has scale' );

@@ -6953,7 +6953,6 @@ Leap = require("../lib/index");
       tipPosition = frame.fingers[0].tipPosition;
 
       if( config.autoCenter ) {
-        
 
         // Check whether the finger has entered the z range of the Leap Motion. Used for the autoCenter option.
         if( !entered ) {
