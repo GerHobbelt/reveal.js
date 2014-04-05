@@ -224,6 +224,26 @@
             threshold: 40
         };
 
+    /*
+     * debug /test assistant
+     */
+    function assert( condition ) {
+        if (typeof window.assert === 'function') {
+            return window.assert(condition);
+        } else if (!condition) {
+            msg = Array.prototype.slice.call(arguments, 1).join(" ").trim();
+            if (console && console.log) {
+                console.log("@@@@@@ assertion failed: ", arguments, (msg || ""));
+            }
+            if (window.QUnit.begin) {
+                throw new Error("ASSERTION failed" + (msg ? ": " + msg : ""));
+            } else if (window.invoke_debugger !== false) {
+                debugger;
+            }
+        }
+        return !!condition;
+    }
+
     /**
      * Starts up the presentation if the client is capable.
      *
@@ -817,7 +837,7 @@
         }
 
         // When fragments are turned off they should be visible
-        if( config.fragments === false ) {
+        if( !config.fragments ) {
             toArray( dom.slides.querySelectorAll( '.fragment' ) ).forEach( function( element ) {
                 element.classList.add( 'visible' );
                 element.classList.remove( 'current-fragment' );
@@ -908,7 +928,7 @@
         }
 
         if ( config.controls && dom.controls ) {
-            [ 'touchstart', 'click' ].forEach( function( eventName ) {
+            ( config.touch ? [ 'touchstart', 'click' ] : [ 'click' ] ).forEach( function( eventName ) {
                 dom.controlsLeft.forEach( function( el ) { el.addEventListener( eventName, onNavigateLeftClicked, false ); } );
                 dom.controlsRight.forEach( function( el ) { el.addEventListener( eventName, onNavigateRightClicked, false ); } );
                 dom.controlsUp.forEach( function( el ) { el.addEventListener( eventName, onNavigateUpClicked, false ); } );
@@ -2496,8 +2516,8 @@
             verticalSlides = document.querySelectorAll( VERTICAL_SLIDES_SELECTOR );
 
         var routes = {
-            left: indexh > 0 || config.loop,
-            right: indexh < horizontalSlides.length - 1 || config.loop,
+            left: indexh > 0 || !!config.loop,
+            right: indexh < horizontalSlides.length - 1 || !!config.loop,
             up: indexv > 0,
             down: indexv < verticalSlides.length - 1
         };
@@ -2522,12 +2542,12 @@
     function availableFragments() {
 
         if( currentSlide && config.fragments ) {
-            var fragments = currentSlide.querySelectorAll( '.fragment' );
+            var fragments = currentSlide.querySelectorAll( '.fragment.visible:not(.current-fragment)' );
             var hiddenFragments = currentSlide.querySelectorAll( '.fragment:not(.visible)' );
 
             return {
-                prev: fragments.length - hiddenFragments.length > 0,
-                next: !!hiddenFragments.length
+                prev: fragments.length > 0,
+                next: hiddenFragments.length > 0
             };
         }
         else {
@@ -2793,11 +2813,18 @@
             }
         }
 
-        if( !slide && currentSlide ) {
-            var hasFragments = currentSlide.querySelectorAll( '.fragment' ).length > 0;
-            if( hasFragments ) {
-                var visibleFragments = currentSlide.querySelectorAll( '.fragment.visible' );
-                f = visibleFragments.length - 1;
+        if( config.fragments ) {
+            if( !slide && currentSlide ) {
+                var currentFragment = currentSlide.querySelector( '.fragment.visible.current-fragment' );
+                if( currentFragment ) {
+                    f = parseInt( currentFragment.getAttribute( 'data-fragment-index' ), 10 );
+                } 
+                else {
+                    var fragments = currentSlide.querySelectorAll( '.fragment' );
+                    if( fragments.length ) {
+                        f = -1;
+                    }
+                }
             }
         }
 
@@ -2932,7 +2959,8 @@
                     var lastVisibleFragment = sortFragments( currentSlide.querySelectorAll( '.fragment.visible' ) ).pop();
 
                     if( lastVisibleFragment ) {
-                        index = parseInt( lastVisibleFragment.getAttribute( 'data-fragment-index' ) || 0, 10 );
+                        assert(lastVisibleFragment.getAttribute( 'data-fragment-index' ) != null);
+                        index = parseInt( lastVisibleFragment.getAttribute( 'data-fragment-index' ), 10 );
                     }
                     else {
                         index = -1;
@@ -2949,6 +2977,7 @@
 
                 toArray( fragments ).forEach( function( element, i ) {
 
+                    assert(element.getAttribute( 'data-fragment-index' ) != null);
                     if( element.hasAttribute( 'data-fragment-index' ) ) {
                         i = parseInt( element.getAttribute( 'data-fragment-index' ), 10 );
                     }
@@ -2969,7 +2998,6 @@
                         element.classList.remove( 'visible' );
                         element.classList.remove( 'current-fragment' );
                     }
-
 
                 } );
 
@@ -3068,7 +3096,7 @@
             // - The presentation isn't paused
             // - The overview isn't active
             // - The presentation isn't over
-            if( autoSlide && !autoSlidePaused && !isPaused() && !isOverview() && ( !Reveal.isLastSlide() || config.loop === true ) ) {
+            if( autoSlide && !autoSlidePaused && !isPaused() && !isOverview() && ( !Reveal.isLastSlide() || config.loop ) ) {
                 autoSlideTimeout = setTimeout( navigateNext, autoSlide );
                 autoSlideStartTime = Date.now();
             }
@@ -3771,7 +3799,7 @@
     function onAutoSlidePlayerClick( event ) {
 
         // Replay
-        if( Reveal.isLastSlide() && config.loop === false ) {
+        if( Reveal.isLastSlide() && !config.loop ) {
             slide( 0, 0 );
             resumeAutoSlide();
         }
