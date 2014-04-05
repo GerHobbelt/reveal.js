@@ -3991,6 +3991,8 @@
         // Returns the indices of the current, or specified, slide
         getIndices: getIndices,
 
+		getTotalSlides: getTotalSlides,
+
         // Returns the slide at the specified index, y is optional
         getSlide: function( x, y ) {
             var horizontalSlide = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR )[ x ];
