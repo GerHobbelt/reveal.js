@@ -943,7 +943,7 @@
                 dom.wrapper.removeEventListener( 'pointerup', onPointerUp, false );
             }
             // IE10
-            if( window.navigator.msPointerEnabled ) {
+            else if( window.navigator.msPointerEnabled ) {
                 dom.wrapper.removeEventListener( 'MSPointerDown', onPointerDown, false );
                 dom.wrapper.removeEventListener( 'MSPointerMove', onPointerMove, false );
                 dom.wrapper.removeEventListener( 'MSPointerUp', onPointerUp, false );
