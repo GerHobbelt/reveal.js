@@ -2168,7 +2168,7 @@ var Reveal = (function(){
 
 		// Attempt to parse the hash as either an index or name
 		var bits = hash.slice( 2 ).split( '/' ),
-			name = hash.replace( /#|\//gi, '' );
+			name = hash.replace( /#!|\//gi, '' );
 
 		// If the first bit is invalid and there is a name we can
 		// assume that this is a named link
