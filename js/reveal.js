@@ -2163,7 +2163,9 @@ var Reveal = (function(){
 	 * Reads the current URL (hash) and navigates accordingly.
 	 */
 	function readURL() {
+		slide( indexh || 0, indexv || 0 );
 		return // fix for google crawler
+		
 		var hash = window.location.hash;
 
 		// Attempt to parse the hash as either an index or name
