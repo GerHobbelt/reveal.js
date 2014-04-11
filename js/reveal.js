@@ -628,7 +628,7 @@ var Reveal = (function(){
 
 		eventsAreBound = true;
 
-		window.addEventListener( 'hashchange', onWindowHashChange, false );
+		//window.addEventListener( 'hashchange', onWindowHashChange, false );
 		window.addEventListener( 'resize', onWindowResize, false );
 
 		if( config.touch ) {
