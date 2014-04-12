@@ -688,7 +688,7 @@
                 background: slide.getAttribute( 'data-background' ),
                 backgroundSize: slide.getAttribute( 'data-background-size' ),
                 backgroundImage: slide.getAttribute( 'data-background-image' ),
-            backgroundVideo: slide.getAttribute( 'data-background-video' ),
+                backgroundVideo: slide.getAttribute( 'data-background-video' ),
                 backgroundColor: slide.getAttribute( 'data-background-color' ),
                 backgroundRepeat: slide.getAttribute( 'data-background-repeat' ),
                 backgroundPosition: slide.getAttribute( 'data-background-position' ),
@@ -708,10 +708,10 @@
                 }
             }
 
-        // Create a hash for this combination of background settings.
-        // This is used to determine when two slide backgrounds are
-        // the same.
-        if( data.background || data.backgroundColor || data.backgroundImage || data.backgroundVideo ) {
+            // Create a hash for this combination of background settings.
+            // This is used to determine when two slide backgrounds are
+            // the same.
+            if( data.background || data.backgroundColor || data.backgroundImage || data.backgroundVideo ) {
                 element.setAttribute( 'data-background-hash', data.background + data.backgroundSize + data.backgroundImage + data.backgroundVideo + data.backgroundColor + data.backgroundRepeat + data.backgroundPosition + data.backgroundTransition );
             }
 
@@ -1359,11 +1359,11 @@
             }
             // Apply scale transform as a fallback
             else {
-				dom.slides.style.left = '50%';
-				dom.slides.style.top = '50%';
-				dom.slides.style.bottom = 'auto';
-				dom.slides.style.right = 'auto';
-                transformElement( dom.slides, 'scale('+ scale +')', '0% 0%' );
+				dom.slides.style.left = 0;
+				dom.slides.style.top = 0;
+				dom.slides.style.bottom = 0;
+				dom.slides.style.right = 0;
+                transformElement( dom.slides, 'scale('+ scale +')', '50% 50%' );
             }
 
             // When overview mode is active (and the relevant data available), do scale the slides' collective too:
