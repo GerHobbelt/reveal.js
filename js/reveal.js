@@ -132,13 +132,13 @@
             theme: null,
 
             // Transition style
-            transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
+            transition: 'default', // default/cube/page/slide/concave/convex/zoom/linear/fade/none
 
             // Transition speed
             transitionSpeed: 'default', // default/fast/slow
 
             // Transition style for full page slide backgrounds
-            backgroundTransition: 'default', // default/linear/none
+            backgroundTransition: 'default', // default/cube/page/slide/concave/convex/zoom/linear/fade/none
 
             // Parallax background image
             parallaxBackgroundImage: '', // CSS syntax, e.g. "a.jpg"
@@ -1347,18 +1347,22 @@
             scale = Math.max( scale, config.minScale );
             scale = Math.min( scale, config.maxScale );
 
-            // Prefer applying scale via zoom since Chrome blurs scaled content
+            // Prefer zooming in WebKit so that content remains crisp
             // with nested transforms.
             //
             // Unfortunately, CSS3 zoom in Chrome has the very bad habit to scale text correctly only down to zoom factors of about 0.4,
             // go below that number and your text gets bigger and bigger (relatively speaking).
             // Try this at: http://jsbin.com/aluniv/3
             // Hence we must revert to using CSS3 transform scale() or scale3d() for Chrome:
-            if( typeof dom.slides.style.zoom !== 'undefined' && !navigator.userAgent.match( /(iphone|ipod|ipad|android|chrome)/gi ) ) {
+            if( typeof dom.slides.style.zoom !== 'undefined' && !navigator.userAgent.match( /(iphone|ipod|ipad|android|webkit)/gi ) ) {
                 dom.slides.style.zoom = scale;
             }
             // Apply scale transform as a fallback
             else {
+				dom.slides.style.left = '50%';
+				dom.slides.style.top = '50%';
+				dom.slides.style.bottom = 'auto';
+				dom.slides.style.right = 'auto';
                 transformElement( dom.slides, 'scale('+ scale +')', '0% 0%' );
             }
 
@@ -1442,7 +1446,7 @@
                         slide.style.top = 0;
                     }
                     else {
-                        slide.style.top = Math.max( - ( getAbsoluteHeight( slide ) / 2 ) - slidePadding, -slideHeight / 2 ) + 'px';
+                        slide.style.top = Math.max( ( ( slideHeight - getAbsoluteHeight( slide ) ) / 2 ) - slidePadding, 0 ) + 'px';
                     }
                 }
                 else {
@@ -2419,7 +2423,7 @@
             }
 
             if( includeAll || h === indexh ) {
-                toArray( backgroundh.childNodes ).forEach( function( backgroundv, v ) {
+                toArray( backgroundh.querySelectorAll( '.slide-background' ) ).forEach( function( backgroundv, v ) {
 
                     if( v < indexv ) {
                         backgroundv.className = 'slide-background past';
@@ -2439,17 +2443,31 @@
 
         } );
 
-        // Don't transition between identical backgrounds. This
-        // prevents unwanted flicker.
-        if( currentBackground ) {
-            var previousBackgroundHash = previousBackground ? previousBackground.getAttribute( 'data-background-hash' ) : null;
-            var currentBackgroundHash = currentBackground.getAttribute( 'data-background-hash' );
-            if( currentBackgroundHash && currentBackgroundHash === previousBackgroundHash && currentBackground !== previousBackground ) {
-                dom.background.classList.add( 'no-transition' );
-            }
+		// Stop any currently playing video background
+		if( previousBackground ) {
 
-            previousBackground = currentBackground;
-        }
+			var previousVideo = previousBackground.querySelector( 'video' );
+			if( previousVideo ) previousVideo.pause();
+
+		}
+
+		if( currentBackground ) {
+
+			// Start video playback
+			var currentVideo = currentBackground.querySelector( 'video' );
+			if( currentVideo ) currentVideo.play();
+
+			// Don't transition between identical backgrounds. This
+			// prevents unwanted flicker.
+			var previousBackgroundHash = previousBackground ? previousBackground.getAttribute( 'data-background-hash' ) : null;
+			var currentBackgroundHash = currentBackground.getAttribute( 'data-background-hash' );
+			if( currentBackgroundHash && currentBackgroundHash === previousBackgroundHash && currentBackground !== previousBackground ) {
+				dom.background.classList.add( 'no-transition' );
+			}
+
+			previousBackground = currentBackground;
+
+		}
 
         // Allow the first background to apply without transition
         setTimeout( function() {
