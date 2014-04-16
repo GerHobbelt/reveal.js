@@ -28,6 +28,7 @@ require(['head', 'zoom', 'highlight', 'marked', 'classList', 'verge', 'reveal'],
         history: true,
         center: true,
         slideNumber: true,
+        timeRemaining: 15,
 
         theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
         transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
