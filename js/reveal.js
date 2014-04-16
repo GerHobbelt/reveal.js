@@ -83,6 +83,9 @@
             // Enable keyboard shortcuts for navigation
             keyboard: true,
 
+			// Optional function that blocks keyboard events when retuning false
+			keyboardCondition: null,
+
             // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'translate3d' | 'zoom' | 'perspective' | 'scale')
             overview: 'translate3d',
 
@@ -263,8 +266,9 @@
             }
         }
 
-        // If the browser doesn't support core features we fall back
-        // to a JavaScript-free mode without transforms
+        // If the browser doesn't support core features we won't be
+        // using JavaScript to control the presentation
+        // and we fall back to a JavaScript-free mode without transforms
         if( !features.transforms2d && !features.transforms3d ) {
             if (!dom.viewport.classList.contains('no-transforms')) {
                 dom.viewport.classList.add('no-transforms');
@@ -2109,6 +2113,8 @@
         var slides = toArray( document.querySelectorAll( selector ) ),
             slidesLength = slides.length;
 
+		var printMode = isPrintingPDF();
+
         if( slidesLength ) {
 
             // Should the index loop?
@@ -2148,6 +2154,17 @@
                 // http://www.w3.org/html/wg/drafts/html/master/editing.html#the-hidden-attribute
                 element.setAttribute( 'hidden', '' );
 
+                // If this element contains vertical slides
+                if( element.querySelector( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ) {
+                    element.classList.add( 'stack' );
+				}
+
+				// If we're printing static slides, all slides are "present"
+				if( printMode ) {
+					element.classList.add( 'present' );
+					continue;
+				}
+
                 if( i < index ) {
                     // Any element previous to index is given the 'past' class
                     element.classList.add( reverse ? 'future' : 'past' );
@@ -2181,7 +2198,6 @@
 
                 // If this element contains vertical slides
                 if( element.querySelector( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ) {
-                    element.classList.add( 'stack' );
 
                     // Solves an edge case where the previous slide maintains the
                     // 'present' class when navigating between adjacent vertical
@@ -3276,6 +3292,12 @@
      * @param {Object} event
      */
     function onDocumentKeyDown( event ) {
+
+		// If there's a condition specified and it returns false,
+		// ignore this event
+		if( typeof config.keyboardCondition === 'function' && config.keyboardCondition() === false ) {
+			return true;
+		}
 
         // Remember if auto-sliding was paused so we can toggle it
         var autoSlideWasPaused = autoSlidePaused;
