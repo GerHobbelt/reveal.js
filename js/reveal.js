@@ -128,6 +128,12 @@
             // Opens links in an iframe preview overlay
             previewLinks: false,
 
+			// Exposes the reveal.js API through window.postMessage
+			postMessage: true,
+
+			// Dispatches all reveal.js events to the parent window through postMessage
+			postMessageEvents: false,
+
             // Focuses body when page changes visiblity to ensure keyboard shortcuts work
             focusBodyOnPageVisiblityChange: true,
 
@@ -324,7 +330,6 @@
 
     }
 
-
     /**
      * Loads the dependencies of reveal.js. Dependencies are
      * defined via the configuration option 'dependencies'
@@ -419,6 +424,9 @@
 
         // Make sure we've got all the DOM elements we need
         if (!setupDOM()) return false;
+
+		// Listen to messages posted to this window
+		setupPostMessage();
 
         // Resets all vertical slides so that only the first is visible
         resetVerticalSlides();
@@ -747,6 +755,31 @@
 
 
     /**
+	 * Registers a listener to postMessage events, this makes it
+	 * possible to call all reveal.js API methods from another
+	 * window. For example:
+	 *
+	 * revealWindow.postMessage( JSON.stringify({
+	 *   method: 'slide',
+	 *   args: [ 2 ]
+	 * }), '*' );
+	 */
+	function setupPostMessage() {
+
+		if( config.postMessage ) {
+			window.addEventListener( 'message', function ( event ) {
+				var data = JSON.parse( event.data );
+				var method = Reveal[data.method];
+
+				if( typeof method === 'function' ) {
+					method.apply( Reveal, data.args );
+				}
+			}, false );
+		}
+
+	}
+
+	/**
      * Applies the configuration settings from the config
      * object. May be called multiple times.
      */
@@ -1166,13 +1199,21 @@
      * Dispatches an event of the specified type from the
      * reveal DOM element.
      */
-    function dispatchEvent( type, properties ) {
+	function dispatchEvent( type, args ) {
 
+		console.log('event', type);
         if( dom.wrapper ) {
-            var event = document.createEvent( "HTMLEvents", 1, 2 );
+		var event = document.createEvent( 'HTMLEvents', 1, 2 );
             event.initEvent( type, true, true );
-            extend( event, properties );
+		extend( event, args );
             dom.wrapper.dispatchEvent( event );
+
+		// If we're in an iframe, post each reveal.js event to the
+		// parent window. Used by the notes plugin
+		if( config.postMessageEvents && window.parent !== window.self ) {
+			window.parent.postMessage( JSON.stringify({ namespace: 'reveal', eventName: type, state: getState() }), '*' );
+		}
+
         }
 
     }
@@ -3155,21 +3196,25 @@
 
     function pauseAutoSlide() {
 
-        autoSlidePaused = true;
-        dispatchEvent( 'autoslidepaused' );
-        clearTimeout( autoSlideTimeout );
+		if( autoSlide && !autoSlidePaused ) {
+		autoSlidePaused = true;
+		dispatchEvent( 'autoslidepaused' );
+		clearTimeout( autoSlideTimeout );
 
-        if( autoSlidePlayer ) {
-            autoSlidePlayer.setPlaying( false );
+		if( autoSlidePlayer ) {
+			autoSlidePlayer.setPlaying( false );
+			}
         }
 
     }
 
     function resumeAutoSlide() {
 
-        autoSlidePaused = false;
-        dispatchEvent( 'autoslideresumed' );
-        cueAutoSlide();
+		if( autoSlide && autoSlidePaused ) {
+		autoSlidePaused = false;
+		dispatchEvent( 'autoslideresumed' );
+		cueAutoSlide();
+		}
 
     }
 
