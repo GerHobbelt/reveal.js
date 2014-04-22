@@ -6,9 +6,9 @@ require.config({
         reveal: '../../js/reveal',
 
         // libraries required by the plugins:
-        zoom: "../plugins/zoom/js/zoom",
-        highlight: "../plugins/highlight/dist/highlight-umd",
-        marked: "../plugins/marked/lib/marked",
+        zoom: '../plugins/zoom/js/zoom',
+        highlight: '../plugins/highlight/dist/highlight-umd',
+        marked: '../plugins/marked/lib/marked',
         classList: '../js/classList/classList',
 
         verge: '../js/verge/verge'
