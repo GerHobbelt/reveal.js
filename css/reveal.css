@@ -674,11 +674,11 @@
     position: absolute;
     width: 100%;
     height: 100%;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
 
     overflow: visible;
     z-index: 1;
@@ -693,10 +693,10 @@
         -ms-perspective: 600px;
             perspective: 600px;
 
-	-webkit-perspective-origin: 50% 40%;
-	   -moz-perspective-origin: 50% 40%;
-	    -ms-perspective-origin: 50% 40%;
-	        perspective-origin: 50% 40%;
+    -webkit-perspective-origin: 50% 40%;
+       -moz-perspective-origin: 50% 40%;
+        -ms-perspective-origin: 50% 40%;
+            perspective-origin: 50% 40%;
 }
 
 .reveal .slides>section {
@@ -815,52 +815,52 @@
 
 .reveal.slide section,
 .reveal.linear section {
-	-webkit-backface-visibility: hidden;
-	   -moz-backface-visibility: hidden;
-	    -ms-backface-visibility: hidden;
-	        backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+       -moz-backface-visibility: hidden;
+        -ms-backface-visibility: hidden;
+            backface-visibility: hidden;
 }
 
 .reveal .slides>section[data-transition=slide].past,
 .reveal.slide .slides>section:not([data-transition]).past,
 .reveal .slides>section[data-transition=linear].past,
 .reveal.linear .slides>section:not([data-transition]).past {
-	-webkit-transform: translate3d(-150%, 0, 0);
-	   -moz-transform: translate3d(-150%, 0, 0);
-	    -ms-transform: translate3d(-150%, 0, 0);
-	     -o-transform: translate3d(-150%, 0, 0);
-	        transform: translate3d(-150%, 0, 0);
+    -webkit-transform: translate3d(-150%, 0, 0);
+       -moz-transform: translate3d(-150%, 0, 0);
+        -ms-transform: translate3d(-150%, 0, 0);
+         -o-transform: translate3d(-150%, 0, 0);
+            transform: translate3d(-150%, 0, 0);
 }
 .reveal .slides>section[data-transition=slide].future,
 .reveal.slide .slides>section:not([data-transition]).future,
 .reveal .slides>section[data-transition=linear].future,
 .reveal.linear .slides>section:not([data-transition]).future {
-	-webkit-transform: translate3d(150%, 0, 0);
-	   -moz-transform: translate3d(150%, 0, 0);
-	    -ms-transform: translate3d(150%, 0, 0);
-	     -o-transform: translate3d(150%, 0, 0);
-	        transform: translate3d(150%, 0, 0);
+    -webkit-transform: translate3d(150%, 0, 0);
+       -moz-transform: translate3d(150%, 0, 0);
+        -ms-transform: translate3d(150%, 0, 0);
+         -o-transform: translate3d(150%, 0, 0);
+            transform: translate3d(150%, 0, 0);
 }
 
 .reveal .slides>section>section[data-transition=slide].past,
 .reveal.slide .slides>section>section:not([data-transition]).past,
 .reveal .slides>section>section[data-transition=linear].past,
 .reveal.linear .slides>section>section:not([data-transition]).past {
-	-webkit-transform: translate3d(0, -150%, 0);
-	   -moz-transform: translate3d(0, -150%, 0);
-	    -ms-transform: translate3d(0, -150%, 0);
-	     -o-transform: translate3d(0, -150%, 0);
-	        transform: translate3d(0, -150%, 0);
+    -webkit-transform: translate3d(0, -150%, 0);
+       -moz-transform: translate3d(0, -150%, 0);
+        -ms-transform: translate3d(0, -150%, 0);
+         -o-transform: translate3d(0, -150%, 0);
+            transform: translate3d(0, -150%, 0);
 }
 .reveal .slides>section>section[data-transition=slide].future,
 .reveal.slide .slides>section>section:not([data-transition]).future,
 .reveal .slides>section>section[data-transition=linear].future,
 .reveal.linear .slides>section>section:not([data-transition]).future {
-	-webkit-transform: translate3d(0, 150%, 0);
-	   -moz-transform: translate3d(0, 150%, 0);
-	    -ms-transform: translate3d(0, 150%, 0);
-	     -o-transform: translate3d(0, 150%, 0);
-	        transform: translate3d(0, 150%, 0);
+    -webkit-transform: translate3d(0, 150%, 0);
+       -moz-transform: translate3d(0, 150%, 0);
+        -ms-transform: translate3d(0, 150%, 0);
+         -o-transform: translate3d(0, 150%, 0);
+            transform: translate3d(0, 150%, 0);
 }
 
 
@@ -1278,10 +1278,10 @@
  *********************************************/
 
 .reveal.overview .slides {
-	-webkit-perspective-origin: 50% 50%;
-	   -moz-perspective-origin: 50% 50%;
-	    -ms-perspective-origin: 50% 50%;
-	        perspective-origin: 50% 50%;
+    -webkit-perspective-origin: 50% 50%;
+       -moz-perspective-origin: 50% 50%;
+        -ms-perspective-origin: 50% 50%;
+            perspective-origin: 50% 50%;
 
     -webkit-perspective: 700px;
        -moz-perspective: 700px;

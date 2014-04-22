@@ -10,286 +10,300 @@
                 font-family: Helvetica;
             }
 
-			#current-slide,
-			#next-slide,
-			#speaker-controls {
-				padding: 6px;
-				box-sizing: border-box;
-				-moz-box-sizing: border-box;
-			}
+            #current-slide,
+            #next-slide,
+            #speaker-controls {
+                padding: 6px;
+                box-sizing: border-box;
+                -moz-box-sizing: border-box;
+            }
 
-			#current-slide iframe,
-			#next-slide iframe {
-				width: 100%;
-				height: 100%;
-				border: 1px solid #ddd;
-			}
+            #current-slide iframe,
+            #next-slide iframe {
+                width: 100%;
+                height: 100%;
+                border: 1px solid #ddd;
+            }
 
-			#current-slide .label,
-			#next-slide .label {
-				position: absolute;
-				top: 10px;
-				left: 10px;
-				font-weight: bold;
-				font-size: 14px;
-				z-index: 2;
-				color: rgba( 255, 255, 255, 0.9 );
-			}
+            #current-slide .label,
+            #next-slide .label {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                font-weight: bold;
+                font-size: 14px;
+                z-index: 2;
+                color: rgba( 255, 255, 255, 0.9 );
+            }
 
-			#current-slide {
-				position: absolute;
-				width: 65%;
-				height: 100%;
-				top: 0;
-				left: 0;
-				padding-right: 0;
-			}
+            #current-slide {
+                position: absolute;
+                width: 65%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                padding-right: 0;
+            }
 
-			#next-slide {
-				position: absolute;
-				width: 35%;
-				height: 40%;
-				right: 0;
-				top: 0;
-			}
+            #next-slide {
+                position: absolute;
+                width: 35%;
+                height: 40%;
+                right: 0;
+                top: 0;
+            }
 
-			#speaker-controls {
-				position: absolute;
-				top: 40%;
-				right: 0;
-				width: 35%;
-				height: 60%;
+            #speaker-controls {
+                position: absolute;
+                top: 40%;
+                right: 0;
+                width: 35%;
+                height: 60%;
 
-				font-size: 18px;
-			}
+                font-size: 18px;
+            }
 
-				.speaker-controls-time.hidden,
-				.speaker-controls-notes.hidden {
-					display: none;
-				}
+                .speaker-controls-time.hidden,
+                .speaker-controls-notes.hidden {
+                    display: none;
+                }
 
-				.speaker-controls-time .label,
-				.speaker-controls-notes .label {
-					text-transform: uppercase;
-					font-weight: normal;
-					font-size: 0.66em;
-					color: #666;
-					margin: 0;
-				}
+                .speaker-controls-time .label,
+                .speaker-controls-notes .label {
+                    text-transform: uppercase;
+                    font-weight: normal;
+                    font-size: 0.66em;
+                    color: #666;
+                    margin: 0;
+                }
 
-				.speaker-controls-time {
-					border-bottom: 1px solid rgba( 200, 200, 200, 0.5 );
-					margin-bottom: 10px;
-					padding: 10px 16px;
-					padding-bottom: 20px;
-				}
+                .speaker-controls-time {
+                    border-bottom: 1px solid rgba( 200, 200, 200, 0.5 );
+                    margin-bottom: 10px;
+                    padding: 10px 16px;
+                    padding-bottom: 20px;
+                }
 
-				.speaker-controls-time .timer,
-				.speaker-controls-time .clock {
-					width: 50%;
-					font-size: 1.9em;
-				}
+                .speaker-controls-time .timer,
+                .speaker-controls-time .clock {
+                    width: 50%;
+                    font-size: 1.9em;
+                }
 
-				.speaker-controls-time .timer {
-					float: left;
-				}
+                .speaker-controls-time .timer {
+                    float: left;
+                }
 
-				.speaker-controls-time .clock {
-					float: right;
-					text-align: right;
-				}
+                .speaker-controls-time .clock {
+                    float: right;
+                    text-align: right;
+                }
 
-				.speaker-controls-time span.mute {
-					color: #bbb;
-				}
+                .speaker-controls-time span.mute {
+                    color: #bbb;
+                }
 
-				.speaker-controls-notes {
-					padding: 10px 16px;
-				}
+                .speaker-controls-notes {
+                    padding: 10px 16px;
+                }
 
-				.speaker-controls-notes .value {
-					margin-top: 5px;
-					line-height: 1.4;
-					font-size: 1.2em;
-				}
+                .speaker-controls-notes .value {
+                    margin-top: 5px;
+                    line-height: 1.4;
+                    font-size: 1.2em;
+                }
 
-			.clear {
-				clear: both;
-			}
+            .clear {
+                clear: both;
+            }
 
-			@media screen and (max-width: 1080px) {
-				#speaker-controls {
-					font-size: 16px;
-				}
-			}
+            @media screen and (max-width: 1080px) {
+                #speaker-controls {
+                    font-size: 16px;
+                }
+            }
 
-			@media screen and (max-width: 900px) {
-				#speaker-controls {
-					font-size: 14px;
-				}
-			}
+            @media screen and (max-width: 900px) {
+                #speaker-controls {
+                    font-size: 14px;
+                }
+            }
 
-			@media screen and (max-width: 800px) {
-				#speaker-controls {
-					font-size: 12px;
-				}
-			}
+            @media screen and (max-width: 800px) {
+                #speaker-controls {
+                    font-size: 12px;
+                }
+            }
 
         </style>
     </head>
 
     <body>
 
-		<div id="current-slide"></div>
-		<div id="next-slide"><span class="label">UPCOMING:</span></div>
-		<div id="speaker-controls">
-			<div class="speaker-controls-time">
-				<h4 class="label">Time</h4>
-				<div class="clock">
-					<span class="clock-value">0:00 AM</span>
-				</div>
-				<div class="timer">
-					<span class="hours-value">00</span><span class="minutes-value">:00</span><span class="seconds-value">:00</span>
-				</div>
-				<div class="clear"></div>
-			</div>
+        <div id="current-slide"></div>
+        <div id="next-slide"><span class="label">UPCOMING:</span></div>
+        <div id="speaker-controls">
+            <div class="speaker-controls-time">
+                <h4 class="label">Time</h4>
+                <div class="clock">
+                    <span class="clock-value">0:00 AM</span>
+                </div>
+                <div class="timer">
+                    <span class="hours-value">00</span><span class="minutes-value">:00</span><span class="seconds-value">:00</span>
+                </div>
+                <div class="clear"></div>
+            </div>
 
-			<div class="speaker-controls-notes hidden">
-				<h4 class="label">Notes</h4>
-				<div class="value"></div>
-			</div>
-		</div>
+            <div class="speaker-controls-notes hidden">
+                <h4 class="label">Notes</h4>
+                <div class="value"></div>
+            </div>
+        </div>
 
         <script src="../../plugin/markdown/marked.js"></script>
         <script>
 
-			(function() {
+            (function() {
 
-				var notes,
-					notesValue,
-					currentState,
-					currentSlide,
-					nextSlide,
-					connected = false;
+                var notes,
+                    notesValue,
+                    currentState,
+                    currentSlide,
+                    nextSlide,
+                    connected = false;
 
-					window.addEventListener( 'message', function( event ) {
+                    window.addEventListener( 'message', function( event ) {
 
-						var data = JSON.parse( event.data );
+                    var data = JSON.parse( event.data );
 
-					// Messages sent by the notes plugin inside of the main window
-					if( data && data.namespace === 'reveal-notes' ) {
-						if( data.type === 'connect' ) {
-							handleConnectMessage( data );
-						}
-						else if( data.type === 'state' ) {
-							handleStateMessage( data );
-						}
-					}
-					// Messages sent by the reveal.js inside of the current slide preview
-					else if( data && data.namespace === 'reveal' ) {
-						if( /ready/.test( data.eventName ) ) {
-							// Send a message back to notify that the handshake is complete
-							window.opener.postMessage( JSON.stringify({ namespace: 'reveal-notes', type: 'connected'} ), '*' );
-						}
-						else if( /slidechanged|fragmentshown|fragmenthidden|overviewshown|overviewhidden|paused|resumed/.test( data.eventName ) && currentState !== JSON.stringify( data.state ) ) {
-							window.opener.postMessage( JSON.stringify({ method: 'setState', args: [ data.state ]} ), '*' );
-						}
-					}
+                    // Messages sent by the notes plugin inside of the main window
+                    if( data && data.namespace === 'reveal-notes' ) {
+                        if( data.type === 'connect' ) {
+                            handleConnectMessage( data );
+                        }
+                        else if( data.type === 'state' ) {
+                            handleStateMessage( data );
+                        }
+                    }
+                    // Messages sent by the reveal.js inside of the current slide preview
+                    else if( data && data.namespace === 'reveal' ) {
+                        if( /ready/.test( data.eventName ) ) {
+                            // Send a message back to notify that the handshake is complete
+                            window.opener.postMessage( JSON.stringify({
+                                namespace: 'reveal-notes',
+                                type: 'connected'
+                            } ), '*' );
+                        }
+                        else if( /slidechanged|fragmentshown|fragmenthidden|overviewshown|overviewhidden|paused|resumed/.test( data.eventName ) && currentState !== JSON.stringify( data.state ) ) {
+                            window.opener.postMessage( JSON.stringify({
+                                method: 'setState',
+                                args: [ data.state ]
+                            } ), '*' );
+                        }
+                    }
 
-				} );
+                } );
 
-				/**
-				 * Called when the main window is trying to establish a
-				 * connection.
-				 */
-				function handleConnectMessage( data ) {
+                /**
+                 * Called when the main window is trying to establish a
+                 * connection.
+                 */
+                function handleConnectMessage( data ) {
 
-					if( connected === false ) {
-						connected = true;
+                    if( connected === false ) {
+                        connected = true;
 
-						setupIframes( data );
-						setupNotes();
-						setupTimer();
-					}
+                        setupIframes( data );
+                        setupNotes();
+                        setupTimer();
+                    }
 
-				}
+                }
 
-				/**
-				 * Called when the main window sends an updated state.
-				 */
-				function handleStateMessage( data ) {
+                /**
+                 * Called when the main window sends an updated state.
+                 */
+                function handleStateMessage( data ) {
 
-					// Store the most recently set state to avoid circular loops
-					// applying the same state
-					currentState = JSON.stringify( data.state );
+                    // Store the most recently set state to avoid circular loops
+                    // applying the same state
+                    currentState = JSON.stringify( data.state );
 
-					// No need for updating the notes in case of fragment changes
-					if ( data.notes ) {
-						notes.classList.remove( 'hidden' );
-						if( data.markdown ) {
-							notesValue.innerHTML = marked( data.notes );
-						}
-						else {
-							notesValue.innerHTML = data.notes;
-						}
-					}
-					else {
-						notes.classList.add( 'hidden' );
-					}
+                    // No need for updating the notes in case of fragment changes
+                    if ( data.notes ) {
+                        notes.classList.remove( 'hidden' );
+                        if( data.markdown ) {
+                            notesValue.innerHTML = marked( data.notes );
+                        }
+                        else {
+                            notesValue.innerHTML = data.notes;
+                        }
+                    }
+                    else {
+                        notes.classList.add( 'hidden' );
+                    }
 
-					// Update the note slides
-					currentSlide.contentWindow.postMessage( JSON.stringify({ method: 'setState', args: [ data.state ] }), '*' );
-					nextSlide.contentWindow.postMessage( JSON.stringify({ method: 'setState', args: [ data.state ] }), '*' );
-					nextSlide.contentWindow.postMessage( JSON.stringify({ method: 'next' }), '*' );
+                    // Update the note slides
+                    currentSlide.contentWindow.postMessage( JSON.stringify({
+                        method: 'setState',
+                        args: [ data.state ]
+                    } ), '*' );
+                    nextSlide.contentWindow.postMessage( JSON.stringify({
+                        method: 'setState',
+                        args: [ data.state ]
+                    } ), '*' );
+                    nextSlide.contentWindow.postMessage( JSON.stringify({
+                        method: 'next'
+                    } ), '*' );
 
-				}
+                }
 
-				/**
-				 * Creates the preview iframes.
-				 */
-				function setupIframes( data ) {
+                /**
+                 * Creates the preview iframes.
+                 */
+                function setupIframes( data ) {
 
-					var url = data.url + '?receiver&progress=false&overview=false&history=false';
-					var hash = '#/' + data.state.indexh + '/' + data.state.indexv;
+                    var url = data.url + '?receiver&progress=false&overview=false&history=false';
+                    var hash = '#/' + data.state.indexh + '/' + data.state.indexv;
 
-					currentSlide = document.createElement( 'iframe' );
-					currentSlide.setAttribute( 'width', 1280 );
-					currentSlide.setAttribute( 'height', 1024 );
-					currentSlide.setAttribute( 'src', url + '&postMessageEvents=true' + hash );
-					document.querySelector( '#current-slide' ).appendChild( currentSlide );
+                    currentSlide = document.createElement( 'iframe' );
+                    currentSlide.setAttribute( 'width', 1280 );
+                    currentSlide.setAttribute( 'height', 1024 );
+                    currentSlide.setAttribute( 'src', url + '&postMessageEvents=true' + hash );
+                    document.querySelector( '#current-slide' ).appendChild( currentSlide );
 
-					nextSlide = document.createElement( 'iframe' );
-					nextSlide.setAttribute( 'width', 640 );
-					nextSlide.setAttribute( 'height', 512 );
-					nextSlide.setAttribute( 'src', url + '&controls=false' + hash );
-					document.querySelector( '#next-slide' ).appendChild( nextSlide );
+                    nextSlide = document.createElement( 'iframe' );
+                    nextSlide.setAttribute( 'width', 640 );
+                    nextSlide.setAttribute( 'height', 512 );
+                    nextSlide.setAttribute( 'src', url + '&controls=false' + hash );
+                    document.querySelector( '#next-slide' ).appendChild( nextSlide );
 
-				}
+                }
 
-				/**
-				 * Setup the notes UI.
-				 */
-				function setupNotes() {
+                /**
+                 * Setup the notes UI.
+                 */
+                function setupNotes() {
 
-					notes = document.querySelector( '.speaker-controls-notes' );
-					notesValue = document.querySelector( '.speaker-controls-notes .value' );
+                    notes = document.querySelector( '.speaker-controls-notes' );
+                    notesValue = document.querySelector( '.speaker-controls-notes .value' );
 
-				}
+                }
 
-				/**
-				 * Create the timer and clock and start updating them
-				 * at an interval.
-				 */
-				function setupTimer() {
+                /**
+                 * Create the timer and clock and start updating them
+                 * at an interval.
+                 */
+                function setupTimer() {
 
-					var start = new Date(),
-						timeEl = document.querySelector( '.speaker-controls-time' ),
-						clockEl = timeEl.querySelector( '.clock-value' ),
-						hoursEl = timeEl.querySelector( '.hours-value' ),
-						minutesEl = timeEl.querySelector( '.minutes-value' ),
-						secondsEl = timeEl.querySelector( '.seconds-value' );
+                    var start = new Date(),
+                        timeEl = document.querySelector( '.speaker-controls-time' ),
+                        clockEl = timeEl.querySelector( '.clock-value' ),
+                        hoursEl = timeEl.querySelector( '.hours-value' ),
+                        minutesEl = timeEl.querySelector( '.minutes-value' ),
+                        secondsEl = timeEl.querySelector( '.seconds-value' );
 
-					function _updateTimer() {
+                    function _updateTimer() {
 
                         var diff, hours, minutes, seconds,
                             now = new Date();
@@ -299,31 +313,31 @@
                         minutes = Math.floor( ( diff / ( 1000 * 60 ) ) % 60 );
                         seconds = Math.floor( ( diff / 1000 ) % 60 );
 
-						clockEl.innerHTML = now.toLocaleTimeString( 'en-US', { hour12: true, hour: '2-digit', minute:'2-digit' } );
-						hoursEl.innerHTML = zeroPadInteger( hours );
-						hoursEl.className = hours > 0 ? '' : 'mute';
-						minutesEl.innerHTML = ':' + zeroPadInteger( minutes );
-						minutesEl.className = minutes > 0 ? '' : 'mute';
-						secondsEl.innerHTML = ':' + zeroPadInteger( seconds );
+                        clockEl.innerHTML = now.toLocaleTimeString( 'en-US', { hour12: true, hour: '2-digit', minute:'2-digit' } );
+                        hoursEl.innerHTML = zeroPadInteger( hours );
+                        hoursEl.className = hours > 0 ? '' : 'mute';
+                        minutesEl.innerHTML = ':' + zeroPadInteger( minutes );
+                        minutesEl.className = minutes > 0 ? '' : 'mute';
+                        secondsEl.innerHTML = ':' + zeroPadInteger( seconds );
 
-					}
+                    }
 
-					// Update once directly
-					_updateTimer();
+                    // Update once directly
+                    _updateTimer();
 
-					// Then update every second
-					setInterval( _updateTimer, 1000 );
+                    // Then update every second
+                    setInterval( _updateTimer, 1000 );
 
-				}
+                }
 
-				function zeroPadInteger( num ) {
+                function zeroPadInteger( num ) {
 
-					var str = '00' + parseInt( num );
-					return str.substring( str.length - 2 );
+                    var str = '00' + parseInt( num );
+                    return str.substring( str.length - 2 );
 
-				}
+                }
 
-			})();
+            })();
 
         </script>
     </body>

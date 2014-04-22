@@ -189,7 +189,7 @@ Reveal.addEventListener( 'ready', function() {
         deepEqual( Reveal.getIndices(), { h: 2, v: 0, f: 2 } );
         deepEqual( Reveal.availableFragments(), { prev: true, next: false } );
 
-        // There's fragments on this slide; all HTML bits are combined into a single fragment: data-fragment-index="0" 
+        // There's fragments on this slide; all HTML bits are combined into a single fragment: data-fragment-index="0"
         Reveal.next();
         deepEqual( Reveal.getIndices(), { h: 2, v: 1, f: -1 } );
         deepEqual( Reveal.availableFragments(), { prev: false, next: true } );
