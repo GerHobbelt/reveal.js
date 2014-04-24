@@ -773,6 +773,9 @@
             var element = document.createElement( 'div' );
 
             // Carry over custom classes from the slide to the background
+            //
+            // http://jsperf.com/element-classlist-vs-element-classname/6  .className vs. classList: for modern browsers it doesn't matter all that much
+            // http://jsperf.com/element-classlist-vs-element-classname/8  .classList.remove vs. .classList.toggle(X, false): latter is not available everywhere 
             element.className = slide.className;
             element.classList.add( 'slide-background' );
             element.classList.remove( 'present' );
