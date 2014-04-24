@@ -1,3 +1,31 @@
+# JoliCode reveal.js fork
+
+## How to use
+
+Clone the project into a new repository gh-pages branch,
+rename `index-jolicode.html` into `index.html` and start working!
+
+## What's different
+
+- `index-jolicode.html` demo with specific instructions
+- new theme "jolicode", already set as default with convergence font loaded locally
+- the jolicode logo is here: ./lib/font/logo-fond-noir.svg
+- support for footer added:
+
+```html
+<footer class="joli">
+    A presentation about ponies - PonyCon 2013
+</footer>
+```
+
+- custom state: `<section data-state="jolistate">`
+- new `.emphasis` class displaying blue text
+- no more borders on images and better `<blockquote>` styles
+
+Kiss :sparkling_heart:
+
+...
+
 # reveal.js [![Build Status](https://travis-ci.org/hakimel/reveal.js.png?branch=master)](https://travis-ci.org/hakimel/reveal.js)
 
 A framework for easily creating beautiful presentations using HTML. [Check out the live demo](http://lab.hakim.se/reveal-js/).
@@ -981,28 +1009,28 @@ Some reveal.js features, like external markdown and speaker notes, require that 
 2. Install [Grunt](http://gruntjs.com/getting-started#installing-the-cli)
 
 4. Clone the reveal.js repository
-   ```sh
-   $ git clone https://github.com/hakimel/reveal.js.git
-   ```
+```sh
+$ git clone git@github.com:jolicode/reveal.js.git
+```
 
 5. Navigate to the reveal.js folder
-   ```sh
-   $ cd reveal.js
-   ```
+```sh
+$ cd reveal.js
+```
 
 6. Install dependencies
-   ```sh
-   $ npm install
-   ```
+```sh
+$ npm install
+```
 
 7. Serve the presentation and monitor source files for changes
-   ```sh
-   $ grunt serve
-   ```
+```sh
+$ grunt serve
+```
 
 8. Open <http://localhost:8000> to view your presentation
 
-   You can change the port by using `grunt serve --port 8001`.
+You can change the port by using `grunt serve --port 8001`.
 
 
 ### Folder Structure
@@ -1017,4 +1045,4 @@ Some reveal.js features, like external markdown and speaker notes, require that 
 
 MIT licensed
 
-Copyright (C) 2014 Hakim El Hattab, http://hakim.se
+Copyright (C) 2013 Hakim El Hattab, http://hakim.se
