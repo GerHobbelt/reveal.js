@@ -16,7 +16,7 @@
         module.exports = function( w ) {
             w = w || window;
             if ( !w.document ) {
-                throw new Error("jQuery plugin requires a window with a document");
+                throw new Error("RevealJS requires a window with a document");
             }
             return factory( w, w.document );
         };
@@ -773,7 +773,11 @@
             var element = document.createElement( 'div' );
 
 		// Carry over custom classes from the slide to the background
-		element.className = 'slide-background ' + slide.className.replace( /present|past|future/, '' );
+		element.className = slide.className;
+		element.classList.add('slide-background');
+		element.classList.remove('present');
+		element.classList.remove('past');
+		element.classList.remove('future');
 
             if( data.background ) {
                 // Auto-wrap image urls in url(...)
