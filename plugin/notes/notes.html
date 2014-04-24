@@ -11,7 +11,7 @@
             }
 
             #current-slide,
-			#upcoming-slide,
+            #upcoming-slide,
             #speaker-controls {
                 padding: 6px;
                 box-sizing: border-box;
@@ -19,14 +19,14 @@
             }
 
             #current-slide iframe,
-			#upcoming-slide iframe {
+            #upcoming-slide iframe {
                 width: 100%;
                 height: 100%;
                 border: 1px solid #ddd;
             }
 
             #current-slide .label,
-			#upcoming-slide .label {
+            #upcoming-slide .label {
                 position: absolute;
                 top: 10px;
                 left: 10px;
@@ -45,7 +45,7 @@
                 padding-right: 0;
             }
 
-			#upcoming-slide {
+            #upcoming-slide {
                 position: absolute;
                 width: 35%;
                 height: 40%;
@@ -141,7 +141,7 @@
     <body>
 
         <div id="current-slide"></div>
-		<div id="upcoming-slide"><span class="label">UPCOMING:</span></div>
+        <div id="upcoming-slide"><span class="label">UPCOMING:</span></div>
         <div id="speaker-controls">
             <div class="speaker-controls-time">
                 <h4 class="label">Time</h4>
@@ -169,7 +169,7 @@
                     notesValue,
                     currentState,
                     currentSlide,
-					upcomingSlide,
+                    upcomingSlide,
                     connected = false;
 
                     window.addEventListener( 'message', function( event ) {
@@ -258,37 +258,37 @@
 
                 }
 
-				// Limit to max one state update per X ms
-				handleStateMessage = debounce( handleStateMessage, 200 );
+                // Limit to max one state update per X ms
+                handleStateMessage = debounce( handleStateMessage, 200 );
 
                 /**
                  * Creates the preview iframes.
                  */
                 function setupIframes( data ) {
 
-					var params = [
-						'receiver',
-						'progress=false',
-						'history=false',
-						'transition=none',
-						'backgroundTransition=none'
-					].join( '&' );
+                    var params = [
+                        'receiver',
+                        'progress=false',
+                        'history=false',
+                        'transition=none',
+                        'backgroundTransition=none'
+                    ].join( '&' );
 
                     var hash = '#/' + data.state.indexh + '/' + data.state.indexv;
-					var currentURL = data.url + '?' + params + '&postMessageEvents=true' + hash;
-					var upcomingURL = data.url + '?' + params + '&controls=false' + hash;
+                    var currentURL = data.url + '?' + params + '&postMessageEvents=true' + hash;
+                    var upcomingURL = data.url + '?' + params + '&controls=false' + hash;
 
                     currentSlide = document.createElement( 'iframe' );
                     currentSlide.setAttribute( 'width', 1280 );
                     currentSlide.setAttribute( 'height', 1024 );
-					currentSlide.setAttribute( 'src', currentURL );
+                    currentSlide.setAttribute( 'src', currentURL );
                     document.querySelector( '#current-slide' ).appendChild( currentSlide );
 
-					upcomingSlide = document.createElement( 'iframe' );
-					upcomingSlide.setAttribute( 'width', 640 );
-					upcomingSlide.setAttribute( 'height', 512 );
-					upcomingSlide.setAttribute( 'src', upcomingURL );
-					document.querySelector( '#upcoming-slide' ).appendChild( upcomingSlide );
+                    upcomingSlide = document.createElement( 'iframe' );
+                    upcomingSlide.setAttribute( 'width', 640 );
+                    upcomingSlide.setAttribute( 'height', 512 );
+                    upcomingSlide.setAttribute( 'src', upcomingURL );
+                    document.querySelector( '#upcoming-slide' ).appendChild( upcomingSlide );
 
                 }
 
@@ -349,36 +349,36 @@
 
                 }
 
-				/**
-				 * Limits the frequency at which a function can be called.
-				 */
-				function debounce( fn, ms ) {
+                /**
+                 * Limits the frequency at which a function can be called.
+                 */
+                function debounce( fn, ms ) {
 
-					var lastTime = 0,
-						timeout;
+                    var lastTime = 0,
+                        timeout;
 
-					return function() {
+                    return function() {
 
-						var args = arguments;
-						var context = this;
+                        var args = arguments;
+                        var context = this;
 
-						clearTimeout( timeout );
+                        clearTimeout( timeout );
 
-						var timeSinceLastCall = Date.now() - lastTime;
-						if( timeSinceLastCall > ms ) {
-							fn.apply( context, args );
-							lastTime = Date.now();
-						}
-						else {
-							timeout = setTimeout( function() {
-								fn.apply( context, args );
-								lastTime = Date.now();
-							}, ms - timeSinceLastCall );
-						}
+                        var timeSinceLastCall = Date.now() - lastTime;
+                        if( timeSinceLastCall > ms ) {
+                            fn.apply( context, args );
+                            lastTime = Date.now();
+                        }
+                        else {
+                            timeout = setTimeout( function() {
+                                fn.apply( context, args );
+                                lastTime = Date.now();
+                            }, ms - timeSinceLastCall );
+                        }
 
-					}
+                    }
 
-				}
+                }
 
             })();
 

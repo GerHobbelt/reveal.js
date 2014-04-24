@@ -440,10 +440,10 @@
         // Update all backgrounds
         updateBackground( true );
 
-		// Special setup and config is required when printing to PDF
-		if( isPrintingPDF() ) {
-			setupPDF();
-		}
+        // Special setup and config is required when printing to PDF
+        if( isPrintingPDF() ) {
+            setupPDF();
+        }
 
         // Notify listeners that the presentation is ready but use a 1ms
         // timeout to ensure it's not fired synchronously after #initialize()
@@ -621,66 +621,66 @@
 
 
     /**
-	 * Configures the presentation for printing to a static
-	 * PDF.
-	 */
-	function setupPDF() {
+     * Configures the presentation for printing to a static
+     * PDF.
+     */
+    function setupPDF() {
 
-		// Dimensions of the content
-		var pageWidth = 1122,
-			pageHeight = 867;
+        // Dimensions of the content
+        var pageWidth = 1122,
+            pageHeight = 867;
 
-		var slideWidth = 960,
-			slideHeight = 700;
+        var slideWidth = 960,
+            slideHeight = 700;
 
-		document.body.classList.add( 'print-pdf' );
-		document.body.style.width = pageWidth + 'px';
-		document.body.style.height = pageHeight + 'px';
+        document.body.classList.add( 'print-pdf' );
+        document.body.style.width = pageWidth + 'px';
+        document.body.style.height = pageHeight + 'px';
 
-		// Slide and slide background layout
-		toArray( document.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
+        // Slide and slide background layout
+        toArray( document.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
 
-			// Vertical stacks are not centred since their section
-			// children will be
-			if( slide.classList.contains( 'stack' ) ) {
-				slide.style.top = 0;
-			}
-			else {
-				var left = ( pageWidth - slideWidth ) / 2;
-				var top = ( pageHeight - slideHeight ) / 2;
+            // Vertical stacks are not centred since their section
+            // children will be
+            if( slide.classList.contains( 'stack' ) ) {
+                slide.style.top = 0;
+            }
+            else {
+                var left = ( pageWidth - slideWidth ) / 2;
+                var top = ( pageHeight - slideHeight ) / 2;
 
-				if( config.center || slide.classList.contains( 'center' ) ) {
-					top = Math.max( ( pageHeight - getAbsoluteHeight( slide ) ) / 2, 0 );
-				}
+                if( config.center || slide.classList.contains( 'center' ) ) {
+                    top = Math.max( ( pageHeight - getAbsoluteHeight( slide ) ) / 2, 0 );
+                }
 
-				slide.style.left = left + 'px';
-				slide.style.top = top + 'px';
-				slide.style.width = slideWidth + 'px';
-				slide.style.height = slideHeight + 'px';
+                slide.style.left = left + 'px';
+                slide.style.top = top + 'px';
+                slide.style.width = slideWidth + 'px';
+                slide.style.height = slideHeight + 'px';
 
-				if( slide.scrollHeight > slideHeight ) {
-					slide.style.overflow = 'hidden';
-				}
+                if( slide.scrollHeight > slideHeight ) {
+                    slide.style.overflow = 'hidden';
+                }
 
-				var background = slide.querySelector( '.slide-background' );
-				if( background ) {
-					background.style.width = pageWidth + 'px';
-					background.style.height = pageHeight + 'px';
-					background.style.top = -top + 'px';
-					background.style.left = -left + 'px';
-				}
-			}
+                var background = slide.querySelector( '.slide-background' );
+                if( background ) {
+                    background.style.width = pageWidth + 'px';
+                    background.style.height = pageHeight + 'px';
+                    background.style.top = -top + 'px';
+                    background.style.left = -left + 'px';
+                }
+            }
 
-		} );
+        } );
 
-		// Show all fragments
-		toArray( document.querySelectorAll( SLIDES_SELECTOR + ' .fragment' ) ).forEach( function( fragment ) {
-			fragment.classList.add( 'visible' );
-		} );
+        // Show all fragments
+        toArray( document.querySelectorAll( SLIDES_SELECTOR + ' .fragment' ) ).forEach( function( fragment ) {
+            fragment.classList.add( 'visible' );
+        } );
 
-	}
+    }
 
-	/**
+    /**
      * Creates an HTML element and returns a reference to it.
      * If the element already exists the existing instance will
      * be returned.
@@ -707,7 +707,7 @@
      */
     function createBackgrounds() {
 
-		var printMode = isPrintingPDF();
+        var printMode = isPrintingPDF();
 
         // Clear prior backgrounds
         dom.background.innerHTML = '';
@@ -719,7 +719,7 @@
             var backgroundStack;
             var back = null;
 
-			if( printMode ) {
+            if( printMode ) {
                 backgroundStack = createBackground( slideh, slideh );
             }
             else {
@@ -729,7 +729,7 @@
             // Iterate over all vertical slides
             toArray( slideh.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).forEach( function( slidev, j ) {
 
-				if( printMode ) {
+                if( printMode ) {
                     createBackground( slidev, slidev );
                 }
                 else {
@@ -772,12 +772,12 @@
 
             var element = document.createElement( 'div' );
 
-		// Carry over custom classes from the slide to the background
-		element.className = slide.className;
-		element.classList.add('slide-background');
-		element.classList.remove('present');
-		element.classList.remove('past');
-		element.classList.remove('future');
+            // Carry over custom classes from the slide to the background
+            element.className = slide.className;
+            element.classList.add( 'slide-background' );
+            element.classList.remove( 'present' );
+            element.classList.remove( 'past' );
+            element.classList.remove( 'future' );
 
             if( data.background ) {
                 // Auto-wrap image urls in url(...)
@@ -837,16 +837,16 @@
 
         if( config.postMessage ) {
             window.addEventListener( 'message', function ( event ) {
-				var data = event.data;
+                var data = event.data;
 
-				// Make sure we're dealing with JSON
-				if( data.charAt( 0 ) === '{' && data.charAt( data.length - 1 ) === '}' ) {
-					data = JSON.parse( data );
+                // Make sure we're dealing with JSON
+                if( data.charAt( 0 ) === '{' && data.charAt( data.length - 1 ) === '}' ) {
+                    data = JSON.parse( data );
 
-					// Check if the requested method can be found
-					if( data.method && typeof Reveal[data.method] === 'function' ) {
-						Reveal[data.method].apply( Reveal, data.args );
-					}
+                    // Check if the requested method can be found
+                    if( data.method && typeof Reveal[data.method] === 'function' ) {
+                        Reveal[data.method].apply( Reveal, data.args );
+                    }
                 }
             }, false );
         }
@@ -1187,7 +1187,7 @@
 
                 if( typeof child.offsetTop === 'number' && child.style ) {
                     // Count # of abs children
-					if( window.getComputedStyle( child ).position === 'absolute' ) {
+                    if( window.getComputedStyle( child ).position === 'absolute' ) {
                         absoluteChildren += 1;
                     }
 
@@ -1554,28 +1554,28 @@
 
             for( var i = 0, len = slides.length; i < len; i++ ) {
                 var slide = slides[ i ];
-				var style = window.getComputedStyle( slide );
+                var style = window.getComputedStyle( slide );
 
-				// Don't update invisible slides
-				if( style.display === 'none' ) {
+                // Don't update invisible slides
+                if( style.display === 'none' ) {
                     continue;
                 }
-				// If the display mode is 'block' flexbox is not supported by
-				// the current browser so we fall back on JavaScript centering
-				else if( style.display === 'block' ) {
-					if( config.center || slide.classList.contains( 'center' ) ) {
-						// Vertical stacks are not centred since their section children will be
-						if( slide.classList.contains( 'stack' ) ) {
-							slide.style.top = 0;
-						}
-						else {
-							slide.style.top = Math.max( ( ( slideHeight - getAbsoluteHeight( slide ) ) / 2 ) - slidePadding, 0 ) + 'px';
-							slide.style.height = 'auto';
-						}
-					}
-					else {
-						slide.style.top = '';
-					}
+                // If the display mode is 'block' flexbox is not supported by
+                // the current browser so we fall back on JavaScript centering
+                else if( style.display === 'block' ) {
+                    if( config.center || slide.classList.contains( 'center' ) ) {
+                        // Vertical stacks are not centred since their section children will be
+                        if( slide.classList.contains( 'stack' ) ) {
+                            slide.style.top = 0;
+                        }
+                        else {
+                            slide.style.top = Math.max( ( ( slideHeight - getAbsoluteHeight( slide ) ) / 2 ) - slidePadding, 0 ) + 'px';
+                            slide.style.height = 'auto';
+                        }
+                    }
+                    else {
+                        slide.style.top = '';
+                    }
                 }
             }
 
@@ -2386,10 +2386,10 @@
             viewDistance = isOverview() ? 6 : 1;
         }
 
-		// Unlimited view distance for printing: we want to print all sheets all at once
-		if( isPrintingPDF() ) {
-			viewDistance = Number.MAX_VALUE;
-		}
+        // Unlimited view distance for printing: we want to print all sheets all at once
+        if( isPrintingPDF() ) {
+            viewDistance = Number.MAX_VALUE;
+        }
 
         return viewDistance;
 
@@ -2425,13 +2425,13 @@
                 distanceX = Math.abs( indexh - x ) || 0;
 
                 // Show the horizontal slide if it's within the view distance
-				if( distanceX < viewDistance ) {
-					horizontalSlide.classList.add( 'visible' );
-					loadSlide( horizontalSlide );
-				}
-				else {
-					horizontalSlide.classList.remove( 'visible' );
-				}
+                if( distanceX < viewDistance ) {
+                    horizontalSlide.classList.add( 'visible' );
+                    loadSlide( horizontalSlide );
+                }
+                else {
+                    horizontalSlide.classList.remove( 'visible' );
+                }
 
                 if( verticalSlidesLength ) {
 
@@ -2442,13 +2442,13 @@
 
                         distanceY = x === indexh ? Math.abs( indexv - y ) : Math.abs( y - oy );
 
-						if( distanceX > viewDistance || distanceY > viewDistance ) {
-							verticalSlide.classList.add( 'visible' );
-							loadSlide( verticalSlide );
-						}
-						else {
-							verticalSlide.classList.remove( 'visible' );
-						}
+                        if( distanceX > viewDistance || distanceY > viewDistance ) {
+                            verticalSlide.classList.add( 'visible' );
+                            loadSlide( verticalSlide );
+                        }
+                        else {
+                            verticalSlide.classList.remove( 'visible' );
+                        }
                     }
 
                 }
@@ -2563,18 +2563,18 @@
         // states of their slides (past/present/future)
         toArray( dom.background.childNodes ).forEach( function( backgroundh, h ) {
 
-			backgroundh.classList.remove( 'past' );
-			backgroundh.classList.remove( 'present' );
-			backgroundh.classList.remove( 'future' );
+            backgroundh.classList.remove( 'past' );
+            backgroundh.classList.remove( 'present' );
+            backgroundh.classList.remove( 'future' );
 
             if( h < indexh ) {
-				backgroundh.classList.add( horizontalPast );
+                backgroundh.classList.add( horizontalPast );
             }
             else if ( h > indexh ) {
-				backgroundh.classList.add( horizontalFuture );
+                backgroundh.classList.add( horizontalFuture );
             }
             else {
-				backgroundh.classList.add( 'present' );
+                backgroundh.classList.add( 'present' );
 
                 // Store a reference to the current background element
                 currentBackground = backgroundh;
@@ -2583,18 +2583,18 @@
             if( includeAll || h === indexh ) {
                 toArray( backgroundh.querySelectorAll( '.slide-background' ) ).forEach( function( backgroundv, v ) {
 
-					backgroundv.classList.remove( 'past' );
-					backgroundv.classList.remove( 'present' );
-					backgroundv.classList.remove( 'future' );
+                    backgroundv.classList.remove( 'past' );
+                    backgroundv.classList.remove( 'present' );
+                    backgroundv.classList.remove( 'future' );
 
                     if( v < indexv ) {
-						backgroundv.classList.add( 'past' );
+                        backgroundv.classList.add( 'past' );
                     }
                     else if ( v > indexv ) {
-						backgroundv.classList.add( 'future' );
+                        backgroundv.classList.add( 'future' );
                     }
                     else {
-						backgroundv.classList.add( 'present' );
+                        backgroundv.classList.add( 'present' );
 
                         // Only if this is the present horizontal and vertical slide
                         if( h === indexh ) currentBackground = backgroundv;
@@ -2683,36 +2683,36 @@
 
         }
 
-	}
+    }
 
-	/**
-	 * Loads any content that is set to load lazily (data-src)
-	 * inside of the given slide.
-	 */
-	function loadSlide( slide ) {
+    /**
+     * Loads any content that is set to load lazily (data-src)
+     * inside of the given slide.
+     */
+    function loadSlide( slide ) {
 
-		// Media elements with data-src attributes
-		toArray( slide.querySelectorAll( 'img[data-src], video[data-src], audio[data-src], iframe[data-src]' ) ).forEach( function( element ) {
-			element.setAttribute( 'src', element.getAttribute( 'data-src' ) );
-			element.removeAttribute( 'data-src' );
-		} );
+        // Media elements with data-src attributes
+        toArray( slide.querySelectorAll( 'img[data-src], video[data-src], audio[data-src], iframe[data-src]' ) ).forEach( function( element ) {
+            element.setAttribute( 'src', element.getAttribute( 'data-src' ) );
+            element.removeAttribute( 'data-src' );
+        } );
 
-		// Media elements with multiple <source>s
-		toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( media ) {
-			var sources = 0;
+        // Media elements with multiple <source>s
+        toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( media ) {
+            var sources = 0;
 
-			toArray( media.querySelectorAll( 'source[data-src]' ) ).forEach( function( source ) {
-				source.setAttribute( 'src', source.getAttribute( 'data-src' ) );
-				source.removeAttribute( 'data-src' );
-				sources += 1;
-			} );
+            toArray( media.querySelectorAll( 'source[data-src]' ) ).forEach( function( source ) {
+                source.setAttribute( 'src', source.getAttribute( 'data-src' ) );
+                source.removeAttribute( 'data-src' );
+                sources += 1;
+            } );
 
-			// If we rewrote sources for this video/audio element, we need
-			// to manually tell it to load from its new origin
-			if( sources > 0 ) {
-				media.load();
-			}
-		} );
+            // If we rewrote sources for this video/audio element, we need
+            // to manually tell it to load from its new origin
+            if( sources > 0 ) {
+                media.load();
+            }
+        } );
 
     }
 
@@ -3081,16 +3081,16 @@
         if( typeof state === 'object' ) {
             slide( deserialize( state.indexh ), deserialize( state.indexv ), deserialize( state.indexf ) );
 
-			var pausedFlag = deserialize( state.paused ),
-				overviewFlag = deserialize( state.overview );
+            var pausedFlag = deserialize( state.paused ),
+                overviewFlag = deserialize( state.overview );
 
-			if( typeof pausedFlag === 'boolean' && pausedFlag !== isPaused() ) {
-				togglePause( pausedFlag );
-			}
+            if( typeof pausedFlag === 'boolean' && pausedFlag !== isPaused() ) {
+                togglePause( pausedFlag );
+            }
 
-			if( typeof overviewFlag === 'boolean' && overviewFlag !== isOverview() ) {
-				toggleOverview( overviewFlag );
-			}
+            if( typeof overviewFlag === 'boolean' && overviewFlag !== isOverview() ) {
+                toggleOverview( overviewFlag );
+            }
         }
 
     }

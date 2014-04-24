@@ -708,7 +708,7 @@
     display: none;
     position: absolute;
     width: 100%;
-	padding: 0px;
+    padding: 0px;
 
     z-index: 10;
     line-height: 1.2em;
@@ -735,45 +735,45 @@
 
 .reveal .slides>section.visible,
 .reveal .slides>section>section.visible {
-	display: block;
+    display: block;
 }
 
 .reveal.center .slides {
-	top: -40px;
+    top: -40px;
 }
 
 .reveal.center .slides,
 .reveal.center .slides section {
-	height: 100%;
+    height: 100%;
 }
 
 .reveal.center .slides section:not(.stack) {
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -moz-box;
-	display: -moz-flex;
-	display: -ms-flexbox;
-	display: flex;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
 
-	-webkit-box-direction: normal;
-	-webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-box-orient: vertical;
 
-	-webkit-flex-direction: column;
-	   -moz-flex-direction: column;
-	    -ms-flex-direction: column;
-	        flex-direction: column;
+    -webkit-flex-direction: column;
+       -moz-flex-direction: column;
+        -ms-flex-direction: column;
+            flex-direction: column;
 
-	-webkit-box-align: center;
-	   -ms-flex-align: center;
-	-webkit-align-items: center;
-	   -moz-align-items: center;
-	        align-items: center;
+    -webkit-box-align: center;
+       -ms-flex-align: center;
+    -webkit-align-items: center;
+       -moz-align-items: center;
+            align-items: center;
 
-	-webkit-box-pack: center;
-	   -ms-flex-pack: center;
-	-webkit-justify-content: center;
-	   -moz-justify-content: center;
-	        justify-content: center;
+    -webkit-box-pack: center;
+       -ms-flex-pack: center;
+    -webkit-justify-content: center;
+       -moz-justify-content: center;
+            justify-content: center;
 }
 
 /* Global transition speed settings */
@@ -802,8 +802,8 @@
 
 .reveal .slides>section.present,
 .reveal .slides>section>section.present {
-	z-index: 11;
-	opacity: 1;
+    z-index: 11;
+    opacity: 1;
 }
 
 /* Don't allow interaction with invisible slides */
