@@ -185,6 +185,8 @@ var Reveal = (function(){
 	function initialize( options ) {
 
 		checkCapabilities();
+		
+		currentSlide = null;
 
 		if( !features.transforms2d && !features.transforms3d ) {
 			document.body.setAttribute( 'class', 'no-transforms' );
