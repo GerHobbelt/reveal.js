@@ -1321,6 +1321,7 @@
 }
 
 .reveal.overview .slides section {
+    /* height: 600px; */
     overflow: hidden;
     opacity: 1 !important;
     visibility: visible !important;

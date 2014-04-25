@@ -2488,10 +2488,28 @@
         // Update slide number if enabled
         if( config.slideNumber && dom.slideNumber) {
 
-            // Display the number of the page using 'indexh - indexv' format
-            var indexString = indexh;
+            // Display the number of the page using 'indexh - indexv [ . fragment ]' format
+            var indexString = '' + indexh;
             if( indexv > 0 ) {
-                indexString += ' - ' + indexv;
+                indexString += '-' + indexv;
+            }
+
+            if( config.fragments ) {
+                if( currentSlide ) {
+                    var currentFragment = currentSlide.querySelector( '.fragment.visible.current-fragment' );
+                    if( currentFragment ) {
+                        var f = (parseInt( currentFragment.getAttribute( 'data-fragment-index' ), 10 ) + 1) || 0;
+                        indexString += '.' + f;
+                    }
+                    else {
+                        var allFragments = currentSlide.querySelectorAll( '.fragment' );
+                        // when the current slide has fragments but none of them is 'current' then we are at the start of the slide
+                        // which we represent by fragment number zero(0):
+                        if( allFragments.length > 0 ) {
+                            indexString += '.0';
+                        }
+                    } 
+                }
             }
 
             dom.slideNumber.innerHTML = indexString;
@@ -2546,6 +2564,7 @@
                     if( fragments.prev ) dom.controlsLeft.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); } );
                     if( fragments.next ) dom.controlsRight.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); } );
                 }
+
             }
 
         }
@@ -2770,7 +2789,10 @@
             };
         }
         else {
-            return { prev: false, next: false };
+            return { 
+                prev: false, 
+                next: false 
+            };
         }
 
     }
@@ -3200,6 +3222,12 @@
                     index += offset;
                 }
 
+                // Clip the index to the allowed range: { -1 .. length-1 }
+                // thus preventing the last fragment from becoming 'not-current': that
+                // situation should be handled by the calling navigation code by moving
+                // to the next slide.
+                index = Math.max(-1, Math.min(index, fragments.length - 1));
+
                 var fragmentsShown = [],
                     fragmentsHidden = [];
 
@@ -3239,6 +3267,7 @@
 
                 updateControls();
                 updateProgress();
+                updateSlideNumber();
 
                 return !!( fragmentsShown.length || fragmentsHidden.length );
 
@@ -3381,7 +3410,7 @@
         }
         // Normal navigation
         else if( ( isOverview() || previousFragment() === false ) && availableRoutes().left ) {
-            slide( indexh - 1 );
+            slide( indexh - 1, Number.MAX_VALUE );
         }
 
     }
@@ -3391,7 +3420,7 @@
         // Reverse for RTL
         if( config.rtl ) {
             if( ( isOverview() || previousFragment() === false ) && availableRoutes().right ) {
-                slide( indexh - 1 );
+                slide( indexh - 1, Number.MAX_VALUE );
             }
         }
         // Normal navigation
@@ -3405,7 +3434,7 @@
 
         // Prioritize hiding fragments
         if( ( isOverview() || previousFragment() === false ) && availableRoutes().up ) {
-            slide( indexh, indexv - 1 );
+            slide( indexh, indexv - 1, Number.MAX_VALUE );
         }
 
     }
@@ -3439,7 +3468,7 @@
                 if( previousSlide ) {
                     var v = ( previousSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ).length - 1 ) || undefined;
                     var h = indexh - 1;
-                    slide( h, v );
+                    slide( h, v, Number.MAX_VALUE );
                 }
             }
         }
