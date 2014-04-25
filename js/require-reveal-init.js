@@ -7,6 +7,7 @@ require.config({
 
         // libraries required by the plugins:
         zoom: '../plugins/zoom/js/zoom',
+        hilitor: '../plugins/hilitor/hilitor',
         highlight: '../plugins/highlight/dist/highlight-umd',
         marked: '../plugins/marked/lib/marked',
         classList: '../js/classList/classList',
