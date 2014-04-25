@@ -67,3 +67,6 @@
 [submodule "lib/LocalConnection"]
 	path = lib/LocalConnection
 	url = git@github.com:GerHobbelt/LocalConnection.js.git
+[submodule "lib/plugins/hilitor"]
+	path = lib/plugins/hilitor
+	url = git@github.com:GerHobbelt/hilitor.git

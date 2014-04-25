@@ -40,136 +40,6 @@
     var searchboxDirty;
     var myHilitor;
 
-// Original JavaScript code by Chirp Internet: www.chirp.com.au
-// Please acknowledge use of this code by including this header.
-// 2/2013 jon: modified regex to display any match, not restricted to word boundaries.
-
-function Hilitor(id, tag, options)
-{
-  var targetNode = document.getElementById(id) || document.body;
-  var hiliteTag = tag || "EM";
-  var skipTags = new RegExp("^(?:" + hiliteTag + "|SCRIPT|FORM|SPAN)$");
-  var colors = ["#ff6", "#a0ffff", "#9f9", "#f99", "#f6f"];
-  var wordColor = [];
-  var colorIdx = 0;
-  var matchRegex = "";
-  var openLeft = true;
-  var openRight = true;
-  options = options || {};
-  if (typeof options.onStart !== 'function') {
-    options.onStart = function () { /* return FALSE when you want to abort */ };
-  }
-  if (typeof options.onFinish !== 'function') {
-    options.onFinish = function () { /* What you return here is returned by Hilitor.apply() */ return true; };
-  }
-  if (typeof options.onDoOne !== 'function') {
-    options.onDoOne = function (node) { /* return FALSE when you want to skip the highlighting change for this node */ };
-  }
-
-  this.setMatchType = function(type)
-  {
-    switch(type)
-    {
-    case "left":
-      this.openLeft = false;
-      this.openRight = true;
-      break;
-    case "right":
-      this.openLeft = true;
-      this.openRight = false;
-      break;
-    default:
-    case "open":
-      this.openLeft = this.openRight = true;
-      break;
-    case "complete":
-      this.openLeft = this.openRight = false;
-      break;
-    }
-  };
-
-  this.setRegex = function (input)
-  {
-    input = input.replace(/^[^\w]+|[^\w]+$/g, "").replace(/[^\w'\-]+/g, "|");
-    var re = "(" + input + ")";
-    if(!this.openLeft) re = "\\b" + re;
-    if(!this.openRight) re = re + "\\b";
-    matchRegex = new RegExp(re, "i");
-  };
-
-  this.getRegex = function ()
-  {
-    var retval = matchRegex.toString();
-    retval = retval.replace(/^\/\\b\(|\)\\b\/i$/g, "");
-    retval = retval.replace(/\|/g, " ");
-    return retval;
-  };
-
-  // recursively apply word highlighting
-  this.hiliteWords = function (node)
-  {
-    var i;
-
-    if(!node)
-        return;
-    if(!matchRegex)
-        return;
-    if(skipTags.test(node.nodeName))
-        return;
-
-    if(node.hasChildNodes()) {
-      for(i = 0; i < node.childNodes.length; i++) {
-        this.hiliteWords(node.childNodes[i]);
-      }
-    }
-    if(node.nodeType == 3) { // NODE_TEXT
-      if((nv = node.nodeValue) && (regs = matchRegex.exec(nv))) {
-        if (false !== options.onDoOne.call(this, node)) {
-          if(!wordColor[regs[0].toLowerCase()]) {
-            wordColor[regs[0].toLowerCase()] = colors[colorIdx++ % colors.length];
-          }
-
-          var match = document.createElement(hiliteTag);
-          match.appendChild(document.createTextNode(regs[0]));
-          match.style.backgroundColor = wordColor[regs[0].toLowerCase()];
-          match.style.fontStyle = "inherit";
-          match.style.color = "#000";
-
-          var after = node.splitText(regs.index);
-          after.nodeValue = after.nodeValue.substring(regs[0].length);
-          node.parentNode.insertBefore(match, after);
-        }
-      }
-    }
-  };
-
-  // remove highlighting
-  this.remove = function ()
-  {
-    var arr = document.getElementsByTagName(hiliteTag);
-    while(arr.length && (el = arr[0])) {
-      el.parentNode.replaceChild(el.firstChild, el);
-    }
-  };
-
-  // start highlighting at target node
-  this.apply = function (input)
-  {
-    // always remove all highlight markers which have been done previously
-    this.remove();
-    if(!input) {
-      return false;
-    }
-    this.setRegex(input);
-    var rv = options.onStart.call(this);
-    if (rv === false) {
-      return rv;
-    }
-    this.hiliteWords(targetNode);
-    return options.onFinish.call(this);
-  };
-
-}
 
     function openSearch() {
         //ensure the search term input dialog is visible and has focus:
@@ -192,41 +62,39 @@ function Hilitor(id, tag, options)
 
     function doSearch() {
         var matchingSlides;
-	
+
         // if there's been a change in the search term, perform a new search:
         if (searchboxDirty) {
             var searchstring = document.getElementById("searchinput").value;
 
             // find the keyword amongst the slides
             myHilitor = new Hilitor("slidecontent", {
-	    	onStart: function () {
-			matchingSlides = [];
-		},
-		onFinish: function () {
-			return matchingSlides;
-		},
-		onDoOne: function (node) {
-		        // find the slide's section element and save it in our list of matching slides
-		        var secnode = node.parentNode;
-		        while (secnode.nodeName != 'SECTION') {
-		            secnode = secnode.parentNode;
-		        }
+                onStart: function () {
+                    matchingSlides = [];
+                },
+                onFinish: function () {
+                    return matchingSlides;
+                },
+                onDoOne: function (node) {
+                    // find the slide's section element and save it in our list of matching slides
+                    var secnode = node.parentNode;
+                    while (secnode.nodeName != 'SECTION') {
+                        secnode = secnode.parentNode;
+                    }
 
-		        var slideIndex = Reveal.getIndices(secnode);
-		        var slidelen = matchingSlides.length;
-		        var alreadyAdded = false;
-		        for (i = 0; i < slidelen; i++) {
-		            if ( (matchingSlides[i].h === slideIndex.h) && (matchingSlides[i].v === slideIndex.v) ) {
-		                alreadyAdded = true;
-		            }
-		        }
-		        if (!alreadyAdded) {
-		            matchingSlides.push(slideIndex);
-		        }
-
-			
-		}
-	    });
+                    var slideIndex = Reveal.getIndices(secnode);
+                    var slidelen = matchingSlides.length;
+                    var alreadyAdded = false;
+                    for (i = 0; i < slidelen; i++) {
+                        if ( (matchingSlides[i].h === slideIndex.h) && (matchingSlides[i].v === slideIndex.v) ) {
+                            alreadyAdded = true;
+                        }
+                    }
+                    if (!alreadyAdded) {
+                        matchingSlides.push(slideIndex);
+                    }
+                }
+            });
             matchedSlides = myHilitor.apply(searchstring) || [];
             currentMatchedIndex = 0;
         }
@@ -291,8 +159,8 @@ function Hilitor(id, tag, options)
         Reveal.AddOn = {};
     }
 
-    Reveal.AddOn.Search = { 
-        open: openSearch 
+    Reveal.AddOn.Search = {
+        open: openSearch
     };
 
     return Reveal;
