@@ -54,6 +54,10 @@
             width: 960,
             height: 700,
 
+            // Dimensions of the content when produced onto printed media
+            printWidth: 1122 /* 2974 */,
+            printHeight: 867 /* 2159 */,
+
             // Factor of the display size that should remain empty around the content
             margin: 0.1,
 
@@ -627,11 +631,11 @@
     function setupPDF() {
 
         // Dimensions of the content
-        var pageWidth = 1122,
-            pageHeight = 867;
+        var pageWidth = config.printWidth,
+            pageHeight = config.printHeight;
 
-        var slideWidth = 960,
-            slideHeight = 700;
+        var slideWidth = config.width,
+            slideHeight = config.height;
 
         document.body.classList.add( 'print-pdf' );
         document.body.style.width = pageWidth + 'px';
