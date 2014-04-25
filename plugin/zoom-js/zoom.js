@@ -41,19 +41,26 @@
         }
     } );
 
-    Reveal.addEventListener( 'overviewshown', function() {
+    Reveal.addEventListener( 'overviewshown', function () {
         isEnabled = false;
     } );
-    Reveal.addEventListener( 'overviewhidden', function() {
+    Reveal.addEventListener( 'overviewhidden', function () {
         isEnabled = true;
     } );
 
-    Reveal.isZoomEnabled = function() {
+    function isZoomEnabled = function () {
         return isEnabled;
     };
 
-    Reveal.zoom = function() {
-        return zoom;
+    if (!Reveal.AddOn) {
+        Reveal.AddOn = {};
+    }
+
+    Reveal.AddOn.Zoom = {
+        isEnabled: isZoomEnabled,
+        getZoomInstance: function () {
+            return zoom;
+        }
     };
 
     return Reveal;
