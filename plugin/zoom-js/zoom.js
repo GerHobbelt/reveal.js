@@ -48,7 +48,7 @@
         isEnabled = true;
     } );
 
-    function isZoomEnabled = function () {
+    function isZoomEnabled() {
         return isEnabled;
     };
 
