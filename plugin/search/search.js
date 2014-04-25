@@ -65,10 +65,11 @@
 
         // if there's been a change in the search term, perform a new search:
         if (searchboxDirty) {
+            searchboxDirty = false;
             var searchstring = document.getElementById("searchinput").value;
 
             // find the keyword amongst the slides
-            myHilitor = new Hilitor("slidecontent", {
+            myHilitor = new Hilitor("slidecontent", null, {
                 onStart: function () {
                     matchingSlides = [];
                 },
@@ -133,7 +134,6 @@
         case 13:
             event.preventDefault();
             doSearch();
-            searchboxDirty = false;
             break;
         default:
             searchboxDirty = true;
