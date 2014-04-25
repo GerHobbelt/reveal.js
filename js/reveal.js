@@ -1616,8 +1616,9 @@
                             slide.style.top = 0;
                         }
                         else {
-                            slide.style.top = Math.max( ( ( targetInfo.slideHeight - getAbsoluteHeight( slide ) ) / 2 ) - targetInfo.slidePadding, 0 ) + 'px';
-                            slide.style.height = 'auto';
+                            var top = ( ( targetInfo.slideHeight - getAbsoluteHeight( slide ) ) / 2 ) - targetInfo.slidePadding;
+                            slide.style.top = Math.max( top, 0 ) + 'px';
+                            slide.style.height = (top > 0 ? 'auto' : '');
                         }
                     }
                     else {
@@ -1806,7 +1807,6 @@
 
         // Only proceed if enabled in config
         if( config.overview && dom.wrapper ) {
-
 
             overview_slides_info = null;
 
@@ -3454,7 +3454,7 @@
         }
         // Normal navigation
         else if( ( isOverview() || previousFragment() === false ) && availableRoutes().left ) {
-            slide( indexh - 1, Number.MAX_VALUE );
+            slide( indexh - 1, Number.MAX_VALUE, Number.MAX_VALUE );
         }
 
     }
@@ -3464,7 +3464,7 @@
         // Reverse for RTL
         if( config.rtl ) {
             if( ( isOverview() || previousFragment() === false ) && availableRoutes().right ) {
-                slide( indexh - 1, Number.MAX_VALUE );
+                slide( indexh - 1, Number.MAX_VALUE, Number.MAX_VALUE );
             }
         }
         // Normal navigation

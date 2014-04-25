@@ -755,6 +755,11 @@
     display: -ms-flexbox;
     display: flex;
 
+    /* auto-create Y-scrollbar in sheets when their dimensions are percentage-based */
+    display: block;
+    overflow-y: auto;
+    overflow-x: hidden;
+
     -webkit-box-direction: normal;
     -webkit-box-orient: vertical;
 
