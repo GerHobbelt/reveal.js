@@ -1650,7 +1650,7 @@
             // Prefer manually defined start-indexv
             var attributeName = stack.hasAttribute( 'data-start-indexv' ) ? 'data-start-indexv' : 'data-previous-indexv';
 
-            return parseInt( stack.getAttribute( attributeName ) || 0, 10 );
+            return parseInt( stack.getAttribute( attributeName ), 10 ) || 0;
         }
 
         return 0;
@@ -2268,6 +2268,7 @@
 
                     if (distance <= SLIDE_NO_DISPLAY_DISTANCE) {
                         element.classList.add( 'visible' );
+                        loadSlide( element );
                     }
                     else {
                         element.classList.remove( 'visible' );
@@ -2380,7 +2381,7 @@
      * 'visible' in the current view mode.
      *
      * Note that 'being visible' does not imply that these are actually visible to the
-     * user but it rather measn that technically these slides are NOT display:none and
+     * user but it rather means that technically these slides are NOT display:none and
      * thus part of the actual DOM.
      */
     function getViewDistance() {
@@ -2429,7 +2430,6 @@
                 var verticalSlides = toArray( horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ),
                     verticalSlidesLength = verticalSlides.length;
 
-                // Loops so that it measures 1 between the first and last slides
                 distanceX = Math.abs( indexh - x ) || 0;
 
                 // Show the horizontal slide if it's within the view distance
@@ -2450,7 +2450,7 @@
 
                         distanceY = x === indexh ? Math.abs( indexv - y ) : Math.abs( y - oy );
 
-						if( distanceX <= viewDistance && distanceY <= viewDistance ) {
+						if( distanceX + distanceY <= viewDistance ) {
                             verticalSlide.classList.add( 'visible' );
                             loadSlide( verticalSlide );
                         }
@@ -3036,7 +3036,7 @@
             if( !slide && currentSlide ) {
                 var currentFragment = currentSlide.querySelector( '.fragment.visible.current-fragment' );
                 if( currentFragment ) {
-                    f = parseInt( currentFragment.getAttribute( 'data-fragment-index' ), 10 );
+                    f = parseInt( currentFragment.getAttribute( 'data-fragment-index' ), 10 ) || 0;
                 }
                 else {
                     var fragments = currentSlide.querySelectorAll( '.fragment' );
@@ -3128,7 +3128,7 @@
         // Group ordered and unordered elements
         fragments.forEach( function( fragment, i ) {
             if( fragment.hasAttribute( 'data-fragment-index' ) ) {
-                var index = parseInt( fragment.getAttribute( 'data-fragment-index' ), 10 );
+                var index = parseInt( fragment.getAttribute( 'data-fragment-index' ), 10 ) || 0;
 
                 if( !ordered[index] ) {
                     ordered[index] = [];
@@ -3188,7 +3188,7 @@
 
                     if( lastVisibleFragment ) {
                         assert(lastVisibleFragment.getAttribute( 'data-fragment-index' ) != null);
-                        index = parseInt( lastVisibleFragment.getAttribute( 'data-fragment-index' ), 10 );
+                        index = parseInt( lastVisibleFragment.getAttribute( 'data-fragment-index' ), 10 ) || 0;
                     }
                     else {
                         index = -1;
@@ -3207,7 +3207,7 @@
 
                     assert(element.getAttribute( 'data-fragment-index' ) != null);
                     if( element.hasAttribute( 'data-fragment-index' ) ) {
-                        i = parseInt( element.getAttribute( 'data-fragment-index' ), 10 );
+                        i = parseInt( element.getAttribute( 'data-fragment-index' ), 10 ) || 0;
                     }
 
                     // Visible fragments
