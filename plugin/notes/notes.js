@@ -9,7 +9,36 @@
  * 3. This window proceeds to send the current presentation state
  *    to the notes window
  */
-var RevealNotes = (function() {
+
+// Custom reveal.js integration
+(function ( window, factory ) {
+
+  if ( typeof module === "object" && typeof module.exports === "object" ) {
+    // Expose a factory as module.exports in loaders that implement the Node
+    // module pattern (including browserify).
+    // This accentuates the need for a real window in the environment
+    // e.g. var jQuery = require("jquery")(window);
+    module.exports = function( w ) {
+      w = w || window;
+      if ( !w.document ) {
+        throw new Error("Reveal plugin requires a window with a document");
+      }
+      return factory( w, w.document, Reveal );
+    };
+  } else {
+    if ( typeof define === "function" && define.amd ) {
+      // AMD. Register as a named module.
+      define( [ "reveal" ], function(Reveal) {
+        return factory(window, document, Reveal);
+      });
+    } else {
+        // Browser globals
+        window.Reveal = factory(window, document, Reveal);
+    }
+  }
+
+// Pass this, window may not be defined yet
+}(this, function ( window, document, Reveal, undefined ) {
 
     function openNotes() {
         var jsFileLocation = document.querySelector('script[src$="notes.js"]').src;  // this js file path
@@ -113,5 +142,9 @@ var RevealNotes = (function() {
         }
     }, false );
 
-    return { open: openNotes };
-})();
+    Reveal.Notes = {
+        open: openNotes
+    };
+
+    return Reveal;
+}));
