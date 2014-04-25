@@ -1111,10 +1111,12 @@
      */
     function extend( a, b ) {
 
-        for( var i in b ) {
-            a[ i ] = b[ i ];
+        if (b) {
+            for( var i in b ) {
+                a[ i ] = b[ i ];
+            }
         }
-
+        
     }
 
     /**
@@ -4409,6 +4411,14 @@
             if( 'addEventListener' in window ) {
                 ( dom.wrapper || document.querySelector( '.reveal' ) ).removeEventListener( type, listener, useCapture );
             }
+        },
+
+        // helper function: extend destination object with the properties of the source object.
+        // When there's a collision, the source property wins.
+        extend: extend,
+
+        // the subspace where all plugins go...
+        AddOn: {
         }
     };
     return Reveal;
