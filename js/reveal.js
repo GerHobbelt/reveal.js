@@ -51,8 +51,8 @@
 
             // The "normal" size of the presentation, aspect ratio will be preserved
             // when the presentation is scaled to fit different resolutions
-            width: 960,
-            height: 700,
+            width: "100%", //960,
+            height: "100%", //700,
 
             // Dimensions of the content when produced onto printed media
             printWidth: 1122 /* 2974 */,
@@ -630,16 +630,11 @@
      */
     function setupPDF() {
 
-        // Dimensions of the content
-        var pageWidth = config.printWidth,
-            pageHeight = config.printHeight;
-
-        var slideWidth = config.width,
-            slideHeight = config.height;
+        var targetInfo = getViewportAndSlideDimensionsInfo();
 
         document.body.classList.add( 'print-pdf' );
-        document.body.style.width = pageWidth + 'px';
-        document.body.style.height = pageHeight + 'px';
+        document.body.style.width = targetInfo.pageWidth + 'px';
+        document.body.style.height = targetInfo.pageHeight + 'px';
 
         // Slide and slide background layout
         toArray( document.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
@@ -650,26 +645,26 @@
                 slide.style.top = 0;
             }
             else {
-                var left = ( pageWidth - slideWidth ) / 2;
-                var top = ( pageHeight - slideHeight ) / 2;
+                var left = ( targetInfo.pageWidth - targetInfo.slideWidth ) / 2;
+                var top = ( targetInfo.pageHeight - targetInfo.slideHeight ) / 2;
 
                 if( config.center || slide.classList.contains( 'center' ) ) {
-                    top = Math.max( ( pageHeight - getAbsoluteHeight( slide ) ) / 2, 0 );
+                    top = Math.max( ( targetInfo.pageHeight - getAbsoluteHeight( slide ) ) / 2, 0 );
                 }
 
                 slide.style.left = left + 'px';
                 slide.style.top = top + 'px';
-                slide.style.width = slideWidth + 'px';
-                slide.style.height = slideHeight + 'px';
+                slide.style.width = targetInfo.slideWidth + 'px';
+                slide.style.height = targetInfo.slideHeight + 'px';
 
-                if( slide.scrollHeight > slideHeight ) {
+                if( slide.scrollHeight > targetInfo.slideHeight ) {
                     slide.style.overflow = 'hidden';
                 }
 
                 var background = slide.querySelector( '.slide-background' );
                 if( background ) {
-                    background.style.width = pageWidth + 'px';
-                    background.style.height = pageHeight + 'px';
+                    background.style.width = targetInfo.pageWidth + 'px';
+                    background.style.height = targetInfo.pageHeight + 'px';
                     background.style.top = -top + 'px';
                     background.style.left = -left + 'px';
                 }
@@ -1116,7 +1111,7 @@
                 a[ i ] = b[ i ];
             }
         }
-        
+
     }
 
     /**
@@ -1434,28 +1429,35 @@
     }
 
     /**
-     * Applies JavaScript-controlled layout rules to the
-     * presentation.
+     * Get the viewport and slide display sizes in pixels
+     * (percentage-based slide width and height are converted to pixels)
      */
-    function layout() {
+    function getViewportAndSlideDimensionsInfo() {
 
-        if ( dom.wrapper && dom.slides && !isPrintingPDF() ) {
+        if ( dom.wrapper && dom.slides ) {
 
-            // Available space to scale within
-            var availableWidth = dom.wrapper.offsetWidth,
-                availableHeight = dom.wrapper.offsetHeight;
+            var rawAvailableWidth, rawAvailableHeight, availableWidth, availableHeight;
+
+            if ( isPrintingPDF() ) {
+                // Dimensions of the page surface
+                rawAvailableWidth = config.printWidth;
+                rawAvailableHeight = config.printHeight;
+            }
+            else {
+                // Available space to scale within
+                rawAvailableWidth = dom.wrapper.offsetWidth;
+                rawAvailableHeight = dom.wrapper.offsetHeight;
+            }
 
             // Reduce available space by margin
-            availableWidth -= ( availableHeight * config.margin );
-            availableHeight -= ( availableHeight * config.margin );
+            var shrinkage = 1 - config.margin;
+            availableWidth = Math.floor(rawAvailableWidth * shrinkage); // ... and round down to whole pixels
+            availableHeight = Math.floor(rawAvailableHeight * shrinkage);
 
             // Dimensions of the content
             var slideWidth = config.width,
                 slideHeight = config.height,
                 slidePadding = 20; // TODO Dig this out of DOM
-
-            // Layout the contents of the slides
-            layoutSlideContents( config.width, config.height, slidePadding );
 
             // Slide width may be a percentage of available width
             if( typeof slideWidth === 'string' && /%$/.test( slideWidth ) ) {
@@ -1467,11 +1469,47 @@
                 slideHeight = parseInt( slideHeight, 10 ) / 100 * availableHeight;
             }
 
-            dom.slides.style.width = slideWidth + 'px';
-            dom.slides.style.height = slideHeight + 'px';
+            return {
+                rawAvailableWidth: rawAvailableWidth,
+                rawAvailableHeight: rawAvailableHeight,
+
+                // available space reduced by margin
+                availableWidth: availableWidth,
+                availableHeight: availableHeight,
+
+                // (Target)Dimensions of the content
+                slideWidth: slideWidth,
+                slideHeight: slideHeight,
+                slidePadding: slidePadding
+            };
+        
+        }
+        else {
+
+            return false;
+
+        }
+
+    }
+
+    /**
+     * Applies JavaScript-controlled layout rules to the
+     * presentation.
+     */
+    function layout() {
+
+        var targetInfo = getViewportAndSlideDimensionsInfo();
+
+        if ( targetInfo && dom.slides && !isPrintingPDF() ) {
+
+            // Layout the contents of the slides
+            layoutSlideContents( targetInfo.slideWidth, targetInfo.slideHeight, targetInfo.slidePadding );
+
+            dom.slides.style.width = targetInfo.slideWidth + 'px';
+            dom.slides.style.height = targetInfo.slideHeight + 'px';
 
             // Determine scale of content to fit within available space
-            scale = Math.min( availableWidth / slideWidth, availableHeight / slideHeight );
+            scale = Math.min( targetInfo.availableWidth / targetInfo.slideWidth, targetInfo.availableHeight / targetInfo.slideHeight );
 
             // Respect max/min scale settings
             scale = Math.max( scale, config.minScale );
@@ -1508,11 +1546,11 @@
                     var hcount = Math.min(overview_slides_info.horizontal_count, viewDistance * 2 + 1);
                     var vcount = Math.min(overview_slides_info.vertical_count, viewDistance * 2 + 1);
 
-                    var totalSlidesWidth = slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
-                    var totalSlidesHeight = slideHeight * vcount * 1.05;
+                    var totalSlidesWidth = targetInfo.slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
+                    var totalSlidesHeight = targetInfo.slideHeight * vcount * 1.05;
 
                     // Determine scale of content to fit within available space
-                    overviewScale = Math.min( availableWidth / totalSlidesWidth, availableHeight / totalSlidesHeight );
+                    overviewScale = Math.min( targetInfo.availableWidth / totalSlidesWidth, targetInfo.availableHeight / totalSlidesHeight );
                     overviewScale /= scale;
 
                     // Respect max/min scale settings
@@ -1524,11 +1562,11 @@
                     var hcount = Math.min(overview_slides_info.horizontal_count, viewDistance * 2 + 1);
                     var vcount = Math.min(overview_slides_info.vertical_count, viewDistance * 2 + 1);
 
-                    var totalSlidesWidth = slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
-                    var totalSlidesHeight = slideHeight * vcount * 1.05;
+                    var totalSlidesWidth = targetInfo.slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
+                    var totalSlidesHeight = targetInfo.slideHeight * vcount * 1.05;
 
                     // Determine scale of content to fit within available space
-                    overviewScale = Math.min( availableWidth / totalSlidesWidth, availableHeight / totalSlidesHeight );
+                    overviewScale = Math.min( targetInfo.availableWidth / totalSlidesWidth, targetInfo.availableHeight / totalSlidesHeight );
                     overviewScale /= scale;
 
                     // compensate for the 3D depth (heuristic)
@@ -1578,7 +1616,7 @@
                             slide.style.top = 0;
                         }
                         else {
-                            slide.style.top = Math.max( ( ( slideHeight - getAbsoluteHeight( slide ) ) / 2 ) - slidePadding, 0 ) + 'px';
+                            slide.style.top = Math.max( ( ( targetInfo.slideHeight - getAbsoluteHeight( slide ) ) / 2 ) - targetInfo.slidePadding, 0 ) + 'px';
                             slide.style.height = 'auto';
                         }
                     }
