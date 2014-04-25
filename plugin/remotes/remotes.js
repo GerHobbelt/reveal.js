@@ -3,7 +3,7 @@
  * of the folks at http://remotes.io
  */
 
-(function(window){
+(function (window) {
 
     /**
      * Detects if we are dealing with a touch enabled device (with some false positives)
@@ -21,7 +21,7 @@
         return window.RevealNotes && !(self == top);
     })();
 
-    if(!hasTouch && !isNotesAndIframe){
+    if( !hasTouch && !isNotesAndIframe ) {
         head.ready( 'remotes.ne.min.js', function() {
             new Remotes("preview")
                 .on("swipe-left", function(e){ Reveal.right(); })

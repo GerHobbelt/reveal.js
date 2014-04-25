@@ -23,7 +23,7 @@
       if ( !w.document ) {
         throw new Error("Reveal plugin requires a window with a document");
       }
-      return factory( w, w.document, Reveal );
+      return factory( w, w.document, require( "reveal" ) );
     };
   } else {
     if ( typeof define === "function" && define.amd ) {
@@ -142,7 +142,11 @@
         }
     }, false );
 
-    Reveal.Notes = {
+    if (!Reveal.AddOn) {
+        Reveal.AddOn = {};
+    }
+
+    Reveal.AddOn.Notes = {
         open: openNotes
     };
 
