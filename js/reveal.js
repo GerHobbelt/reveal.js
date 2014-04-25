@@ -2196,7 +2196,12 @@
                     var d2 = slidesLength - d1;   // this will always produce a positive 'd2' value as  d1 <= slidesLength
                     var distance = Math.min(d1, d2);
 
-                    element.style.display = distance > SLIDE_NO_DISPLAY_DISTANCE ? 'none' : 'block';
+                    if (distance <= SLIDE_NO_DISPLAY_DISTANCE) {
+                        element.classList.add( 'visible' );
+                    }
+                    else {
+                        element.classList.remove( 'visible' );
+                    }
                 }
 
                 var reverse = config.rtl && !isVerticalSlide( element );
