@@ -2266,7 +2266,12 @@
                     var d2 = slidesLength - d1;   // this will always produce a positive 'd2' value as  d1 <= slidesLength
                     var distance = Math.min(d1, d2);
 
-                    element.style.display = distance > SLIDE_NO_DISPLAY_DISTANCE ? 'none' : 'block';
+                    if (distance <= SLIDE_NO_DISPLAY_DISTANCE) {
+                        element.classList.add( 'visible' );
+                    }
+                    else {
+                        element.classList.remove( 'visible' );
+                    }
                 }
 
                 var reverse = config.rtl && !isVerticalSlide( element );
@@ -2428,13 +2433,13 @@
                 distanceX = Math.abs( indexh - x ) || 0;
 
                 // Show the horizontal slide if it's within the view distance
-                if( distanceX < viewDistance ) {
-                    horizontalSlide.classList.add( 'visible' );
-                    loadSlide( horizontalSlide );
-                }
-                else {
-                    horizontalSlide.classList.remove( 'visible' );
-                }
+				if( distanceX <= viewDistance ) {
+					horizontalSlide.classList.add( 'visible' );
+					loadSlide( horizontalSlide );
+				}
+				else {
+					horizontalSlide.classList.remove( 'visible' );
+				}
 
                 if( verticalSlidesLength ) {
 
@@ -2445,7 +2450,7 @@
 
                         distanceY = x === indexh ? Math.abs( indexv - y ) : Math.abs( y - oy );
 
-                        if( distanceX > viewDistance || distanceY > viewDistance ) {
+						if( distanceX <= viewDistance && distanceY <= viewDistance ) {
                             verticalSlide.classList.add( 'visible' );
                             loadSlide( verticalSlide );
                         }
