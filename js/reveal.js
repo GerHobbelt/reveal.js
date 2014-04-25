@@ -2358,7 +2358,7 @@
                 distanceX = Math.abs( indexh - x ) || 0;
 
                 // Show the horizontal slide if it's within the view distance
-				if( distanceX < viewDistance ) {
+				if( distanceX <= viewDistance ) {
 					horizontalSlide.classList.add( 'visible' );
 					loadSlide( horizontalSlide );
 				}
@@ -2375,7 +2375,7 @@
 
                         distanceY = x === indexh ? Math.abs( indexv - y ) : Math.abs( y - oy );
 
-						if( distanceX > viewDistance || distanceY > viewDistance ) {
+						if( distanceX <= viewDistance && distanceY <= viewDistance ) {
 							verticalSlide.classList.add( 'visible' );
 							loadSlide( verticalSlide );
 						}
