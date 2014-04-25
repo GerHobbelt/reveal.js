@@ -9,7 +9,7 @@
      * Detects if we are dealing with a touch enabled device (with some false positives)
      * Borrowed from modernizr: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touch.js
      */
-    var hasTouch  = (function(){
+    var hasTouch = (function () {
         return ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch;
     })();
 
@@ -17,7 +17,7 @@
      * Detects if notes are enabled and the current page is opened inside an /iframe
      * this prevents loading Remotes.io several times
      */
-    var isNotesAndIframe = (function(){
+    var isNotesAndIframe = (function () {
         return window.RevealNotes && !(self == top);
     })();
 

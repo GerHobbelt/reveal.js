@@ -274,8 +274,11 @@
 
             }
             else {
+
                 section.innerHTML = createMarkdownSlide( getMarkdownFromSlide( section ) );
+
             }
+
         }
 
     }

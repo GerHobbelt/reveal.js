@@ -779,7 +779,7 @@
             // Carry over custom classes from the slide to the background
             //
             // http://jsperf.com/element-classlist-vs-element-classname/6  .className vs. classList: for modern browsers it doesn't matter all that much
-            // http://jsperf.com/element-classlist-vs-element-classname/8  .classList.remove vs. .classList.toggle(X, false): latter is not available everywhere 
+            // http://jsperf.com/element-classlist-vs-element-classname/8  .classList.remove vs. .classList.toggle(X, false): latter is not available everywhere
             element.className = slide.className;
             element.classList.add( 'slide-background' );
             element.classList.remove( 'present' );
@@ -2437,13 +2437,13 @@
                 distanceX = Math.abs( indexh - x ) || 0;
 
                 // Show the horizontal slide if it's within the view distance
-				if( distanceX <= viewDistance ) {
-					horizontalSlide.classList.add( 'visible' );
-					loadSlide( horizontalSlide );
-				}
-				else {
-					horizontalSlide.classList.remove( 'visible' );
-				}
+                if( distanceX <= viewDistance ) {
+                    horizontalSlide.classList.add( 'visible' );
+                    loadSlide( horizontalSlide );
+                }
+                else {
+                    horizontalSlide.classList.remove( 'visible' );
+                }
 
                 if( verticalSlidesLength ) {
 
@@ -2454,7 +2454,7 @@
 
                         distanceY = x === indexh ? Math.abs( indexv - y ) : Math.abs( y - oy );
 
-						if( distanceX + distanceY <= viewDistance ) {
+                        if( distanceX + distanceY <= viewDistance ) {
                             verticalSlide.classList.add( 'visible' );
                             loadSlide( verticalSlide );
                         }
@@ -2512,7 +2512,7 @@
                         if( allFragments.length > 0 ) {
                             indexString += '.0';
                         }
-                    } 
+                    }
                 }
             }
 
@@ -2793,9 +2793,9 @@
             };
         }
         else {
-            return { 
-                prev: false, 
-                next: false 
+            return {
+                prev: false,
+                next: false
             };
         }
 

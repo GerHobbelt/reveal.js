@@ -41,8 +41,12 @@
         }
     } );
 
-    Reveal.addEventListener( 'overviewshown', function() { isEnabled = false; } );
-    Reveal.addEventListener( 'overviewhidden', function() { isEnabled = true; } );
+    Reveal.addEventListener( 'overviewshown', function() {
+        isEnabled = false;
+    } );
+    Reveal.addEventListener( 'overviewhidden', function() {
+        isEnabled = true;
+    } );
 
     Reveal.isZoomEnabled = function() {
         return isEnabled;
