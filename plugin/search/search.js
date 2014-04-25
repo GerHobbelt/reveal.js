@@ -39,14 +39,46 @@
     var currentMatchedIndex;
     var searchboxDirty;
     var myHilitor;
+    var options = {
+        isHotKey: function (keyDownEvent, domElementWithFocus, domElementInputValueForSearch) {
+            // ignore key event when it's not going to match due to metakey states: 
+            if (event.altKey || event.ctrlKey || event.metaKey) { 
+                return false;
+            }
+            var hitQmarkKey = (event.keyCode === 191 && event.shiftKey);   /* shift-/ = '?' key */
+            var hitF3Key =    (event.keyCode === 114 && !event.shiftKey);  /* F3 */
+            // ignore event when our input field has focus and it's a 'character key' being pressed right now:
+            if (domElementWithFocus === domElementInputValueForSearch && hitQmarkKey) {
+                return false;
+            }
+            // otherwise report success when either of the 'shortcuts' is hit:
+            return hitQmarkKey || hitF3Key;
+        }
+    }
+    // check if the options were already set up before:
+    if (Reveal.AddOn && Reveal.AddOn.Search && Reveal.AddOn.Search.Defaults) {
+        getOrSetOptions(Reveal.AddOn.Search.Defaults);      
+    }
 
+
+    // pass no arg or NULL to receive the current options object
+    function getOrSetOptions(opts) {
+        Reveal.extend(options, opts);
+        return options;
+    }
 
     function openSearch() {
-        //ensure the search term input dialog is visible and has focus:
+        //ensure the search term input field is visible and has focus:
         var inputbox = document.getElementById("searchinput");
         inputbox.style.display = "inline";
         inputbox.focus();
         inputbox.select();
+    }
+
+    function closeSearch() {
+        //ensure the search term input field is *not* visible:
+        var inputbox = document.getElementById("searchinput");
+        inputbox.style.display = "none";
     }
 
     function toggleSearch() {
@@ -55,7 +87,7 @@
             openSearch();
         }
         else {
-            inputbox.style.display = "none";
+            closeSearch();
             myHilitor.remove();
         }
     }
@@ -115,9 +147,8 @@
 
     if( !dom.wrapper.querySelector( '.searchbox' ) ) {
         var searchElement = document.createElement( 'div' );
-        searchElement.id = "searchinputdiv";
-        searchElement.classList.add( 'searchdiv' );
-        searchElement.style.position = 'absolute';
+        searchElement.classList.add( 'searchbox' );
+        searchElement.style.position = 'fixed';
         searchElement.style.top = '10px';
         searchElement.style.left = '10px';
         //embedded base64 search icon Designed by Sketchdock - http://www.sketchdock.com/:
@@ -141,26 +172,29 @@
         }
     }, false );
 
-    // Open the search when the 's' key is hit (yes, this conflicts with the notes plugin, disabling for now)
-    /*
+    // Open the search when the '?' of [F3] key is hit, as checked for in isHotKey()
     document.addEventListener( 'keydown', function( event ) {
-        // Disregard the event if the target is editable or a
-        // modifier is present
-        if ( document.querySelector( ':focus' ) !== null || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey ) return;
+        // Disregard the event if the target is editable and isn't us:
+        var inputbox = document.getElementById("searchinput");
+        var focusbox = document.querySelector( ':focus' );
+        if ( focusbox !== null && focusbox !== inputbox ) return;
 
-        if( event.keyCode === 83 ) {
+        if( options.isHotKey(event, focusbox, inputbox) ) {
             event.preventDefault();
             openSearch();
         }
     }, false );
-    */
 
     if (!Reveal.AddOn) {
         Reveal.AddOn = {};
     }
 
     Reveal.AddOn.Search = {
-        open: openSearch
+        open: openSearch,
+        close: closeSearch,
+        toggle: toggleSearch,
+
+        options: getOrSetOptions
     };
 
     return Reveal;
