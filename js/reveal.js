@@ -1498,12 +1498,13 @@
      */
     function layout() {
 
+        var i, len;
         var targetInfo = getViewportAndSlideDimensionsInfo();
 
         if ( targetInfo && dom.slides && !isPrintingPDF() ) {
 
             // Layout the contents of the slides
-            layoutSlideContents( targetInfo.slideWidth, targetInfo.slideHeight, targetInfo.slidePadding );
+            layoutSlideContents( targetInfo.slideWidth, targetInfo.slideHeight );
 
             dom.slides.style.width = targetInfo.slideWidth + 'px';
             dom.slides.style.height = targetInfo.slideHeight + 'px';
@@ -1533,6 +1534,9 @@
                 dom.slides.style.right = 0;
                 transformElement( dom.slides, 'scale('+ scale +')', '50% 50%' );
             }
+
+            // Select all slides, vertical and horizontal
+            var slides = toArray( document.querySelectorAll( SLIDES_SELECTOR ) );
 
             // When overview mode is active (and the relevant data available), do scale the slides' collective too:
             if (overview_slides_info) {
@@ -1584,6 +1588,15 @@
                 else {
                     transformElement( dom.slides_wrapper, 'scale('+ overviewScale +')', '50% 25%' );
                 }
+
+                // Pin the height of all slides as otherwise the overview rendering will be botched;
+                // this action will be undone as soon as the overview mode is exited.
+                // WARNING: it also means the user cannot set a hardwired style="height: YYY px;" style
+                // for any SECTION and expect to live...
+                for( i = 0, len = slides.length; i < len; i++ ) {
+                    var slide = slides[ i ];
+                    slide.style.height = targetInfo.slideHeight + "px";
+                }
             }
             else {
                 // reset wrapper scale for single sheet view
@@ -1594,12 +1607,18 @@
                 else {
                     transformElement( dom.slides_wrapper, '' );
                 }
+
+                // Remove the height pinning we did above when we're out of overview mode.
+                for( i = 0, len = slides.length; i < len; i++ ) {
+                    var slide = slides[ i ];
+                    slide.style.height = '';
+                }
             }
 
             // Select all slides, vertical and horizontal
             var slides = toArray( document.querySelectorAll( SLIDES_SELECTOR ) );
 
-            for( var i = 0, len = slides.length; i < len; i++ ) {
+            for( i = 0, len = slides.length; i < len; i++ ) {
                 var slide = slides[ i ];
                 var style = window.getComputedStyle( slide );
 
@@ -1616,9 +1635,11 @@
                             slide.style.top = 0;
                         }
                         else {
-                            var top = ( ( targetInfo.slideHeight - getAbsoluteHeight( slide ) ) / 2 ) - targetInfo.slidePadding;
-                            slide.style.top = Math.max( top, 0 ) + 'px';
-                            slide.style.height = (top > 0 ? 'auto' : '');
+                            var h = getAbsoluteHeight( slide );
+                            var top = ( ( targetInfo.slideHeight - h ) / 2 ) - targetInfo.slidePadding;
+                            slide.style.top = Math.max( Math.floor( top ), 0 ) + 'px';
+                            // NEVER set height to 'auto' as it will nuke the fixed-height assuming overview mode:
+                            //slide.style.height = (top > 0 ? 'auto' : '');
                         }
                     }
                     else {
@@ -1638,7 +1659,7 @@
      * Applies layout logic to the contents of all slides in
      * the presentation.
      */
-    function layoutSlideContents( width, height, padding ) {
+    function layoutSlideContents( width, height ) {
 
         // Handle sizing of elements with the 'stretch' class
         toArray( dom.slides.querySelectorAll( 'section > .stretch' ) ).forEach( function( element ) {

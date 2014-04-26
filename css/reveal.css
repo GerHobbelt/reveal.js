@@ -744,7 +744,7 @@
 
 .reveal.center .slides,
 .reveal.center .slides section {
-    height: 100%;
+    /* height: 100%;    -- don't set this one if you ant the JavaScript getAbsoluteHeight() to work and center your slides for you! */
 }
 
 .reveal.center .slides section:not(.stack) {
@@ -757,7 +757,7 @@
 
     /* auto-create Y-scrollbar in sheets when their dimensions are percentage-based */
     display: block;
-    overflow-y: auto;
+    overflow-y: hidden; /* auto */
     overflow-x: hidden;
 
     -webkit-box-direction: normal;
@@ -1328,7 +1328,14 @@
 .reveal.overview .slides section {
     /* height: 600px; */
 
-    /* overflow: hidden; */ /* <-- removing this one made slide 20 in the demo page show consistently in the ESC overview; with this style, it would disappear when you moved past it.   :-S */
+    overflow: hidden; /* <-- removing this one made slide 20 in the demo page show consistently in the ESC overview; with this style, it would disappear when you moved past it.   :-S */
+                        /* turns out you can accomplish the same overview 'fix' by killing the -webkit-transform-style: preserve-3d style as well! Definitely tickling a browser bug here! */
+    /* Chrome bugfix: */
+    -webkit-transform-style: flat;
+       -moz-transform-style: flat;
+        -ms-transform-style: flat;
+            transform-style: flat;
+
 
     opacity: 1 !important;
     visibility: visible !important;
