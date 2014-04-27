@@ -103,13 +103,14 @@ footer.joli {
   font-weight: 200;
   letter-spacing: -0.02em;
   color: #eeeeee;
-  text-shadow: 0 0 9px #031426;
+  text-shadow: 0 0 3px rgba(3, 20, 38, 0.5);
 }
 
 ::selection {
   color: white;
   background: #ecc217;
-  text-shadow: none; }
+  text-shadow: 0 0 3px rgba(184, 68, 2, 0.5);
+}
 
 /*********************************************
  * HEADERS
@@ -126,10 +127,12 @@ footer.joli {
   line-height: 1.1em;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2); }
+  text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.8); 
+}
 
 .reveal h1 {
-  text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2); }
+  text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.8); 
+}
 
 /*********************************************
  * LINKS
@@ -141,16 +144,19 @@ footer.joli {
   -moz-transition: color .15s ease;
   -ms-transition: color .15s ease;
   -o-transition: color .15s ease;
-  transition: color .15s ease; }
+  transition: color .15s ease; 
+}
 
 .reveal a:not(.image):hover {
-  color: #f7d325;
-  text-shadow: none;
-  border: none; }
+  color: #F3F331;
+  text-shadow: 0 0 3px rgba(184, 68, 2, 0.5);
+  border: none; 
+}
 
 .reveal .roll span:after {
   color: #fff;
-  background: #a98a0e; }
+  background: #a98a0e; 
+}
 
 /*********************************************
  * IMAGES
@@ -164,12 +170,14 @@ footer.joli {
   -moz-transition: all .2s linear;
   -ms-transition: all .2s linear;
   -o-transition: all .2s linear;
-  transition: all .2s linear; }
+  transition: all .2s linear; 
+}
 
 .reveal a:hover img {
   background: rgba(255, 255, 255, 0.2);
   border-color: #ecc217;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.55); }
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.55); 
+}
 
 /*********************************************
  * NAVIGATION CONTROLS
