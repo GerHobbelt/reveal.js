@@ -87,7 +87,7 @@
             // Enable keyboard shortcuts for navigation
             keyboard: true,
 
-            // Optional function that blocks keyboard events when retuning false
+            // Optional function that blocks keyboard events when returning false
             keyboardCondition: null,
 
             // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'translate3d' | 'zoom' | 'perspective' | 'scale')
@@ -138,8 +138,8 @@
             // Dispatches all reveal.js events to the parent window through postMessage
             postMessageEvents: false,
 
-            // Focuses body when page changes visiblity to ensure keyboard shortcuts work
-            focusBodyOnPageVisiblityChange: true,
+            // Focuses body when page changes visibility to ensure keyboard shortcuts work
+            focusBodyOnPageVisibilityChange: true,
 
             // Theme (see /css/theme)
             theme: null,
@@ -292,12 +292,19 @@
         var query = Reveal.getQueryHash();
 
         // Do not accept new dependencies via query config to avoid
-        // the potential of malicious script injection
-        if( typeof query['dependencies'] !== 'undefined' ) delete query['dependencies'];
+        // the potential of malicious script injection. Same goes for
+        // keyboardCondition option which can be used to inject 
+        // malicious code.
+        // (Note: this is a blacklist approach; a better way is to whitelist the ones that are okay. See the augmented extend() function below.)
+        if( typeof query.dependencies !== 'undefined' ) delete query.dependencies;
+        if( typeof query.keyboardCondition !== 'undefined' ) delete query.keyboardCondition;
 
         // Copy options over to our config object
         extend( config, options );
-        extend( config, query );
+        extend( config, query, function( fieldname ) {
+            // filter: only accept query parameters which do already exist in our `config` object:
+            return typeof config[fieldname] !== 'undefined';
+        } );
 
         // Hide the address bar in mobile browsers
         hideAddressBar();
@@ -756,55 +763,55 @@
      * @param {HTMLElement} container The element that the background
      * should be appended to
      */
-        function createBackground( slide, container ) {
+    function createBackground( slide, container ) {
 
-            var data = {
-                background: slide.getAttribute( 'data-background' ),
-                backgroundSize: slide.getAttribute( 'data-background-size' ),
-                backgroundImage: slide.getAttribute( 'data-background-image' ),
-                backgroundVideo: slide.getAttribute( 'data-background-video' ),
-                backgroundColor: slide.getAttribute( 'data-background-color' ),
-                backgroundRepeat: slide.getAttribute( 'data-background-repeat' ),
-                backgroundPosition: slide.getAttribute( 'data-background-position' ),
-                backgroundTransition: slide.getAttribute( 'data-background-transition' )
-            };
+        var data = {
+            background: slide.getAttribute( 'data-background' ),
+            backgroundSize: slide.getAttribute( 'data-background-size' ),
+            backgroundImage: slide.getAttribute( 'data-background-image' ),
+            backgroundVideo: slide.getAttribute( 'data-background-video' ),
+            backgroundColor: slide.getAttribute( 'data-background-color' ),
+            backgroundRepeat: slide.getAttribute( 'data-background-repeat' ),
+            backgroundPosition: slide.getAttribute( 'data-background-position' ),
+            backgroundTransition: slide.getAttribute( 'data-background-transition' )
+        };
 
-            var element = document.createElement( 'div' );
+        var element = document.createElement( 'div' );
 
-            // Carry over custom classes from the slide to the background
-            //
-            // http://jsperf.com/element-classlist-vs-element-classname/6  .className vs. classList: for modern browsers it doesn't matter all that much
-            // http://jsperf.com/element-classlist-vs-element-classname/8  .classList.remove vs. .classList.toggle(X, false): latter is not available everywhere
-            element.className = slide.className;
-            element.classList.add( 'slide-background' );
-            element.classList.remove( 'present' );
-            element.classList.remove( 'past' );
-            element.classList.remove( 'future' );
+        // Carry over custom classes from the slide to the background
+        //
+        // http://jsperf.com/element-classlist-vs-element-classname/6  .className vs. classList: for modern browsers it doesn't matter all that much
+        // http://jsperf.com/element-classlist-vs-element-classname/8  .classList.remove vs. .classList.toggle(X, false): latter is not available everywhere
+        element.className = slide.className;
+        element.classList.add( 'slide-background' );
+        element.classList.remove( 'present' );
+        element.classList.remove( 'past' );
+        element.classList.remove( 'future' );
 
-            if( data.background ) {
-                // Auto-wrap image urls in url(...)
-                if( /^(http|file|\/\/)/gi.test( data.background ) || /\.(svg|png|jpg|jpeg|gif|bmp)$/gi.test( data.background ) ) {
-                    element.style.backgroundImage = 'url(' + data.background + ')';
-                }
-                else {
-                    element.style.background = data.background;
-                }
+        if( data.background ) {
+            // Auto-wrap image urls in url(...)
+            if( /^(http|file|\/\/)/gi.test( data.background ) || /\.(svg|png|jpg|jpeg|gif|bmp)$/gi.test( data.background ) ) {
+                element.style.backgroundImage = 'url(' + data.background + ')';
             }
-
-            // Create a hash for this combination of background settings.
-            // This is used to determine when two slide backgrounds are
-            // the same.
-            if( data.background || data.backgroundColor || data.backgroundImage || data.backgroundVideo ) {
-                element.setAttribute( 'data-background-hash', data.background + data.backgroundSize + data.backgroundImage + data.backgroundVideo + data.backgroundColor + data.backgroundRepeat + data.backgroundPosition + data.backgroundTransition );
+            else {
+                element.style.background = data.background;
             }
+        }
 
-            // Additional and optional background properties
-            if( data.backgroundSize ) element.style.backgroundSize = data.backgroundSize;
-            if( data.backgroundImage ) element.style.backgroundImage = 'url("' + data.backgroundImage + '")';
-            if( data.backgroundColor ) element.style.backgroundColor = data.backgroundColor;
-            if( data.backgroundRepeat ) element.style.backgroundRepeat = data.backgroundRepeat;
-            if( data.backgroundPosition ) element.style.backgroundPosition = data.backgroundPosition;
-            if( data.backgroundTransition ) element.setAttribute( 'data-background-transition', data.backgroundTransition );
+        // Create a hash for this combination of background settings.
+        // This is used to determine when two slide backgrounds are
+        // the same.
+        if( data.background || data.backgroundColor || data.backgroundImage || data.backgroundVideo ) {
+            element.setAttribute( 'data-background-hash', data.background + data.backgroundSize + data.backgroundImage + data.backgroundVideo + data.backgroundColor + data.backgroundRepeat + data.backgroundPosition + data.backgroundTransition );
+        }
+
+        // Additional and optional background properties
+        if( data.backgroundSize ) element.style.backgroundSize = data.backgroundSize;
+        if( data.backgroundImage ) element.style.backgroundImage = 'url("' + data.backgroundImage + '")';
+        if( data.backgroundColor ) element.style.backgroundColor = data.backgroundColor;
+        if( data.backgroundRepeat ) element.style.backgroundRepeat = data.backgroundRepeat;
+        if( data.backgroundPosition ) element.style.backgroundPosition = data.backgroundPosition;
+        if( data.backgroundTransition ) element.setAttribute( 'data-background-transition', data.backgroundTransition );
 
         // Create video background element
         if( data.backgroundVideo ) {
@@ -818,11 +825,11 @@
             element.appendChild( video );
         }
 
-            container.appendChild( element );
+        container.appendChild( element );
 
-            return element;
+        return element;
 
-        }
+    }
 
 
     /**
@@ -1022,7 +1029,7 @@
             dom.progress.addEventListener( 'click', onProgressClicked, false );
         }
 
-        if( config.focusBodyOnPageVisiblityChange ) {
+        if( config.focusBodyOnPageVisibilityChange ) {
             var visibilityChange;
 
             if( 'hidden' in document ) {
@@ -1101,14 +1108,28 @@
     }
 
     /**
-     * Extend object a with the properties of object b.
-     * If there's a conflict, object b takes precedence.
+     * Extend object `a` with the properties of object `b`.
+     * If there's a conflict, object `b` takes precedence.
+     *
+     * When function `filter` has been specified, it must return a truthy value
+     * for the `b.property` to be accepted. Use this, for example, 
+     * to only allow a specific subset of all the `b.properties` 
+     * to be copied into `a`. 
      */
-    function extend( a, b ) {
+    function extend( a, b, filter ) {
 
-        if (b) {
-            for( var i in b ) {
-                a[ i ] = b[ i ];
+        if( b ) {
+            if( !filter ) {
+                for( var i in b ) {
+                    a[ i ] = b[ i ];
+                }
+            } 
+            else {
+                for( var i in b ) {
+                    if( filter( i ) ) {
+                        a[ i ] = b[ i ];
+                    }
+                }
             }
         }
 
@@ -1124,7 +1145,7 @@
     }
 
     /**
-     * Utility for deserializing a value.
+     * Utility for de-serializing a value.
      */
     function deserialize( value ) {
 
@@ -1137,6 +1158,24 @@
 
         return value;
 
+    }
+
+    /**
+     * Filter object before encoding it in JSON: 
+     * remove any properties which are functions or objects.
+     */
+    function filterForJSONtransmission( obj ) {
+        if( !obj ) return null;
+
+        var rv = {};
+        for( var k in obj ) {
+            if( typeof k === 'function' ) continue;
+            //if( typeof k === 'object' ) continue;    // really we should only ditch DOM elements?
+            if( k === 'currentSlide' || k === 'previousSlide') continue;
+            if( k === 'fragment' || k === 'fragments') continue;
+            rv[ k ] = obj[ k ];
+        }
+        return rv;
     }
 
     /**
@@ -1291,6 +1330,7 @@
                 window.parent.postMessage( JSON.stringify({
                     namespace: 'reveal',
                     eventName: type,
+                    eventData: filterForJSONtransmission(args),
                     state: getState()
                 } ), '*' );
             }
@@ -1595,7 +1635,11 @@
                 // for any SECTION and expect to live...
                 for( i = 0, len = slides.length; i < len; i++ ) {
                     var slide = slides[ i ];
+                    var h = getAbsoluteHeight( slide );
+                    slide.style.paddingTop = Math.max(0, Math.floor((targetInfo.slideHeight - h) / 2)) + "px";
+                    slide.style.paddingBottom = Math.max(0, Math.floor((targetInfo.slideHeight - h) / 2)) + "px";
                     slide.style.height = targetInfo.slideHeight + "px";
+                    slide.style.top = "0px";
                 }
             }
             else {
@@ -1612,6 +1656,8 @@
                 for( i = 0, len = slides.length; i < len; i++ ) {
                     var slide = slides[ i ];
                     slide.style.height = '';
+                    slide.style.paddingTop = '';
+                    slide.style.paddingBottom = '';
                 }
             }
 
@@ -3128,6 +3174,7 @@
                 else {
                     var fragments = currentSlide.querySelectorAll( '.fragment' );
                     if( fragments.length ) {
+                        // signal that we are not yet showing *any* of the fragments yet
                         f = -1;
                     }
                 }
@@ -3323,11 +3370,21 @@
                 } );
 
                 if( fragmentsHidden.length ) {
-                    dispatchEvent( 'fragmenthidden', { fragment: fragmentsHidden[0], fragments: fragmentsHidden } );
+                    dispatchEvent( 'fragmenthidden', { 
+                        fragment: fragmentsHidden[0], 
+                        fragments: fragmentsHidden,
+                        currentFragmentIndex: index,
+                        fragmentHiddenCount: fragmentsHidden.length
+                    } );
                 }
 
                 if( fragmentsShown.length ) {
-                    dispatchEvent( 'fragmentshown', { fragment: fragmentsShown[0], fragments: fragmentsShown } );
+                    dispatchEvent( 'fragmentshown', { 
+                        fragment: fragmentsShown[0], 
+                        fragments: fragmentsShown,
+                        currentFragmentIndex: index,
+                        fragmentShownCount: fragmentsShown.length 
+                    } );
                 }
 
                 updateControls();
@@ -3587,7 +3644,7 @@
 
         // If there's a condition specified and it returns false,
         // ignore this event
-        if( typeof config.keyboardCondition === 'function' && config.keyboardCondition() === false ) {
+        if( typeof config.keyboardCondition === 'function' && config.keyboardCondition( event ) === false ) {
             return true;
         }
 
