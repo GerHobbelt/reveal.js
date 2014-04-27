@@ -23,7 +23,7 @@
     } else {
         if ( typeof define === "function" && define.amd ) {
             // AMD. Register as a named module.
-            define( "reveal", [], function(head) {
+            define( [], function(head) {
                 return factory(window, document);
             });
         } else {
