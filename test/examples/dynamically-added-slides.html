@@ -4,12 +4,12 @@
     <head>
         <meta charset="utf-8">
 
-        <title>reveal.js - Barebones</title>
+        <title>reveal.js - Dynamically adding &amp; removing slides</title>
 
         <link rel="stylesheet" href="../../css/reveal.css">
     </head>
 
-    <body>
+    <body class="reveal-viewport">
 
         <div class="reveal">
 
@@ -29,14 +29,21 @@
 
         </div>
 
-        <script src="../../lib/js/head/dist/head.js"></script>
-        <script src="../../js/reveal.js"></script>
-
         <script>
+            var RequireBaseURL = '../../lib/_/';
 
-            Reveal.initialize();
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            var RevealConfiguration = {
+                dependencies: [
+                    { src: require.toUrl('../js/classList/classList.js'), condition: function() { return !document.body.classList; } }
+                ]
+            };
 
         </script>
 
+        <!-- data-main attribute tells require.js to load
+             scripts/main.js after require.js loads. -->
+        <script data-main="../../js/require-reveal-init.js" src="../../lib/js/requireJS/require.js"></script>
     </body>
 </html>

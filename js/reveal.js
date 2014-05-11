@@ -23,7 +23,7 @@
     } else {
         if ( typeof define === "function" && define.amd ) {
             // AMD. Register as a named module.
-            define( [], function(head) {
+            define( [], function () {
                 return factory(window, document);
             });
         } else {
@@ -295,7 +295,11 @@
         // the potential of malicious script injection. Same goes for
         // keyboardCondition option which can be used to inject 
         // malicious code.
-        // (Note: this is a blacklist approach; a better way is to whitelist the ones that are okay. See the augmented extend() function below.)
+        //
+        // Note: 
+        // This is a blacklist approach; a better way is to 
+        // whitelist the ones that are okay. 
+        // See the augmented extend() function below.
         if( typeof query.dependencies !== 'undefined' ) delete query.dependencies;
         if( typeof query.keyboardCondition !== 'undefined' ) delete query.keyboardCondition;
 
@@ -431,7 +435,7 @@
      *
      * Return FALSE when the function failed to run to completion.
      */
-    function start() {
+    function start( config ) {
 
         // Make sure we've got all the DOM elements we need
         if (!setupDOM()) return false;
@@ -637,11 +641,13 @@
      */
     function setupPDF() {
 
+        // mark the current context as print rather than screen display
+        document.body.classList.add( 'print-pdf' );
+
         var targetInfo = getViewportAndSlideDimensionsInfo();
 
-        document.body.classList.add( 'print-pdf' );
-        document.body.style.width = targetInfo.pageWidth + 'px';
-        document.body.style.height = targetInfo.pageHeight + 'px';
+        document.body.style.width = targetInfo.rawAvailableWidth + 'px';
+        document.body.style.height = targetInfo.rawAvailableHeight + 'px';
 
         // Slide and slide background layout
         toArray( document.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
@@ -652,11 +658,11 @@
                 slide.style.top = 0;
             }
             else {
-                var left = ( targetInfo.pageWidth - targetInfo.slideWidth ) / 2;
-                var top = ( targetInfo.pageHeight - targetInfo.slideHeight ) / 2;
+                var left = ( targetInfo.rawAvailableWidth - targetInfo.slideWidth ) / 2;
+                var top = ( targetInfo.rawAvailableHeight - targetInfo.slideHeight ) / 2;
 
                 if( config.center || slide.classList.contains( 'center' ) ) {
-                    top = Math.max( ( targetInfo.pageHeight - getAbsoluteHeight( slide ) ) / 2, 0 );
+                    top = Math.max( ( targetInfo.rawAvailableHeight - getAbsoluteHeight( slide ) ) / 2, 0 );
                 }
 
                 slide.style.left = left + 'px';
@@ -670,8 +676,8 @@
 
                 var background = slide.querySelector( '.slide-background' );
                 if( background ) {
-                    background.style.width = targetInfo.pageWidth + 'px';
-                    background.style.height = targetInfo.pageHeight + 'px';
+                    background.style.width = targetInfo.printWidth + 'px';
+                    background.style.height = targetInfo.printHeight + 'px';
                     background.style.top = -top + 'px';
                     background.style.left = -left + 'px';
                 }
@@ -833,6 +839,33 @@
 
 
     /**
+     * The event listener for postMessage events, which makes it
+     * possible to call all reveal.js API methods from another
+     * window. For example:
+     *
+     * revealWindow.postMessage( JSON.stringify({
+     *   method: 'slide',
+     *   args: [ 2 ]
+     * }), '*' );
+     */
+    function postMessageListener( event ) {
+
+        var data = event.data;
+
+        // Make sure we're dealing with JSON
+        if( data.charAt( 0 ) === '{' && data.charAt( data.length - 1 ) === '}' ) {
+            data = JSON.parse( data ); DOES NOT yet apply the new configuration; you must call
+
+            // Check if the requested method can be found
+            if( data.method && typeof Reveal[data.method] === 'function' ) {
+                Reveal[data.method].apply( Reveal, data.args );
+            }
+        }
+
+    }
+
+
+    /**
      * Registers a listener to postMessage events, this makes it
      * possible to call all reveal.js API methods from another
      * window. For example:
@@ -844,39 +877,45 @@
      */
     function setupPostMessage() {
 
+        // when registered before, make sure we don't register it twice:
+        window.removeEventListener( 'message', postMessageListener, false );
+
         if( config.postMessage ) {
-            window.addEventListener( 'message', function ( event ) {
-                var data = event.data;
-
-                // Make sure we're dealing with JSON
-                if( data.charAt( 0 ) === '{' && data.charAt( data.length - 1 ) === '}' ) {
-                    data = JSON.parse( data );
-
-                    // Check if the requested method can be found
-                    if( data.method && typeof Reveal[data.method] === 'function' ) {
-                        Reveal[data.method].apply( Reveal, data.args );
-                    }
-                }
-            }, false );
+            window.addEventListener( 'message', postMessageListener, false );
         }
 
     }
 
     /**
+     * Mix the configuration settings in `options` , if any, into the config
+     * object. DOES NOT yet apply the new configuration; you must call
+     * applyConfiguration() to do just that.
+     *
+     * This is done implicitly when you call a Reveal API such as `start(options)`.
+     */
+    function configure( options ) {
+
+        // New config options may be passed when this method
+        // is invoked through the API after initialization
+        if( typeof options === 'object' ) extend( config, options );
+
+        // Force linear transition based on browser capabilities
+        if( features.transforms3d === false ) config.transition = 'linear';
+
+    }
+
+
+    /**
      * Applies the configuration settings from the config
      * object. May be called multiple times.
      */
-    function configure( options ) {
+    function applyConfiguration() {
 
         var numberOfSlides = document.querySelectorAll( SLIDES_SELECTOR ).length;
 
         if( dom.wrapper ) {
             dom.wrapper.classList.remove( config.transition );
         }
-
-        // New config options may be passed when this method
-        // is invoked through the API after initialization
-        if( typeof options === 'object' ) extend( config, options );
 
         // Force linear transition based on browser capabilities
         if( features.transforms3d === false ) config.transition = 'linear';
@@ -1114,7 +1153,9 @@
      * When function `filter` has been specified, it must return a truthy value
      * for the `b.property` to be accepted. Use this, for example, 
      * to only allow a specific subset of all the `b.properties` 
-     * to be copied into `a`. 
+     * to be copied into `a`.
+     *
+     * Return the augmented `a` object as the result. 
      */
     function extend( a, b, filter ) {
 
@@ -1132,6 +1173,7 @@
                 }
             }
         }
+        return a;
 
     }
 
@@ -1517,7 +1559,7 @@
                 availableWidth: availableWidth,
                 availableHeight: availableHeight,
 
-                // (Target)Dimensions of the content
+                // (Target) Dimensions of the content
                 slideWidth: slideWidth,
                 slideHeight: slideHeight,
                 slidePadding: slidePadding
@@ -4477,7 +4519,7 @@
         getQueryHash: function() {
             var query = {};
 
-            location.search.replace( /[A-Z0-9]+?=([\w\.%-]*)/gi, function(a) {
+            window.location.search.replace( /[A-Z0-9]+?=([\w\.%-]*)/gi, function(a) {
                 query[ a.split( '=' ).shift() ] = a.split( '=' ).pop();
             } );
 

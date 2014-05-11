@@ -100,23 +100,24 @@
 
         </div>
 
-        <script src="../../lib/js/head/dist/head.js"></script>
-        <script src="../../js/reveal.js"></script>
-
         <script>
+            var RequireBaseURL = '../../lib/_/';
 
             // Full list of configuration options available here:
             // https://github.com/hakimel/reveal.js#configuration
-            Reveal.initialize({
+            var RevealConfiguration = {
                 center: true,
                 // rtl: true,
 
                 transition: 'linear',
                 // transitionSpeed: 'slow',
                 // backgroundTransition: 'slide'
-            });
+            };
 
         </script>
 
+        <!-- data-main attribute tells require.js to load
+             scripts/main.js after require.js loads. -->
+        <script data-main="../../js/require-reveal-init.js" src="../../lib/js/requireJS/require.js"></script>
     </body>
 </html>

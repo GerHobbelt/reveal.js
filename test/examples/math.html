@@ -160,8 +160,11 @@
         </div>
 
         <script>
+            var RequireBaseURL = '../../lib/_/';
 
-            Reveal.initialize({
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            var RevealConfiguration = {
                 history: true,
                 transition: 'linear',
 
@@ -171,15 +174,15 @@
                 },
 
                 dependencies: [
-                    { src: '../../lib/js/classList/classList.js' },
-                    { src: '../../plugin/math/math.js', async: false /* async=true: will load MathJax while the presentation is already running, which is fine when it is not used in the first slide. However, the side effect is that when browsing quickly through the presentation that some pages may not have rendered their formulas yet. */ }
+                    { src: require.toUrl('../js/classList/classList.js'), condition: function() { return !document.body.classList; } },
+                    { src: require.toUrl('../../plugin/math/math.js'), async: false /* async=true: will load MathJax while the presentation is already running, which is fine when it is not used in the first slide. However, the side effect is that when browsing quickly through the presentation that some pages may not have rendered their formulas yet. */ }
                 ]
-            });
+            };
 
         </script>
 
         <!-- data-main attribute tells require.js to load
              scripts/main.js after require.js loads. -->
-        <script data-main="js/require-reveal-init.js" src="../../lib/js/requireJS/require.js"></script>
+        <script data-main="../../js/require-reveal-init.js" src="../../lib/js/requireJS/require.js"></script>
     </body>
 </html>
