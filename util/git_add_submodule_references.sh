@@ -73,19 +73,23 @@ esac
 
 
 
-git_submod_add   git://github.com/GerHobbelt/highlight.js.git                            lib/plugins/highlight
+git_submod_add   git@github.com:GerHobbelt/LocalConnection.js.git                        lib/LocalConnection
 git_submod_add   git@github.com:GerHobbelt/SyntaxHighlighter.git                         lib/plugins/SyntaxHighlighter
 git_submod_add   git@github.com:GerHobbelt/classList.js.git                              lib/js/classList
 git_submod_add   git@github.com:GerHobbelt/headjs.git                                    lib/js/head
+git_submod_add   git@github.com:GerHobbelt/highlight.js.git                              lib/plugins/highlight
 git_submod_add   git@github.com:GerHobbelt/marked.git                                    lib/plugins/marked
+git_submod_add   git@github.com:GerHobbelt/nprogress.git                                 lib/js/nprogress
 git_submod_add   git@github.com:GerHobbelt/require-css.git                               lib/js/requireCSS
 git_submod_add   git@github.com:GerHobbelt/require-less.git                              lib/js/require-less
 git_submod_add   git@github.com:GerHobbelt/requireJS-domReady.git                        lib/js/require-domReady
 git_submod_add   git@github.com:GerHobbelt/requirejs-plugins.git                         lib/js/require-plugins
 git_submod_add   git@github.com:GerHobbelt/requirejs.git                                 lib/js/requireJS
 git_submod_add   git@github.com:GerHobbelt/response.js.git                               lib/js/response.js
+git_submod_add   git@github.com:GerHobbelt/scopedQuerySelectorShim.git                   lib/scopedQuerySelectorShim
+git_submod_add   git@github.com:GerHobbelt/text.git                                      lib/js/require-text
 git_submod_add   git@github.com:GerHobbelt/verge.git                                     lib/js/verge
-git_submod_add   git@github.com:GerHobbelt/zoom.js.git                                   lib/js/zoom
+git_submod_add   git@github.com:GerHobbelt/whitespace-cleaner.git                        util/wsclean
 git_submod_add   git@github.com:GerHobbelt/zoom.js.git                                   lib/plugins/zoom
 
 

@@ -1,3 +1,31 @@
+# JoliCode reveal.js fork
+
+## How to use
+
+Clone the project into a new repository gh-pages branch,
+rename `index-jolicode.html` into `index.html` and start working!
+
+## What's different
+
+- `index-jolicode.html` demo with specific instructions
+- new theme "jolicode", already set as default with convergence font loaded locally
+- the jolicode logo is here: ./lib/font/logo-fond-noir.svg
+- support for footer added:
+
+```html
+<footer class="joli">
+    A presentation about ponies - PonyCon 2013
+</footer>
+```
+
+- custom state: `<section data-state="jolistate">`
+- new `.emphasis` class displaying blue text
+- no more borders on images and better `<blockquote>` styles
+
+Kiss :sparkling_heart:
+
+...
+
 # reveal.js [![Build Status](https://travis-ci.org/hakimel/reveal.js.png?branch=master)](https://travis-ci.org/hakimel/reveal.js)
 
 A framework for easily creating beautiful presentations using HTML. [Check out the live demo](http://lab.hakim.se/reveal-js/).
@@ -15,7 +43,7 @@ reveal.js comes with a broad range of features including [nested slides](https:/
 
 ## Online Editor
 
-Presentations are written using HTML or markdown but there's also an online editor for those of you who prefer a graphical interface. Give it a try at [http://slid.es](http://slid.es).
+Presentations are written using HTML or markdown but there's also an online editor for those of you who prefer a graphical interface. Give it a try at [http://slides.com](http://slides.com).
 
 
 ## Instructions
@@ -63,8 +91,8 @@ When used locally, this feature requires that reveal.js [runs from a local web s
 ```html
 <section data-markdown="example.md"
          data-separator="^\n\n\n"
-         data-vertical="^\n\n"
-         data-notes="^Note:"
+         data-separator-vertical="^\n\n"
+         data-separator-notes="^Note:"
          data-charset="iso-8859-15">
 </section>
 ```
@@ -90,7 +118,7 @@ Special syntax (in html comment) is available for adding attributes to the slide
 <section data-markdown>
     <script type="text/template">
     <!-- .slide: data-background="#ff0000" -->
-        Mardown content
+        Markdown content
     </script>
 </section>
 ```
@@ -161,13 +189,13 @@ Reveal.initialize({
     previewLinks: false,
 
     // Transition style
-    transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
+    transition: 'default', // default/cube/page/slide/concave/convex/zoom/linear/fade/none
 
     // Transition speed
     transitionSpeed: 'default', // default/fast/slow
 
     // Transition style for full page slide backgrounds
-    backgroundTransition: 'default', // default/none/slide/concave/convex/zoom
+    backgroundTransition: 'default', // default/none/fade/slide/concave/convex/zoom
 
     // Number of slides away from the current that are visible
     viewDistance: 3,
@@ -186,8 +214,6 @@ Reveal.initialize({
 
 });
 ```
-
-Note that the new default vertical centering option will break compatibility with slides that were using transitions with backgrounds (`cube` and `page`). To restore the previous behavior, set `center` to `false`.
 
 
 The configuration can be updated after initialization using the ```configure``` method:
@@ -284,9 +310,9 @@ You can also override the slide duration for individual slides and fragments by 
 
 ```html
 <section data-autoslide="2000">
-	<p>After 2 seconds the first fragment will be shown.</p>
-	<p class="fragment" data-autoslide="10000">After 10 seconds the next fragment will be shown.</p>
-	<p class="fragment">Now, the fragment is displayed for 2 seconds before the next slide is shown.</p>
+    <p>After 2 seconds the first fragment will be shown.</p>
+    <p class="fragment" data-autoslide="10000">After 10 seconds the next fragment will be shown.</p>
+    <p class="fragment">Now, the fragment is displayed for 2 seconds before the next slide is shown.</p>
 </section>
 ```
 
@@ -305,6 +331,23 @@ Reveal.configure({
     32: null // don't do anything when SPACE is pressed (i.e. disable a reveal.js default binding)
   }
 });
+```
+
+### Lazy Loading
+
+When working on presentation with a lot of media or iframe content it's important to load lazily. Lazy loading means that reveal.js will only load content for the few slides nearest to the current slide. The number of slides that are preloaded is determined by the `viewDistance` configuration option.
+
+To enable lazy loading all you need to do is change your "src" attributes to "data-src" as shown below. This is supported for image, video, audio and iframe elements.
+
+```html
+<section>
+  <img data-src="image.png">
+  <iframe data-src="http://slides.com">
+  <video>
+    <source data-src="video.webm" type="video/webm" />
+    <source data-src="video.mp4" type="video/mp4" />
+  </video>
+</section>
 ```
 
 
@@ -412,7 +455,7 @@ Reveal.initialize({
     parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px" - currently only pixels are supported (don't use % or auto)
 
     // This slide transition gives best results:
-    transition: linear
+    transition: 'slide'
 
 });
 ```
@@ -659,7 +702,7 @@ When used locally, this feature requires that reveal.js [runs from a local web s
 If you're using the external Markdown plugin, you can add notes with the help of a special delimiter:
 
 ```html
-<section data-markdown="example.md" data-separator="^\n\n\n" data-vertical="^\n\n" data-notes="^Note:"></section>
+<section data-markdown="example.md" data-separator="^\n\n\n" data-separator-vertical="^\n\n" data-separator-notes="^Note:"></section>
 
 # Title
 
@@ -737,7 +780,7 @@ Reveal.initialize({
         //...
         // other deps
         //...
-        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
+        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/master.js', async: true },
 
         // and if you want speaker notes
@@ -772,7 +815,7 @@ Reveal.initialize({
         //...
         // other deps
         //...
-        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
+        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
 
         // other dependencies...
@@ -816,7 +859,7 @@ Reveal.initialize({
         //...
         // other deps
         //...
-        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
+        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
 
         // other dependencies...
@@ -842,7 +885,7 @@ Reveal.initialize({
         //...
         // other deps
         //...
-        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
+        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', async: true },
         { src: 'plugin/multiplex/master.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
 
@@ -967,7 +1010,7 @@ Some reveal.js features, like external markdown and speaker notes, require that 
 
 4. Clone the reveal.js repository
 ```sh
-$ git clone https://github.com/hakimel/reveal.js.git
+$ git clone git@github.com:jolicode/reveal.js.git
 ```
 
 5. Navigate to the reveal.js folder

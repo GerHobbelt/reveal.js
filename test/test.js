@@ -81,6 +81,10 @@ Reveal.addEventListener( 'ready', function() {
         strictEqual( Reveal.isLastSlide(), false, 'false after Reveal.slide( 0, 0 )' );
     });
 
+    test( 'Reveal.getTotalSlides', function() {
+        strictEqual( Reveal.getTotalSlides(), 8, 'eight slides in total' );
+    });
+
     test( 'Reveal.getIndices', function() {
         var indices = Reveal.getIndices();
 
@@ -116,6 +120,16 @@ Reveal.addEventListener( 'ready', function() {
         equal( Reveal.getCurrentSlide(), secondSlide, 'current is slide #1' );
     });
 
+    test( 'Reveal.getProgress', function() {
+        Reveal.slide( 0, 0 );
+        strictEqual( Reveal.getProgress(), 0, 'progress is 0 on first slide' );
+
+        var lastSlideIndex = document.querySelectorAll( '.reveal .slides>section' ).length - 1;
+
+        Reveal.slide( lastSlideIndex, 0 );
+        strictEqual( Reveal.getProgress(), 1, 'progress is 1 on last slide' );
+    });
+
     test( 'Reveal.getScale', function() {
         ok( typeof Reveal.getScale() === 'number', 'has scale' );
     });
@@ -148,28 +162,64 @@ Reveal.addEventListener( 'ready', function() {
         // Step through the vertical child slides
         Reveal.next();
         deepEqual( Reveal.getIndices(), { h: 1, v: 0, f: undefined } );
+        deepEqual( Reveal.availableFragments(), { prev: false, next: false } );
 
         Reveal.next();
         deepEqual( Reveal.getIndices(), { h: 1, v: 1, f: undefined } );
+        deepEqual( Reveal.availableFragments(), { prev: false, next: false } );
 
         Reveal.next();
         deepEqual( Reveal.getIndices(), { h: 1, v: 2, f: undefined } );
+        deepEqual( Reveal.availableFragments(), { prev: false, next: false } );
 
         // There's fragments on this slide
         Reveal.next();
         deepEqual( Reveal.getIndices(), { h: 2, v: 0, f: -1 } );
+        deepEqual( Reveal.availableFragments(), { prev: false, next: true } );
 
         Reveal.next();
         deepEqual( Reveal.getIndices(), { h: 2, v: 0, f: 0 } );
+        deepEqual( Reveal.availableFragments(), { prev: false, next: true } );
 
         Reveal.next();
         deepEqual( Reveal.getIndices(), { h: 2, v: 0, f: 1 } );
+        deepEqual( Reveal.availableFragments(), { prev: true, next: true } );
 
         Reveal.next();
         deepEqual( Reveal.getIndices(), { h: 2, v: 0, f: 2 } );
+        deepEqual( Reveal.availableFragments(), { prev: true, next: false } );
+
+        // There's fragments on this slide; all HTML bits are combined into a single fragment: data-fragment-index="0"
+        Reveal.next();
+        deepEqual( Reveal.getIndices(), { h: 2, v: 1, f: -1 } );
+        deepEqual( Reveal.availableFragments(), { prev: false, next: true } );
 
         Reveal.next();
-        deepEqual( Reveal.getIndices(), { h: 2, v: 0, f: 3 } );
+        deepEqual( Reveal.getIndices(), { h: 2, v: 1, f: 0 } );
+        deepEqual( Reveal.availableFragments(), { prev: false, next: false } );         // this is the only (grouped!) fragment in this slide, hence there is NO previous fragment!
+
+        // There's fragments on this slide
+        Reveal.next();
+        deepEqual( Reveal.getIndices(), { h: 2, v: 2, f: -1 } );
+        deepEqual( Reveal.availableFragments(), { prev: false, next: true } );
+
+        Reveal.next();
+        deepEqual( Reveal.getIndices(), { h: 2, v: 2, f: 0 } );
+        deepEqual( Reveal.availableFragments(), { prev: false, next: true } );
+
+        Reveal.next();
+        deepEqual( Reveal.getIndices(), { h: 2, v: 2, f: 1 } );
+        deepEqual( Reveal.availableFragments(), { prev: true, next: false } );
+
+        // Last slide!
+        Reveal.next();
+        deepEqual( Reveal.getIndices(), { h: 3, v: 0, f: undefined } );
+        deepEqual( Reveal.availableFragments(), { prev: false, next: false } );
+
+        // Last slide remains last!
+        Reveal.next();
+        deepEqual( Reveal.getIndices(), { h: 3, v: 0, f: undefined } );
+        deepEqual( Reveal.availableFragments(), { prev: false, next: false } );
     });
 
     test( 'Reveal.next at end', function() {
@@ -335,70 +385,70 @@ Reveal.addEventListener( 'ready', function() {
 
 
     // ---------------------------------------------------------------
-	// AUTO-SLIDE TESTS
+    // AUTO-SLIDE TESTS
 
-	QUnit.module( 'Auto Sliding' );
+    QUnit.module( 'Auto Sliding' );
 
-	test( 'Reveal.isAutoSliding', function() {
-		strictEqual( Reveal.isAutoSliding(), false, 'false by default' );
+    test( 'Reveal.isAutoSliding', function() {
+        strictEqual( Reveal.isAutoSliding(), false, 'false by default' );
 
-		Reveal.configure({ autoSlide: 10000 });
-		strictEqual( Reveal.isAutoSliding(), true, 'true after starting' );
+        Reveal.configure({ autoSlide: 10000 });
+        strictEqual( Reveal.isAutoSliding(), true, 'true after starting' );
 
-		Reveal.configure({ autoSlide: 0 });
-		strictEqual( Reveal.isAutoSliding(), false, 'false after setting to 0' );
-	});
+        Reveal.configure({ autoSlide: 0 });
+        strictEqual( Reveal.isAutoSliding(), false, 'false after setting to 0' );
+    });
 
-	test( 'Reveal.toggleAutoSlide', function() {
-		Reveal.configure({ autoSlide: 10000 });
+    test( 'Reveal.toggleAutoSlide', function() {
+        Reveal.configure({ autoSlide: 10000 });
 
-		Reveal.toggleAutoSlide();
-		strictEqual( Reveal.isAutoSliding(), false, 'false after first toggle' );
-		Reveal.toggleAutoSlide();
-		strictEqual( Reveal.isAutoSliding(), true, 'true after second toggle' );
+        Reveal.toggleAutoSlide();
+        strictEqual( Reveal.isAutoSliding(), false, 'false after first toggle' );
+        Reveal.toggleAutoSlide();
+        strictEqual( Reveal.isAutoSliding(), true, 'true after second toggle' );
 
-		Reveal.configure({ autoSlide: 0 });
-	});
+        Reveal.configure({ autoSlide: 0 });
+    });
 
-	asyncTest( 'autoslidepaused', function() {
-		expect( 1 );
+    asyncTest( 'autoslidepaused', function() {
+        expect( 1 );
 
-		var _onEvent = function( event ) {
-			ok( true, 'event fired' );
-		}
+        var _onEvent = function( event ) {
+            ok( true, 'event fired' );
+        }
 
-		Reveal.addEventListener( 'autoslidepaused', _onEvent );
-		Reveal.configure({ autoSlide: 10000 });
-		Reveal.toggleAutoSlide();
+        Reveal.addEventListener( 'autoslidepaused', _onEvent );
+        Reveal.configure({ autoSlide: 10000 });
+        Reveal.toggleAutoSlide();
 
-		start();
+        start();
 
-		// cleanup
-		Reveal.configure({ autoSlide: 0 });
-		Reveal.removeEventListener( 'autoslidepaused', _onEvent );
-	});
+        // cleanup
+        Reveal.configure({ autoSlide: 0 });
+        Reveal.removeEventListener( 'autoslidepaused', _onEvent );
+    });
 
-	asyncTest( 'autoslideresumed', function() {
-		expect( 1 );
+    asyncTest( 'autoslideresumed', function() {
+        expect( 1 );
 
-		var _onEvent = function( event ) {
-			ok( true, 'event fired' );
-		}
+        var _onEvent = function( event ) {
+            ok( true, 'event fired' );
+        }
 
-		Reveal.addEventListener( 'autoslideresumed', _onEvent );
-		Reveal.configure({ autoSlide: 10000 });
-		Reveal.toggleAutoSlide();
-		Reveal.toggleAutoSlide();
+        Reveal.addEventListener( 'autoslideresumed', _onEvent );
+        Reveal.configure({ autoSlide: 10000 });
+        Reveal.toggleAutoSlide();
+        Reveal.toggleAutoSlide();
 
-		start();
+        start();
 
-		// cleanup
-		Reveal.configure({ autoSlide: 0 });
-		Reveal.removeEventListener( 'autoslideresumed', _onEvent );
-	});
+        // cleanup
+        Reveal.configure({ autoSlide: 0 });
+        Reveal.removeEventListener( 'autoslideresumed', _onEvent );
+    });
 
 
-	// ---------------------------------------------------------------
+    // ---------------------------------------------------------------
     // CONFIGURATION VALUES
 
     QUnit.module( 'Configuration' );
@@ -435,6 +485,16 @@ Reveal.addEventListener( 'ready', function() {
         equal( Reveal.getIndices().h, 0, 'looped from end to start' );
 
         Reveal.configure({ loop: false });
+    });
+
+
+    // ---------------------------------------------------------------
+    // LAZY-LOADING TESTS
+
+    QUnit.module( 'Lazy-Loading' );
+
+    test( 'img with data-src', function() {
+        strictEqual( document.querySelectorAll( '.reveal section img[src]' ).length, 1, 'Image source has been set' );
     });
 
 

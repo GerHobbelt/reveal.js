@@ -18,7 +18,7 @@
   } else {
     if ( typeof define === "function" && define.amd ) {
       // AMD. Register as a named module.
-      define( "reveal.zoom", [ "reveal", "zoom" ], function(Reveal, zoom) {
+      define( [ "reveal", "zoom" ], function(Reveal, zoom) {
         return factory(window, document, Reveal, zoom);
       });
     } else {
@@ -41,17 +41,28 @@
         }
     } );
 
-    Reveal.addEventListener( 'overviewshown', function() { isEnabled = false; } );
-    Reveal.addEventListener( 'overviewhidden', function() { isEnabled = true; } );
+    Reveal.addEventListener( 'overviewshown', function () {
+        isEnabled = false;
+    } );
+    Reveal.addEventListener( 'overviewhidden', function () {
+        isEnabled = true;
+    } );
 
-    Reveal.isZoomEnabled = function() {
+    function isZoomEnabled() {
         return isEnabled;
     };
 
-    Reveal.zoom = function() {
-        return zoom;
+    if (!Reveal.AddOn) {
+        Reveal.AddOn = {};
+    }
+
+    Reveal.AddOn.Zoom = {
+        isEnabled: isZoomEnabled,
+        getZoomInstance: function () {
+            return zoom;
+        }
     };
-    
+
     return Reveal;
 }));
 

@@ -4,7 +4,7 @@
 	ignore = dirty
 [submodule "lib/plugins/highlight"]
 	path = lib/plugins/highlight
-	url = git://github.com/GerHobbelt/highlight.js.git
+	url = git@github.com:GerHobbelt/highlight.js.git
 	ignore = dirty
 [submodule "lib/js/verge"]
 	path = lib/js/verge
@@ -25,10 +25,6 @@
 [submodule "lib/js/classList"]
 	path = lib/js/classList
 	url = git@github.com:GerHobbelt/classList.js.git
-	ignore = dirty
-[submodule "lib/js/zoom"]
-	path = lib/js/zoom
-	url = git@github.com:GerHobbelt/zoom.js.git
 	ignore = dirty
 [submodule "lib/plugins/marked"]
 	path = lib/plugins/marked
@@ -58,3 +54,19 @@
 	path = lib/js/require-plugins
 	url = git@github.com:GerHobbelt/requirejs-plugins.git
 	ignore = dirty
+[submodule "util/wsclean"]
+	path = util/wsclean
+	url = git@github.com:GerHobbelt/whitespace-cleaner.git
+	ignore = dirty
+[submodule "lib/js/nprogress"]
+	path = lib/js/nprogress
+	url = git@github.com:GerHobbelt/nprogress.git
+[submodule "lib/scopedQuerySelectorShim"]
+	path = lib/scopedQuerySelectorShim
+	url = git@github.com:GerHobbelt/scopedQuerySelectorShim.git
+[submodule "lib/LocalConnection"]
+	path = lib/LocalConnection
+	url = git@github.com:GerHobbelt/LocalConnection.js.git
+[submodule "lib/plugins/hilitor"]
+	path = lib/plugins/hilitor
+	url = git@github.com:GerHobbelt/hilitor.git

@@ -4,30 +4,25 @@
     <head>
         <meta charset="utf-8">
 
-        <title>reveal.js - Embedded Media</title>
-
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>reveal.js - Dynamically adding &amp; removing slides</title>
 
         <link rel="stylesheet" href="../../css/reveal.css">
-        <link rel="stylesheet" href="../../css/theme/default.css" id="theme">
     </head>
 
-    <body>
+    <body class="reveal-viewport">
 
         <div class="reveal">
 
             <div class="slides">
 
                 <section>
-                    <h2>Embedded Media Test</h2>
+                    <h2>Barebones Presentation</h2>
+                    <p>This example contains the bare minimum includes and markup required to run a reveal.js presentation.</p>
                 </section>
 
                 <section>
-                    <iframe data-autoplay width="420" height="345" src="http://www.youtube.com/embed/l3RQZ4mcr1c"></iframe>
-                </section>
-
-                <section>
-                    <h2>Empty Slide</h2>
+                    <h2>No Theme</h2>
+                    <p>There's no theme included, so it will fall back on browser defaults.</p>
                 </section>
 
             </div>
@@ -40,7 +35,9 @@
             // Full list of configuration options available here:
             // https://github.com/hakimel/reveal.js#configuration
             var RevealConfiguration = {
-                transition: 'linear'
+                dependencies: [
+                    { src: require.toUrl('../js/classList/classList.js'), condition: function() { return !document.body.classList; } }
+                ]
             };
 
         </script>

@@ -42,6 +42,10 @@
 // Pass this, window may not be defined yet
 }(this, function ( window, document, Reveal, highlight, undefined ) {
 
+    function highlightMe( event ) {
+        highlight.highlightBlock( event.currentTarget );
+    }
+
     if( typeof window.addEventListener === 'function' ) {
         var hljs_nodes = document.querySelectorAll( 'pre code' );
 
@@ -59,9 +63,7 @@
             }
 
             // re-highlight when focus is lost (for edited code)
-            element.addEventListener( 'focusout', function( event ) {
-                highlight.highlightBlock( event.currentTarget );
-            }, false );
+            element.addEventListener( 'focusout', highlightMe, false );
         }
     }
 

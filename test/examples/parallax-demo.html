@@ -1,4 +1,4 @@
-<!doctype html>
+<DOCTYPE html>
 <html lang="en" style="height: 100%;">
 
     <head>
@@ -14,20 +14,41 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        <link rel="stylesheet" href="css/reveal.css">
-        <link rel="stylesheet" href="css/theme/default.css" id="theme">
+        <link rel="stylesheet" href="../../css/reveal.css">
+        <link rel="stylesheet" href="../../css/theme/default.css" id="theme">
 
         <!-- For syntax highlighting -->
-        <link rel="stylesheet" href="lib/css/highlight/zenburn.css">
+        <link rel="stylesheet" href="../../lib/css/highlight/zenburn.css">
 
-        <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+        <!-- If the query includes 'print-pdf', include the PDF print sheet -->
         <script>
-            document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+            // local scope for code:
+            (function () {
+                // media="print"; alternative is 'css/print/paper.css'
+                var link = document.createElement( 'link' );
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                if( window.location.search.match( /print-pdf/gi ) ) {
+                    link.href = '../../css/print/pdf.css';
+    				// no media type specified for this one: it applies to both screen and print...
+                }
+    			else {
+                    link.href = '../../css/print/paper.css';
+    				link.media = 'print';
+    			}
+                document.getElementsByTagName( 'head' )[0].appendChild( link );
+            })();
         </script>
 
         <!--[if lt IE 9]>
-        <script src="lib/js/html5shiv.js"></script>
+        <script src="../../lib/js/html5shiv.js"></script>
         <![endif]-->
+
+        <link rel='stylesheet' href='../../lib/js/nprogress/nprogress.css'>
+
+        <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,700,400italic'>
+
+        <script src='../../lib/js/nprogress/nprogress.js'></script>
     </head>
 
     <body class="reveal-viewport">
@@ -64,8 +85,8 @@
                             Slides can be nested inside of other slides,
                             try pressing <a href="#" class="navigate-down">down</a>.
                         </p>
-                        <a href="#" class="image navigate-down">
-                            <img width="178" height="238" src="assets/arrow.png" alt="Down arrow">
+                        <a href="#" class="navigate-down">
+                            <img width="178" height="238" data-src="../../assets/arrow.png" alt="Down arrow">
                         </a>
                     </section>
                     <section contenteditable="true">
@@ -76,14 +97,14 @@
                         <h2>Basement Level 2</h2>
                         <p>Cornify</p>
                         <a class="test" href="http://cornify.com">
-                            <img width="280" height="326" src="assets/cornify.gif" alt="Unicorn">
+                            <img width="280" height="326" data-src="../../assets/cornify.gif" alt="Unicorn">
                         </a>
                     </section>
                     <section contenteditable="true">
                         <h2>Basement Level 3</h2>
                         <p>That's it, time to go back up.</p>
-                        <a href="#/2" class="image">
-                            <img width="178" height="238" src="assets/arrow.png" alt="Up arrow" style="-webkit-transform: rotate(180deg);">
+                        <a href="#/2">
+                            <img width="178" height="238" data-src="../../assets/arrow.png" alt="Up arrow" style="-webkit-transform: rotate(180deg);">
                         </a>
                     </section>
                 </section>
@@ -157,9 +178,9 @@
                                 <td>$3</td>
                                 <td>2</td>
                             <tr>
-                      </tbody>
-                   </table>
-               </section>
+                        </tbody>
+                    </table>
+                </section>
 
                 <section data-markdown>
                     <script type="text/template">
@@ -184,7 +205,9 @@
                         You can select from different transitions, like: <br>
                         <a href="?transition=cube#/transitions">Cube</a> -
                         <a href="?transition=page#/transitions">Page</a> -
+                        <a href="?transition=slide#/transitions">Slide</a> -
                         <a href="?transition=concave#/transitions">Concave</a> -
+                        <a href="?transition=convex#/transitions">Convex</a> -
                         <a href="?transition=zoom#/transitions">Zoom</a> -
                         <a href="?transition=linear#/transitions">Linear</a> -
                         <a href="?transition=fade#/transitions">Fade</a> -
@@ -205,8 +228,7 @@
                         <a href="?theme=night#/themes">Night</a> <br>
                         <a href="?theme=moon#/themes">Moon</a> -
                         <a href="?theme=solarized#/themes">Solarized</a> -
-                        <a href="?theme=aerogear#/themes">Aerogear</a> <br>
-                        <a href="?theme=parallax-demo#/themes">Parallax Background Demo</a> <br>
+                        <a href="?theme=aerogear#/themes">Aerogear</a> -
                         <a href="?theme=blood#/themes">Blood</a> -
                         <a href="?theme=jolicode#/themes">Jolicode</a> -
                         <a href="?theme=one-mozilla#/themes">One::Mozilla</a> -
@@ -234,7 +256,7 @@
                     <p>
                         Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
                     </p>
-                    <pre><code data-trim contenteditable style="font-size: 18px; margin-top: 20px;">
+                    <pre><code class="javascript" data-trim contenteditable style="font-size: 18px;">
 Reveal.addEventListener( 'customevent', function() {
     console.log( '"customevent" has fired' );
 } );
@@ -247,28 +269,28 @@ Reveal.addEventListener( 'customevent', function() {
                         <p>
                             Set <code>data-background="#007777"</code> on a slide to change the full page background to the given color. All CSS color formats are supported.
                         </p>
-                        <a href="#" class="image navigate-down">
-                            <img width="178" height="238" src="assets/arrow.png" alt="Down arrow">
+                        <a href="#" class="navigate-down">
+                            <img width="178" height="238" data-src="../../assets/arrow.png" alt="Down arrow">
                         </a>
                     </section>
-                    <section data-background="assets/arrow.png">
+                    <section data-background="../../assets/arrow.png">
                         <h2>Image Backgrounds</h2>
                         <pre><code>&lt;section data-background="image.png"&gt;</code></pre>
                     </section>
-                    <section data-background="assets/arrow.png" data-background-repeat="repeat" data-background-size="100px">
+                    <section data-background="../../assets/arrow.png" data-background-repeat="repeat" data-background-size="100px">
                         <h2>Repeated Image Backgrounds</h2>
                         <pre><code style="word-wrap: break-word;">&lt;section data-background="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
                     </section>
                 </section>
 
-                <section data-transition="linear" data-background="#4d7e65" data-background-transition="slide">
+                <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
                     <h2>Background Transitions</h2>
                     <p>
                         Pass reveal.js the <code>backgroundTransition: 'slide'</code> config argument to make backgrounds slide rather than fade.
                     </p>
                 </section>
 
-                <section data-transition="linear" data-background="#8c4738" data-background-transition="slide">
+                <section data-transition="slide" data-background="#8c4738" data-background-transition="slide">
                     <h2>Background Transition Override</h2>
                     <p>
                         You can override background transitions per slide by using <code>data-background-transition="slide"</code>.
@@ -348,18 +370,20 @@ function linkify( selector ) {
 
                 <section>
                     <h2>Spectacular image!</h2>
-                    <a class="image" href="http://lab.hakim.se/meny/" target="_blank">
-                        <img width="320" height="299" src="http://s3.amazonaws.com/hakim-static/portfolio/images/meny.png" alt="Meny">
+                    <a href="http://lab.hakim.se/meny/" target="_blank">
+                        <img width="320" height="299" data-src="http://s3.amazonaws.com/hakim-static/portfolio/images/meny.png" alt="Meny">
                     </a>
                 </section>
 
                 <section>
                     <h2>Export to PDF</h2>
                     <p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>, below is an example that's been uploaded to SlideShare.</p>
+                    <!--
                     <iframe id="slideshare" src="http://www.slideshare.net/slideshow/embed_code/13872948" width="455" height="356" style="margin:0;overflow:hidden;border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe>
                     <script>
                         document.getElementById('slideshare').attributeName = 'allowfullscreen';
                     </script>
+                    -->
                 </section>
 
                 <section>
@@ -379,19 +403,19 @@ function linkify( selector ) {
                     }
                     </style>
                     <ul class="longlist">
-                        <li><a href="./test/examples/barebones.html">Examples :: barebones</a></li>
-                        <li><a href="./test/examples/embedded-media.html">Examples :: embedded-media</a></li>
-                        <li><a href="./test/examples/math.html">Examples :: math</a></li>
-                        <li><a href="./test/examples/slide-backgrounds.html">Examples :: slide-backgrounds</a></li>
-                        <li><a href="./test/examples/slide-number.html">Examples :: slide-number</a></li>
+                        <li><a href="./barebones.html">Examples :: barebones</a></li>
+                        <li><a href="./embedded-media.html">Examples :: embedded-media</a></li>
+                        <li><a href="./math.html">Examples :: math</a></li>
+                        <li><a href="./slide-backgrounds.html">Examples :: slide-backgrounds</a></li>
+                        <li><a href="./slide-number.html">Examples :: slide-number</a></li>
+                        <li><a href="./postmessage-example.html">Examples :: postmessage</a></li>
                     </ul>
                     <ul class="longlist">
-                        <li><a href="./plugin/markdown/example.html"> Plugin :: markdown/example</a></li>
-                        <li><a href="./plugin/notes/notes.html"> Plugin :: notes/notes</a></li>
-                        <li><a href="./plugin/notes-server/notes.html"> Plugin :: notes-server/notes</a></li>
-                        <li><a href="./plugin/postmessage/example.html"> Plugin :: postmessage/example</a></li>
-                        <li><a href="./test/test-markdown.html"> Test :: test-markdown</a></li>
-                        <li><a href="./test/test.html"> Test :: test</a></li>
+                        <li><a href="../../plugin/markdown/example.html"> Plugin :: markdown/example</a></li>
+                        <li><a href="../../plugin/notes/notes.html"> Plugin :: notes/notes</a></li>
+                        <li><a href="../../plugin/notes-server/notes.html"> Plugin :: notes-server/notes</a></li>
+                        <li><a href="../../test/test-markdown.html"> Test :: test-markdown</a></li>
+                        <li><a href="../../test/test.html"> Test :: test</a></li>
                     </ul>
                 </section>
                 <section>
@@ -414,53 +438,45 @@ function linkify( selector ) {
             <div class="progress"><span></span></div>
         </div>
 
-        <script src="lib/js/head/dist/head.js"></script>
-        <script src="js/reveal.js"></script>
-
         <script>
+            var body = document.getElementsByTagName('body')[0];
+            body.style.display = 'block'; // $('body').show();
+            var version_el = body.getElementsByClassName('version');
+            for (var i = version_el.length; i-- > 0; ) {
+              version_el[i].innerHTML = NProgress.version; // $('.version').text(NProgress.version);
+            }
+            NProgress.start("Loading the presentation...");
 
-            head.load("lib/plugins/zoom/js/zoom.js", function() {
-                console.log("zoom library loaded.", arguments);
-            });
-            head.load("lib/plugins/highlight/dist/highlight-umd.js", function() {
-                console.log("highlight library loaded.", arguments);
-            });
-            head.load("lib/plugins/marked/lib/marked.js", function() {
-                console.log("markdown library loaded.", arguments);
-            });
+            NProgress.settings.onDoneBegin = slow_fade_all_ends_all;
 
-            // Full list of configuration options available here:
-            // https://github.com/hakimel/reveal.js#configuration
-            Reveal.initialize({
-                // width: 960,
-                // height: 700,
-                controls: true,
-                progress: true,
-                history: true,
-                center: true,
-                slideNumber: true,
+            function tick() {
+              // NProgress.inc() will never arrive at 'done' all by itself as it won't push the .status beyond the 0.994 mark:
+              if (NProgress.status > 0.99) {
+                NProgress.done(false, "Done. Ready when you are!");
 
-                theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-                transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+                // slow_fade_all_ends_all(); <-- executed via NProgress.settings.onDoneBegin instead
+              } else {
+                NProgress.inc();
+                setTimeout(tick, 200);
+              }
+            }
+            tick();
 
-                // Parallax scrolling
-                parallaxBackgroundImage: 'assets/reveal-parallax-1.jpg', // 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
-                //parallaxBackgroundSize: '2100px 900px',
-
-                // Optional libraries used to extend on reveal.js
-                dependencies: [
-                    { src: 'lib/js/classList/classList.js', condition: function() { return !document.body.classList; } },
-                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { if (typeof hljs !== 'undefined') { hljs.initHighlightingOnLoad(); } } },
-                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
-                    // { src: 'plugin/leap/leap.js', async: true },
-                    { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
-                    // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
-                ]
-            });
-
+            function slow_fade_all_ends_all() {
+              function slow_fade_one(el, i) {
+                setTimeout(function() {
+                  NProgress.Internals.removeClass(el, 'out');
+                }, i * 500);
+              }
+              var fade_el = body.getElementsByClassName('fade');
+              for (var i = fade_el.length; i-- > 0; ) {
+                slow_fade_one(fade_el[i], i);
+              }
+            }
         </script>
 
+        <!-- data-main attribute tells require.js to load
+             scripts/main.js after require.js loads. -->
+        <script data-main="parallax-demo-init.js" src="../../lib/js/requireJS/require.js"></script>
     </body>
 </html>

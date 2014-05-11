@@ -105,8 +105,11 @@ function register_remote {
 
 
 
+register_remote lib/LocalConnection                                           jeremyharris-original                    git@github.com:jeremyharris/LocalConnection.js.git                               $# $@
 register_remote lib/js/classList                                              local-original                           ../../../../classlist-shim/                                                      $# $@
 register_remote lib/js/head                                                   local-original                           ../../../../headjs/                                                              $# $@
+register_remote lib/js/nprogress                                              GerHobbelt-original                      git@github.com:GerHobbelt/nprogress.git                                          $# $@
+register_remote lib/js/nprogress                                              local-original                           ../../../../nprogress/                                                           $# $@
 register_remote lib/js/require-domReady                                       local_original                           ../../../../require-domReady                                                     $# $@
 register_remote lib/js/require-less                                           local_original                           ../../../../require-less                                                         $# $@
 register_remote lib/js/require-plugins                                        local_original                           ../../../../require-plugins                                                      $# $@
@@ -115,13 +118,13 @@ register_remote lib/js/requireJS                                              lo
 register_remote lib/js/response.js                                            local-original                           ../../../../response.js/                                                         $# $@
 register_remote lib/js/verge                                                  local-2-original                         ../../../../jquery-verge/                                                        $# $@
 register_remote lib/js/verge                                                  local-original                           ../../../../verge-screendimensions/                                              $# $@
-register_remote lib/js/zoom                                                   hakimel-original                         git@github.com:hakimel/zoom.js.git                                               $# $@
-register_remote lib/js/zoom                                                   local-original                           ../../../../zoom/                                                                $# $@
 register_remote lib/plugins/SyntaxHighlighter                                 local-original                           ../../../../SyntaxHighlighter/                                                   $# $@
 register_remote lib/plugins/highlight                                         local-lib                                ../../../../highlight/                                                           $# $@
 register_remote lib/plugins/highlight                                         local-original                           ../../../../highlight/                                                           $# $@
+register_remote lib/plugins/marked                                            local-original                           ../../../../marked/                                                              $# $@
 register_remote lib/plugins/zoom                                              local-lib                                ../../../../zoom/                                                                $# $@
 register_remote lib/plugins/zoom                                              local-original                           ../../../../zoom/                                                                $# $@
+register_remote lib/scopedQuerySelectorShim                                   lazd-original                            git@github.com:lazd/scopedQuerySelectorShim.git                                  $# $@
 
 
 
