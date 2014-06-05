@@ -640,6 +640,29 @@
      * PDF.
      */
     function setupPDF() {
+/*
+TBD: we need something completely different for printing slides [GerHobbelt]
+*/
+
+		// The aspect ratio of pages when saving to PDF in Chrome,
+		// we need to abide by this ratio when determining the pixel
+		// size of our pages
+		var pageAspectRatio = 1.295;
+
+		var slideSize = getComputedSlideSize( window.innerWidth, window.innerHeight );
+
+		// Dimensions of the PDF pages
+		var pageWidth = Math.round( slideSize.width * ( 1 + config.margin ) ),
+			pageHeight = Math.round( pageWidth / pageAspectRatio );
+
+		// Dimensions of slides within the pages
+		var slideWidth = slideSize.width,
+			slideHeight = slideSize.height;
+
+/*
+TBD end
+*/
+
 
         // mark the current context as print rather than screen display
         document.body.classList.add( 'print-pdf' );
@@ -654,30 +677,43 @@
 
             // Vertical stacks are not centred since their section
             // children will be
-            if( slide.classList.contains( 'stack' ) ) {
-                slide.style.top = 0;
-            }
-            else {
+			if( slide.classList.contains( 'stack' ) === false ) {
+				// Center the slide inside of the page, giving the slide some margin
                 var left = ( targetInfo.rawAvailableWidth - targetInfo.slideWidth ) / 2;
                 var top = ( targetInfo.rawAvailableHeight - targetInfo.slideHeight ) / 2;
 
-                if( config.center || slide.classList.contains( 'center' ) ) {
-                    top = Math.max( ( targetInfo.rawAvailableHeight - getAbsoluteHeight( slide ) ) / 2, 0 );
+				var contentHeight = getAbsoluteHeight( slide );
+				var numberOfPages = Math.ceil( contentHeight / pageHeight );
+
+				// Center slides vertically
+				if( numberOfPages === 1 && config.center || slide.classList.contains( 'center' ) ) {
+					top = Math.max( ( pageHeight - contentHeight ) / 2, 0 );
                 }
 
+				// Position the slide inside of the page
                 slide.style.left = left + 'px';
                 slide.style.top = top + 'px';
                 slide.style.width = targetInfo.slideWidth + 'px';
                 slide.style.height = targetInfo.slideHeight + 'px';
 
+/*
+TBD this is the old code; next marker starts the new code. To be checked and re-evaluated. [GerHobbelt]
+*/
+
                 if( slide.scrollHeight > targetInfo.slideHeight ) {
                     slide.style.overflow = 'hidden';
                 }
 
+/*
+TBD end of old code, start of new code
+*/
+
+				// TODO Backgrounds need to be multiplied when the slide
+				// stretches over multiple pages
                 var background = slide.querySelector( '.slide-background' );
                 if( background ) {
                     background.style.width = targetInfo.printWidth + 'px';
-                    background.style.height = targetInfo.printHeight + 'px';
+					background.style.height = ( targetInfo.printHeight * numberOfPages ) + 'px';
                     background.style.top = -top + 'px';
                     background.style.left = -left + 'px';
                 }
@@ -1583,6 +1619,19 @@
         var i, len;
         var targetInfo = getViewportAndSlideDimensionsInfo();
 
+/*
+TBD new code:
+*/
+
+			var size = getComputedSlideSize();
+
+			var slidePadding = 20; // TODO Dig this out of DOM
+
+/*
+TBD end new code
+*/
+
+
         if ( targetInfo && dom.slides && !isPrintingPDF() ) {
 
             // Layout the contents of the slides
@@ -1593,6 +1642,8 @@
 
             // Determine scale of content to fit within available space
             scale = Math.min( targetInfo.availableWidth / targetInfo.slideWidth, targetInfo.availableHeight / targetInfo.slideHeight );
+// TBD: new code:
+//			scale = Math.min( size.presentationWidth / size.width, size.presentationHeight / size.height );
 
             // Respect max/min scale settings
             scale = Math.max( scale, config.minScale );
@@ -1772,6 +1823,41 @@
             }
 
         } );
+
+	}
+
+	/**
+	 * Calculates the computed pixel size of our slides. These
+	 * values are based on the width and height configuration
+	 * options.
+	 */
+	function getComputedSlideSize( presentationWidth, presentationHeight ) {
+
+		var size = {
+			// Slide size
+			width: config.width,
+			height: config.height,
+
+			// Presentation size
+			presentationWidth: presentationWidth || dom.wrapper.offsetWidth,
+			presentationHeight: presentationHeight || dom.wrapper.offsetHeight
+		};
+
+		// Reduce available space by margin
+		size.presentationWidth -= ( size.presentationHeight * config.margin );
+		size.presentationHeight -= ( size.presentationHeight * config.margin );
+
+		// Slide width may be a percentage of available width
+		if( typeof size.width === 'string' && /%$/.test( size.width ) ) {
+			size.width = parseInt( size.width, 10 ) / 100 * size.presentationWidth;
+		}
+
+		// Slide height may be a percentage of available height
+		if( typeof size.height === 'string' && /%$/.test( size.height ) ) {
+			size.height = parseInt( size.height, 10 ) / 100 * size.presentationHeight;
+		}
+
+		return size;
 
     }
 
