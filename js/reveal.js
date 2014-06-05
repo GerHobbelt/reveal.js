@@ -457,7 +457,9 @@
 
         // Special setup and config is required when printing to PDF
         if( isPrintingPDF() ) {
-            setupPDF();
+            if (!setupPDF()) {
+                return false;
+            }
         }
 
         // Notify listeners that the presentation is ready but use a 1ms
@@ -650,6 +652,9 @@ TBD: we need something completely different for printing slides [GerHobbelt]
 		var pageAspectRatio = 1.295;
 
 		var slideSize = getComputedSlideSize( window.innerWidth, window.innerHeight );
+        if (slideSize === false) {
+            return false;
+        }
 
 		// Dimensions of the PDF pages
 		var pageWidth = Math.round( slideSize.width * ( 1 + config.margin ) ),
@@ -726,6 +731,7 @@ TBD end of old code, start of new code
             fragment.classList.add( 'visible' );
         } );
 
+        return true;
     }
 
     /**
@@ -890,7 +896,9 @@ TBD end of old code, start of new code
 
         // Make sure we're dealing with JSON
         if( data.charAt( 0 ) === '{' && data.charAt( data.length - 1 ) === '}' ) {
-            data = JSON.parse( data ); DOES NOT yet apply the new configuration; you must call
+            data = JSON.parse( data ); 
+//TBD            
+            throw new Error("DOES NOT yet apply the new configuration; you must call xxx");
 
             // Check if the requested method can be found
             if( data.method && typeof Reveal[data.method] === 'function' ) {
@@ -1624,6 +1632,9 @@ TBD new code:
 */
 
 			var size = getComputedSlideSize();
+            if (size === false) {
+                return;
+            }
 
 			var slidePadding = 20; // TODO Dig this out of DOM
 
@@ -1832,6 +1843,8 @@ TBD end new code
 	 * options.
 	 */
 	function getComputedSlideSize( presentationWidth, presentationHeight ) {
+
+        if (!dom.wrapper || !dom.slides) return false;
 
 		var size = {
 			// Slide size
