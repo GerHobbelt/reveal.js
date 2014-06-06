@@ -37,11 +37,13 @@
 
     'use strict';
 
-    var SLIDES_SELECTOR = '.reveal .slides section',
-        HORIZONTAL_SLIDES_SELECTOR = '.reveal .slides > section',
-        VERTICAL_SLIDES_SELECTOR = '.reveal .slides > section.present > section',
-        HOME_SLIDE_SELECTOR = '.reveal .slides > section:first-of-type',
-        SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR = ':scope > section',
+    // these *_SELECTOR defines are all `dom.wrapper` based, which explains why they won't have the `.reveal` root/wrapper DIV class in them:
+	var SLIDES_SELECTOR = '.slides section',
+		HORIZONTAL_SLIDES_SELECTOR = '.slides > section',
+		VERTICAL_SLIDES_SELECTOR = '.slides > section.present > section',
+		HOME_SLIDE_SELECTOR = '.slides > section:first-of-type';
+    // this *_SELECTOR define is (horizontal) slide `section` selection based:
+    var SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR = ':scope > section',
         SLIDE_NO_DISPLAY_DISTANCE = 1,
 
         Reveal = null,
@@ -268,13 +270,24 @@
 
         dom.viewport = document.querySelector( '.reveal-viewport' );
 
-        // If there's viewport defined use the body element
+        // If there's no viewport defined use the body element
         if( !dom.viewport ) {
             dom.viewport = document.body;
             if (!dom.viewport.classList.contains('reveal-viewport')) {
                 dom.viewport.classList.add('reveal-viewport');
             }
         }
+
+			// Since JS won't be running any further, we need to load all
+			// images that were intended to lazy load now
+			var images = document.getElementsByTagName( 'img' );
+			for( var i = 0, len = images.length; i < len; i++ ) {
+				var image = images[i];
+				if( image.getAttribute( 'data-src' ) ) {
+					image.setAttribute( 'src', image.getAttribute( 'data-src' ) );
+					image.removeAttribute( 'data-src' );
+				}
+			}
 
         // If the browser doesn't support core features we won't be
         // using JavaScript to control the presentation
@@ -285,6 +298,13 @@
             }
             return false;
         }
+    
+//TBD: remove this chunk. It should happen in start/setup.
+//TBD: git blame the next three lines: who did Hakim do this exactly?    
+		// Cache references to key DOM elements
+		dom.wrapper = document.querySelector( '.reveal' );
+		dom.slides = document.querySelector( '.reveal .slides' );
+//TBD end
 
         // Force a layout when the whole page, incl fonts, has loaded
         window.addEventListener( 'load', layout, false );
@@ -341,7 +361,7 @@
 
         features.canvas = !!document.createElement( 'canvas' ).getContext;
 
-        isMobileDevice = navigator.userAgent.match( /(iphone|ipod|android)/gi );
+		isMobileDevice = navigator.userAgent.match( /(iphone|ipod|ipad|android)/gi );
 
     }
 
@@ -455,13 +475,6 @@
         // Update all backgrounds
         updateBackground( true );
 
-        // Special setup and config is required when printing to PDF
-        if( isPrintingPDF() ) {
-            if (!setupPDF()) {
-                return false;
-            }
-        }
-
         // Notify listeners that the presentation is ready but use a 1ms
         // timeout to ensure it's not fired synchronously after #initialize()
         setTimeout( function() {
@@ -476,6 +489,22 @@
                 'currentSlide': currentSlide
             } );
         }, 1 );
+
+		// Special setup and config is required when printing to PDF
+		if( isPrintingPDF() ) {
+			removeEventListeners();
+
+			// The document needs to have loaded for the PDF layout
+			// measurements to be accurate
+			if( document.readyState === 'complete' ) {
+				if (!setupPDF()) {
+                    return false;
+                }
+			}
+			else {
+				window.addEventListener( 'load', setupPDF );
+			}
+		}
 
         return true;
     }
@@ -646,23 +675,24 @@
 TBD: we need something completely different for printing slides [GerHobbelt]
 */
 
-		// The aspect ratio of pages when saving to PDF in Chrome,
-		// we need to abide by this ratio when determining the pixel
-		// size of our pages
-		var pageAspectRatio = 1.295;
-
 		var slideSize = getComputedSlideSize( window.innerWidth, window.innerHeight );
         if (slideSize === false) {
             return false;
         }
 
 		// Dimensions of the PDF pages
-		var pageWidth = Math.round( slideSize.width * ( 1 + config.margin ) ),
-			pageHeight = Math.round( pageWidth / pageAspectRatio );
+		var pageWidth = Math.floor( slideSize.width * ( 1 + config.margin ) ),
+			pageHeight = Math.floor( slideSize.height * ( 1 + config.margin  ) );
 
 		// Dimensions of slides within the pages
 		var slideWidth = slideSize.width,
 			slideHeight = slideSize.height;
+
+		// Let the browser know what page size we want to print
+		injectStyleSheet( '@page{size:'+ pageWidth +'px '+ pageHeight +'px; margin: 0;}' );
+
+		// Limit the size of certain elements to the dimensions of the slide
+		injectStyleSheet( '.reveal img, .reveal video, .reveal iframe{max-width: '+ slideWidth +'px; max-height:'+ slideHeight +'px}' );
 
 /*
 TBD end
@@ -678,7 +708,7 @@ TBD end
         document.body.style.height = targetInfo.rawAvailableHeight + 'px';
 
         // Slide and slide background layout
-        toArray( document.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
+		toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
 
             // Vertical stacks are not centred since their section
             // children will be
@@ -688,7 +718,7 @@ TBD end
                 var top = ( targetInfo.rawAvailableHeight - targetInfo.slideHeight ) / 2;
 
 				var contentHeight = getAbsoluteHeight( slide );
-				var numberOfPages = Math.ceil( contentHeight / pageHeight );
+				var numberOfPages = Math.max( Math.ceil( contentHeight / pageHeight ), 1 );
 
 				// Center slides vertically
 				if( numberOfPages === 1 && config.center || slide.classList.contains( 'center' ) ) {
@@ -727,7 +757,7 @@ TBD end of old code, start of new code
         } );
 
         // Show all fragments
-        toArray( document.querySelectorAll( SLIDES_SELECTOR + ' .fragment' ) ).forEach( function( fragment ) {
+		toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR + ' .fragment' ) ).forEach( function( fragment ) {
             fragment.classList.add( 'visible' );
         } );
 
@@ -741,15 +771,26 @@ TBD end of old code, start of new code
      */
     function createSingletonNode( container, tagname, classname, innerHTML ) {
 
-        var node = container.querySelector( '.' + classname );
-        if( !node ) {
-            node = document.createElement( tagname );
-            node.classList.add( classname );
-            if( innerHTML !== null ) {
-                node.innerHTML = innerHTML;
-            }
-            container.appendChild( node );
-        }
+		// Find all nodes matching the description
+		var nodes = container.querySelectorAll( '.' + classname );
+
+		// Check all matches to find one which is a direct child of
+		// the specified container
+		for( var i = 0; i < nodes.length; i++ ) {
+			var testNode = nodes[i];
+			if( testNode.parentNode === container ) {
+				return testNode;
+			}
+		}
+
+		// If no node was found, create it now
+		var node = document.createElement( tagname );
+			node.classList.add( classname );
+		if( typeof innerHTML === 'string' ) {
+				node.innerHTML = innerHTML;
+			}
+			container.appendChild( node );
+
         return node;
 
     }
@@ -768,7 +809,7 @@ TBD end of old code, start of new code
         dom.background.classList.add( 'no-transition' );
 
         // Iterate over all horizontal slides
-        toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).forEach( function( slideh, i ) {
+		toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).forEach( function( slideh, i ) {
 
             var backgroundStack;
             var back = null;
@@ -789,6 +830,8 @@ TBD end of old code, start of new code
                 else {
                     createBackground( slidev, backgroundStack );
                 }
+
+				backgroundStack.classList.add( 'stack' );
 
             } );
 
@@ -839,7 +882,7 @@ TBD end of old code, start of new code
         if( data.background ) {
             // Auto-wrap image urls in url(...)
             if( /^(http|file|\/\/)/gi.test( data.background ) || /\.(svg|png|jpg|jpeg|gif|bmp)$/gi.test( data.background ) ) {
-                element.style.backgroundImage = 'url(' + data.background + ')';
+				slide.setAttribute( 'data-background-image', data.background );
             }
             else {
                 element.style.background = data.background;
@@ -850,28 +893,24 @@ TBD end of old code, start of new code
         // This is used to determine when two slide backgrounds are
         // the same.
         if( data.background || data.backgroundColor || data.backgroundImage || data.backgroundVideo ) {
-            element.setAttribute( 'data-background-hash', data.background + data.backgroundSize + data.backgroundImage + data.backgroundVideo + data.backgroundColor + data.backgroundRepeat + data.backgroundPosition + data.backgroundTransition );
+            element.setAttribute( 'data-background-hash', 
+                data.background + 
+                data.backgroundSize + 
+                data.backgroundImage + 
+                data.backgroundVideo + 
+                data.backgroundColor + 
+                data.backgroundRepeat + 
+                data.backgroundPosition + 
+                data.backgroundTransition 
+            );
         }
 
         // Additional and optional background properties
         if( data.backgroundSize ) element.style.backgroundSize = data.backgroundSize;
-        if( data.backgroundImage ) element.style.backgroundImage = 'url("' + data.backgroundImage + '")';
         if( data.backgroundColor ) element.style.backgroundColor = data.backgroundColor;
         if( data.backgroundRepeat ) element.style.backgroundRepeat = data.backgroundRepeat;
         if( data.backgroundPosition ) element.style.backgroundPosition = data.backgroundPosition;
         if( data.backgroundTransition ) element.setAttribute( 'data-background-transition', data.backgroundTransition );
-
-        // Create video background element
-        if( data.backgroundVideo ) {
-            var video = document.createElement( 'video' );
-
-            // Support comma separated lists of video sources
-            data.backgroundVideo.split( ',' ).forEach( function( source ) {
-                video.innerHTML += '<source src="'+ source +'">';
-            } );
-
-            element.appendChild( video );
-        }
 
         container.appendChild( element );
 
@@ -955,7 +994,8 @@ TBD end of old code, start of new code
      */
     function applyConfiguration() {
 
-        var numberOfSlides = document.querySelectorAll( SLIDES_SELECTOR ).length;
+//TBD: check all new dom.wrapper usage!
+		var numberOfSlides = dom.wrapper.querySelectorAll( SLIDES_SELECTOR ).length;
 
         if( dom.wrapper ) {
             dom.wrapper.classList.remove( config.transition );
@@ -1302,6 +1342,23 @@ TBD end of old code, start of new code
     }
 
     /**
+	 * Injects the given CSS styles into the DOM.
+	 */
+	function injectStyleSheet( value ) {
+
+		var tag = document.createElement( 'style' );
+		tag.type = 'text/css';
+		if( tag.styleSheet ) {
+			tag.styleSheet.cssText = value;
+		}
+		else {
+			tag.appendChild( document.createTextNode( value ) );
+		}
+		document.getElementsByTagName( 'head' )[0].appendChild( tag );
+
+	}
+
+	/**
      * Retrieves the height of the given element by looking
      * at the position and height of its immediate children.
      */
@@ -1430,7 +1487,7 @@ TBD end of old code, start of new code
     function enableRollingLinks() {
 
         if( features.transforms3d && !( 'msPerspective' in document.body.style ) ) {
-            var anchors = document.querySelectorAll( SLIDES_SELECTOR + ' a' );
+			var anchors = dom.wrapper.querySelectorAll( SLIDES_SELECTOR + ' a' );
 
             for( var i = 0, len = anchors.length; i < len; i++ ) {
                 var anchor = anchors[i];
@@ -1454,7 +1511,7 @@ TBD end of old code, start of new code
      */
     function disableRollingLinks() {
 
-        var anchors = document.querySelectorAll( SLIDES_SELECTOR + ' a.roll' );
+		var anchors = dom.wrapper.querySelectorAll( SLIDES_SELECTOR + ' a.roll' );
 
         for( var i = 0, len = anchors.length; i < len; i++ ) {
             var anchor = anchors[i];
@@ -1660,14 +1717,15 @@ TBD end new code
             scale = Math.max( scale, config.minScale );
             scale = Math.min( scale, config.maxScale );
 
-            // Prefer zooming in WebKit so that content remains crisp
+			// Prefer zooming in desktop Chrome so that content remains crisp
             // with nested transforms.
             //
             // Unfortunately, CSS3 zoom in Chrome has the very bad habit to scale text correctly only down to zoom factors of about 0.4,
             // go below that number and your text gets bigger and bigger (relatively speaking).
             // Try this at: http://jsbin.com/aluniv/3
             // Hence we must revert to using CSS3 transform scale() or scale3d() for Chrome:
-            if( typeof dom.slides.style.zoom !== 'undefined' && !navigator.userAgent.match( /(iphone|ipod|ipad|android|webkit)/gi ) ) {
+//TBD: Hakim + my results ==> this if() should never match (using his condition in the mean time...):
+			if( !isMobileDevice && /chrome/i.test( navigator.userAgent ) && typeof dom.slides.style.zoom !== 'undefined' ) {
                 dom.slides.style.zoom = scale;
             }
             // Apply scale transform as a fallback
@@ -1680,7 +1738,7 @@ TBD end new code
             }
 
             // Select all slides, vertical and horizontal
-            var slides = toArray( document.querySelectorAll( SLIDES_SELECTOR ) );
+			var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
 
             // When overview mode is active (and the relevant data available), do scale the slides' collective too:
             if (overview_slides_info) {
@@ -1766,7 +1824,7 @@ TBD end new code
             }
 
             // Select all slides, vertical and horizontal
-            var slides = toArray( document.querySelectorAll( SLIDES_SELECTOR ) );
+            var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
 
             for( i = 0, len = slides.length; i < len; i++ ) {
                 var slide = slides[ i ];
@@ -1941,7 +1999,7 @@ TBD end new code
             // before we can position them
             activateOverviewTimeout = setTimeout( function() {
 
-                var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
+    			var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
                 overview_slides_info = {
                     horizontal_count: horizontalSlides.length,
                     vertical_count: 1
@@ -2033,7 +2091,7 @@ TBD end new code
             }, 1 );
 
             // Select all slides
-            toArray( document.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
+			toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
                 // Resets all transforms to use the external styles
                 transformElement( slide, '' );
 
@@ -2262,7 +2320,7 @@ TBD end new code
         previousSlide = currentSlide;
 
         // Query all horizontal slides in the deck
-        var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
+		var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
 
         // If no vertical index is specified and the upcoming slide is a
         // stack, resume at its previous vertical index
@@ -2358,10 +2416,10 @@ TBD end new code
 
             // Reset all slides upon navigate to home
             // Issue: #285
-            if ( document.querySelector( HOME_SLIDE_SELECTOR ).classList.contains( 'present' ) ) {
+			if ( dom.wrapper.querySelector( HOME_SLIDE_SELECTOR ).classList.contains( 'present' ) ) {
                 // Launch async task
                 setTimeout( function () {
-                    var slides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.stack') ), i;
+					var slides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.stack') ), i;
                     for( i in slides ) {
                         if( slides[i] ) {
                             // Reset stack
@@ -2373,7 +2431,7 @@ TBD end new code
         }
 
         // Handle embedded content
-        if( slideChanged ) {
+		if( slideChanged || !previousSlide ) {
             stopEmbeddedContent( previousSlide );
             startEmbeddedContent( currentSlide );
         }
@@ -2414,12 +2472,16 @@ TBD end new code
         // Re-create the slide backgrounds
         createBackgrounds();
 
+		// Write the current hash to the URL
+		writeURL();
+
         sortAllFragments();
 
         updateControls();
         updateProgress();
         updateBackground( true );
         updateSlideNumber();
+		updateSlidesVisibility();
 
     }
 
@@ -2429,7 +2491,7 @@ TBD end new code
      */
     function resetVerticalSlides() {
 
-        var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+		var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
         horizontalSlides.forEach( function( horizontalSlide ) {
 
             var verticalSlides = toArray( horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) );
@@ -2453,7 +2515,7 @@ TBD end new code
      */
     function sortAllFragments() {
 
-        var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+		var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
         horizontalSlides.forEach( function( horizontalSlide ) {
 
             var verticalSlides = toArray( horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) );
@@ -2486,7 +2548,7 @@ TBD end new code
 
         // Select all slides and convert the NodeList result to
         // an array
-        var slides = toArray( document.querySelectorAll( selector ) ),
+		var slides = toArray( dom.wrapper.querySelectorAll( selector ) ),
             slidesLength = slides.length;
 
         var printMode = isPrintingPDF();
@@ -2665,7 +2727,7 @@ TBD end new code
 
         // Select all slides and convert the NodeList result to
         // an array
-        var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ),
+		var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ),
             horizontalSlidesLength = horizontalSlides.length,
             distanceX,
             distanceY;
@@ -2686,11 +2748,10 @@ TBD end new code
 
                 // Show the horizontal slide if it's within the view distance
                 if( distanceX <= viewDistance ) {
-                    horizontalSlide.classList.add( 'visible' );
-                    loadSlide( horizontalSlide );
+					showSlide( horizontalSlide );
                 }
                 else {
-                    horizontalSlide.classList.remove( 'visible' );
+					hideSlide( horizontalSlide );
                 }
 
                 if( verticalSlidesLength ) {
@@ -2703,11 +2764,10 @@ TBD end new code
                         distanceY = x === indexh ? Math.abs( indexv - y ) : Math.abs( y - oy );
 
                         if( distanceX + distanceY <= viewDistance ) {
-                            verticalSlide.classList.add( 'visible' );
-                            loadSlide( verticalSlide );
+							showSlide( verticalSlide );
                         }
                         else {
-                            verticalSlide.classList.remove( 'visible' );
+							hideSlide( verticalSlide );
                         }
                     }
 
@@ -2724,11 +2784,10 @@ TBD end new code
     function updateProgress() {
 
         // Update progress if enabled
-        if( config.progress && dom.progress ) {
+		if( config.progress && dom.progressbar ) {
 
-            if ( dom.progressbar ) {
-                dom.progressbar.style.width = getProgress() * window.innerWidth + 'px';
-            }
+            dom.progressbar.style.width = getProgress() * window.innerWidth + 'px';
+
         }
     }
 
@@ -2939,8 +2998,8 @@ TBD end new code
                 dom.wrapper.classList.add( 'has-parallax-background' );
             }, 1 );
 
-            var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ),
-                verticalSlides = document.querySelectorAll( VERTICAL_SLIDES_SELECTOR );
+			var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ),
+				verticalSlides = dom.wrapper.querySelectorAll( VERTICAL_SLIDES_SELECTOR );
 
             var backgroundWidth = parseInt( bgimg.width, 10 ),
                 backgroundHeight = parseInt( bgimg.height, 10 );
@@ -2965,10 +3024,15 @@ TBD end new code
     }
 
     /**
-     * Loads any content that is set to load lazily (data-src)
-     * inside of the given slide.
+	 * Called when the given slide is within the configured view
+	 * distance. Shows the slide element and loads any content
+	 * that is set to load lazily (data-src).
      */
-    function loadSlide( slide ) {
+	function showSlide( slide ) {
+
+		// Show the slide element
+		//slide.style.display = 'block';
+        slide.classList.add( 'visible' );
 
         // Media elements with data-src attributes
         toArray( slide.querySelectorAll( 'img[data-src], video[data-src], audio[data-src], iframe[data-src]' ) ).forEach( function( element ) {
@@ -2976,7 +3040,7 @@ TBD end new code
             element.removeAttribute( 'data-src' );
         } );
 
-        // Media elements with multiple <source>s
+		// Media elements with <source> children
         toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( media ) {
             var sources = 0;
 
@@ -2993,17 +3057,70 @@ TBD end new code
             }
         } );
 
+
+		// Show the corresponding background element
+		var indices = getIndices( slide );
+		var background = getSlideBackground( indices.h, indices.v );
+		if( background ) {
+			//background.style.display = 'block';
+            background.classList.add( 'visible' );
+
+			// If the background contains media, load it
+			if( background.hasAttribute( 'data-loaded' ) === false ) {
+				background.setAttribute( 'data-loaded', 'true' );
+
+				var backgroundImage = slide.getAttribute( 'data-background-image' ),
+					backgroundVideo = slide.getAttribute( 'data-background-video' );
+
+				// Images
+				if( backgroundImage ) {
+					background.style.backgroundImage = 'url(' + backgroundImage + ')';
+				}
+				// Videos
+				else if ( backgroundVideo ) {
+					var video = document.createElement( 'video' );
+
+					// Support comma separated lists of video sources
+					backgroundVideo.split( ',' ).forEach( function( source ) {
+						video.innerHTML += '<source src="' + source + '">';
+					} );
+
+					background.appendChild( video );
+				}
+			}
+		}
+
     }
 
     /**
+	 * Called when the given slide is moved outside of the
+	 * configured view distance.
+	 */
+	function hideSlide( slide ) {
+
+		// Hide the slide element
+		//slide.style.display = 'none';
+        slide.classList.remove( 'visible' );
+
+		// Hide the corresponding background element
+		var indices = getIndices( slide );
+		var background = getSlideBackground( indices.h, indices.v );
+		if( background ) {
+			//background.style.display = 'none';
+            background.classList.remove( 'visible' );
+		}
+
+	}
+
+	/**
      * Determine what available routes there are for navigation.
      *
      * @return {Object} containing four booleans: left/right/up/down
      */
     function availableRoutes() {
 
-        var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ),
-            verticalSlides = document.querySelectorAll( VERTICAL_SLIDES_SELECTOR );
+		var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ),
+			verticalSlides = dom.wrapper.querySelectorAll( VERTICAL_SLIDES_SELECTOR );
 
         var routes = {
             left: indexh > 0 || !!config.loop,
@@ -3113,10 +3230,10 @@ TBD end new code
      */
     function getProgress() {
 
-        var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+		var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
 
         // The number of past and total slides
-        var totalCount = document.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
+		var totalCount = dom.wrapper.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
         var pastCount = 0;
 
         // Step through all slides and count the past ones
@@ -3197,13 +3314,10 @@ TBD end new code
         if( isNaN( parseInt( bits[0], 10 ) ) && name.length ) {
             var element;
 
-            try {
-                // Find the slide with the specified name
+			// Ensure the named link is a valid HTML ID attribute
+			if( /^[a-zA-Z][\w:.-]*$/.test( name ) ) {
+				// Find the slide with the specified ID
                 element = document.querySelector( '#' + name );
-            }
-            catch( e ) {
-                // If the ID is an invalid selector a harmless SyntaxError
-                // may be thrown here.
             }
 
             if( element ) {
@@ -3246,7 +3360,7 @@ TBD end new code
             if( typeof delay === 'number' ) {
                 writeURLTimeout = setTimeout( writeURL, delay );
             }
-            else {
+			else if( currentSlide ) {
                 var url = '/';
 
                 // Attempt to create a named link based on the slide's ID
@@ -3257,7 +3371,7 @@ TBD end new code
                 }
 
                 // If the current slide has an ID, use that as a named link
-                if( currentSlide && typeof id === 'string' && id.length ) {
+				if( typeof id === 'string' && id.length ) {
                     url = '/' + id;
                 }
                 // Otherwise use the /h/v index
@@ -3295,10 +3409,13 @@ TBD end new code
             var slideh = isVertical ? slide.parentNode : slide;
 
             // Select all horizontal slides
-            var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+			var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
 
             // Now that we know which the horizontal slide is, get its index
             h = Math.max( horizontalSlides.indexOf( slideh ), 0 );
+
+			// Assume we're not vertical
+			v = undefined;
 
             // If this is a vertical slide, grab the vertical index
             if( isVertical ) {
@@ -3331,7 +3448,64 @@ TBD end new code
      */
     function getTotalSlides() {
 
-        return document.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
+		return dom.wrapper.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
+
+	}
+
+	/**
+	 * Returns the slide element matching the specified index.
+     *                                                           
+     * Note:
+     *
+     * When the `y` vertical index is invalid or non-existent as a slide, 
+     * then the 'horizontal slide' as index `x` is produced instead.
+	 */    
+	function getSlide( x, y ) {
+
+		var horizontalSlide = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR )[ x ];
+        var verticalSlides = horizontalSlide && horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
+
+		if( verticalSlides && verticalSlides.length && typeof y === 'number' ) {
+			var slide = verticalSlides[ y ];
+            if( slide ) {
+                return slide;
+            }
+		}
+
+		return horizontalSlide;
+
+	}
+
+	/**
+	 * Returns the background element for the given slide.
+	 * All slides, even the ones with no background properties
+	 * defined, have a background element so as long as the
+	 * index is valid an element will be returned.
+	 */
+	function getSlideBackground( x, y ) {
+
+		// When printing to PDF the slide backgrounds are nested
+		// inside of the slides
+		if( isPrintingPDF() ) {
+			var slide = getSlide( x, y );
+			if( slide ) {
+				var background = slide.querySelector( '.slide-background' );
+				if( background && background.parentNode === slide ) {
+					return background;
+				}
+			}
+
+			return undefined;
+		}
+
+		var horizontalBackground = dom.wrapper.querySelectorAll( '.backgrounds > .slide-background' )[ x ];
+		var verticalBackgrounds = horizontalBackground && horizontalBackground.querySelectorAll( '.slide-background' );
+
+		if( verticalBackgrounds && verticalBackgrounds.length && typeof y === 'number' ) {
+			return verticalBackgrounds ? verticalBackgrounds[ y ] : undefined;
+		}
+
+		return horizontalBackground;
 
     }
 
@@ -3726,7 +3900,7 @@ TBD end new code
             }
             else {
                 // Fetch the previous horizontal slide, if there is one
-                var previousSlide = document.querySelector( HORIZONTAL_SLIDES_SELECTOR + '.past:nth-child(' + indexh + ')' );
+				var previousSlide = dom.wrapper.querySelector( HORIZONTAL_SLIDES_SELECTOR + '.past:nth-child(' + indexh + ')' );
 
                 if( previousSlide ) {
                     var v = ( previousSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ).length - 1 ) || undefined;
@@ -3796,13 +3970,14 @@ TBD end new code
 
         // Check if there's a focused element that could be using
         // the keyboard
-        var activeElement = document.activeElement;
+		var activeElementIsCE = document.activeElement && document.activeElement.contentEditable !== 'inherit';
+		var activeElementIsInput = document.activeElement && document.activeElement.tagName && /input|textarea/i.test( document.activeElement.tagName );
         var hasFocus = !!( document.activeElement && ( document.activeElement.type || document.activeElement.href || document.activeElement.contentEditable !== 'inherit' ) );
 
         // Disregard the event if the focused element is located in a hidden slide (a 'past' or 'future' slide)
-        var tag = (document.activeElement && activeElement.nodeName);
-        if (tag === 'SECTION' && activeElement.classList &&
-            (activeElement.classList.contains( 'past' ) || activeElement.classList.contains( 'future' )))
+        var tag = (document.activeElement && document.activeElement.nodeName);
+        if (tag === 'SECTION' && document.activeElement.classList &&
+            (document.activeElement.classList.contains( 'past' ) || document.activeElement.classList.contains( 'future' )))
         {
             hasFocus = false;
 
@@ -3815,13 +3990,28 @@ TBD end new code
             if (document.activeElement) {
                 document.activeElement.blur();
             }
-            activeElement = document.activeElement;
         }
 
         // Disregard the event if there's a focused element or a
         // keyboard modifier key is present
-        console.log('onKeyDown: ', hasFocus, activeElement, (document.activeElement && activeElement.nodeName), (document.activeElement && activeElement.type), (document.activeElement && activeElement.href), (document.activeElement && activeElement.contentEditable), ", hidden: ", (document.activeElement ? activeElement.getAttribute('hidden') : "---"), ", key data: ", event.shiftKey, event.keyCode, event.altKey, event.ctrlKey, event.metaKey, isPaused());
-        if( hasFocus || (event.shiftKey && event.keyCode !== 32) || event.altKey || event.ctrlKey || event.metaKey ) return;
+        console.log('onKeyDown: ', {
+            hasFocus: hasFocus, 
+            activeElement: document.activeElement, 
+            activeElementIsCE: activeElementIsCE, 
+            activeElementIsInput: activeElementIsInput, 
+            nodeName: (document.activeElement && document.activeElement.nodeName), 
+            nodeType: (document.activeElement && document.activeElement.type), 
+            nodeHREF: (document.activeElement && document.activeElement.href), 
+            nodeContentEditable: (document.activeElement && document.activeElement.contentEditable), 
+            hidden: (document.activeElement ? document.activeElement.getAttribute('hidden') : "---"), 
+            key_shift: event.shiftKey, 
+            key_code: event.keyCode, 
+            key_alt: event.altKey, 
+            key_ctrl: event.ctrlKey, 
+            key_meta: event.metaKey, 
+            paused: isPaused()
+        });
+		if( activeElementIsCE || activeElementIsInput || (event.shiftKey && event.keyCode !== 32) || event.altKey || event.ctrlKey || event.metaKey ) return;
 
         // While paused only allow "unpausing" keyboard events (b and .)
         if( isPaused() && [66,190,191].indexOf( event.keyCode ) === -1 ) {
@@ -3933,9 +4123,9 @@ TBD end new code
                             config.__overview_backup = config.overview;
                         }
                         var overview_modes = [
-                        'translate3d',
-                        'perspective',
-                        'scale'
+                            'translate3d',
+                            'perspective',
+                            'scale'
                         ];
                         var new_mode = overview_modes[event.keyCode - 49];
                         if ( !new_mode ) {
@@ -3979,7 +4169,7 @@ TBD end new code
         // If the input resulted in a triggered action we should prevent
         // the browsers default behavior
         if( triggered ) {
-            event.preventDefault();
+			event.preventDefault && event.preventDefault();
         }
         // ESC or O key
         else if ( ( event.keyCode === 27 || event.keyCode === 79 ) && features.transforms3d ) {
@@ -3990,7 +4180,7 @@ TBD end new code
                 toggleOverview();
             }
 
-            event.preventDefault();
+			event.preventDefault && event.preventDefault();
         }
 
         // If auto-sliding is enabled we need to cue up
@@ -4190,10 +4380,10 @@ TBD end new code
 
         event.preventDefault();
 
-        var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+        var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
 
         // The number of past and total slides
-        var totalCount = document.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
+        var totalCount = dom.wrapper.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
         // 'round' the click position back to slide index
         var slideIndex = Math.floor( 0.5 + ( event.clientX / window.innerWidth /* dom.wrapper.offsetWidth */ ) * (totalCount - 1) );
         var pastCount = 0;
@@ -4582,17 +4772,11 @@ TBD end new code
 
         getTotalSlides: getTotalSlides,
 
-        // Returns the slide at the specified index, y is optional
-        getSlide: function( x, y ) {
-            var horizontalSlide = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR )[ x ];
-            var verticalSlides = horizontalSlide && horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
+		// Returns the slide element at the specified index
+		getSlide: getSlide,
 
-            if( typeof y !== 'undefined' ) {
-                return verticalSlides ? verticalSlides[ y ] : undefined;
-            }
-
-            return horizontalSlide;
-        },
+		// Returns the slide background element at the specified index
+		getSlideBackground: getSlideBackground,
 
         // Returns the previous slide element, may be null
         getPreviousSlide: function() {
@@ -4634,8 +4818,7 @@ TBD end new code
 
         // Returns true if we're currently on the first slide
         isFirstSlide: function() {
-            var rv = document.querySelector( SLIDES_SELECTOR + '.past' );
-            return !rv;
+			return ( indexh === 0 && indexv === 0 );
         },
 
         // Returns true if we're currently on the last slide
@@ -4661,13 +4844,37 @@ TBD end new code
         // Forward event binding to the reveal DOM element
         addEventListener: function( type, listener, useCapture ) {
             if( 'addEventListener' in window ) {
-                ( dom.wrapper || document.querySelector( '.reveal' ) ).addEventListener( type, listener, useCapture );
+//TBD: queue registration if dom.wrapper is not yet set up?
+                dom.wrapper.addEventListener( type, listener, useCapture );
             }
         },
         removeEventListener: function( type, listener, useCapture ) {
             if( 'addEventListener' in window ) {
-                ( dom.wrapper || document.querySelector( '.reveal' ) ).removeEventListener( type, listener, useCapture );
+//TBD
+                dom.wrapper.removeEventListener( type, listener, useCapture );
             }
+        },
+        
+		// Programatically triggers a keyboard event
+        //
+        // `keyCode` may be a numeric keyCode (suitable for the keyDown event) or a complete (keyboard) Event object.
+		triggerKey: function( keyCode ) {         
+            
+            if( !(keyCode && keyCode.preventDefault && keyCode.keyCode) ) {
+                keyCode = {
+                    shiftKey: false, 
+                    keyCode: keyCode || false,
+                    altKey: false,
+                    ctrlKey: false,
+                    metaKey: false,
+                    preventDefault: function () {}, 
+                    stopPropagation: function () {}, 
+                    stopImmediatePropagation: function () {}, 
+                    // and mark this 'event' object as a fake for the connaisseurs:
+                    fakeSource: this
+                };
+            }
+			onDocumentKeyDown( keyCode );
         },
 
         // helper function: extend destination object with the properties of the source object.
