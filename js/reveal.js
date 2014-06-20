@@ -1884,7 +1884,6 @@ TBD end new code
 
                 element.style.width = ( nw * es ) + 'px';
                 element.style.height = ( nh * es ) + 'px';
-
             }
             else {
                 element.style.width = width + 'px';
@@ -2581,11 +2580,10 @@ TBD end new code
                     var distance = Math.min(d1, d2);
 
                     if (distance <= SLIDE_NO_DISPLAY_DISTANCE) {
-                        element.classList.add( 'visible' );
-                        loadSlide( element );
+                        showSlide( element );
                     }
                     else {
-                        element.classList.remove( 'visible' );
+                        hideSlide( element );
                     }
                 }
 
@@ -3419,7 +3417,7 @@ TBD end new code
 
             // If this is a vertical slide, grab the vertical index
             if( isVertical ) {
-                v = Math.max( toArray( slide.parentNode.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).indexOf( slide ), 0 );
+                v = Math.max( toArray( slideh.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).indexOf( slide ), 0 );
             }
         }
 
@@ -3667,7 +3665,9 @@ TBD end new code
 
                     // Visible fragments
                     if( i <= index ) {
-                        if( !element.classList.contains( 'visible' ) ) fragmentsShown.push( element );
+                        if( !element.classList.contains( 'visible' ) ) {
+                            fragmentsShown.push( element );
+                        }
                         element.classList.add( 'visible' );
                         element.classList.remove( 'current-fragment' );
 
@@ -3677,7 +3677,9 @@ TBD end new code
                     }
                     // Hidden fragments
                     else {
-                        if( element.classList.contains( 'visible' ) ) fragmentsHidden.push( element );
+                        if( element.classList.contains( 'visible' ) ) {
+                            fragmentsHidden.push( element );
+                        }
                         element.classList.remove( 'visible' );
                         element.classList.remove( 'current-fragment' );
                     }
