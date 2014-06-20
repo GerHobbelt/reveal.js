@@ -237,6 +237,21 @@
             startCount: 0,
             captured: false,
             threshold: 40
+		},
+
+		// Holds information about the keyboard shortcuts
+		keyboardShortcuts = {
+			'N  ,  SPACE':			'Next slide',
+			'P':					'Previous slide',
+			'&#8592;  ,  H':		'Navigate left',
+			'&#8594;  ,  L':		'Navigate right',
+			'&#8593;  ,  K':		'Navigate up',
+			'&#8595;  ,  J':		'Navigate down',
+			'Home':					'First slide',
+			'End':					'Last slide',
+			'B  ,  .':				'Pause',
+			'F':					'Fullscreen',
+			'ESC, O':				'Slide overview'
         };
 
     /*
@@ -589,6 +604,8 @@
         // Prevent transitions while we're loading
         dom.slides.classList.add( 'no-transition' );
 
+		dom.wrapper.setAttribute( 'role', 'application' );
+
         dom.slides_wrapper = createSingletonNode( dom.wrapper, 'div', 'slides-wrapper', null );
         // now place wrapper at the 'slides' position in the DOM and wrap it around the slides when we didn't already:
         //   http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-952280727
@@ -645,7 +662,33 @@
             dom.controlsNext = toArray( document.querySelectorAll( '.navigate-next' ) );
         }
 
+		dom.statusDiv = createStatusDiv();
+
         return true;
+    }
+
+	/**
+	 * Creates a hidden div with role aria-live to announce the
+	 * current slide content. Hide the div off-screen to make it
+	 * available only to Assistive Technologies.
+	 */
+	function createStatusDiv() {
+
+		var statusDiv = document.getElementById( 'aria-status-div' );
+		if( !statusDiv ) {
+			statusDiv = document.createElement( 'div' );
+			statusDiv.style.position = 'absolute';
+			statusDiv.style.height = '1px';
+			statusDiv.style.width = '1px';
+			statusDiv.style.overflow ='hidden';
+			statusDiv.style.clip = 'rect( 1px, 1px, 1px, 1px )';
+			statusDiv.setAttribute( 'id', 'aria-status-div' );
+			statusDiv.setAttribute( 'aria-live', 'polite' );
+			statusDiv.setAttribute( 'aria-atomic','true' );
+			dom.wrapper.appendChild( statusDiv );
+		}
+		return statusDiv;
+
     }
 
     /**
@@ -1146,6 +1189,7 @@ TBD end of old code, start of new code
 
         if( config.keyboard ) {
             document.addEventListener( 'keydown', onDocumentKeyDown, false );
+			document.addEventListener( 'keypress', onDocumentKeyPress, false );
         }
 
         if ( config.progress && dom.progress ) {
@@ -1191,6 +1235,7 @@ TBD end of old code, start of new code
         eventsAreBound = false;
 
         document.removeEventListener( 'keydown', onDocumentKeyDown, false );
+		document.removeEventListener( 'keypress', onDocumentKeyPress, false );
         window.removeEventListener( 'hashchange', onWindowHashChange, false );
         window.removeEventListener( 'resize', onWindowResize, false );
 
@@ -1558,16 +1603,17 @@ TBD end of old code, start of new code
     /**
      * Opens a preview window for the target URL.
      */
-    function openPreview( url ) {
+	function showPreview( url ) {
 
-        closePreview();
+		closeOverlay();
 
         if( dom.wrapper ) {
-            dom.preview = document.createElement( 'div' );
-            dom.preview.classList.add( 'preview-link-overlay' );
-            dom.wrapper.appendChild( dom.preview );
+    		dom.overlay = document.createElement( 'div' );
+    		dom.overlay.classList.add( 'overlay' );
+    		dom.overlay.classList.add( 'overlay-preview' );
+    		dom.wrapper.appendChild( dom.overlay );
 
-            dom.preview.innerHTML = [
+    		dom.overlay.innerHTML = [
                 '<header>',
                     '<a class="close" href="#"><span class="icon"></span></a>',
                     '<a class="external" href="'+ url +'" target="_blank"><span class="icon"></span></a>',
@@ -1578,35 +1624,75 @@ TBD end of old code, start of new code
                 '</div>'
             ].join('');
 
-            dom.preview.querySelector( 'iframe' ).addEventListener( 'load', function( event ) {
-                dom.preview.classList.add( 'loaded' );
+    		dom.overlay.querySelector( 'iframe' ).addEventListener( 'load', function( event ) {
+    			dom.overlay.classList.add( 'loaded' );
             }, false );
 
-            dom.preview.querySelector( '.close' ).addEventListener( 'click', function( event ) {
-                closePreview();
+    		dom.overlay.querySelector( '.close' ).addEventListener( 'click', function( event ) {
+    			closeOverlay();
                 event.preventDefault();
             }, false );
 
-            dom.preview.querySelector( '.external' ).addEventListener( 'click', function( event ) {
-                closePreview();
+    		dom.overlay.querySelector( '.external' ).addEventListener( 'click', function( event ) {
+    			closeOverlay();
             }, false );
 
             setTimeout( function() {
-                dom.preview.classList.add( 'visible' );
+			    dom.overlay.classList.add( 'visible' );
             }, 1 );
         }
 
     }
 
-    /**
-     * Closes the iframe preview window.
-     */
-    function closePreview() {
+	/**
+	 * Opens a overlay window with help material.
+	 */
+	function showHelp() {
 
-        if( dom.preview ) {
-            dom.preview.setAttribute( 'src', '' );
-            dom.preview.parentNode.removeChild( dom.preview );
-            dom.preview = null;
+		closeOverlay();
+
+		dom.overlay = document.createElement( 'div' );
+		dom.overlay.classList.add( 'overlay' );
+		dom.overlay.classList.add( 'overlay-help' );
+		dom.wrapper.appendChild( dom.overlay );
+
+		var html = '<p class="title">Keyboard Shortcuts</p><br/>';
+
+		html += '<table><th>KEY</th><th>ACTION</th>';
+		for( var key in keyboardShortcuts ) {
+			html += '<tr><td>' + key + '</td><td>' + keyboardShortcuts[ key ] + '</td></tr>';
+		}
+
+		html += '</table>';
+
+		dom.overlay.innerHTML = [
+			'<header>',
+				'<a class="close" href="#"><span class="icon"></span></a>',
+			'</header>',
+			'<div class="viewport">',
+				'<div class="viewport-inner">'+ html +'</div>',
+			'</div>'
+		].join('');
+
+		dom.overlay.querySelector( '.close' ).addEventListener( 'click', function( event ) {
+			closeOverlay();
+			event.preventDefault();
+		}, false );
+
+		setTimeout( function() {
+			dom.overlay.classList.add( 'visible' );
+		}, 1 );
+
+	}
+
+    /**
+	 * Closes any currently open overlay.
+	 */
+	function closeOverlay() {
+
+		if( dom.overlay ) {
+			dom.overlay.parentNode.removeChild( dom.overlay );
+			dom.overlay = null;
         }
 
     }
@@ -2412,6 +2498,7 @@ TBD end new code
         // stacks
         if( previousSlide ) {
             previousSlide.classList.remove( 'present' );
+			previousSlide.setAttribute( 'aria-hidden', 'true' );
 
             // Reset all slides upon navigate to home
             // Issue: #285
@@ -2434,6 +2521,9 @@ TBD end new code
             stopEmbeddedContent( previousSlide );
             startEmbeddedContent( currentSlide );
         }
+
+		// Announce the current slide contents, for screen readers
+		dom.statusDiv.innerHTML = currentSlide.textContent;
 
         updateControls();
         updateProgress();
@@ -2482,6 +2572,8 @@ TBD end new code
         updateSlideNumber();
 		updateSlidesVisibility();
 
+		formatEmbeddedContent();
+
     }
 
     /**
@@ -2500,6 +2592,7 @@ TBD end new code
                     verticalSlide.classList.remove( 'present' );
                     verticalSlide.classList.remove( 'past' );
                     verticalSlide.classList.add( 'future' );
+					verticalSlide.setAttribute( 'aria-hidden', 'true' );
                 }
 
             } );
@@ -2595,6 +2688,7 @@ TBD end new code
 
                 // http://www.w3.org/html/wg/drafts/html/master/editing.html#the-hidden-attribute
                 element.setAttribute( 'hidden', '' );
+				element.setAttribute( 'aria-hidden', 'true' );
 
                 // If this element contains vertical slides
                 if( element.querySelector( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ) {
@@ -2669,6 +2763,7 @@ TBD end new code
             // Mark the current slide as present
             slides[index].classList.add( 'present' );
             slides[index].removeAttribute( 'hidden' );
+			slides[index].removeAttribute( 'aria-hidden' );
 
             // If this slide has a state associated with it, add it
             // onto the current state of the deck
@@ -3165,6 +3260,29 @@ TBD end new code
     }
 
     /**
+	 * Enforces origin-specific format rules for embedded media.
+	 */
+	function formatEmbeddedContent() {
+
+		// YouTube frames must include "?enablejsapi=1"
+		toArray( dom.slides.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
+			var src = el.getAttribute( 'src' );
+			if( !/enablejsapi\=1/gi.test( src ) ) {
+				el.setAttribute( 'src', src + ( !/\?/.test( src ) ? '?' : '&' ) + 'enablejsapi=1' );
+			}
+		});
+
+		// Vimeo frames must include "?api=1"
+		toArray( dom.slides.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
+			var src = el.getAttribute( 'src' );
+			if( !/api\=1/gi.test( src ) ) {
+				el.setAttribute( 'src', src + ( !/\?/.test( src ) ? '?' : '&' ) + 'api=1' );
+			}
+		});
+
+	}
+
+	/**
      * Start playback of any embedded content inside of
      * the targeted slide.
      */
@@ -3187,6 +3305,14 @@ TBD end new code
             toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( el.hasAttribute( 'data-autoplay' ) ) {
                     el.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
+				}
+			});
+
+			// Vimeo embeds
+			toArray( slide.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
+				if( el.hasAttribute( 'data-autoplay' ) ) {
+					console.log(11);
+					el.contentWindow.postMessage( '{"method":"play"}', '*' );
                 }
             } );
         }
@@ -3216,6 +3342,13 @@ TBD end new code
             toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
                     el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
+				}
+			});
+
+			// Vimeo embeds
+			toArray( slide.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
+				if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
+					el.contentWindow.postMessage( '{"method":"pause"}', '*' );
                 }
             } );
         }
@@ -3671,6 +3804,9 @@ TBD end new code
                         element.classList.add( 'visible' );
                         element.classList.remove( 'current-fragment' );
 
+						// Announce the fragments one by one to the Screen Reader
+						dom.statusDiv.innerHTML = element.textContent;
+
                         if( i === index ) {
                             element.classList.add( 'current-fragment' );
                         }
@@ -3953,6 +4089,23 @@ TBD end new code
     }
 
     /**
+	 * Handler for the document level 'keypress' event.
+	 */
+	function onDocumentKeyPress( event ) {
+
+		// Check if the pressed key is question mark
+		if( event.shiftKey && event.charCode === 63 ) {
+			if( dom.overlay ) {
+				closeOverlay();
+			}
+			else {
+				showHelp( true );
+			}
+		}
+
+	}
+
+	/**
      * Handler for the document level 'keydown' event.
      *
      * @param {Object} event
@@ -4175,8 +4328,8 @@ TBD end new code
         }
         // ESC or O key
         else if ( ( event.keyCode === 27 || event.keyCode === 79 ) && features.transforms3d ) {
-            if( dom.preview ) {
-                closePreview();
+			if( dom.overlay ) {
+				closeOverlay();
             }
             else {
                 toggleOverview();
@@ -4509,7 +4662,7 @@ TBD end new code
 
         var url = event.target.getAttribute( 'href' );
         if( url ) {
-            openPreview( url );
+			showPreview( url );
             event.preventDefault();
         }
 
