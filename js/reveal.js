@@ -470,7 +470,7 @@
      *
      * Return FALSE when the function failed to run to completion.
      */
-    function start( config ) {
+    function start( config, restarting ) {
 
         // Make sure we've got all the DOM elements we need
         if (!setupDOM()) return false;
@@ -499,9 +499,10 @@
             loaded = true;
 
             dispatchEvent( 'ready', {
-                'indexh': indexh,
-                'indexv': indexv,
-                'currentSlide': currentSlide
+                indexh: indexh,
+                indexv: indexv,
+                currentSlide: currentSlide,
+                restarting: restarting
             } );
         }, 1 );
 
@@ -529,7 +530,10 @@
      *
      * Return FALSE when the function failed to run to completion.
      */
-    function restart() {
+    function restart( config ) {
+
+        // Notify listeners that the presentation is about to restart
+        dispatchEvent( 'restart:before' );
 
         // Clean up the remains of the previous state, if there ever was one.
         while( state.length ) {
@@ -554,14 +558,7 @@
         // The current scale of the presentation (see width/height config)
         scale = 1;
 
-
-        // Notify listeners that the presentation is ready but use a 1ms
-        // timeout to ensure it's not fired synchronously after initialize()
-        setTimeout( function() {
-            dispatchEvent( 'restart' );
-        }, 1 );
-
-        return start();
+        return start( config, true );
     }
 
 
@@ -2125,10 +2122,10 @@ TBD end new code
                 if( !wasActive ) {
                     // Notify observers of the overview showing
                     dispatchEvent( 'overviewshown', {
-                        'indexh': indexh,
-                        'indexv': indexv,
-                        'currentSlide': currentSlide,
-                        'slidesMatrixInfo': overview_slides_info
+                        indexh: indexh,
+                        indexv: indexv,
+                        currentSlide: currentSlide,
+                        slidesMatrixInfo: overview_slides_info
                     } );
                 }
 
@@ -2177,9 +2174,9 @@ TBD end new code
 
             // Notify observers of the overview hiding
             dispatchEvent( 'overviewhidden', {
-                'indexh': indexh,
-                'indexv': indexv,
-                'currentSlide': currentSlide
+                indexh: indexh,
+                indexv: indexv,
+                currentSlide: currentSlide
             } );
 
         }
@@ -2469,11 +2466,11 @@ TBD end new code
         var slideChanged = ( indexh !== indexhBefore || indexv !== indexvBefore );
         if( slideChanged ) {
             dispatchEvent( 'slidechanged', {
-                'indexh': indexh,
-                'indexv': indexv,
-                'previousSlide': previousSlide,
-                'currentSlide': currentSlide,
-                'origin': o
+                indexh: indexh,
+                indexv: indexv,
+                previousSlide: previousSlide,
+                currentSlide: currentSlide,
+                origin: o
             } );
         }
         else {
