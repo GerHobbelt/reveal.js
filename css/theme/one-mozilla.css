@@ -212,6 +212,13 @@
     font-size:16px;
 }
 
+.reveal pre code
+{
+    text-align: left;
+    display: inline-block;
+}
+
+
 /*********************************************
  * list
  *********************************************/
