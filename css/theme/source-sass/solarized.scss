@@ -1,12 +1,12 @@
 /**
- * Solarized Dark theme for reveal.js.
+ * Solarized Light theme for reveal.js.
  * Author: Achim Staebler
  */
 
 
 // Default mixins and settings -----------------
-@import "../template/mixins";
-@import "../template/settings";
+@import "../template-sass/mixins";
+@import "../template-sass/settings";
 // ---------------------------------------------
 
 
@@ -25,6 +25,7 @@
 }
 
 @import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+
 
 /**
  * Solarized colors by Ethan Schoonover
@@ -53,16 +54,21 @@ $cyan:      #2aa198;
 $green:     #859900;
 
 // Override theme settings (see ../template/settings.scss)
-$mainColor: $base1;
-$headingColor: $base2;
+$mainColor: $base00;
+$headingColor: $base01;
 $headingTextShadow: none;
-$backgroundColor: $base03;
+$backgroundColor: $base3;
 $linkColor: $blue;
 $linkColorHover: lighten( $linkColor, 20% );
 $selectionBackgroundColor: $magenta;
 
+// Background generator
+// @mixin bodyBackground() {
+// 	@include radial-gradient( rgba($base3,1), rgba(lighten($base3, 20%),1) );
+// }
+
 
 
 // Theme template ------------------------------
-@import "../template/theme";
+@import "../template-sass/theme";
 // ---------------------------------------------

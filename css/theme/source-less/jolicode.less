@@ -14,14 +14,14 @@
 
 
 // Default mixins and settings -----------------
-@import "../template/mixins";
-@import "../template/settings";
+@import "../template-less/mixins";
+@import "../template-less/settings";
 
 // ---------------------------------------------
 
-$joli-yellow:       #F7D325;
-$joli-dark-yellow:  #ECC217;
-$complementary:     #25b2f7;
+@joli-yellow:       #F7D325;
+@joli-dark-yellow:  #ECC217;
+@complementary:     #25b2f7;
 
 // Include theme-specific fonts
 @font-face {
@@ -36,16 +36,16 @@ $complementary:     #25b2f7;
 }
 
 // Headings
-$headingFont: 'convergenceregular', Impact, sans-serif;
-$headingColor: $joli-yellow;
-$headingLineHeight: 1.1em;
+@headingFont: 'convergenceregular', Impact, sans-serif;
+@headingColor: @joli-yellow;
+@headingLineHeight: 1.1em;
 
 // Links and actions
-$linkColor: $complementary;
-$linkColorHover: $joli-yellow;
+@linkColor: @complementary;
+@linkColorHover: @joli-yellow;
 
 // Text selection
-$selectionBackgroundColor: $joli-dark-yellow;
+@selectionBackgroundColor: @joli-dark-yellow;
 
 footer.joli {
   display: block;
@@ -53,8 +53,8 @@ footer.joli {
   bottom: 10px;
   margin-left: 20px;
   z-index: 20;
-  font-family: $mainFont;
-  color: $complementary;
+  font-family: @mainFont;
+  color: @complementary;
 }
 
 .jolistate .reveal .state-background {
@@ -87,7 +87,7 @@ footer.joli {
 }
 
 .reveal section .emphasis {
-  color: $complementary;
+  color: @complementary;
 }
 
 .reveal section {
@@ -124,7 +124,7 @@ footer.joli {
   }
 
   blockquote {
-    border-left: 10px solid $complementary;
+    border-left: 10px solid @complementary;
     padding-left: 20px;
     margin: 50px auto;
     quotes: "\201C""\201D""\2018""\2019";
@@ -132,7 +132,7 @@ footer.joli {
     font-style: normal;
   }
   blockquote:before {
-    color: $complementary;
+    color: @complementary;
     content: open-quote;
     font-size: 4em;
     line-height: 0.1em;
@@ -140,20 +140,20 @@ footer.joli {
     vertical-align: -0.4em;
   }
 
-  &.present[data-background] {
+  & /* .present[data-background] */ {
     h1, h2, h3, h4, h5, h6, p {
-      @extend .big-shadow;
+      /* @extend */ .big-shadow;
     }
   }
 }
 
 // Background generator
-@mixin bodyBackground() {
+.bodyBackground() {
   background-color: #171717 !important;
-  // @include radial-gradient( rgb(5, 6, 7), rgb(39, 42, 45));
+  // .radial-gradient( rgb(5, 6, 7), rgb(39, 42, 45));
 }
 
 // Theme template ------------------------------
-@import "../template/theme";
+@import "../template-less/theme";
 // ---------------------------------------------
 

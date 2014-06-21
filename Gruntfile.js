@@ -59,6 +59,53 @@ module.exports = function(grunt) {
             }
         },
 
+        less: {
+          compileCore: {
+            options: {
+              strictMath: true,
+              sourceMap: true,
+              outputSourceFiles: true,
+              sourceMapURL: '<%= pkg.name %>.css.map',
+              sourceMapFilename: 'css/<%= pkg.name %>.css.map'
+            },
+            files: {
+              'css/<%= pkg.name %>.css': 'less/bootstrap.less'
+            }
+          },
+          themes: {
+            options: {
+              strictMath: true
+            },
+            files: {
+                'css/theme/default.css': 'css/theme/source-less/default.less',
+                'css/theme/beige.css': 'css/theme/source-less/beige.less',
+                'css/theme/night.css': 'css/theme/source-less/night.less',
+                'css/theme/serif.css': 'css/theme/source-less/serif.less',
+                'css/theme/simple.css': 'css/theme/source-less/simple.less',
+                'css/theme/sky.css': 'css/theme/source-less/sky.less',
+                'css/theme/moon.css': 'css/theme/source-less/moon.less',
+                'css/theme/solarized.css': 'css/theme/source-less/solarized.less',
+                'css/theme/blood.css': 'css/theme/source-less/blood.less',
+                'css/theme/jolicode.css': 'css/theme/source-less/jolicode.less',
+                'css/theme/openbossa.css': 'css/theme/source-less/openbossa.less',
+                'css/theme/aerogear.css': 'css/theme/source-less/aerogear.less',
+                'css/theme/one-mozilla.css': 'css/theme/source-less/one-mozilla.less',
+                'css/theme/parallax-demo.css': 'css/theme/source-less/parallax-demo.less',
+                'css/theme/fourkitchens.css': 'css/theme/source-less/fourkitchens.less'
+            }
+          },
+          minify: {
+            options: {
+              cleancss: true,
+              report: 'min'
+            },
+            files: {
+              'dist/css/<%= pkg.name %>.min.css': 'dist/css/<%= pkg.name %>.css',
+              'dist/css/<%= pkg.name %>-theme.min.css': 'dist/css/<%= pkg.name %>-theme.css'
+            }
+          }
+        },
+
         jshint: {
             options: {
                 curly: false,
@@ -115,7 +162,7 @@ module.exports = function(grunt) {
                 tasks: 'default'
             },
             theme: {
-                files: [ 'css/theme/source/*.scss', 'css/theme/template/*.scss' ],
+                files: [ 'css/theme/source-sass/*.scss', 'css/theme/template-sass/*.scss' ],
                 tasks: 'themes'
             },
             html: {
@@ -132,6 +179,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks( 'grunt-contrib-uglify' );
     grunt.loadNpmTasks( 'grunt-contrib-watch' );
     grunt.loadNpmTasks( 'grunt-contrib-sass' );
+    grunt.loadNpmTasks( 'grunt-contrib-less' );
     grunt.loadNpmTasks( 'grunt-contrib-connect' );
     grunt.loadNpmTasks( 'grunt-zip' );
 

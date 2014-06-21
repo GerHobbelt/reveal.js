@@ -6,8 +6,8 @@
 
 
 // Default mixins and settings -----------------
-@import "../template/mixins";
-@import "../template/settings";
+@import "../template-sass/mixins";
+@import "../template-sass/settings";
 // ---------------------------------------------
 
 
@@ -52,5 +52,5 @@ $linkColorHover: lighten( $linkColor, 20% );
 $selectionBackgroundColor: #66B360;
 
 // Theme template ------------------------------
-@import "../template/theme";
+@import "../template-sass/theme";
 // ---------------------------------------------
