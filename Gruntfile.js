@@ -51,6 +51,9 @@ module.exports = function(grunt) {
                     'css/theme/blood.css': 'css/theme/source/blood.scss',
                     'css/theme/jolicode.css': 'css/theme/source/jolicode.scss',
                     'css/theme/openbossa.css': 'css/theme/source/openbossa.scss',
+                    'css/theme/aerogear.css': 'css/theme/source/aerogear.scss',
+                    'css/theme/one-mozilla.css': 'css/theme/source/one-mozilla.scss',
+                    'css/theme/parallax-demo.css': 'css/theme/source/parallax-demo.scss',
                     'css/theme/fourkitchens.css': 'css/theme/source/fourkitchens.scss'
                 }
             }
