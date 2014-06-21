@@ -3064,39 +3064,47 @@ TBD end new code
     function updateParallax() {
 
         // Check if background has an image: it may have come from us via config.parallaxBackgroundImage or via the stylesheet
-        var bgimg = new Image();
-        var imgsrc = getStyle(dom.background, "background-image");
-        bgimg.src = (imgsrc || '').replace(/url\(|\)$|"/ig, '');
-        console.log("updateParallax: ", bgimg, imgsrc);
+        var imgsrc = getStyle(dom.background, "background-image") || '';
+        var hasImage = (imgsrc.length > 0 && imgsrc !== "none");
+        if (hasImage) {
+            var bgimg = new Image();
+            bgimg.src = imgsrc.replace(/url\(|\)$|"/ig, '');
+            console.log("updateParallax: ", bgimg, imgsrc);
 
-        if (bgimg.width && bgimg.height) {
+            if (bgimg.width && bgimg.height) {
 
-            // Make sure the below properties are set on the element - these properties are
-            // needed for proper transitions to be set on the element via CSS. To remove
-            // annoying background slide-in effect when the presentation starts, apply
-            // these properties after short time delay
-            setTimeout( function() {
-                dom.wrapper.classList.add( 'has-parallax-background' );
-            }, 1 );
+                // Make sure the below properties are set on the element - these properties are
+                // needed for proper transitions to be set on the element via CSS. To remove
+                // annoying background slide-in effect when the presentation starts, apply
+                // these properties after short time delay
+                setTimeout( function() {
+                    dom.wrapper.classList.add( 'has-parallax-background' );
+                }, 1 );
 
-			var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ),
-				verticalSlides = dom.wrapper.querySelectorAll( VERTICAL_SLIDES_SELECTOR );
+    			var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ),
+    				verticalSlides = dom.wrapper.querySelectorAll( VERTICAL_SLIDES_SELECTOR );
 
-            var backgroundWidth = parseInt( bgimg.width, 10 ),
-                backgroundHeight = parseInt( bgimg.height, 10 );
+                var backgroundWidth = parseInt( bgimg.width, 10 ),
+                    backgroundHeight = parseInt( bgimg.height, 10 );
 
-            var slideWidth = dom.background.offsetWidth;
-            var horizontalSlideCount = horizontalSlides.length;
-            var horizontalOffset = -( backgroundWidth - slideWidth ) / ( horizontalSlideCount - 1 ) * indexh;
+                var slideWidth = dom.background.offsetWidth;
+                var horizontalSlideCount = horizontalSlides.length;
+                var horizontalOffset = -( backgroundWidth - slideWidth ) / ( horizontalSlideCount - 1 ) * indexh;
 
-            var slideHeight = dom.background.offsetHeight;
-            var verticalSlideCount = verticalSlides.length;
-            var verticalOffset = verticalSlideCount > 1 ? -( backgroundHeight - slideHeight ) / ( verticalSlideCount-1 ) * indexv : 0;
+                var slideHeight = dom.background.offsetHeight;
+                var verticalSlideCount = verticalSlides.length;
+                var verticalOffset = verticalSlideCount > 1 ? -( backgroundHeight - slideHeight ) / ( verticalSlideCount-1 ) * indexv : 0;
 
-            dom.background.style.backgroundPosition = horizontalOffset + 'px ' + verticalOffset + 'px';
+                dom.background.style.backgroundPosition = horizontalOffset + 'px ' + verticalOffset + 'px';
 
+            }
+            else {
+
+                hasImage = false;
+            }
         }
-        else {
+
+        if (!hasImage) {
 
             dom.wrapper.classList.remove( 'has-parallax-background' );
 
