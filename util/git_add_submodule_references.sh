@@ -78,6 +78,7 @@ git_submod_add   git@github.com:GerHobbelt/SyntaxHighlighter.git                
 git_submod_add   git@github.com:GerHobbelt/classList.js.git                              lib/js/classList
 git_submod_add   git@github.com:GerHobbelt/headjs.git                                    lib/js/head
 git_submod_add   git@github.com:GerHobbelt/highlight.js.git                              lib/plugins/highlight
+git_submod_add   git@github.com:GerHobbelt/hilitor.git                                   lib/plugins/hilitor
 git_submod_add   git@github.com:GerHobbelt/marked.git                                    lib/plugins/marked
 git_submod_add   git@github.com:GerHobbelt/nprogress.git                                 lib/js/nprogress
 git_submod_add   git@github.com:GerHobbelt/require-css.git                               lib/js/requireCSS

@@ -147,3 +147,10 @@
  *********************************************/
 .reveal .slide-number {
   color: #66b360; }
+
+.reveal .controls #current-slide {
+  font-size: .4em;
+  position: absolute;
+  top: 46px;
+  left: 38px; }
+
