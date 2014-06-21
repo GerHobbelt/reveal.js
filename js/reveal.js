@@ -44,9 +44,11 @@
 		HOME_SLIDE_SELECTOR = '.slides > section:first-of-type';
     // this *_SELECTOR define is (horizontal) slide `section` selection based:
     var SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR = ':scope > section',
-        SLIDE_NO_DISPLAY_DISTANCE = 1,
+        SLIDE_NO_DISPLAY_DISTANCE = 1;
 
-        Reveal = null,
+    var nil_function = function () {};
+
+    var Reveal = null,
 
         // Configurations defaults, can be overridden at initialization time
         config = {
@@ -90,7 +92,7 @@
             keyboard: true,
 
             // Optional function that blocks keyboard events when returning false
-            keyboardCondition: null,
+            keyboardCondition: nil_function,
 
             // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'translate3d' | 'zoom' | 'perspective' | 'scale')
             overview: 'translate3d',
@@ -293,16 +295,16 @@
             }
         }
 
-			// Since JS won't be running any further, we need to load all
-			// images that were intended to lazy load now
-			var images = document.getElementsByTagName( 'img' );
-			for( var i = 0, len = images.length; i < len; i++ ) {
-				var image = images[i];
-				if( image.getAttribute( 'data-src' ) ) {
-					image.setAttribute( 'src', image.getAttribute( 'data-src' ) );
-					image.removeAttribute( 'data-src' );
-				}
+		// Since JS won't be running any further, we need to load all
+		// images that were intended to lazy load now
+		var images = document.getElementsByTagName( 'img' );
+		for( var i = 0, len = images.length; i < len; i++ ) {
+			var image = images[i];
+			if( image.getAttribute( 'data-src' ) ) {
+				image.setAttribute( 'src', image.getAttribute( 'data-src' ) );
+				image.removeAttribute( 'data-src' );
 			}
+		}
 
         // If the browser doesn't support core features we won't be
         // using JavaScript to control the presentation
@@ -314,19 +316,16 @@
             return false;
         }
     
-//TBD: remove this chunk. It should happen in start/setup.
-//TBD: git blame the next three lines: who did Hakim do this exactly?    
-		// Cache references to key DOM elements
-		dom.wrapper = document.querySelector( '.reveal' );
-		dom.slides = document.querySelector( '.reveal .slides' );
-//TBD end
+		//dom.wrapper = document.querySelector( '.reveal' );
+		//dom.slides = document.querySelector( '.reveal .slides' );
 
         // Force a layout when the whole page, incl fonts, has loaded
         window.addEventListener( 'load', layout, false );
 
         var query = Reveal.getQueryHash();
 
-        // Do not accept new dependencies via query config to avoid
+        // Do not accept new dependencies via query config 
+        // which may specify user-defined JavaScript code to avoid
         // the potential of malicious script injection. Same goes for
         // keyboardCondition option which can be used to inject 
         // malicious code.
@@ -336,13 +335,14 @@
         // whitelist the ones that are okay. 
         // See the augmented extend() function below.
         if( typeof query.dependencies !== 'undefined' ) delete query.dependencies;
-        if( typeof query.keyboardCondition !== 'undefined' ) delete query.keyboardCondition;
 
         // Copy options over to our config object
         extend( config, options );
         extend( config, query, function( fieldname ) {
-            // filter: only accept query parameters which do already exist in our `config` object:
-            return typeof config[fieldname] !== 'undefined';
+            // filter 1: only accept query parameters which do already exist in our `config` object
+            // filter 2: only accept query parameters which do not contain executable JavaScript code
+            return typeof config[fieldname] !== 'undefined'
+                && typeof config[fieldname] !== 'function';
         } );
 
         // Hide the address bar in mobile browsers
@@ -482,7 +482,7 @@
         resetVerticalSlides();
 
         // Updates the presentation to match the current configuration values
-        configure();
+        configure( config );
 
         // Read the initial hash
         readURL();
@@ -556,7 +556,7 @@
 
 
         // Notify listeners that the presentation is ready but use a 1ms
-        // timeout to ensure it's not fired synchronously after #initialize()
+        // timeout to ensure it's not fired synchronously after initialize()
         setTimeout( function() {
             dispatchEvent( 'restart' );
         }, 1 );
@@ -664,7 +664,7 @@
 
 		dom.statusDiv = createStatusDiv();
 
-        return true;
+        return !!dom.statusDiv;
     }
 
 	/**
@@ -675,7 +675,7 @@
 	function createStatusDiv() {
 
 		var statusDiv = document.getElementById( 'aria-status-div' );
-		if( !statusDiv ) {
+		if( !statusDiv && dom.wrapper ) {
 			statusDiv = document.createElement( 'div' );
 			statusDiv.style.position = 'absolute';
 			statusDiv.style.height = '1px';
@@ -974,18 +974,15 @@ TBD end of old code, start of new code
      */
     function postMessageListener( event ) {
 
-        var data = event.data;
-
         // Make sure we're dealing with JSON
-        if( data.charAt( 0 ) === '{' && data.charAt( data.length - 1 ) === '}' ) {
+        try {
             data = JSON.parse( data ); 
-//TBD            
-            throw new Error("DOES NOT yet apply the new configuration; you must call xxx");
 
             // Check if the requested method can be found
             if( data.method && typeof Reveal[data.method] === 'function' ) {
                 Reveal[data.method].apply( Reveal, data.args );
             }
+        } catch (e) {
         }
 
     }
@@ -1014,10 +1011,10 @@ TBD end of old code, start of new code
 
     /**
      * Mix the configuration settings in `options` , if any, into the config
-     * object. DOES NOT yet apply the new configuration; you must call
-     * applyConfiguration() to do just that.
+     * object.
      *
-     * This is done implicitly when you call a Reveal API such as `start(options)`.
+     * Applies the configuration settings from the config
+     * object. May be called multiple times.
      */
     function configure( options ) {
 
@@ -1028,56 +1025,43 @@ TBD end of old code, start of new code
         // Force linear transition based on browser capabilities
         if( features.transforms3d === false ) config.transition = 'linear';
 
-    }
-
-
-    /**
-     * Applies the configuration settings from the config
-     * object. May be called multiple times.
-     */
-    function applyConfiguration() {
-
-//TBD: check all new dom.wrapper usage!
-		var numberOfSlides = dom.wrapper.querySelectorAll( SLIDES_SELECTOR ).length;
-
-        if( dom.wrapper ) {
-            dom.wrapper.classList.remove( config.transition );
+        if( !dom.wrapper ) {
+            return false;
         }
 
-        // Force linear transition based on browser capabilities
-        if( features.transforms3d === false ) config.transition = 'linear';
+        var numberOfSlides = dom.wrapper.querySelectorAll( SLIDES_SELECTOR ).length;
 
-        if( dom.wrapper ) {
-            dom.wrapper.classList.add( config.transition );
+        dom.wrapper.classList.remove( config.transition );
 
-            dom.wrapper.setAttribute( 'data-transition-speed', config.transitionSpeed );
-            dom.wrapper.setAttribute( 'data-background-transition', config.backgroundTransition );
+        dom.wrapper.classList.add( config.transition );
 
-            if( dom.controls ) {
-                dom.controls.style.display = config.controls ? 'block' : 'none';
-            }
+        dom.wrapper.setAttribute( 'data-transition-speed', config.transitionSpeed );
+        dom.wrapper.setAttribute( 'data-background-transition', config.backgroundTransition );
 
-            if( dom.progress ) {
-                dom.progress.style.display = config.progress ? 'block' : 'none';
-            }
+        if( dom.controls ) {
+            dom.controls.style.display = config.controls ? 'block' : 'none';
+        }
 
-            if( dom.timeRemaining ) {
-                dom.timeRemaining.style.display = config.timeRemaining ? 'block' : 'none';
-            }
+        if( dom.progress ) {
+            dom.progress.style.display = config.progress ? 'block' : 'none';
+        }
 
-            if( config.rtl ) {
-                dom.wrapper.classList.add( 'rtl' );
-            }
-            else {
-                dom.wrapper.classList.remove( 'rtl' );
-            }
+        if( dom.timeRemaining ) {
+            dom.timeRemaining.style.display = config.timeRemaining ? 'block' : 'none';
+        }
 
-            if( config.center ) {
-                dom.wrapper.classList.add( 'center' );
-            }
-            else {
-                dom.wrapper.classList.remove( 'center' );
-            }
+        if( config.rtl ) {
+            dom.wrapper.classList.add( 'rtl' );
+        }
+        else {
+            dom.wrapper.classList.remove( 'rtl' );
+        }
+
+        if( config.center ) {
+            dom.wrapper.classList.add( 'center' );
+        }
+        else {
+            dom.wrapper.classList.remove( 'center' );
         }
 
         if( config.mouseWheel ) {
@@ -1149,6 +1133,8 @@ TBD end of old code, start of new code
         }
 
         sync();
+
+        return true;
 
     }
 
@@ -1651,37 +1637,39 @@ TBD end of old code, start of new code
 
 		closeOverlay();
 
-		dom.overlay = document.createElement( 'div' );
-		dom.overlay.classList.add( 'overlay' );
-		dom.overlay.classList.add( 'overlay-help' );
-		dom.wrapper.appendChild( dom.overlay );
+        if( dom.wrapper ) {
+    		dom.overlay = document.createElement( 'div' );
+    		dom.overlay.classList.add( 'overlay' );
+    		dom.overlay.classList.add( 'overlay-help' );
+    		dom.wrapper.appendChild( dom.overlay );
 
-		var html = '<p class="title">Keyboard Shortcuts</p><br/>';
+    		var html = '<p class="title">Keyboard Shortcuts</p><br/>';
 
-		html += '<table><th>KEY</th><th>ACTION</th>';
-		for( var key in keyboardShortcuts ) {
-			html += '<tr><td>' + key + '</td><td>' + keyboardShortcuts[ key ] + '</td></tr>';
-		}
+    		html += '<table><th>KEY</th><th>ACTION</th>';
+    		for( var key in keyboardShortcuts ) {
+    			html += '<tr><td>' + key + '</td><td>' + keyboardShortcuts[ key ] + '</td></tr>';
+    		}
 
-		html += '</table>';
+    		html += '</table>';
 
-		dom.overlay.innerHTML = [
-			'<header>',
-				'<a class="close" href="#"><span class="icon"></span></a>',
-			'</header>',
-			'<div class="viewport">',
-				'<div class="viewport-inner">'+ html +'</div>',
-			'</div>'
-		].join('');
+    		dom.overlay.innerHTML = [
+    			'<header>',
+    				'<a class="close" href="#"><span class="icon"></span></a>',
+    			'</header>',
+    			'<div class="viewport">',
+    				'<div class="viewport-inner">'+ html +'</div>',
+    			'</div>'
+    		].join('');
 
-		dom.overlay.querySelector( '.close' ).addEventListener( 'click', function( event ) {
-			closeOverlay();
-			event.preventDefault();
-		}, false );
+    		dom.overlay.querySelector( '.close' ).addEventListener( 'click', function( event ) {
+    			closeOverlay();
+    			event.preventDefault();
+    		}, false );
 
-		setTimeout( function() {
-			dom.overlay.classList.add( 'visible' );
-		}, 1 );
+    		setTimeout( function() {
+    			dom.overlay.classList.add( 'visible' );
+    		}, 1 );
+        }
 
 	}
 
@@ -1774,12 +1762,12 @@ TBD end of old code, start of new code
 TBD new code:
 */
 
-			var size = getComputedSlideSize();
-            if (size === false) {
-                return;
-            }
+		var size = getComputedSlideSize();
+        if (size === false) {
+            return;
+        }
 
-			var slidePadding = 20; // TODO Dig this out of DOM
+		var slidePadding = 20; // TODO Dig this out of DOM
 
 /*
 TBD end new code
@@ -4093,6 +4081,12 @@ TBD end new code
 	 */
 	function onDocumentKeyPress( event ) {
 
+        // If there's a condition specified and it returns false,
+        // ignore this event
+        if( typeof config.keyboardCondition === 'function' && config.keyboardCondition( event ) === false ) {
+            return true;
+        }
+
 		// Check if the pressed key is question mark
 		if( event.shiftKey && event.charCode === 63 ) {
 			if( dom.overlay ) {
@@ -4166,7 +4160,9 @@ TBD end new code
             key_meta: event.metaKey, 
             paused: isPaused()
         });
-		if( activeElementIsCE || activeElementIsInput || (event.shiftKey && event.keyCode !== 32) || event.altKey || event.ctrlKey || event.metaKey ) return;
+		if( activeElementIsCE || activeElementIsInput || (event.shiftKey && event.keyCode !== 32) || event.altKey || event.ctrlKey || event.metaKey ) {
+            return false;
+        }
 
         // While paused only allow "unpausing" keyboard events (b and .)
         if( isPaused() && [66,190,191].indexOf( event.keyCode ) === -1 ) {
@@ -4304,6 +4300,7 @@ TBD end new code
                     }
                     break;
 
+                // 8:
                 case 56:
                     if ( config.__overviewViewDistance_backup == null ) {
                         config.__overviewViewDistance_backup = config.overviewViewDistance;
@@ -4311,6 +4308,17 @@ TBD end new code
                     config.overviewViewDistance = config.__overviewViewDistance_backup;
                     if (isOverview()) {
                         activateOverview();
+                    }
+                    break;
+
+                // ESC or O key
+                case 27:
+                case 79:
+                    if( dom.overlay ) {
+                        closeOverlay();
+                    }
+                    else {
+                        toggleOverview();
                     }
                     break;
 
@@ -4326,21 +4334,12 @@ TBD end new code
         if( triggered ) {
 			event.preventDefault && event.preventDefault();
         }
-        // ESC or O key
-        else if ( ( event.keyCode === 27 || event.keyCode === 79 ) && features.transforms3d ) {
-			if( dom.overlay ) {
-				closeOverlay();
-            }
-            else {
-                toggleOverview();
-            }
-
-			event.preventDefault && event.preventDefault();
-        }
 
         // If auto-sliding is enabled we need to cue up
         // another timeout
         cueAutoSlide();
+
+        return +triggered;
 
     }
 
@@ -5015,21 +5014,29 @@ TBD end new code
         // `keyCode` may be a numeric keyCode (suitable for the keyDown event) or a complete (keyboard) Event object.
 		triggerKey: function( keyCode ) {         
             
-            if( !(keyCode && keyCode.preventDefault && keyCode.keyCode) ) {
+            if( typeof keyCode === "object" && keyCode !== null ) {
                 keyCode = {
-                    shiftKey: false, 
-                    keyCode: keyCode || false,
-                    altKey: false,
-                    ctrlKey: false,
-                    metaKey: false,
-                    preventDefault: function () {}, 
-                    stopPropagation: function () {}, 
-                    stopImmediatePropagation: function () {}, 
-                    // and mark this 'event' object as a fake for the connaisseurs:
-                    fakeSource: this
+                    keyCode: +keyCode
                 };
             }
+
+            keyCode = extend({
+                shiftKey: false, 
+                keyCode: false,
+                altKey: false,
+                ctrlKey: false,
+                metaKey: false,
+                preventDefault: function () {}, 
+                stopPropagation: function () {}, 
+                stopImmediatePropagation: function () {}, 
+                // and mark this 'event' object as a fake for the connaisseurs:
+                fakeSource: this
+            }, keyCode);
+
 			onDocumentKeyDown( keyCode );
+
+            return keyCode;
+
         },
 
         // helper function: extend destination object with the properties of the source object.
