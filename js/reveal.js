@@ -849,26 +849,26 @@ TBD end of old code, start of new code
         dom.background.classList.add( 'no-transition' );
 
         // Iterate over all horizontal slides
-		toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).forEach( function( slideh, i ) {
+		toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).forEach( function( slideh, x ) {
 
             var backgroundStack;
             var back = null;
 
             if( printMode ) {
-                backgroundStack = createBackground( slideh, slideh );
+                backgroundStack = createBackground( slideh, slideh, x, false );
             }
             else {
-                backgroundStack = createBackground( slideh, dom.background );
+                backgroundStack = createBackground( slideh, dom.background, x, false );
             }
 
             // Iterate over all vertical slides
-            toArray( slideh.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).forEach( function( slidev, j ) {
+            toArray( slideh.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).forEach( function( slidev, y ) {
 
                 if( printMode ) {
-                    createBackground( slidev, slidev );
+                    createBackground( slidev, slidev, x, y );
                 }
                 else {
-                    createBackground( slidev, backgroundStack );
+                    createBackground( slidev, backgroundStack, x, y );
                 }
 
 				backgroundStack.classList.add( 'stack' );
@@ -894,7 +894,7 @@ TBD end of old code, start of new code
      * @param {HTMLElement} container The element that the background
      * should be appended to
      */
-    function createBackground( slide, container ) {
+    function createBackground( slide, container, x, y ) {
 
         var data = {
             background: slide.getAttribute( 'data-background' ),
@@ -907,7 +907,12 @@ TBD end of old code, start of new code
             backgroundTransition: slide.getAttribute( 'data-background-transition' )
         };
 
-        var element = document.createElement( 'div' );
+        var add_bg_el = false;
+        var element = getSlideBackground( x, y );
+        if( !element ) {
+            element = document.createElement( 'div' );
+            add_bg_el = true;
+        }
 
         // Carry over custom classes from the slide to the background
         //
@@ -923,6 +928,7 @@ TBD end of old code, start of new code
             // Auto-wrap image urls in url(...)
             if( /^(http|file|\/\/)/gi.test( data.background ) || /\.(svg|png|jpg|jpeg|gif|bmp)$/gi.test( data.background ) ) {
 				slide.setAttribute( 'data-background-image', data.background );
+                data.backgroundImage = data.background;
             }
             else {
                 element.style.background = data.background;
@@ -952,8 +958,10 @@ TBD end of old code, start of new code
         if( data.backgroundPosition ) element.style.backgroundPosition = data.backgroundPosition;
         if( data.backgroundTransition ) element.setAttribute( 'data-background-transition', data.backgroundTransition );
 
-        container.appendChild( element );
-
+        if( add_bg_el ) {
+            container.appendChild( element );
+        }
+        
         return element;
 
     }
@@ -3586,7 +3594,7 @@ TBD end new code
 	 */    
 	function getSlide( x, y ) {
 
-		var horizontalSlide = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR )[ x ];
+		var horizontalSlide = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) )[ x ];
         var verticalSlides = horizontalSlide && horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
 
 		if( verticalSlides && verticalSlides.length && typeof y === 'number' ) {
@@ -3622,7 +3630,7 @@ TBD end new code
 			return undefined;
 		}
 
-		var horizontalBackground = dom.wrapper.querySelectorAll( '.backgrounds > .slide-background' )[ x ];
+		var horizontalBackground = toArray( dom.wrapper.querySelectorAll( '.backgrounds > .slide-background' ) )[ x ];
 		var verticalBackgrounds = horizontalBackground && horizontalBackground.querySelectorAll( '.slide-background' );
 
 		if( verticalBackgrounds && verticalBackgrounds.length && typeof y === 'number' ) {
