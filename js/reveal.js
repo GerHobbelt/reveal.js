@@ -4193,8 +4193,13 @@ TBD end new code
             return false;
         }
 
-        // While paused only allow "unpausing" keyboard events (b and .)
-        if( isPaused() && [66,190,191].indexOf( event.keyCode ) === -1 ) {
+		// While paused only allow "unpausing" keyboard events ('b', '.' or any key specifically mapped to togglePause)
+		var allowedKeys = [66,190,191].concat(Object.keys(config.keyboard).map( function (key) {
+			if( config.keyboard[key] === 'togglePause' ) {
+				return parseInt(key, 10);
+			}
+		}));
+		if( isPaused() && allowedKeys.indexOf( event.keyCode ) === -1 ) {
             return false;
         }
 
