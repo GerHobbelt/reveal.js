@@ -8,7 +8,6 @@ Reveal.addEventListener( 'ready', function() {
 		strictEqual( Reveal.isReady(), true, 'returns true' );
 	});
 
-
 } );
 
 Reveal.initialize({ pdf: true });
