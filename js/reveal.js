@@ -116,6 +116,10 @@
             // i.e. contained within a limited portion of the screen
             embedded: false,
 
+			// Flags if we should show a help overlay when the questionmark
+			// key is pressed
+			help: true,
+
             // Number of milliseconds between automatically proceeding to the
             // next slide, disabled when set to 0, this value can be overwritten
             // by using a data-autoslide attribute on your slides
@@ -732,7 +736,7 @@ TBD: we need something completely different for printing slides [GerHobbelt]
 		injectStyleSheet( '@page{size:'+ pageWidth +'px '+ pageHeight +'px; margin: 0;}' );
 
 		// Limit the size of certain elements to the dimensions of the slide
-		injectStyleSheet( '.reveal img, .reveal video, .reveal iframe{max-width: '+ slideWidth +'px; max-height:'+ slideHeight +'px}' );
+		injectStyleSheet( '.reveal section > img, .reveal section > video, .reveal section > iframe{max-width: ' + slideWidth + 'px; max-height:' + slideHeight + 'px}' );
 
 /*
 TBD end
@@ -1640,42 +1644,48 @@ TBD end of old code, start of new code
 	 */
 	function showHelp() {
 
-		closeOverlay();
+		if( config.help ) {
 
-        if( dom.wrapper ) {
-    		dom.overlay = document.createElement( 'div' );
-    		dom.overlay.classList.add( 'overlay' );
-    		dom.overlay.classList.add( 'overlay-help' );
-    		dom.wrapper.appendChild( dom.overlay );
+			closeOverlay();
 
-    		var html = '<p class="title">Keyboard Shortcuts</p><br/>';
+            if( dom.wrapper ) {
 
-    		html += '<table><th>KEY</th><th>ACTION</th>';
-    		for( var key in keyboardShortcuts ) {
-    			html += '<tr><td>' + key + '</td><td>' + keyboardShortcuts[ key ] + '</td></tr>';
-    		}
+        		dom.overlay = document.createElement( 'div' );
+        		dom.overlay.classList.add( 'overlay' );
+        		dom.overlay.classList.add( 'overlay-help' );
+        		dom.wrapper.appendChild( dom.overlay );
 
-    		html += '</table>';
+        		var html = '<p class="title">Keyboard Shortcuts</p><br/>';
 
-    		dom.overlay.innerHTML = [
-    			'<header>',
-    				'<a class="close" href="#"><span class="icon"></span></a>',
-    			'</header>',
-    			'<div class="viewport">',
-    				'<div class="viewport-inner">'+ html +'</div>',
-    			'</div>'
-    		].join('');
+        		html += '<table><th>KEY</th><th>ACTION</th>';
+        		for( var key in keyboardShortcuts ) {
+        			html += '<tr><td>' + key + '</td><td>' + keyboardShortcuts[ key ] + '</td></tr>';
+        		}
 
-    		dom.overlay.querySelector( '.close' ).addEventListener( 'click', function( event ) {
-    			closeOverlay();
-    			event.preventDefault();
-    		}, false );
+        		html += '</table>';
 
-    		setTimeout( function() {
-    			dom.overlay.classList.add( 'visible' );
-    		}, 1 );
+        		dom.overlay.innerHTML = [
+        			'<header>',
+        				'<a class="close" href="#"><span class="icon"></span></a>',
+        			'</header>',
+        			'<div class="viewport">',
+        				'<div class="viewport-inner">'+ html +'</div>',
+        			'</div>'
+        		].join('');
+
+        		dom.overlay.querySelector( '.close' ).addEventListener( 'click', function( event ) {
+        			closeOverlay();
+        			event.preventDefault();
+        		}, false );
+
+        		setTimeout( function() {
+        			dom.overlay.classList.add( 'visible' );
+        		}, 1 );
+
+            }
+
         }
-
+        
 	}
 
     /**
@@ -2516,7 +2526,7 @@ TBD end new code
         }
 
 		// Announce the current slide contents, for screen readers
-		dom.statusDiv.innerHTML = currentSlide.textContent;
+		dom.statusDiv.textContent = currentSlide.textContent;
 
         updateControls();
         updateProgress();
@@ -2818,7 +2828,7 @@ TBD end new code
             distanceX,
             distanceY;
 
-        if( horizontalSlidesLength ) {
+		if( horizontalSlidesLength && typeof indexh !== 'undefined' ) {
 
             // The number of steps away from the present slide that will
             // be visible
@@ -2830,7 +2840,13 @@ TBD end new code
                 var verticalSlides = toArray( horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ),
                     verticalSlidesLength = verticalSlides.length;
 
-                distanceX = Math.abs( indexh - x ) || 0;
+				if( 0 ) {
+                    // Loops so that it measures 1 between the first and last slides
+				    distanceX = Math.abs( ( ( indexh || 0 ) - x ) % ( horizontalSlidesLength - viewDistance ) ) || 0;
+                }
+                else {
+                    distanceX = Math.abs( ( indexh || 0 ) - x ) || 0;
+                }
 
                 // Show the horizontal slide if it's within the view distance
                 if( distanceX <= viewDistance ) {
@@ -2847,7 +2863,7 @@ TBD end new code
                     for( var y = 0; y < verticalSlidesLength; y++ ) {
                         var verticalSlide = verticalSlides[y];
 
-                        distanceY = x === indexh ? Math.abs( indexv - y ) : Math.abs( y - oy );
+						distanceY = x === ( indexh || 0 ) ? Math.abs( ( indexv || 0 ) - y ) : Math.abs( y - oy );
 
                         if( distanceX + distanceY <= viewDistance ) {
 							showSlide( verticalSlide );
@@ -3326,7 +3342,7 @@ TBD end new code
      */
     function stopEmbeddedContent( slide ) {
 
-        if( slide ) {
+		if( slide && slide.parentNode ) {
             // HTML5 media elements
             toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) ) {
