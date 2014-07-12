@@ -61,7 +61,7 @@
     text-shadow: none;
 }
 
-.reveal-viewport .slides-wrapper {
+.reveal-viewport .slides-wrapper.scrollable-slide {
     /* ensure that 'scrollable slides' are indeed scrollable: position=absolute prevents the scrollbar from showing up */
     overflow: auto;
     position: relative;

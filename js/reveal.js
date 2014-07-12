@@ -171,7 +171,7 @@
             // parallaxBackgroundSize: '', // CSS syntax, e.g. '3000px 2000px'
 
             // Number of slides away from the current that are visible (the minimum is 1 IFF we want the slide animations to show both the old and the new slide during transitions)
-            viewDistance: 0,
+            viewDistance: 1,
 
             // Number of slides away from the current that are visible in overview mode
             overviewViewDistance: 6,
@@ -1814,24 +1814,38 @@ TBD end of old code, start of new code
             if ( !overview_slides_info ) {
                 dom.slides.style.width = null;
                 dom.slides.style.height = null;
+
                 dom.slides.style.zoom = null;
                 dom.slides.style.left = 0;
                 dom.slides.style.top = 0;
                 dom.slides.style.bottom = 0;
                 dom.slides.style.right = 0;
                 transformElement( dom.slides, '', '' );
-                if (0) {
-                    slide.style.paddingTop = '0px';
-                    slide.style.paddingBottom = '0px';
-                    slide.style.height = null;
-                    slide.style.top = '0px';
+
+                if (slide) {
+                    slide.style.zoom = null;
+                    slide.style.left = 0;
+                    slide.style.top = 0;
+                    slide.style.bottom = 0;
+                    slide.style.right = 0;
+                    transformElement( slide, '', '' );
+            
+                    if (1) {
+                        slide.style.paddingTop = '0px';
+                        slide.style.paddingBottom = '0px';
+                        slide.style.height = null;
+                        slide.style.top = '0px';
+                    }
                 }
             }
             var slideDimensions = false;
             var isScrollableSlide = false;
+            dom.slides_wrapper.classList.remove( 'scrollable-slide' );
             if (slide) {
                 if( slide.hasAttribute( 'data-scrollable' ) ) {
                     isScrollableSlide = true;
+                    dom.slides_wrapper.classList.add( 'scrollable-slide' );
+
                     // let the browser reflow the scrollable content so we can decide what to do next:
                     dom.slides.style.width = targetInfo.slideWidth + 'px';
                     dom.slides.style.height = targetInfo.slideHeight + 'px';
@@ -1851,10 +1865,11 @@ TBD end of old code, start of new code
             // Determine scale of content to fit within available space
             var realScale = Infinity;
             if ( slideDimensions && !isScrollableSlide && !overview_slides_info ) {
-                realScale = Math.min( targetInfo.availableWidth / slideDimensions.width, targetInfo.availableHeight / slideDimensions.height );
+                //realScale = Math.min( targetInfo.availableWidth / slideDimensions.width, targetInfo.availableHeight / slideDimensions.height );
+                realScale = Math.min( targetInfo.slideWidth / slideDimensions.width, targetInfo.slideHeight / slideDimensions.height );
 
-                dom.slides.style.width = slideDimensions.width + 'px';
-                dom.slides.style.height = slideDimensions.height + 'px';
+                dom.slides.style.width = targetInfo.slideWidth + 'px';
+                dom.slides.style.height = targetInfo.slideHeight + 'px';
             } else {
                 if ( isScrollableSlide && !overview_slides_info ) {
                     // when the scrollable content is higher than the slide area, we better kill the fixed height. Same for the width...
@@ -1874,11 +1889,22 @@ TBD end of old code, start of new code
                 }
             }
             scale = Math.min( targetInfo.availableWidth / targetInfo.slideWidth, targetInfo.availableHeight / targetInfo.slideHeight );
-            scale = Math.min( scale, realScale );
+            //scale = Math.min( scale, realScale );
 
             // Respect max/min scale settings
             scale = Math.max( scale, config.minScale );
             scale = Math.min( scale, config.maxScale );
+
+            console.log("layout: ", {
+                slideDimensions: slideDimensions,
+                isScrollableSlide: isScrollableSlide,
+                targetInfo: targetInfo,
+                overview_slides_info: overview_slides_info,
+                indices: getIndices(),
+                scale: scale,
+                realScale: realScale,
+                slide: slide
+            });
 
 			// Prefer zooming in desktop Chrome so that content remains crisp
             // with nested transforms.
@@ -1898,6 +1924,57 @@ TBD end of old code, start of new code
                 dom.slides.style.right = 0;
                 transformElement( dom.slides, 'scale('+ scale +')', '50% 50%' );
             }
+
+
+
+            var realSlideDimensions = false;
+            if (slide) {
+                if( slide.hasAttribute( 'data-scrollable' ) ) {
+                    isScrollableSlide = true;
+                    dom.slides_wrapper.classList.add( 'scrollable-slide' );
+
+                    // let the browser reflow the scrollable content so we can decide what to do next:
+                    dom.slides.style.width = targetInfo.slideWidth + 'px';
+                    dom.slides.style.height = targetInfo.slideHeight + 'px';
+                }
+                realSlideDimensions = getAbsoluteSize( slide );
+                if (0) {
+                    slide.style.paddingTop = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2)) + 'px';
+                    slide.style.paddingBottom = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2)) + 'px';
+                    slide.style.height = targetInfo.slideHeight + 'px';
+                    slide.style.top = '0px';
+                }
+            }
+
+            // Layout the contents of the slides
+            layoutSlideContents( targetInfo.slideWidth, targetInfo.slideHeight );
+
+            // Determine scale of content to fit within available space
+            var realScale = Infinity;
+            if ( realSlideDimensions && !isScrollableSlide && !overview_slides_info ) {
+                //realScale = Math.min( targetInfo.availableWidth / slideDimensions.width, targetInfo.availableHeight / slideDimensions.height );
+                realScale = Math.min( targetInfo.slideWidth / realSlideDimensions.width, targetInfo.slideHeight / realSlideDimensions.height );
+
+                dom.slides.style.width = targetInfo.slideWidth + 'px';
+                dom.slides.style.height = targetInfo.slideHeight + 'px';
+            }
+
+            realScale = Math.min( 1, realScale );
+
+            if (slide) {
+                if( useZoomFallback ) {
+                    slide.style.zoom = realScale;
+                }
+                // Apply scale transform
+                else {
+                    slide.style.left = 0;
+                    slide.style.top = 0;
+                    slide.style.bottom = 0;
+                    slide.style.right = 0;
+                    transformElement( slide, 'scale('+ realScale +')', '50% 50%' );
+                }
+            }
+
 
             // Select all slides, vertical and horizontal
 			var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
