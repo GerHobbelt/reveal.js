@@ -92,6 +92,18 @@
         }
     }
 
+    // compare two slide indices {h,v,f} and return a value suitable for use with sorting/filtering
+    function compare(a, b) {
+        var rv = a.h - b.h;
+        if (!rv) {
+            rv = (a.v || 0) - (b.v || 0);
+            if (!rv) {
+                rv = (a.f || 0) - (b.f || 0);
+            }
+        }
+        return rv;
+    }
+
     function doSearch() {
         var matchingSlides;
 
@@ -106,30 +118,39 @@
                     matchingSlides = [];
                 },
                 onFinish: function () {
-                    return matchingSlides;
+                    // sort the list and remove the duplicates:
+                    matchingSlides.sort(compare);
+                    var prev = { h: -1, v: -1, f: -1 };     // this is an illegal slide index, so the first compare() will never report a match.
+                    return matchingSlides.filter(function (a) {
+                        var rv = compare(prev, a);
+                        prev = a;
+                        return rv !== 0;
+                    });
                 },
                 onDoOne: function (node) {
                     // find the slide's section element and save it in our list of matching slides
-                    var secnode = node.parentNode;
-                    while (secnode.nodeName != 'SECTION') {
-                        secnode = secnode.parentNode;
-                    }
-
-                    var slideIndex = Reveal.getIndices(secnode);
-                    var slidelen = matchingSlides.length;
-                    var alreadyAdded = false;
-                    for (i = 0; i < slidelen; i++) {
-                        if ( (matchingSlides[i].h === slideIndex.h) && (matchingSlides[i].v === slideIndex.v) ) {
-                            alreadyAdded = true;
-                        }
-                    }
-                    if (!alreadyAdded) {
+                    //
+                    // When we find the searchstring in a section of the DOM that is *not* part of a slide, then
+                    // we ignore it for the goto-list `matchingSlides`:
+                    var slideIndex = Reveal.getIndices(node);
+                    if (slideIndex) {
                         matchingSlides.push(slideIndex);
                     }
                 }
             });
             matchedSlides = myHilitor.apply(searchstring) || [];
+            // By default, start at the first slide which has a match
             currentMatchedIndex = 0;
+
+            // Or start at the current slide if there's a match there...
+            var slideIndex = Reveal.getIndices();
+            var slidelen = matchingSlides.length;
+            for (var i = 0; i < slidelen; i++) {
+                if ( 0 === compare(matchingSlides[i], slideIndex) ) {
+                    currentMatchedIndex = i;
+                    break;
+                }
+            }
         }
 
         // navigate to the next slide that has the keyword, wrapping to the first if necessary
@@ -137,7 +158,7 @@
             currentMatchedIndex = 0;
         }
         if (matchedSlides.length > currentMatchedIndex) {
-            Reveal.slide(matchedSlides[currentMatchedIndex].h, matchedSlides[currentMatchedIndex].v);
+            Reveal.slide(matchedSlides[currentMatchedIndex].h, matchedSlides[currentMatchedIndex].v, matchedSlides[currentMatchedIndex].f);
             currentMatchedIndex++;
         }
     }

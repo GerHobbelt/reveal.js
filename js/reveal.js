@@ -1791,6 +1791,8 @@ TBD end of old code, start of new code
             }
         }
 
+        sortAllFragments();
+
     }
 
 
@@ -2604,7 +2606,7 @@ TBD end of old code, start of new code
         }
 
         // Show fragment, if specified
-        if( typeof f !== 'undefined' ) {
+        if( f != null ) {
             navigateFragment( f );
         }
 
@@ -2700,8 +2702,6 @@ TBD end of old code, start of new code
 		// Write the current hash to the URL
 		writeURL();
 
-        sortAllFragments();
-
         updateControls();
         updateProgress();
         updateBackground();
@@ -2753,7 +2753,9 @@ TBD end of old code, start of new code
 
             } );
 
-            if( verticalSlides.length === 0 ) sortFragments( horizontalSlide.querySelectorAll( '.fragment' ) );
+            if( verticalSlides.length === 0 ) {
+                sortFragments( horizontalSlide.querySelectorAll( '.fragment' ) );
+            }
 
         } );
 
@@ -3612,8 +3614,8 @@ TBD end of old code, start of new code
 
             if( element ) {
                 // Find the position of the named slide and navigate to it
-                var indices = Reveal.getIndices( element );
-                slide( indices.h, indices.v );
+                var indices = getIndices( element );
+                slide( indices.h, indices.v, indices.f );
             }
             // If the slide doesn't exist, navigate to the current slide
             else {
@@ -3681,18 +3683,42 @@ TBD end of old code, start of new code
      * Retrieves the h/v location of the current, or specified,
      * slide.
      *
-     * @param {HTMLElement} slide If specified, the returned
-     * index will be for this slide rather than the currently
-     * active one
+     * @param {HTMLElement} element If specified, the returned
+     * index will be for the specified slide rather than the currently
+     * active one. The `element` can be either the slide HTMLElement 
+     * itself or a HTMLElement contained within a slide. 
      *
      * @return {Object} { h: <int>, v: <int>, f: <int> }
+     * @return {Boolean} FALSE when the `element` argument is specified and it is not a slide, fragment or child element thereof.
+     * @return {Boolean} FALSE when the `element` argument is null (not specified) and no slide is 'current' yet.
      */
-    function getIndices( slide ) {
+    function getIndices( element ) {
 
         // By default, return the current indices
         var h = indexh,
             v = indexv,
-            f;
+            f = undefined,
+            fragments;
+
+        // Find out if this is a slide DOM node or a child node:
+        // in the latter case, we need to find the parent fragment / slide.
+        var slide = element;
+        while (slide && !slide.nodeName.match( /^section$/i )) {
+            if (slide.classList && slide.classList.contains('fragment')) {
+                if( slide.hasAttribute( 'data-fragment-index' ) ) {
+                    f = parseInt( slide.getAttribute( 'data-fragment-index' ), 10 ) || 0;
+                }
+            }
+            slide = slide.parentNode;
+        }
+        // When the element was specified but proved not to be a slide or a child thereof, we return FALSE.
+        if ( element && !slide ) {
+            return false;
+        }
+        // When no element/slide was specified and we don't have a 'current' slide yet, we also return FALSE.
+        if ( !slide && !currentSlide ) {
+            return false;
+        }
 
         // If a slide is specified, return the indices of that slide
         if( slide ) {
@@ -3715,16 +3741,33 @@ TBD end of old code, start of new code
         }
 
         if( config.fragments ) {
-            if( !slide && currentSlide ) {
+            if( !slide ) {
                 var currentFragment = currentSlide.querySelector( '.fragment.visible.current-fragment' );
                 if( currentFragment ) {
                     f = parseInt( currentFragment.getAttribute( 'data-fragment-index' ), 10 ) || 0;
                 }
                 else {
-                    var fragments = currentSlide.querySelectorAll( '.fragment' );
+                    fragments = currentSlide.querySelectorAll( '.fragment' );
                     if( fragments.length ) {
                         // signal that we are not yet showing *any* of the fragments yet
                         f = -1;
+                    }
+                }
+            }
+            else {
+                if ( f === undefined ) {
+                    // We didn't get an element that's inside a fragment, so it's part of the entire slide.
+                    // Nevertheless, we'ld like to know which fragments are visible, already.
+                    fragments = slide.querySelectorAll( '.fragment' );
+                    if ( fragments.length ) {
+                        var visibleFragments = slide.querySelectorAll( '.fragment.visible' );
+                        if ( visibleFragments.length === 0 ) {
+                            // signal that we are not yet showing *any* of the fragments yet
+                            f = -1;
+                        }
+                        else {
+                            f = visibleFragments.length - 1;
+                        }
                     }
                 }
             }
