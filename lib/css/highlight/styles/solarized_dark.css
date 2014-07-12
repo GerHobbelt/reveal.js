@@ -6,7 +6,7 @@ Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmai
 
 pre code {
   display: block; padding: 0.5em;
-  background: #030a1b; color: #cccccc;
+  background: #002b36; color: #839496;
 }
 
 pre .comment,
@@ -67,7 +67,7 @@ pre .haskell .type {
 }
 
 pre .preprocessor,
- pre .preprocessor .keyword,
+pre .preprocessor .keyword,
 pre .shebang,
 pre .symbol,
 pre .symbol .string,
@@ -90,20 +90,20 @@ pre .tex .formula {
   background: #073642;
 }
 
-pre .lean .lean_keyword {
-    color:#227DBE;
+pre {
+  counter-reset: lines;
 }
-pre .lean .type {
-    color:#207a78;
+pre .line {
+  counter-increment: lines;
 }
-pre .lean .op {
-    color:#b58900;
+pre .line::before {
+  content: counter(lines); 
+  text-align: right;
+  display: inline-block; 
+  width: 2em;
+  padding-right: 0.5em; 
+  margin-right: 0.5em;
+  color: #BBB; 
+  border-right: solid 1px;
 }
 
-pre .lean .keyword {
-    color:#ff2733;
-}
-
-pre .lean .metavar {
-    color:#ff2733;
-}

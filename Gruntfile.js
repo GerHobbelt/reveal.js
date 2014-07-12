@@ -15,6 +15,26 @@ module.exports = function(grunt) {
                 ' */'
         },
 
+        copy: {
+            // copy the stuff that comes with the highlight plugin from the submodule
+            highlight: {
+                files: [
+                    {
+                        expand: true, 
+                        cwd: 'lib/plugins/highlight/src/', 
+                        src: ['styles/**'], 
+                        dest: 'lib/css/highlight/'
+                    },
+                    {
+                        expand: true, 
+                        cwd: 'lib/plugins/highlight/src/', 
+                        src: ['languages/**'], 
+                        dest: 'lib/css/highlight/'
+                    }
+                ]
+            }
+        },
+
         qunit: {
             files: [ 'test/*.html' ]
         },
@@ -180,11 +200,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks( 'grunt-contrib-watch' );
     grunt.loadNpmTasks( 'grunt-contrib-sass' );
     grunt.loadNpmTasks( 'grunt-contrib-less' );
+    grunt.loadNpmTasks( 'grunt-contrib-copy' );
     grunt.loadNpmTasks( 'grunt-contrib-connect' );
     grunt.loadNpmTasks( 'grunt-zip' );
 
     // Default task
-    grunt.registerTask( 'default', [ 'jshint', 'cssmin', 'uglify', 'qunit' ] );
+    grunt.registerTask( 'default', [ 'copy:highlight', 'jshint', 'cssmin', 'uglify', 'qunit' ] );
 
     // Theme task
     grunt.registerTask( 'themes', [ 'sass' ] );

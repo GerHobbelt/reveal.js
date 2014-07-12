@@ -1,7 +1,5 @@
 /*
-
-github.com style (c) Vasily Polovnyov <vast@whiteants.net>
-
+Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine (@thingsinjars)
 */
 
 pre code {
@@ -14,21 +12,19 @@ pre .comment,
 pre .template_comment,
 pre .diff .header,
 pre .javadoc {
-  color: #998;
+  color: #408080;
   font-style: italic
 }
 
 pre .keyword,
+pre .assignment,
+pre .literal,
 pre .css .rule .keyword,
 pre .winutils,
 pre .javascript .title,
 pre .lisp .title,
-pre .nginx .title,
-pre .subst,
-pre .request,
-pre .status {
-  color: #000;
-  font-weight: bold
+pre .subst {
+  color: #954121;
 }
 
 pre .number,
@@ -40,13 +36,15 @@ pre .string,
 pre .tag .value,
 pre .phpdoc,
 pre .tex .formula {
-  color: #d14
+  color: #219161;
 }
 
 pre .title,
 pre .id {
-  color: #900;
-  font-weight: bold
+  color: #19469D;
+}
+pre .params {
+  color: #00F;
 }
 
 pre .javascript .title,
@@ -56,8 +54,7 @@ pre .subst {
 }
 
 pre .class .title,
-pre .haskell .type,
-pre .vhdl .literal,
+pre .haskell .label,
 pre .tex .command {
   color: #458;
   font-weight: bold
@@ -79,7 +76,7 @@ pre .lisp .body {
 }
 
 pre .regexp {
-  color: #009926
+  color: #B68
 }
 
 pre .class {
@@ -98,6 +95,7 @@ pre .input_number {
 }
 
 pre .builtin,
+pre .constructor,
 pre .built_in,
 pre .lisp .title {
   color: #0086b3
@@ -131,3 +129,21 @@ pre .chunk {
 pre .tex .formula {
   opacity: 0.5;
 }
+
+pre {
+  counter-reset: lines;
+}
+pre .line {
+  counter-increment: lines;
+}
+pre .line::before {
+  content: counter(lines); 
+  text-align: right;
+  display: inline-block; 
+  width: 2em;
+  padding-right: 0.5em; 
+  margin-right: 0.5em;
+  color: #BBB; 
+  border-right: solid 1px;
+}
+
