@@ -61,6 +61,13 @@
     text-shadow: none;
 }
 
+.reveal-viewport .slides-wrapper {
+    /* ensure that 'scrollable slides' are indeed scrollable: position=absolute prevents the scrollbar from showing up */
+    overflow: auto;
+    position: relative;
+    left: 0;
+    top: 0;
+}
 
 /*********************************************
  * VIEW FRAGMENTS
@@ -503,7 +510,7 @@
     margin: auto;
 
     overflow: visible;
-    z-index: 1;
+    /* z-index: 1;          -- removing this one ensures that the search plugin always shows up on top like it should. */
     text-align: center;
 
     -webkit-transition: -webkit-perspective .4s ease;
@@ -564,10 +571,10 @@
 
 .reveal.center .slides,
 .reveal.center .slides section {
-    /* height: 100%;    -- don't set this one if you ant the JavaScript getAbsoluteHeight() to work and center your slides for you! */
+    /* height: 100%;    -- don't set this one if you want the JavaScript getAbsoluteHeight() to work and center your slides for you! */
 }
 
-.reveal.center .slides section:not(.stack) {
+.reveal.center .slides section.visible:not(.stack) {
     display: -webkit-box;
     display: -webkit-flex;
     display: -moz-box;
@@ -661,6 +668,23 @@
     opacity: 0;
 }
 
+/* 
+ * Hide a lot of content in each page in overview mode to clean it up: make the view more readable / less cluttered.
+ *
+ * This assumes the slide headings are encoded in <H1>, etc.
+ */
+.reveal.overview .slides>section div,
+.reveal.overview .slides>section p,
+.reveal.overview .slides>section table,
+.reveal.overview .slides>section ol,
+.reveal.overview .slides>section ul,
+.reveal.overview .slides>section dl,
+.reveal.overview .slides>section pre,
+.reveal.overview .slides>section form,
+.reveal.overview .slides>section blockquote
+{
+    display: none;
+}
 
 
 
@@ -1325,7 +1349,7 @@
  * PER-SLIDE BACKGROUNDS
  *********************************************/
 
-.reveal>.backgrounds {
+.reveal > .backgrounds {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -1366,6 +1390,7 @@
     .reveal .slide-background.present {
         opacity: 1;
         visibility: visible;
+        display: block;
     }
 
     .print-pdf .reveal .slide-background {

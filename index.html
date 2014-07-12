@@ -20,7 +20,7 @@
         <link rel="stylesheet" href="css/theme/default.css" id="theme">	<!-- <link rel="stylesheet" href="css/theme/fourkitchens.css" > -->
 
         <!-- For syntax highlighting -->
-        <link rel="stylesheet" href="lib/css/highlight/zenburn.css"> <!-- <link rel="stylesheet" href="lib/css/github.css"> -->
+        <link rel="stylesheet" href="lib/css/highlight/styles/zenburn.css">
 
 		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
         <script>
@@ -278,11 +278,11 @@ Reveal.addEventListener( 'customevent', function() {
                     </section>
                     <section data-background-image="assets/arrow.png">
                         <h2>Image Backgrounds</h2>
-                        <pre><code>&lt;section data-background-image="image.png"&gt;</code></pre>
+                        <pre><code class="html">&lt;section data-background-image="image.png"&gt;</code></pre>
                     </section>
                     <section data-background-image="assets/arrow.png" data-background-repeat="repeat" data-background-size="100px">
                         <h2>Repeated Image Backgrounds</h2>
-                        <pre><code style="word-wrap: break-word;">&lt;section data-background-image="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
+                        <pre><code class="html" style="word-wrap: break-word;">&lt;section data-background-image="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
                     </section>
                 </section>
 
@@ -314,7 +314,7 @@ Reveal.addEventListener( 'customevent', function() {
 
                 <section>
                     <h2>Pretty Code</h2>
-                    <pre><code data-trim contenteditable>
+                    <pre><code class="javascript" data-trim contenteditable>
 function linkify( selector ) {
   if( supports3DTransforms ) {
 
@@ -442,40 +442,46 @@ function linkify( selector ) {
         </div>
 
         <script>
-            var body = document.getElementsByTagName('body')[0];
-            body.style.display = 'block'; // $('body').show();
-            var version_el = body.getElementsByClassName('version');
-            for (var i = version_el.length; i-- > 0; ) {
-              version_el[i].innerHTML = NProgress.version; // $('.version').text(NProgress.version);
-            }
-            NProgress.start("Loading the presentation...");
+            (function () {
+                var body = document.getElementsByTagName('body')[0];
+                body.style.display = 'block'; // $('body').show();
+                var version_el = body.getElementsByClassName('version');
+                for (var i = version_el.length; i-- > 0; ) {
+                  version_el[i].innerHTML = NProgress.version; // $('.version').text(NProgress.version);
+                }
+                NProgress.start("Loading the presentation...");
 
-            NProgress.settings.onDoneBegin = slow_fade_all_ends_all;
+                // invoke this when the load phase is completed (`NProgress.done()`)
+                NProgress.settings.onDoneBegin = slow_fade_all_ends_all;
 
-            function tick() {
-              // NProgress.inc() will never arrive at 'done' all by itself as it won't push the .status beyond the 0.994 mark:
-              if (NProgress.status > 0.99) {
-                NProgress.done(false, "Done. Ready when you are!");
+                var timerh = null;
 
-                // slow_fade_all_ends_all(); <-- executed via NProgress.settings.onDoneBegin instead
-              } else {
-                NProgress.inc();
-                setTimeout(tick, 200);
-              }
-            }
-            tick();
+                function tick() {
+                  // NProgress.inc() will never arrive at 'done' all by itself as it won't push the .status beyond the 0.994 mark.
+                  //
+                  // Note: we call 'done' when Reveal has loaded itself and all its plugins, see `js/require-reveal-init.js`
+                  if (NProgress.isStarted()) {
+                    NProgress.inc();
+                    timerh = setTimeout(tick, 200);
+                  }
+                }
+                tick();
 
-            function slow_fade_all_ends_all() {
-              function slow_fade_one(el, i) {
-                setTimeout(function() {
-                  NProgress.Internals.removeClass(el, 'out');
-                }, i * 500);
-              }
-              var fade_el = body.getElementsByClassName('fade');
-              for (var i = fade_el.length; i-- > 0; ) {
-                slow_fade_one(fade_el[i], i);
-              }
-            }
+                function slow_fade_all_ends_all() {
+                  clearTimeout(timerh);
+                  timerh = null;
+
+                  function slow_fade_one(el, i) {
+                    setTimeout(function() {
+                      NProgress.Internals.removeClass(el, 'out');
+                    }, i * 500);
+                  }
+                  var fade_el = body.getElementsByClassName('fade');
+                  for (var i = fade_el.length; i-- > 0; ) {
+                    slow_fade_one(fade_el[i], i);
+                  }
+                }
+            })();
         </script>
 
         <!-- data-main attribute tells require.js to load

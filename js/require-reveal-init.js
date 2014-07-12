@@ -54,7 +54,15 @@ var RevealConfiguration;
             verge: jslib('verge/verge')
         },
         onCompleteLoadOne: function (e) {
-            console.log("RequireJS onCompleteLoadOne: ", e.defQueue, arguments);
+            console.log("RequireJS onCompleteLoadOne: ", e.defQueue, document.readyState, arguments);
+
+            if (NProgress.isStarted()) {
+                NProgress.inc();
+            }
+        },
+        // RequireJS BUG?: `callback` is not firing when ALL dependencies have loaded; it is already firing after the first one! 
+        callback: function() {
+            console.log("RequireJS callback: all loaded: ", document.readyState, arguments);
         }
     });
 })();
@@ -83,14 +91,28 @@ require(['zoom', 'highlight', 'marked', 'classList', 'verge', 'reveal'],
 
         // Optional libraries used to extend on reveal.js
         dependencies: [
-            { src: require.toUrl('../js/classList/classList.js'), condition: function() { return !document.body.classList; } },
-            { src: require.toUrl('../../plugin/markdown/markdown.js'), condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-            { src: require.toUrl('../../plugin/highlight/highlight.js'), async: true, callback: function() { if (typeof highlight !== 'undefined') { highlight.initHighlightingOnLoad(); } } },
-            { src: require.toUrl('../../plugin/zoom-js/zoom.js'), async: true, condition: function() { return !!document.body.classList; } },
-            { src: require.toUrl('../../plugin/notes/notes.js'), async: true, condition: function() { return !!document.body.classList; } },
+            { src: require.toUrl('../js/classList/classList.js'), condition: function() { 
+                return !document.body.classList; 
+            } },
+            { src: require.toUrl('../../plugin/markdown/markdown.js'), condition: function() { 
+                return !!document.querySelector( '[data-markdown]' ); 
+            } },
+            { src: require.toUrl('../../plugin/highlight/highlight.js'), async: true, condition: function() { 
+                return !!document.querySelector( 'pre code' ); 
+            }, callback: function() { 
+                console.log('highlight plugin callback arguments: ', arguments); 
+            } },
+            { src: require.toUrl('../../plugin/zoom-js/zoom.js'), async: true, condition: true },
+            { src: require.toUrl('../../plugin/notes/notes.js'), async: true, condition: true },
             // { src: require.toUrl('../../plugin/leap/leap.js'), async: true },
-            { src: require.toUrl('../../plugin/search/search.js'), async: true, condition: function() { return !!document.body.classList; } }
-            // { src: require.toUrl('../../plugin/remotes/remotes.js'), async: true, condition: function() { return !!document.body.classList; } }
+            { src: require.toUrl('../../plugin/search/search.js'), async: true, condition: true }
+            // { src: require.toUrl('../../plugin/remotes/remotes.js'), async: true }
         ]
     }, RevealConfiguration));
+
+    Reveal.addEventListener( 'ready', function ( info ) {
+        console.log("Reveal is READY: ", info, arguments);
+
+        NProgress.done(false, "Done. Ready when you are!");
+    } );
 });
