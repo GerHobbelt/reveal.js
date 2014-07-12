@@ -142,11 +142,12 @@
             // By default, start at the first slide which has a match
             currentMatchedIndex = 0;
 
-            // Or start at the current slide if there's a match there...
+            // By default, start at the current slide if there's a match at or beyond...
             var slideIndex = Reveal.getIndices();
+            slideIndex.f = -1;
             var slidelen = matchingSlides.length;
             for (var i = 0; i < slidelen; i++) {
-                if ( 0 === compare(matchingSlides[i], slideIndex) ) {
+                if ( compare(slideIndex, matchingSlides[i]) <= 0 ) {
                     currentMatchedIndex = i;
                     break;
                 }
