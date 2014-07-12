@@ -138,7 +138,7 @@
                     }
                 }
             });
-            matchedSlides = myHilitor.apply(searchstring) || [];
+            matchingSlides = myHilitor.apply(searchstring) || [];
             // By default, start at the first slide which has a match
             currentMatchedIndex = 0;
 
@@ -152,6 +152,7 @@
                     break;
                 }
             }
+            matchedSlides = matchingSlides;
         }
 
         // navigate to the next slide that has the keyword, wrapping to the first if necessary
