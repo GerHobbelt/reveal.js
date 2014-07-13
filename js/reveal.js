@@ -98,7 +98,7 @@
             keyboardCondition: nil_function,
 
             // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'translate3d' | 'zoom' | 'perspective' | 'scale')
-            overview: 'translate3d',
+            overview: 'perspective',
 
             // Vertical centering of slides
             center: true,
@@ -949,6 +949,11 @@ TBD end of old code, start of new code
             backgroundTransition: slide.getAttribute( 'data-background-transition' )
         };
 
+        // Force linear transition based on browser capabilities
+        if( features.transforms3d === false && data.backgroundTransition ) {
+            data.backgroundTransition = 'linear';
+        }
+
         var add_bg_el = false;
         var element = getSlideBackground( x, y );
         if( !element ) {
@@ -1072,7 +1077,10 @@ TBD end of old code, start of new code
         if( typeof options === 'object' ) extend( config, options );
 
         // Force linear transition based on browser capabilities
-        if( features.transforms3d === false ) config.transition = 'linear';
+        if( features.transforms3d === false ) {
+            config.transition = 'linear';
+            config.backgroundTransition = 'linear';
+        }
 
         if( !dom.wrapper ) {
             return false;
@@ -1809,9 +1817,30 @@ TBD end of old code, start of new code
 
             var slide = currentSlide;
 
+            // Select all slides, vertical and horizontal
+            var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
+
+
             // before calculating the slide height, we must nuke the previously patching in padding/top/etc. to get a correct measurement,
             // but don't do this when we're in overview mode as then it would damage the layout while we move through the slide set in the overview.
             if ( !overview_slides_info ) {
+                // reset wrapper scale for single sheet view
+                if( useZoomFallback ) {
+                    dom.slides_wrapper.style.zoom = null;
+                }
+                // Apply scale transform
+                else {
+                    transformElement( dom.slides_wrapper, null, null );
+                }
+
+                // Remove the height pinning we did in overview mode now that we're *out* of overview mode.
+                for( i = 0, len = slides.length; i < len; i++ ) {
+                    var sl = slides[ i ];
+                    sl.style.height = null;
+                    sl.style.paddingTop = null;
+                    sl.style.paddingBottom = null;
+                }
+
                 dom.slides.style.width = null;
                 dom.slides.style.height = null;
 
@@ -1820,21 +1849,24 @@ TBD end of old code, start of new code
                 dom.slides.style.top = 0;
                 dom.slides.style.bottom = 0;
                 dom.slides.style.right = 0;
-                transformElement( dom.slides, '', '' );
+                transformElement( dom.slides, null, null );
 
                 if (slide) {
                     slide.style.zoom = null;
-                    slide.style.left = 0;
-                    slide.style.top = 0;
-                    slide.style.bottom = 0;
-                    slide.style.right = 0;
-                    transformElement( slide, '', '' );
+                    slide.style.left = null;
+                    slide.style.top = null;
+                    slide.style.bottom = null;
+                    slide.style.right = null;
+                    transformElement( slide, null, null );
+
+                    slide.style.height = null;
+                    slide.style.width = null;
             
-                    if (1) {
-                        slide.style.paddingTop = '0px';
-                        slide.style.paddingBottom = '0px';
+                    if (0) {
+                        slide.style.paddingTop = 0;
+                        slide.style.paddingBottom = 0;
                         slide.style.height = null;
-                        slide.style.top = '0px';
+                        slide.style.top = 0;
                     }
                 }
             }
@@ -1851,11 +1883,11 @@ TBD end of old code, start of new code
                     dom.slides.style.height = targetInfo.slideHeight + 'px';
                 }
                 slideDimensions = getAbsoluteSize( slide );
-                if (0) {
+                if (1) {
                     slide.style.paddingTop = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2)) + 'px';
                     slide.style.paddingBottom = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2)) + 'px';
-                    slide.style.height = targetInfo.slideHeight + 'px';
-                    slide.style.top = '0px';
+                    // slide.style.height = targetInfo.slideHeight + 'px';
+                    // slide.style.top = '0px';
                 }
             }
 
@@ -1976,9 +2008,6 @@ TBD end of old code, start of new code
             }
 
 
-            // Select all slides, vertical and horizontal
-			var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
-
             // When overview mode is active (and the relevant data available), do scale the slides' collective too:
             if (overview_slides_info) {
 
@@ -1988,8 +2017,8 @@ TBD end of old code, start of new code
                 if (getSpecialOverviewMode() !== 1) {
                     // The number of steps away from the present slide that will be visible
                     var viewDistance = getViewDistance();
-                    var hcount = Math.min(overview_slides_info.horizontal_count, viewDistance * 2 + 1);
-                    var vcount = Math.min(overview_slides_info.vertical_count, viewDistance * 2 + 1);
+                    var hcount = Math.min(overview_slides_info.horizontal_count, viewDistance * 2);
+                    var vcount = Math.min(overview_slides_info.vertical_count, viewDistance * 2);
 
                     var totalSlidesWidth = targetInfo.slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
                     var totalSlidesHeight = targetInfo.slideHeight * vcount * 1.05;
@@ -2004,8 +2033,8 @@ TBD end of old code, start of new code
                 } else {
                     // The number of steps away from the present slide that will be visible
                     var viewDistance = getViewDistance();
-                    var hcount = Math.min(overview_slides_info.horizontal_count, viewDistance * 2 + 1);
-                    var vcount = Math.min(overview_slides_info.vertical_count, viewDistance * 2 + 1);
+                    var hcount = Math.min(overview_slides_info.horizontal_count, viewDistance * 2);
+                    var vcount = Math.min(overview_slides_info.vertical_count, viewDistance * 2);
 
                     var totalSlidesWidth = targetInfo.slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
                     var totalSlidesHeight = targetInfo.slideHeight * vcount * 1.05;
@@ -2027,7 +2056,7 @@ TBD end of old code, start of new code
                 }
                 // Apply scale transform
                 else {
-                    transformElement( dom.slides_wrapper, 'scale('+ overviewScale +')', '50% 25%' );
+                    transformElement( dom.slides_wrapper, 'scale('+ overviewScale +')', '50% 50%' );
                 }
 
                 // Pin the height of all slides as otherwise the overview rendering will be botched;
@@ -2104,24 +2133,6 @@ TBD end of old code, start of new code
                         }
 
                     }
-                }
-            }
-            else {
-                // reset wrapper scale for single sheet view
-                if( useZoomFallback ) {
-                    dom.slides_wrapper.style.zoom = null;
-                }
-                // Apply scale transform
-                else {
-                    transformElement( dom.slides_wrapper, '' );
-                }
-
-                // Remove the height pinning we did above when we're out of overview mode.
-                for( i = 0, len = slides.length; i < len; i++ ) {
-                    var slide = slides[ i ];
-                    slide.style.height = '';
-                    slide.style.paddingTop = '';
-                    slide.style.paddingBottom = '';
                 }
             }
 
@@ -2306,7 +2317,7 @@ TBD end of old code, start of new code
                     hslide.setAttribute( 'data-index-h', i );
 
                     // Apply CSS transform
-                    transformElement( hslide, 'translate3d( ' + ( ( i - indexh ) * hoffset ) + '%, 0px, '+ (getSpecialOverviewMode() === 1 ? -depth : 0) + 'px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                    transformElement( hslide, 'translate3d( ' + ( ( i - indexh ) * hoffset ) + '%, 0px, '+ (getSpecialOverviewMode() === 1 ? -depth : 0) + 'px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)', '50% 50%' );
 
                     if( hslide.classList.contains( 'stack' ) ) {
 
@@ -2322,7 +2333,7 @@ TBD end of old code, start of new code
                             vslide.setAttribute( 'data-index-v', j );
 
                             // Apply CSS transform
-                            transformElement( vslide, 'translate3d( 0px, ' + ( ( j - verticalIndex ) * 105 ) + '%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                            transformElement( vslide, 'translate3d( 0px, ' + ( ( j - verticalIndex ) * 105 ) + '%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)', '50% 50%' );
 
                             // Navigate to this slide on click
                             vslide.addEventListener( 'click', onOverviewSlideClicked, true );
@@ -2388,7 +2399,7 @@ TBD end of old code, start of new code
             // Select all slides
 			toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
                 // Resets all transforms to use the external styles
-                transformElement( slide, '' );
+                transformElement( slide, null, null );
 
                 slide.removeEventListener( 'click', onOverviewSlideClicked, true );
             } );
@@ -5274,6 +5285,12 @@ TBD end of old code, start of new code
         getCurrentSlide: function() {
             return currentSlide;
         },
+
+        getSlideSizeInfo: getAbsoluteSize,
+
+        getViewPortSizeInfo: getViewportAndSlideDimensionsInfo,
+
+        getElementStyle: getStyle,
 
         // Returns the current scale of the presentation content
         getScale: function() {
