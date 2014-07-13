@@ -4,10 +4,43 @@
  *
  * @author Hakim El Hattab
  */
+
+// Custom reveal.js integration
+(function ( window, factory ) {
+
+  if ( typeof module === "object" && typeof module.exports === "object" ) {
+    // Expose a factory as module.exports in loaders that implement the Node
+    // module pattern (including browserify).
+    // This accentuates the need for a real window in the environment
+    // e.g. var jQuery = require("jquery")(window);
+    module.exports = function( w ) {
+      w = w || window;
+      if ( !w.document ) {
+        throw new Error("Reveal plugin requires a window with a document");
+      }
+      return factory( w, w.document, require( "reveal" ), require( "mathjax" ) );
+    };
+  } else {
+    if ( typeof define === "function" && define.amd ) {
+      // AMD. Register as a named module.
+      define( [ "reveal", "mathjax" ], function(Reveal, MathJax) {
+        return factory(window, document, Reveal, MathJax);
+      });
+    } else {
+        // Browser globals
+        window.Reveal = factory(window, document, Reveal, MathJax);
+    }
+  }
+
+// Pass this, window may not be defined yet
+}(this, function ( window, document, Reveal, MathJax, undefined ) {
+
+//TBD
+
 var RevealMath = window.RevealMath || (function(){
 
     var options = Reveal.getConfig().math || {};
-    options.mathjax = options.mathjax || 'http://cdn.mathjax.org/mathjax/latest/MathJax.js';
+    //options.mathjax = options.mathjax || 'http://cdn.mathjax.org/mathjax/latest/MathJax.js';
     options.config = options.config || 'TeX-AMS_HTML-full';
 
     loadScript( options.mathjax + '?config=' + options.config, function() {
@@ -61,4 +94,6 @@ var RevealMath = window.RevealMath || (function(){
 
     }
 
+
+    return RevealMath;
 })();

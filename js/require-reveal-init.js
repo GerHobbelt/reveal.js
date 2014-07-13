@@ -1,5 +1,5 @@
-var RequireBaseURL;
-var RevealConfiguration;
+var RequireBaseURL;             // string: path
+var RevealConfiguration;        // object or function-returning-an-object
 
 (function () {
     var libdir = RequireBaseURL || 'lib/_/';
@@ -91,9 +91,9 @@ require(['zoom', 'highlight', 'marked', 'classList', 'verge', 'reveal'],
 
         // Optional libraries used to extend on reveal.js
         dependencies: [
-            { src: require.toUrl('../js/classList/classList.js'), condition: function() { 
-                return !document.body.classList; 
-            } },
+            // { src: require.toUrl('../js/classList/classList.js'), condition: function() { 
+            //     return !document.body.classList; 
+            // } },
             { src: require.toUrl('../../plugin/markdown/markdown.js'), condition: function() { 
                 return !!document.querySelector( '[data-markdown]' ); 
             } },
@@ -108,7 +108,10 @@ require(['zoom', 'highlight', 'marked', 'classList', 'verge', 'reveal'],
             { src: require.toUrl('../../plugin/search/search.js'), async: true, condition: true }
             // { src: require.toUrl('../../plugin/remotes/remotes.js'), async: true }
         ]
-    }, RevealConfiguration));
+    }, (typeof RevealConfiguration === 'function' ? 
+        RevealConfiguration(Reveal, zoom, highlight, marked, classList, verge) : 
+        RevealConfiguration)
+    ));
 
     Reveal.addEventListener( 'ready', function ( info ) {
         console.log("Reveal is READY: ", info, arguments);
