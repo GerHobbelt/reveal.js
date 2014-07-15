@@ -11,6 +11,9 @@
  *
  * @author dalexandre@jolicode.com
  */
+
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+
 @font-face {
   font-family: 'convergenceregular';
   src: url("../../lib/font/convergence-regular-webfont.eot");

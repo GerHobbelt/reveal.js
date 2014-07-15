@@ -44,6 +44,16 @@
  * GLOBAL STYLES
  *********************************************/
 
+body
+{
+    /* 
+        The page is shown (starting with an NProgress loader animation) once 
+        the reveal-pagestart-driver.js script has loaded and executed:
+        that script will set the 'display: block' style on the BODY tag.
+    */
+    display: none;
+}
+
 .reveal-viewport {
     position: relative;
     width: 100%;
@@ -68,6 +78,10 @@
     left: 0;
     top: 0;
 }
+/* prevent nasty scrollbars (at full size!) to show up in the overview rendering: */
+.reveal-viewport .reveal.overview .slides-wrapper.scrollable-slide {
+  overflow: hidden;             /* and, yes, we know we bluntly *clip* the contents here. Readability of this kind of content isn't the purpose of the overview mode anyway. */ 
+}
 
 /*********************************************
  * VIEW FRAGMENTS
@@ -77,9 +91,9 @@
     opacity: 0;
     visibility: hidden;
 
-    -webkit-transition: all .2s ease;
-       -moz-transition: all .2s ease;
-            transition: all .2s ease;
+    -webkit-transition: all 2s ease;
+       -moz-transition: all 2s ease;
+            transition: all 2s ease;
 }
     .reveal .slides section .fragment.visible {
         opacity: 1;
@@ -262,9 +276,9 @@
 
     -moz-transform: scale(.9999);
 
-    -webkit-transition: all 0.2s ease;
-       -moz-transition: all 0.2s ease;
-            transition: all 0.2s ease;
+    -webkit-transition: all 2s ease;
+       -moz-transition: all 2s ease;
+            transition: all 2s ease;
 }
 
 .reveal .controls div.enabled {
@@ -349,9 +363,9 @@
 
         background-color: #000;
 
-        -webkit-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-           -moz-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-                transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
+        -webkit-transition: width 2s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+           -moz-transition: width 2s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+                transition: width 2s cubic-bezier(0.260, 0.860, 0.440, 0.985);
     }
 
 /*********************************************
@@ -386,10 +400,10 @@
 
     pointer-events: none;
 
-    -webkit-transition: all 400ms ease;
-       -moz-transition: all 400ms ease;
-        -ms-transition: all 400ms ease;
-            transition: all 400ms ease;
+    -webkit-transition: all 2s ease;
+       -moz-transition: all 2s ease;
+        -ms-transition: all 2s ease;
+            transition: all 2s ease;
 
     -webkit-transform-origin: 50% 0%;
        -moz-transform-origin: 50% 0%;
@@ -464,11 +478,11 @@
         height: 100%;
         width: 0px;
 
-        -webkit-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-           -moz-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-            -ms-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-             -o-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-                transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
+        -webkit-transition: width 4s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+           -moz-transition: width 4s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+            -ms-transition: width 4s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+             -o-transition: width 4s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+                transition: width 4s cubic-bezier(0.260, 0.860, 0.440, 0.985);
     }
 
 
@@ -513,9 +527,9 @@
     /* z-index: 1;          -- removing this one ensures that the search plugin always shows up on top like it should. */
     text-align: center;
 
-    -webkit-transition: -webkit-perspective .4s ease;
-       -moz-transition: -moz-perspective .4s ease;
-            transition: perspective .4s ease;
+    -webkit-transition: -webkit-perspective 3s ease;
+       -moz-transition: -moz-perspective 3s ease;
+            transition: perspective 3s ease;
 
     -webkit-perspective: 600px;
        -moz-perspective: 600px;
@@ -546,18 +560,18 @@
         -ms-transform-style: preserve-3d;
             transform-style: preserve-3d;
 
-    -webkit-transition: -webkit-transform-origin 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        -webkit-transform 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        visibility 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        opacity 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-       -moz-transition: -moz-transform-origin 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        -moz-transform 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        visibility 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        opacity 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-            transition: transform-origin 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        transform 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        visibility 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        opacity 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
+    -webkit-transition: -webkit-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -webkit-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+       -moz-transition: -moz-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -moz-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+            transition: transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
 }
 
 .reveal .slides > section.visible,
@@ -610,26 +624,26 @@
 
 /* Global transition speed settings */
 .reveal[data-transition-speed="fast"] .slides section {
-    -webkit-transition-duration: 400ms;
-       -moz-transition-duration: 400ms;
-            transition-duration: 400ms;
+    -webkit-transition-duration: 2s;
+       -moz-transition-duration: 2s;
+            transition-duration: 2s;
 }
 .reveal[data-transition-speed="slow"] .slides section {
-    -webkit-transition-duration: 1200ms;
-       -moz-transition-duration: 1200ms;
-            transition-duration: 1200ms;
+    -webkit-transition-duration: 6s;
+       -moz-transition-duration: 6s;
+            transition-duration: 6s;
 }
 
 /* Slide-specific transition speed overrides */
 .reveal .slides section[data-transition-speed="fast"] {
-    -webkit-transition-duration: 400ms;
-       -moz-transition-duration: 400ms;
-            transition-duration: 400ms;
+    -webkit-transition-duration: 2s;
+       -moz-transition-duration: 2s;
+            transition-duration: 2s;
 }
 .reveal .slides section[data-transition-speed="slow"] {
-    -webkit-transition-duration: 1200ms;
-       -moz-transition-duration: 1200ms;
-            transition-duration: 1200ms;
+    -webkit-transition-duration: 6s;
+       -moz-transition-duration: 6s;
+            transition-duration: 6s;
 }
 
 .reveal .slides > section.present,
@@ -673,15 +687,15 @@
  *
  * This assumes the slide headings are encoded in <H1 > , etc.
  */
-.reveal.overview .slides > section div,
-.reveal.overview .slides > section p,
-.reveal.overview .slides > section table,
-.reveal.overview .slides > section ol,
-.reveal.overview .slides > section ul,
-.reveal.overview .slides > section dl,
-.reveal.overview .slides > section pre,
-.reveal.overview .slides > section form,
-.reveal.overview .slides > section blockquote
+x.reveal.overview .slides > section div,
+x.reveal.overview .slides > section p,
+x.reveal.overview .slides > section table,
+x.reveal.overview .slides > section ol,
+x.reveal.overview .slides > section ul,
+x.reveal.overview .slides > section dl,
+x.reveal.overview .slides > section pre,
+x.reveal.overview .slides > section form,
+x.reveal.overview .slides > section blockquote
 {
     display: none;
 }
@@ -744,6 +758,7 @@
 }
 
 
+
 /*********************************************
  * CONVEX TRANSITION
  * Aliased 'default' for backwards compatibility
@@ -786,6 +801,7 @@
         -ms-transform: translate3d(0, 300px, 0) rotateX(-70deg) translate3d(0, 300px, 0);
             transform: translate3d(0, 300px, 0) rotateX(-70deg) translate3d(0, 300px, 0);
 }
+
 
 
 /*********************************************
@@ -1119,9 +1135,11 @@
          -o-transform: none;
             transform: none;
 
-    -webkit-transition: opacity 0.5s;
-       -moz-transition: opacity 0.5s;
-            transition: opacity 0.5s;
+    -webkit-transition: opacity 5s;
+       -moz-transition: opacity 5s;
+        -ms-transition: opacity 5s;
+         -o-transition: opacity 5s;
+            transition: opacity 5s;
 }
 
 
@@ -1131,8 +1149,8 @@
 .reveal.fade.overview-deactivating .slides > section > section {
     -webkit-transition: none;
        -moz-transition: none;
-         -ms-transform: none;
-          -o-transform: none;
+        -ms-transition: none;
+         -o-transition: none;
             transition: none;
 }
 
@@ -1151,6 +1169,8 @@
 
     -webkit-transition: none;
        -moz-transition: none;
+        -ms-transition: none;
+         -o-transition: none;
             transition: none;
 }
 
@@ -1177,10 +1197,10 @@
     overflow: hidden; /* <-- removing this one made slide 20 in the demo page show consistently in the ESC overview; with this style, it would disappear when you moved past it.   :-S */
                         /* turns out you can accomplish the same overview 'fix' by killing the -webkit-transform-style: preserve-3d style as well! Definitely tickling a browser bug here! */
     /* Chrome bugfix: */
-    -webkit-transform-style: flat !important;
-       -moz-transform-style: flat !important;
-        -ms-transform-style: flat !important;
-            transform-style: flat !important;
+    -webkit-transform-style: flat;
+       -moz-transform-style: flat;
+        -ms-transform-style: flat;
+            transform-style: flat;
 
 
     opacity: 1 !important;
@@ -1199,9 +1219,11 @@
 
 .reveal.overview[data-overview-transition=none] .slides section,
 .reveal.overview-deactivating[data-overview-transition=none] .slides section {
-    -webkit-transition: none !important;
-       -moz-transition: none !important;
-            transition: none !important;
+    -webkit-transition: none;
+       -moz-transition: none;
+        -ms-transition: none;
+         -o-transition: none;
+            transition: none;
 }
 
 .reveal.overview .slides section .fragment {
@@ -1244,9 +1266,11 @@
     opacity: 0;
     z-index: 100;
 
-    -webkit-transition: all 1s ease;
-       -moz-transition: all 1s ease;
-            transition: all 1s ease;
+    -webkit-transition: all 5s ease;
+       -moz-transition: all 5s ease;
+        -ms-transition: all 5s ease;
+         -o-transition: all 5s ease;
+            transition: all 5s ease;
 }
 .reveal.paused .pause-overlay {
     visibility: visible;
@@ -1302,6 +1326,8 @@
 .reveal .no-transition * {
     -webkit-transition: none !important;
        -moz-transition: none !important;
+        -ms-transition: none !important;
+         -o-transition: none !important;
             transition: none !important;
 }
 
@@ -1321,9 +1347,11 @@
 
     background: rgba( 0, 0, 0, 0 );
 
-    -webkit-transition: background 800ms ease;
-       -moz-transition: background 800ms ease;
-            transition: background 800ms ease;
+    -webkit-transition: background 5s ease;
+       -moz-transition: background 5s ease;
+        -ms-transition: background 5s ease;
+         -o-transition: background 5s ease;
+            transition: background 5s ease;
 }
 .alert .reveal .state-background {
     background: rgba( 200, 50, 30, 0.6 );
@@ -1373,7 +1401,7 @@
             perspective: 2600px;
 }
     .reveal .slide-background {
-		display: none;
+		display: none;                /* this also nukes the transitions, so we have to ensure both the next/prev slides' backgrounds are displayed anyhow! */
         position: fixed;
         width: 100%;
         height: 100%;
@@ -1387,9 +1415,11 @@
         background-repeat: no-repeat;
         background-size: cover;
 
-        -webkit-transition: all 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-           -moz-transition: all 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
-                transition: all 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);
+        -webkit-transition: all 5s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+           -moz-transition: all 5s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+            -ms-transition: all 5s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+             -o-transition: all 5s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+                transition: all 5s cubic-bezier(0.260, 0.860, 0.440, 0.985);
     }
 
 	.reveal .slide-background.stack {
@@ -1397,10 +1427,23 @@
 	}
 
     .reveal .slide-background.present {
+        display: block;
         opacity: 1;
         visibility: visible;
-        display: block;
     }
+
+    /* override the display:none for `.reveal .slide-background` above, so we can have visible background transitions */
+    .reveal .slide-background.past-1 {
+        display: block;                
+        opacity: 1;
+        visibility: visible;
+    }
+    .reveal .slide-background.future-1 {
+        display: block;                
+        opacity: 1;
+        visibility: visible;
+    }
+
 
     .print-pdf .reveal .slide-background {
         opacity: 1 !important;
@@ -1423,6 +1466,8 @@
 .reveal > .backgrounds .slide-background[data-background-transition=none] {
     -webkit-transition: none;
        -moz-transition: none;
+        -ms-transition: none;
+         -o-transition: none;
             transition: none;
 }
 
@@ -1434,6 +1479,7 @@
     -webkit-backface-visibility: hidden;
        -moz-backface-visibility: hidden;
         -ms-backface-visibility: hidden;
+         -o-backface-visibility: hidden;
             backface-visibility: hidden;
 }
     .reveal[data-background-transition=slide] > .backgrounds .slide-background.past,
@@ -1479,6 +1525,7 @@
     -webkit-transform: translate3d(-100%, 0, 0) rotateY(-90deg) translate3d(-100%, 0, 0);
        -moz-transform: translate3d(-100%, 0, 0) rotateY(-90deg) translate3d(-100%, 0, 0);
         -ms-transform: translate3d(-100%, 0, 0) rotateY(-90deg) translate3d(-100%, 0, 0);
+         -o-transform: translate3d(-100%, 0, 0) rotateY(-90deg) translate3d(-100%, 0, 0);
             transform: translate3d(-100%, 0, 0) rotateY(-90deg) translate3d(-100%, 0, 0);
 }
 .reveal[data-background-transition=convex] > .backgrounds .slide-background.future,
@@ -1488,6 +1535,7 @@
     -webkit-transform: translate3d(100%, 0, 0) rotateY(90deg) translate3d(100%, 0, 0);
        -moz-transform: translate3d(100%, 0, 0) rotateY(90deg) translate3d(100%, 0, 0);
         -ms-transform: translate3d(100%, 0, 0) rotateY(90deg) translate3d(100%, 0, 0);
+         -o-transform: translate3d(100%, 0, 0) rotateY(90deg) translate3d(100%, 0, 0);
             transform: translate3d(100%, 0, 0) rotateY(90deg) translate3d(100%, 0, 0);
 }
 
@@ -1555,6 +1603,8 @@
 .reveal > .backgrounds .slide-background[data-background-transition=zoom] {
     -webkit-transition-timing-function: ease;
        -moz-transition-timing-function: ease;
+        -ms-transition-timing-function: ease;
+         -o-transition-timing-function: ease;
             transition-timing-function: ease;
 }
 
@@ -1607,14 +1657,14 @@
 
 /* Global transition speed settings */
 .reveal[data-transition-speed="fast"] > .backgrounds .slide-background {
-    -webkit-transition-duration: 400ms;
-       -moz-transition-duration: 400ms;
-            transition-duration: 400ms;
+    -webkit-transition-duration: 2s;
+       -moz-transition-duration: 2s;
+            transition-duration: 2s;
 }
 .reveal[data-transition-speed="slow"] > .backgrounds .slide-background {
-    -webkit-transition-duration: 1200ms;
-       -moz-transition-duration: 1200ms;
-            transition-duration: 1200ms;
+    -webkit-transition-duration: 5s;
+       -moz-transition-duration: 5s;
+            transition-duration: 5s;
 }
 
 
@@ -1652,21 +1702,21 @@
  *********************************************/
 
 .reveal.has-parallax-background .backgrounds {
-    -webkit-transition: all 0.8s ease;
-       -moz-transition: all 0.8s ease;
-            transition: all 0.8s ease;
+    -webkit-transition: all 5s ease;
+       -moz-transition: all 5s ease;
+            transition: all 5s ease;
 }
 
 /* Global transition speed settings */
 .reveal.has-parallax-background[data-transition-speed="fast"] .backgrounds {
-    -webkit-transition-duration: 400ms;
-       -moz-transition-duration: 400ms;
-            transition-duration: 400ms;
+    -webkit-transition-duration: 3s;
+       -moz-transition-duration: 3s;
+            transition-duration: 3s;
 }
 .reveal.has-parallax-background[data-transition-speed="slow"] .backgrounds {
-    -webkit-transition-duration: 1200ms;
-       -moz-transition-duration: 1200ms;
-            transition-duration: 1200ms;
+    -webkit-transition-duration: 6s;
+       -moz-transition-duration: 6s;
+            transition-duration: 6s;
 }
 
 
@@ -1685,9 +1735,9 @@
  	opacity: 0;
  	visibility: hidden;
 
- 	-webkit-transition: all 0.3s ease;
- 	   -moz-transition: all 0.3s ease;
- 	        transition: all 0.3s ease;
+ 	-webkit-transition: all 3s ease;
+ 	   -moz-transition: all 3s ease;
+ 	        transition: all 3s ease;
 }
 	.reveal .overlay.visible {
  		opacity: 1;
@@ -1708,9 +1758,9 @@
  		visibility: visible;
  		opacity: 0.6;
 
- 		-webkit-transition: all 0.3s ease;
- 		   -moz-transition: all 0.3s ease;
- 		        transition: all 0.3s ease;
+ 		-webkit-transition: all 3s ease;
+ 		   -moz-transition: all 3s ease;
+ 		        transition: all 3s ease;
  	}
 
 	.reveal .overlay header {
@@ -1769,9 +1819,9 @@
  		opacity: 0;
  		visibility: hidden;
 
- 		-webkit-transition: all 0.3s ease;
- 		   -moz-transition: all 0.3s ease;
- 		        transition: all 0.3s ease;
+ 		-webkit-transition: all 3s ease;
+ 		   -moz-transition: all 3s ease;
+ 		        transition: all 3s ease;
  	}
 
 	.reveal .overlay.overlay-preview.loaded .viewport iframe {
@@ -1838,9 +1888,9 @@
     z-index: 30;
     cursor: pointer;
 
-    -webkit-transition: all 400ms ease;
-       -moz-transition: all 400ms ease;
-            transition: all 400ms ease;
+    -webkit-transition: all 3s ease;
+       -moz-transition: all 3s ease;
+            transition: all 3s ease;
 }
 
 .reveal.overview .playback {
@@ -1881,9 +1931,9 @@
 
     pointer-events: none;
 
-    -webkit-transition: all 400ms ease;
-       -moz-transition: all 400ms ease;
-            transition: all 400ms ease;
+    -webkit-transition: all 3s ease;
+       -moz-transition: all 3s ease;
+            transition: all 3s ease;
 
     -webkit-transform-origin: 50% 0%;
        -moz-transform-origin: 50% 0%;

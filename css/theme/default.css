@@ -46,13 +46,13 @@ body.print-pdf {
 }
 
 
-.reveal .slides>section.omnipresent {
+.reveal .slides > section.omnipresent {
   display: block;
   z-index: 11;
   opacity: 1;
 }
 
-.reveal .slides>section>div.omnipresent, .reveal .slides>section>section>div.omnipresent {
+.reveal .slides > section > div.omnipresent, .reveal .slides > section > section > div.omnipresent {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -81,18 +81,18 @@ body.print-pdf {
 
 
 .titlebar {
-  -webkit-transition: opacity .15s ease;
-  -moz-transition: opacity .15s ease;
-  -ms-transition: opacity .15s ease;
-  -o-transition: opacity .15s ease;
-  transition: opacity .15s ease;
+  -webkit-transition: opacity 2s ease;
+  -moz-transition: opacity 2s ease;
+  -ms-transition: opacity 2s ease;
+  -o-transition: opacity 2s ease;
+  transition: opacity 2s ease;
 }
 
 body:not([data-slide='1']) .titlebar {
   opacity: 0;
 }
 
-body.print-pdf .reveal .slides>section.omnipresent {
+body.print-pdf .reveal .slides > section.omnipresent {
   display: none !important;
 }
 
@@ -251,6 +251,12 @@ body.print-pdf .titlebar {
   background: #3F3F3F;
   color: #DCDCDC; }
 
+/* prevent nasty scrollbars (at full size!) to show up in the overview rendering: */
+.reveal.overview pre code {
+  overflow: hidden;             /* and, yes, we know we bluntly *clip* the contents here. Readability of this kind of content isn't the purpose of the overview mode anyway. */ 
+}
+
+
 .reveal table {
   margin: auto;
   border-collapse: collapse;
@@ -289,11 +295,11 @@ body.print-pdf .titlebar {
 .reveal a {
   color: #13daec;
   text-decoration: none;
-  -webkit-transition: color .15s ease;
-  -moz-transition: color .15s ease;
-  -ms-transition: color 0.15s ease;
-  -o-transition: color 0.15s ease;
-  transition: color .15s ease; }
+  -webkit-transition: color 2s ease;
+  -moz-transition: color 2s ease;
+  -ms-transition: color 2s ease;
+  -o-transition: color 2s ease;
+  transition: color 2s ease; }
 
 .reveal a:hover {
   color: #71e9f4;
@@ -314,11 +320,11 @@ body.print-pdf .titlebar {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); }
 
 .reveal a img {
-  -webkit-transition: all .15s linear;
-  -moz-transition: all .15s linear;
-  -ms-transition: all .15s linear;
-  -o-transition: all .15s linear;
-  transition: all .15s linear; }
+  -webkit-transition: all 2s linear;
+  -moz-transition: all 2s linear;
+  -ms-transition: all 2s linear;
+  -o-transition: all 2s linear;
+  transition: all 2s linear; }
 
 .reveal a:hover img {
   background: rgba(255, 255, 255, 0.2);
@@ -364,11 +370,11 @@ body.print-pdf .titlebar {
 
 .reveal .progress span {
   background: #13daec;
-  -webkit-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
-  -moz-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
-  -ms-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
-  -o-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
-  transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985); }
+  -webkit-transition: width 3s cubic-bezier(0.26, 0.86, 0.44, 0.985);
+  -moz-transition: width 3s cubic-bezier(0.26, 0.86, 0.44, 0.985);
+  -ms-transition: width 3s cubic-bezier(0.26, 0.86, 0.44, 0.985);
+  -o-transition: width 3s cubic-bezier(0.26, 0.86, 0.44, 0.985);
+  transition: width 3s cubic-bezier(0.26, 0.86, 0.44, 0.985); }
 
 /*********************************************
  * SLIDE NUMBER

@@ -1820,7 +1820,6 @@ TBD end of old code, start of new code
             // Select all slides, vertical and horizontal
             var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
 
-
             // before calculating the slide height, we must nuke the previously patching in padding/top/etc. to get a correct measurement,
             // but don't do this when we're in overview mode as then it would damage the layout while we move through the slide set in the overview.
             if ( !overview_slides_info ) {
@@ -1834,12 +1833,12 @@ TBD end of old code, start of new code
                 }
 
                 // Remove the height pinning we did in overview mode now that we're *out* of overview mode.
-                for( i = 0, len = slides.length; i < len; i++ ) {
-                    var sl = slides[ i ];
-                    sl.style.height = null;
-                    sl.style.paddingTop = null;
-                    sl.style.paddingBottom = null;
-                }
+                // for( i = 0, len = slides.length; i < len; i++ ) {
+                //     var sl = slides[ i ];
+                //     sl.style.height = null;
+                //     sl.style.paddingTop = null;
+                //     sl.style.paddingBottom = null;
+                // }
 
                 dom.slides.style.width = null;
                 dom.slides.style.height = null;
@@ -1862,11 +1861,11 @@ TBD end of old code, start of new code
                     slide.style.height = null;
                     slide.style.width = null;
             
-                    if (0) {
-                        slide.style.paddingTop = 0;
-                        slide.style.paddingBottom = 0;
+                    if (1) {
+                        slide.style.paddingTop = null;
+                        slide.style.paddingBottom = null;
                         slide.style.height = null;
-                        slide.style.top = 0;
+                        slide.style.top = null;
                     }
                 }
             }
@@ -1882,12 +1881,14 @@ TBD end of old code, start of new code
                     dom.slides.style.width = targetInfo.slideWidth + 'px';
                     dom.slides.style.height = targetInfo.slideHeight + 'px';
                 }
+                slide.style.width = targetInfo.slideWidth + 'px';
                 slideDimensions = getAbsoluteSize( slide );
+                slide.style.width = null;
                 if (1) {
                     slide.style.paddingTop = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2)) + 'px';
                     slide.style.paddingBottom = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2)) + 'px';
-                    // slide.style.height = targetInfo.slideHeight + 'px';
-                    // slide.style.top = '0px';
+                    slide.style.height = Math.max(targetInfo.slideHeight, slideDimensions.height) + 'px';
+                    slide.style.top = '0px';
                 }
             }
 
@@ -1973,7 +1974,7 @@ TBD end of old code, start of new code
                 if (0) {
                     slide.style.paddingTop = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2)) + 'px';
                     slide.style.paddingBottom = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2)) + 'px';
-                    slide.style.height = targetInfo.slideHeight + 'px';
+                    slide.style.height = Math.max(targetInfo.slideHeight, slideDimensions.height) + 'px';
                     slide.style.top = '0px';
                 }
             }
@@ -2044,7 +2045,9 @@ TBD end of old code, start of new code
                     overviewScale /= scale;
 
                     // compensate for the 3D depth (heuristic)
-                    overviewScale *= 50 / Math.max(1, Math.min(getViewDistance(), overview_slides_info.horizontal_count));
+                    // there's ZERO depth, as the depth caused all kinds of flukes in the animation;
+                    // now we simply scale the overview to fit the viewport.
+                    //overviewScale *= 50 / Math.max(1, Math.min(getViewDistance(), overview_slides_info.horizontal_count));
 
                     // Respect max/min scale settings
                     overviewScale = Math.max( overviewScale, config.overviewMinScale );
@@ -2066,14 +2069,14 @@ TBD end of old code, start of new code
                 for( i = 0, len = slides.length; i < len; i++ ) {
                     var slide = slides[ i ];
                     // before calculating the slide height, we must nuke the previously patching in padding/top/etc. to get a correct measurement:
-                    slide.style.paddingTop = '0px';
-                    slide.style.paddingBottom = '0px';
+                    slide.style.paddingTop = null;
+                    slide.style.paddingBottom = null;
                     slide.style.height = null;
-                    slide.style.top = '0px';
+                    slide.style.top = null;
                     var wh = getAbsoluteSize( slide );
                     slide.style.paddingTop = Math.max(0, Math.floor((targetInfo.slideHeight - wh.height) / 2)) + 'px';
                     slide.style.paddingBottom = Math.max(0, Math.floor((targetInfo.slideHeight - wh.height) / 2)) + 'px';
-                    slide.style.height = targetInfo.slideHeight + 'px';
+                    slide.style.height = Math.max(targetInfo.slideHeight, wh.height) + 'px';
                     slide.style.top = '0px';
                 }
 
@@ -2099,19 +2102,26 @@ TBD end of old code, start of new code
                             }
                             else {
                                 // before calculating the slide height, we must nuke the previously patching in padding/top/etc. to get a correct measurement:
-                                // slide.style.paddingTop = '0px';
-                                // slide.style.paddingBottom = '0px';
-                                // slide.style.height = '';
-                                slide.style.top = '0px';
+                                slide.style.paddingTop = null;
+                                slide.style.paddingBottom = null;
+                                slide.style.height = null;
+                                slide.style.top = null;
                                 var wh = getAbsoluteSize( slide );
-                                var top = ( ( targetInfo.slideHeight - wh.height ) / 2 ) - targetInfo.slidePadding;
-                                slide.style.top = Math.max( Math.floor( top ), 0 ) + 'px';
-                                // NEVER set height to 'auto' as it will nuke the fixed-height assuming overview mode:
-                                //slide.style.height = (top > 0 ? 'auto' : '');
+                                slide.style.paddingTop = Math.max(0, Math.floor((targetInfo.slideHeight - wh.height) / 2)) + 'px';
+                                slide.style.paddingBottom = Math.max(0, Math.floor((targetInfo.slideHeight - wh.height) / 2)) + 'px';
+                                if (0) {
+                                    slide.style.height = Math.max(targetInfo.slideHeight, wh.height) + 'px';
+                                } else {
+                                    // clip bottom off the slide in overview mode when slide is overlarge: 
+                                    // we have a fixed space to show each slide in there and we don't want 
+                                    // to be bothered with extra scaling (which will shrink the slide horizontally as well).
+                                    slide.style.height = targetInfo.slideHeight + 'px';
+                                }
+                                slide.style.top = '0px';
                             }
                         }
                         else {
-                            slide.style.top = '';
+                            slide.style.top = null;
                         }
                     }
                     else {
@@ -2119,7 +2129,7 @@ TBD end of old code, start of new code
                         if( config.center || slide.classList.contains( 'center' ) ) {
                             // Vertical stacks are not centred since their section children will be
                             if( slide.classList.contains( 'stack' ) ) {
-                                slide.style.height = '';
+                                slide.style.height = null;
                                 slide.style.top = 0;
                             }
                             else {
@@ -2128,8 +2138,8 @@ TBD end of old code, start of new code
                             }
                         }
                         else {
-                            slide.style.height = '';
-                            slide.style.top = '';
+                            slide.style.height = null;
+                            slide.style.top = null;
                         }
 
                     }
@@ -2290,7 +2300,7 @@ TBD end of old code, start of new code
             var wasActive = dom.wrapper.classList.contains( 'overview' );
 
             // Vary the depth of the overview based on screen size
-            var depth = window.innerWidth < 400 ? 1000 : 2500;
+            //var depth = window.innerWidth < 400 ? 1000 : 2500;
 
             dom.wrapper.classList.add( 'overview' );
             dom.wrapper.classList.remove( 'overview-deactivating' );
@@ -2317,7 +2327,7 @@ TBD end of old code, start of new code
                     hslide.setAttribute( 'data-index-h', i );
 
                     // Apply CSS transform
-                    transformElement( hslide, 'translate3d( ' + ( ( i - indexh ) * hoffset ) + '%, 0px, '+ (getSpecialOverviewMode() === 1 ? -depth : 0) + 'px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)', '50% 50%' );
+                    transformElement( hslide, 'translate3d( ' + ( ( i - indexh ) * hoffset ) + '%, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)', '50% 50%' );
 
                     if( hslide.classList.contains( 'stack' ) ) {
 
@@ -2394,7 +2404,7 @@ TBD end of old code, start of new code
 
             deactivateOverviewTimeout = setTimeout( function () {
                 dom.wrapper.classList.remove( 'overview-deactivating' );
-            }, 1 );
+            }, 50 );
 
             // Select all slides
 			toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
@@ -2813,9 +2823,13 @@ TBD end of old code, start of new code
             verticalSlides.forEach( function( verticalSlide, y ) {
 
                 if( y > 0 ) {
-                    verticalSlide.classList.remove( 'present' );
+                    verticalSlide.classList.remove( 'past-1' );
                     verticalSlide.classList.remove( 'past' );
+                    verticalSlide.classList.remove( 'present' );
                     verticalSlide.classList.add( 'future' );
+                    if (y === 1) {
+                        verticalSlide.classList.add( 'future-1' );
+                    }
 					verticalSlide.setAttribute( 'aria-hidden', 'true' );
                 }
 
@@ -2908,9 +2922,11 @@ TBD end of old code, start of new code
 
                 var reverse = config.rtl && !isVerticalSlide( element );
 
+                element.classList.remove( 'past-1' );
                 element.classList.remove( 'past' );
                 element.classList.remove( 'present' );
                 element.classList.remove( 'future' );
+                element.classList.remove( 'future-1' );
 
                 // http://www.w3.org/html/wg/drafts/html/master/editing.html#the-hidden-attribute
                 element.setAttribute( 'hidden', '' );
@@ -2925,6 +2941,9 @@ TBD end of old code, start of new code
                 if( i < index ) {
                     // Any element previous to index is given the 'past' class
                     element.classList.add( reverse ? 'future' : 'past' );
+                    if ( i + 1 === index ) {
+                        element.classList.add( reverse ? 'future-1' : 'past-1' );
+                    }
 
                     if( config.fragments ) {
                         var pastFragments = toArray( element.querySelectorAll( '.fragment' ) );
@@ -2940,6 +2959,9 @@ TBD end of old code, start of new code
                 else if( i > index ) {
                     // Any element subsequent to index is given the 'future' class
                     element.classList.add( reverse ? 'past' : 'future' );
+                    if ( i - 1 === index ) {
+                        element.classList.add( reverse ? 'past-1' : 'future-1' );
+                    }
 
                     if( config.fragments ) {
                         var futureFragments = toArray( element.querySelectorAll( '.fragment.visible' ) );
@@ -2971,10 +2993,16 @@ TBD end of old code, start of new code
                             if( i < index ) {
                                 // Any element previous to index is given the 'past' class
                                 subelement.classList.add( reverse ? 'future' : 'past' );
+                                if ( i + 1 === index ) {
+                                    subelement.classList.add( reverse ? 'future-1' : 'past-1' );
+                                }
                             }
                             else if( i > index ) {
                                 // Any element subsequent to index is given the 'future' class
                                 subelement.classList.add( reverse ? 'past' : 'future' );
+                                if ( i - 1 === index ) {
+                                    subelement.classList.add( reverse ? 'past-1' : 'future-1' );
+                                }
                             }
                         }
                     }
@@ -3222,15 +3250,23 @@ TBD end of old code, start of new code
         // states of their slides (past/present/future)
         toArray( dom.background.childNodes ).forEach( function( backgroundh, h ) {
 
+            backgroundh.classList.remove( 'past-1' );
             backgroundh.classList.remove( 'past' );
             backgroundh.classList.remove( 'present' );
             backgroundh.classList.remove( 'future' );
+            backgroundh.classList.remove( 'future-1' );
 
             if( h < indexh ) {
                 backgroundh.classList.add( horizontalPast );
+                if ( h + 1 === indexh ) {
+                    backgroundh.classList.add( horizontalPast + '-1' );
+                }
             }
             else if ( h > indexh ) {
                 backgroundh.classList.add( horizontalFuture );
+                if ( h - 1 === indexh ) {
+                    backgroundh.classList.add( horizontalFuture + '-1' );
+                }
             }
             else {
                 backgroundh.classList.add( 'present' );
@@ -3241,22 +3277,36 @@ TBD end of old code, start of new code
 
             toArray( backgroundh.querySelectorAll( ':scope > .slide-background' ) ).forEach( function( backgroundv, v ) {
 
+                backgroundv.classList.remove( 'past-1' );
                 backgroundv.classList.remove( 'past' );
                 backgroundv.classList.remove( 'present' );
                 backgroundv.classList.remove( 'future' );
+                backgroundv.classList.remove( 'future-1' );
 
                 if( h < indexh ) {
                     backgroundv.classList.add( horizontalPast );
+                    if ( h + 1 === indexh ) {
+                        backgroundv.classList.add( horizontalPast + '-1' );
+                    }
                 }
                 else if ( h > indexh ) {
                     backgroundv.classList.add( horizontalFuture );
+                    if ( h - 1 === indexh ) {
+                        backgroundv.classList.add( horizontalFuture + '-1' );
+                    }
                 }
                 else {
                     if( v < indexv ) {
                         backgroundv.classList.add( 'past' );
+                        if ( v + 1 === indexv ) {    
+                            backgroundv.classList.add( 'past-1' );
+                        }
                     }
                     else if ( v > indexv ) {
                         backgroundv.classList.add( 'future' );
+                        if ( v - 1 === indexv ) {
+                            backgroundv.classList.add( 'future-1' );
+                        }
                     }
                     else {
                         backgroundv.classList.add( 'present' );
