@@ -3276,7 +3276,7 @@ TBD end of old code, start of new code
                 //
                 // In regular display mode, we only ever want to see the previous slide and the current slide,
                 // for the sake of smooth transitions. 
-                if( distanceX <= viewDistance && ( isOverview() || distanceX === 0 || x === previousIndexh ) ) {
+                if( distanceX <= viewDistance ) {
                     console.log("updateSlidesVisibility: slide ", x, " SHOW: ", distanceX, "<=", viewDistance);
 					showSlide( horizontalSlide );
                     if ( distanceX !== 0 && !isOverview() ) {
@@ -3297,7 +3297,7 @@ TBD end of old code, start of new code
 
 						distanceY = x === ( indexh || 0 ) ? Math.abs( ( indexv || 0 ) - y ) : Math.abs( y - oy );
 
-                        if( distanceX + distanceY <= viewDistance && ( isOverview() || distanceX + distanceY === 0 || ( x === previousIndexh && y === previousIndexv ) ) ) {
+                        if( distanceX + distanceY <= viewDistance ) {
                             console.log("updateSlidesVisibility: slide ", x, ", ", y, " SHOW: ", distanceX, "+", distanceY, "<=", viewDistance);
 							showSlide( verticalSlide );
                             if ( distanceX + distanceY !== 0 && !isOverview() ) {
