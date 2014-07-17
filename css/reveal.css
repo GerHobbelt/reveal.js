@@ -478,11 +478,11 @@ body
         height: 100%;
         width: 0px;
 
-        -webkit-transition: width 4s cubic-bezier(0.260, 0.860, 0.440, 0.985);
-           -moz-transition: width 4s cubic-bezier(0.260, 0.860, 0.440, 0.985);
-            -ms-transition: width 4s cubic-bezier(0.260, 0.860, 0.440, 0.985);
-             -o-transition: width 4s cubic-bezier(0.260, 0.860, 0.440, 0.985);
-                transition: width 4s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+        -webkit-transition: width 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+           -moz-transition: width 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+            -ms-transition: width 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+             -o-transition: width 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+                transition: width 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
     }
 
 
@@ -596,8 +596,24 @@ body
     display: -ms-flexbox;
     display: flex;
 
-    /* auto-create Y-scrollbar in sheets when their dimensions are percentage-based */
+    -webkit-box-sizing: content-box;
+       -moz-box-sizing: content-box;
+            box-sizing: content-box;
+    /*
+        Together with the flex box model, this will ensure slides are centered by simply setting their height.
+     */
+
+    /*
+    The alternative, the classic box model:
+
     display: block;
+
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+    */    
+
+    /* auto-create Y-scrollbar in sheets when their dimensions are percentage-based */
     overflow-y: hidden; /* auto */
     overflow-x: hidden;
 
@@ -629,9 +645,9 @@ body
             transition-duration: 2s;
 }
 .reveal[data-transition-speed="slow"] .slides section {
-    -webkit-transition-duration: 6s;
-       -moz-transition-duration: 6s;
-            transition-duration: 6s;
+    -webkit-transition-duration: 3s;
+       -moz-transition-duration: 3s;
+            transition-duration: 3s;
 }
 
 /* Slide-specific transition speed overrides */
@@ -641,9 +657,9 @@ body
             transition-duration: 2s;
 }
 .reveal .slides section[data-transition-speed="slow"] {
-    -webkit-transition-duration: 6s;
-       -moz-transition-duration: 6s;
-            transition-duration: 6s;
+    -webkit-transition-duration: 3s;
+       -moz-transition-duration: 3s;
+            transition-duration: 3s;
 }
 
 .reveal .slides > section.present,
@@ -665,13 +681,33 @@ body
     pointer-events: auto;
 }
 
-/* reset all transforms that may be active for a slide when we switch to overview mode */
+/* 
+ * Reset all transforms that may be active for a slide when we switch to overview mode.
+ */
 .reveal.overview .slides > section,
 .reveal.overview .slides > section > section {
         -webkit-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
            -moz-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
             -ms-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
+             -o-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
                 transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
+}
+
+/*
+ * This 'reset-transitions' class is used to RESET any pending transitions when we go from 
+ * regular to overview mode.
+ *
+ * Inspired by: http://www.bennadel.com/blog/2462-understanding-css-transitions-and-class-timing-revisited.htm;
+ */
+.reveal.reset-transitions .slides section,
+.reveal.reset-transitions .slides > section > section,
+.reveal.reset-transitions .slides section,
+.reveal.reset-transitions .slides > section > section {
+    -webkit-transition: none !important;
+       -moz-transition: none !important;
+        -ms-transition: none !important;
+         -o-transition: none !important;
+            transition: none !important;
 }
 
 
@@ -1135,11 +1171,11 @@ x.reveal.overview .slides > section blockquote
          -o-transform: none;
             transform: none;
 
-    -webkit-transition: opacity 5s;
-       -moz-transition: opacity 5s;
-        -ms-transition: opacity 5s;
-         -o-transition: opacity 5s;
-            transition: opacity 5s;
+    -webkit-transition: opacity 3s;
+       -moz-transition: opacity 3s;
+        -ms-transition: opacity 3s;
+         -o-transition: opacity 3s;
+            transition: opacity 3s;
 }
 
 
@@ -1207,7 +1243,6 @@ x.reveal.overview .slides > section blockquote
     visibility: visible !important;
     cursor: pointer;
     background: rgba(0,0,0,0.1);
-	box-sizing: border-box;
 }
 .reveal.overview {
     /* Chrome bugfix: */
@@ -1266,11 +1301,11 @@ x.reveal.overview .slides > section blockquote
     opacity: 0;
     z-index: 100;
 
-    -webkit-transition: all 5s ease;
-       -moz-transition: all 5s ease;
-        -ms-transition: all 5s ease;
-         -o-transition: all 5s ease;
-            transition: all 5s ease;
+    -webkit-transition: all 3s ease;
+       -moz-transition: all 3s ease;
+        -ms-transition: all 3s ease;
+         -o-transition: all 3s ease;
+            transition: all 3s ease;
 }
 .reveal.paused .pause-overlay {
     visibility: visible;
@@ -1347,11 +1382,11 @@ x.reveal.overview .slides > section blockquote
 
     background: rgba( 0, 0, 0, 0 );
 
-    -webkit-transition: background 5s ease;
-       -moz-transition: background 5s ease;
-        -ms-transition: background 5s ease;
-         -o-transition: background 5s ease;
-            transition: background 5s ease;
+    -webkit-transition: background 3s ease;
+       -moz-transition: background 3s ease;
+        -ms-transition: background 3s ease;
+         -o-transition: background 3s ease;
+            transition: background 3s ease;
 }
 .alert .reveal .state-background {
     background: rgba( 200, 50, 30, 0.6 );
@@ -1415,11 +1450,11 @@ x.reveal.overview .slides > section blockquote
         background-repeat: no-repeat;
         background-size: cover;
 
-        -webkit-transition: all 5s cubic-bezier(0.260, 0.860, 0.440, 0.985);
-           -moz-transition: all 5s cubic-bezier(0.260, 0.860, 0.440, 0.985);
-            -ms-transition: all 5s cubic-bezier(0.260, 0.860, 0.440, 0.985);
-             -o-transition: all 5s cubic-bezier(0.260, 0.860, 0.440, 0.985);
-                transition: all 5s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+        -webkit-transition: all 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+           -moz-transition: all 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+            -ms-transition: all 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+             -o-transition: all 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+                transition: all 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
     }
 
 	.reveal .slide-background.stack {
@@ -1433,14 +1468,14 @@ x.reveal.overview .slides > section blockquote
     }
 
     /* override the display:none for `.reveal .slide-background` above, so we can have visible background transitions */
-    .reveal .slide-background.past-1 {
+    .reveal .slide-background.visible.past-1 {
         display: block;                
-        opacity: 1;
+        opacity: 0;
         visibility: visible;
     }
-    .reveal .slide-background.future-1 {
+    .reveal .slide-background.visible.future-1 {
         display: block;                
-        opacity: 1;
+        opacity: 0;
         visibility: visible;
     }
 
@@ -1662,9 +1697,9 @@ x.reveal.overview .slides > section blockquote
             transition-duration: 2s;
 }
 .reveal[data-transition-speed="slow"] > .backgrounds .slide-background {
-    -webkit-transition-duration: 5s;
-       -moz-transition-duration: 5s;
-            transition-duration: 5s;
+    -webkit-transition-duration: 3s;
+       -moz-transition-duration: 3s;
+            transition-duration: 3s;
 }
 
 
@@ -1702,9 +1737,9 @@ x.reveal.overview .slides > section blockquote
  *********************************************/
 
 .reveal.has-parallax-background .backgrounds {
-    -webkit-transition: all 5s ease;
-       -moz-transition: all 5s ease;
-            transition: all 5s ease;
+    -webkit-transition: all 3s ease;
+       -moz-transition: all 3s ease;
+            transition: all 3s ease;
 }
 
 /* Global transition speed settings */
@@ -1714,9 +1749,9 @@ x.reveal.overview .slides > section blockquote
             transition-duration: 3s;
 }
 .reveal.has-parallax-background[data-transition-speed="slow"] .backgrounds {
-    -webkit-transition-duration: 6s;
-       -moz-transition-duration: 6s;
-            transition-duration: 6s;
+    -webkit-transition-duration: 3s;
+       -moz-transition-duration: 3s;
+            transition-duration: 3s;
 }
 
 

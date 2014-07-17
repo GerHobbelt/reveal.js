@@ -76,19 +76,19 @@
             overviewMinScale: 0.01,
             overviewMaxScale: 1.0,
 
-            // Display controls in the bottom right corner
+            // {boolean} Display controls in the bottom right corner
             controls: true,
 
-            // Display a presentation progress bar
+            // {boolean} Display a presentation progress bar
             progress: true,
 
             // Display a subtle timer bar (time is in minutes)
             timeRemaining: 0,
 
-            // Display the page number of the current slide
+            // {boolean} Display the page number of the current slide
             slideNumber: false,
 
-            // Push each slide change to the browser history
+            // {boolean} Push each slide change to the browser history
             history: false,
 
             // Enable keyboard shortcuts for navigation
@@ -97,29 +97,29 @@
             // Optional function that blocks keyboard events when returning false
             keyboardCondition: nil_function,
 
-            // Enable the slide overview mode (FALSE | TRUE | 'translateZ' | 'translate3d' | 'zoom' | 'perspective' | 'scale')
-            overview: 'perspective',
+            // {boolean} Enable the slide overview mode
+            overview: true,
 
-            // Vertical centering of slides
+            // {boolean} Vertical centering of slides
             center: true,
 
-            // Enables touch navigation on devices with touch input
+            // {boolean} Enables touch navigation on devices with touch input
             touch: true,
 
-            // Loop the presentation
+            // {boolean} Loop the presentation
             loop: false,
 
-            // Change the presentation direction to be RTL
+            // {boolean} Change the presentation direction to be RTL
             rtl: false,
 
-            // Turns fragments on and off globally
+            // {boolean} Turns fragments on and off globally
             fragments: true,
 
-            // Flags if the presentation is running in an embedded mode,
+            // {boolean} Flags if the presentation is running in an embedded mode,
             // i.e. contained within a limited portion of the screen
             embedded: false,
 
-			// Flags if we should show a help overlay when the questionmark
+			// Flags if we should show a help overlay when the '?' questionmark
 			// key is pressed
 			help: true,
 
@@ -128,28 +128,28 @@
             // by using a data-autoslide attribute on your slides
             autoSlide: 0,
 
-            // Stop auto-sliding after user input
+            // {boolean} Stop auto-sliding after user input
             autoSlideStoppable: true,
 
-            // Enable slide navigation via mouse wheel
+            // {boolean} Enable slide navigation via mouse wheel
             mouseWheel: false,
 
-            // Apply a 3D roll to links on hover
+            // {boolean} Apply a 3D roll to links on hover
             rollingLinks: false,
 
-            // Hides the address bar on mobile devices
+            // {boolean} Hides the address bar on mobile devices
             hideAddressBar: true,
 
-            // Opens links in an iframe preview overlay
+            // {boolean} Opens links in an iframe preview overlay
             previewLinks: false,
 
-            // Exposes the reveal.js API through window.postMessage
+            // {boolean} Exposes the reveal.js API through window.postMessage
             postMessage: true,
 
-            // Dispatches all reveal.js events to the parent window through postMessage
+            // {boolean} Dispatches all reveal.js events to the parent window through postMessage
             postMessageEvents: false,
 
-            // Focuses body when page changes visibility to ensure keyboard shortcuts work
+            // {boolean} Focuses body when page changes visibility to ensure keyboard shortcuts work
             focusBodyOnPageVisibilityChange: true,
 
             // Theme (see /css/theme)
@@ -164,17 +164,17 @@
             // Transition style for full page slide backgrounds
             backgroundTransition: 'default', // default/cube/page/slide/concave/convex/zoom/linear/fade/none
 
+            // number of milliseconds the CSS transitions will take when navigating the deck, worst case
+            transitionMaxDuration: 3000,
+
             // Parallax background image
             parallaxBackgroundImage: '', // CSS syntax, e.g. 'a.jpg'
 
             // // Parallax background size [DEPRECATED]
             // parallaxBackgroundSize: '', // CSS syntax, e.g. '3000px 2000px'
 
-            // Number of slides away from the current that are visible (the minimum is 1 IFF we want the slide animations to show both the old and the new slide during transitions)
-            viewDistance: 1,
-
             // Number of slides away from the current that are visible in overview mode
-            overviewViewDistance: 6,
+            viewDistance: 6,
 
             // Script dependencies to load
             dependencies: []
@@ -188,6 +188,10 @@
         indexh /* = undefined */,
         indexv /* = undefined */,
 
+        // The horizontal and vertical index of the previously active slide
+        previousIndexh = null,
+        previousIndexv = null,
+
         // The previous and current slide HTML elements
         previousSlide = null,
         currentSlide /* = undefined */,
@@ -199,7 +203,7 @@
         // all current slides.
         state = [],
 
-        // NULL when a single slide is shown; in overview mode this contains the overview info (number of H/V slides, ...)
+        // contains the overview info (number of H/V slides, ...)
         overview_slides_info = null,
 
         // The current scale of the presentation (see width/height config)
@@ -226,11 +230,17 @@
         // Delays updates to the URL due to a Chrome thumbnailer bug
         writeURLTimeout = 0,
 
-        // A delay used to activate the overview mode
-        activateOverviewTimeout = 0,
+        // Registers what the viewDistance settings are for the present overview
+        currentOverviewInfo = null,
 
-        // A delay used to deactivate the overview mode
-        deactivateOverviewTimeout = 0,
+        // {setTimeout handler} A delay used to activate the overview mode
+        // activateOverviewTimeout = null,
+
+        // {setTimeout handler} A delay used to deactivate the overview mode
+        deactivateOverviewTimeout = null,
+
+        // {setTimeout handler} A delay used to hide next/previous slides in the deck after the transition to the new current slide has completed.
+        transitionMaxDurationTimeout = null,
 
         // Flags if the interaction event listeners are bound
         eventsAreBound = false,
@@ -289,12 +299,17 @@
         return !!condition;
     }
 
+
     /**
      * Starts up the presentation if the client is capable.
      *
      * Return FALSE when the function failed to run to completion.
      */
     function initialize( options ) {
+
+        if ( !document.body ) {
+            return false;
+        }
 
         checkCapabilities();
 
@@ -326,7 +341,7 @@
             if (!dom.viewport.classList.contains('no-transforms')) {
                 dom.viewport.classList.add('no-transforms');
             }
-            return false;
+            return true;
         }
     
 		//dom.wrapper = document.querySelector( '.reveal' );
@@ -338,7 +353,7 @@
         var query = Reveal.getQueryHash();
 
         // Do not accept new dependencies via query config 
-        // which may specify user-defined JavaScript code to avoid
+        // (which may specify user-defined JavaScript code) to avoid
         // the potential of malicious script injection. Same goes for
         // keyboardCondition option which can be used to inject 
         // malicious code.
@@ -352,8 +367,9 @@
         // Copy options over to our config object
         extend( config, options );
         extend( config, query, function( fieldname ) {
-            // filter 1: only accept query parameters which do already exist in our `config` object
-            // filter 2: only accept query parameters which do not contain executable JavaScript code
+            // filter 1: only accept query parameters which do already exist in our `config` object.
+            //
+            // filter 2: only accept query parameters which do not contain executable JavaScript code.
             return typeof config[fieldname] !== 'undefined'
                 && typeof config[fieldname] !== 'function';
         } );
@@ -389,6 +405,25 @@
 
         features.canvas = !!document.createElement( 'canvas' ).getContext;
 
+		features.touch = !!( 'ontouchstart' in window );
+
+        // See http://davidwalsh.name/vendor-prefix
+        features.vendorPrefix = (function () {
+          var styles = window.getComputedStyle(document.documentElement, ''),
+            pre = (Array.prototype.slice
+              .call(styles)
+              .join('') 
+              .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
+            )[1],
+            dom = ('WebKit|Moz|MS|O').match(new RegExp('(' + pre + ')', 'i'))[1];
+          return {
+            dom: dom,
+            lowercase: pre,
+            css: '-' + pre + '-',
+            js: pre[0].toUpperCase() + pre.substr(1)
+          };
+        })();
+
 		isMobileDevice = navigator.userAgent.match( /(iphone|ipod|ipad|android)/gi );
 
         // Prefer zooming in desktop Chrome (and other browsers) so that content remains crisp
@@ -399,6 +434,31 @@
         // Try this at: http://jsbin.com/aluniv/3
         // Hence we must revert to using CSS3 transform scale() or scale3d() for Chrome:
         useZoomFallback = !isMobileDevice && /chrome/gi.test( navigator.userAgent ) && typeof document.createElement( 'div' ).style.zoom !== 'undefined';
+    }
+
+    /**
+     * Generate a function which is retried at the given interval until it returns a truthy value.
+     */
+    function generateKickstarter(f, interval) {
+        var timer = null;
+        var kick;
+        
+        interval = Math.max(50, (interval || 0));
+
+        // kick the starter until it succeeds
+        kick = function() {
+            clearTimeout( timer );
+            timer = null;
+
+            var rv = f();
+            if ( !rv ) {
+                timer = setTimeout( kick, interval );
+                rv = false;
+            }
+            return rv;
+        };
+
+        return kick;
     }
 
     /**
@@ -415,18 +475,7 @@
         var scriptsAsync = [],
             scriptsToPreload = 0,
             asyncScriptsToLoad = 0,
-            timer = null;
-
-        // kick the starter until it succeeds
-        function tryStart() {
-            clearTimeout( timer );
-            timer = null;
-
-            var rv = start();
-            if ( !rv ) {
-                timer = setTimeout( tryStart, 100 );
-            }
-        }
+            tryStart = generateKickstarter( start, 100 );
 
         // Called once synchronous scripts finish loading
         //
@@ -435,6 +484,7 @@
             if( scriptsToPreload === 0 ) {
                 loadAsyncScripts();
 
+                // kick the starter until it succeeds
                 tryStart();
             }
             return true;
@@ -508,11 +558,31 @@
         // Make sure we've got all the DOM elements we need
         if (!setupDOM()) return false;
 
+        // :-(  can't detect styles that only kick in when exactly?...
+        //
+        // // Detect how much time we should give 'disappearing slides' when we navigate through the deck:
+        // var duration = 0;
+        // var s, i, len;
+        // var animSet = [ dom.wrapper, dom.slides, dom.slides_wrapper ].concat( toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) ) );
+        // var len = animSet.length;
+        //
+        // for( i = 0; i < len; i++ ) {
+        //     var element = animSet[i];
+        //     s = getStyle( element, 'transition-duration', true );
+        //     s = s.match(/(\d*\.?\d+)(m?s)/);
+        //     s = parseFloat( s[1] ) * ( s[2] === 'ms' ? 1 : 1000 );
+        //     duration = Math.max( duration, s );
+        // }
+        // slideTransitionDuration = duration;
+
         // Listen to messages posted to this window
         setupPostMessage();
 
         // Resets all vertical slides so that only the first is visible
         resetVerticalSlides();
+
+        // set vertical slide stacks to their initial position (= top vertical slide)
+        resetSlideStacks();
 
         // Prep the slide hierarchy so getTotalSlides(), etc. will work as expected
         prepSlideHierarchy();
@@ -581,6 +651,8 @@
         // The horizontal and vertical index of the currently active slide
         indexh = undefined;
         indexv = undefined;
+        previousIndexh = null;
+        previousIndexv = null;
 
         // The previous and current slide HTML elements
         previousSlide = null;
@@ -732,17 +804,28 @@
      * Adjusted to match http://robertnyman.com/2006/04/24/get-the-rendered-style-of-an-element/ yet follow
      * https://developer.mozilla.org/en/docs/Web/API/window.getComputedStyle
      */
-    function getStyle(el, styleProp)
+    function getStyle(el, styleProp, styleMayBeBrowserDependent)
     {
         var rv = "";
+        var vendorSpecificStyleProp;
+
         if (document.defaultView && document.defaultView.getComputedStyle) {
-            rv = document.defaultView.getComputedStyle(el, null).getPropertyValue(styleProp);
+            var info = document.defaultView.getComputedStyle(el, null);
+            rv = info.getPropertyValue(styleProp);
+            if (styleMayBeBrowserDependent && ( rv == null || rv === '' ) ) {
+                vendorSpecificStyleProp = features.vendorPrefix.js + styleProp[0].toUpperCase() + styleProp.substr(1);
+                rv = info.getPropertyValue(vendorSpecificStyleProp);
+            }
         }
         else if (el.currentStyle) {
             styleProp = styleProp.replace(/\-(\w)/g, function (strMatch, p1) {
                 return p1.toUpperCase();
             });
             rv = el.currentStyle[styleProp];
+            if (styleMayBeBrowserDependent && ( rv == null || rv === '' ) ) {
+                vendorSpecificStyleProp = features.vendorPrefix.js + styleProp[0].toUpperCase() + styleProp.substr(1);
+                rv = el.currentStyle[vendorSpecificStyleProp];
+            }
         }
         return rv;
     }
@@ -799,7 +882,7 @@ TBD end
                 var left = ( targetInfo.rawAvailableWidth - targetInfo.slideWidth ) / 2;
                 var top = ( targetInfo.rawAvailableHeight - targetInfo.slideHeight ) / 2;
 
-				var contentSize = getAbsoluteSize( slide );
+				var contentSize = getComputedSlideSize( slide );
 				var numberOfPages = Math.max( Math.ceil( contentSize.height / pageHeight ), 1 );
 
 				// Center slides vertically
@@ -1210,7 +1293,7 @@ TBD end of old code, start of new code
         window.addEventListener( 'hashchange', onWindowHashChange, false );
         window.addEventListener( 'resize', onWindowResize, false );
 
-        if( config.touch && dom.wrapper ) {
+        if( config.touch && features.touch && dom.wrapper ) {
             dom.wrapper.addEventListener( 'touchstart', onTouchStart, false );
             dom.wrapper.addEventListener( 'touchmove', onTouchMove, false );
             dom.wrapper.addEventListener( 'touchend', onTouchEnd, false );
@@ -1258,7 +1341,17 @@ TBD end of old code, start of new code
         }
 
         if ( config.controls && dom.controls ) {
-            ( config.touch ? [ 'touchstart', 'click' ] : [ 'click' ] ).forEach( function( eventName ) {
+    		// Listen to both touch and click events, in case the device
+    		// supports both
+    		var pointerEvents = ( config.touch && features.touch ) ? [ 'touchstart', 'click' ] : [ 'click' ];
+
+    		// Only support touch for Android, fixes double navigations in
+    		// stock browser
+    		if( navigator.userAgent.match( /android/gi ) ) {
+    			pointerEvents = [ 'touchstart' ];
+    		}
+
+    		pointerEvents.forEach( function( eventName ) {
                 dom.controlsLeft.forEach( function( el ) { el.addEventListener( eventName, onNavigateLeftClicked, false ); } );
                 dom.controlsRight.forEach( function( el ) { el.addEventListener( eventName, onNavigateRightClicked, false ); } );
                 dom.controlsUp.forEach( function( el ) { el.addEventListener( eventName, onNavigateUpClicked, false ); } );
@@ -1385,8 +1478,8 @@ TBD end of old code, start of new code
         for( var k in obj ) {
             if( typeof k === 'function' ) continue;
             //if( typeof k === 'object' ) continue;    // really we should only ditch DOM elements?
-            if( k === 'currentSlide' || k === 'previousSlide') continue;
-            if( k === 'fragment' || k === 'fragments') continue;
+            if( k === 'currentSlide' || k === 'previousSlide' ) continue;
+            if( k === 'fragment' || k === 'fragments' ) continue;
             rv[ k ] = obj[ k ];
         }
         return rv;
@@ -1411,7 +1504,7 @@ TBD end of old code, start of new code
     /**
      * Applies a CSS transform to the target element.
      */
-    function transformElement( element, transform, origin ) {
+    function transformElement( element, transform ) {
 
         element.style.WebkitTransform = transform;
         element.style.MozTransform = transform;
@@ -1419,15 +1512,44 @@ TBD end of old code, start of new code
         element.style.OTransform = transform;
         element.style.transform = transform;
 
-        if (typeof origin !== 'undefined') {
-            element.style.WebkitTransformOrigin = origin;
-            element.style.MozTransformOrigin = origin;
-            element.style.msTransformOrigin = origin;
-            element.style.OTransformOrigin = origin;
-            element.style.transformOrigin = origin;
-        }
-
     }
+
+    /**
+     * Applies the given scale to the target element.
+     */
+    function scaleElement( element, scale ) {
+        if ( scale == null ) {
+            // reset the scale and related attributes:
+            element.style.left = null;
+            element.style.top = null;
+            element.style.bottom = null;
+            element.style.right = null;
+            element.style.zoom = null;
+            transformElement( element, null );
+        }
+        else {
+            element.style.left = 0;
+            element.style.top = 0;
+            element.style.bottom = 0;
+            element.style.right = 0;
+
+            // Prefer zooming in desktop Chrome so that content remains crisp
+            // with nested transforms.
+            //
+            // Unfortunately, CSS3 zoom in Chrome has the very bad habit to scale text correctly only down to zoom factors of about 0.4,
+            // go below that number and your text gets bigger and bigger (relatively speaking).
+            // Try this at: http://jsbin.com/aluniv/3
+            // Hence we must revert to using CSS3 transform scale() or scale3d() for Chrome:
+            if( useZoomFallback ) {
+                element.style.zoom = scale;
+            }
+            // Apply scale transform
+            else {
+                transformElement( element, 'scale(' + scale + ')' );
+            }
+        }
+    }
+
 
     /**
 	 * Injects the given CSS styles into the DOM.
@@ -1450,7 +1572,7 @@ TBD end of old code, start of new code
      * Retrieves the height & width of the given element by looking
      * at the position and height/width of its immediate children.
      */
-    function getAbsoluteSize( element ) {
+    function getComputedSlideSize( element ) {
 
         var height = 0;
         var width = 0;
@@ -1511,13 +1633,13 @@ TBD end of old code, start of new code
         if( element ) {
             var newHeight, oldHeight = element.style.height;
 
-            // Change the .stretch element height to 0 in order find the height of all
+            // Change the .stretch element height to 0 in order to find the height of all
             // the other elements
             element.style.height = '0px';
             newHeight = height - element.parentNode.offsetHeight;
 
             // Restore the old height, just in case
-            element.style.height = oldHeight + 'px';
+            element.style.height = oldHeight;
 
             return newHeight;
         }
@@ -1810,102 +1932,125 @@ TBD end of old code, start of new code
      */
     function layout() {
 
-        var i, len;
+        var i, j, len, hlen, vlen;
         var targetInfo = getViewportAndSlideDimensionsInfo();
 
-        if ( targetInfo && dom.slides && !isPrintingPDF() ) {
-
-            var slide = currentSlide;
-
-            // Select all slides, vertical and horizontal
-            var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
-
-            // before calculating the slide height, we must nuke the previously patching in padding/top/etc. to get a correct measurement,
-            // but don't do this when we're in overview mode as then it would damage the layout while we move through the slide set in the overview.
-            if ( !overview_slides_info ) {
-                // reset wrapper scale for single sheet view
-                if( useZoomFallback ) {
-                    dom.slides_wrapper.style.zoom = null;
-                }
-                // Apply scale transform
-                else {
-                    transformElement( dom.slides_wrapper, null, null );
-                }
-
-                // Remove the height pinning we did in overview mode now that we're *out* of overview mode.
-                // for( i = 0, len = slides.length; i < len; i++ ) {
-                //     var sl = slides[ i ];
-                //     sl.style.height = null;
-                //     sl.style.paddingTop = null;
-                //     sl.style.paddingBottom = null;
-                // }
-
-                dom.slides.style.width = null;
-                dom.slides.style.height = null;
-
-                dom.slides.style.zoom = null;
-                dom.slides.style.left = 0;
-                dom.slides.style.top = 0;
-                dom.slides.style.bottom = 0;
-                dom.slides.style.right = 0;
-                transformElement( dom.slides, null, null );
-
-                if (slide) {
-                    slide.style.zoom = null;
-                    slide.style.left = null;
-                    slide.style.top = null;
-                    slide.style.bottom = null;
-                    slide.style.right = null;
-                    transformElement( slide, null, null );
-
-                    slide.style.height = null;
-                    slide.style.width = null;
-            
-                    if (1) {
-                        slide.style.paddingTop = null;
-                        slide.style.paddingBottom = null;
-                        slide.style.height = null;
-                        slide.style.top = null;
-                    }
-                }
+        function layoutSingleSlide( slide, x, y ) {
+        
+            // Check if this slide comes with a dimensions/scale cache.
+            var cache = slide.getAttribute( 'data-reveal-dim-cache' ) || '';
+    
+            // Make sure we're dealing with JSON, if there's any cache.
+            if ( !cache.length ) {
+                cache = false;
             }
-            var slideDimensions = false;
-            var isScrollableSlide = false;
-            dom.slides_wrapper.classList.remove( 'scrollable-slide' );
-            if (slide) {
-                if( slide.hasAttribute( 'data-scrollable' ) ) {
-                    isScrollableSlide = true;
-                    dom.slides_wrapper.classList.add( 'scrollable-slide' );
-
-                    // let the browser reflow the scrollable content so we can decide what to do next:
-                    dom.slides.style.width = targetInfo.slideWidth + 'px';
-                    dom.slides.style.height = targetInfo.slideHeight + 'px';
-                }
-                slide.style.width = targetInfo.slideWidth + 'px';
-                slideDimensions = getAbsoluteSize( slide );
-                slide.style.width = null;
-                if (1) {
-                    slide.style.paddingTop = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2)) + 'px';
-                    slide.style.paddingBottom = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2)) + 'px';
-                    slide.style.height = Math.max(targetInfo.slideHeight, slideDimensions.height) + 'px';
-                    slide.style.top = '0px';
+            else {
+                try {
+                    cache = JSON.parse( cache ) || false; 
+                } 
+                catch (e) {
+                    cache = false;
                 }
             }
 
-            // Layout the contents of the slides
-            layoutSlideContents( targetInfo.slideWidth, targetInfo.slideHeight );
+            var isCurrentSlide = (slide === currentSlide);
+
+            // Resets all transforms to use the external styles
+            scaleElement( slide, null );
+            transformElement( slide, null );
+
+            // Remove the previous height/size pinning.
+            slide.style.height = null;
+            slide.style.width = null;
+    
+            slide.style.paddingTop = null;
+            slide.style.paddingBottom = null;
+            slide.style.height = null;
+            slide.style.top = null;
+
+            // Make sure the slide is visible in the DOM for otherwise we cannot obtain measurements.
+            // Later on in the layout process we'll invoke updateSlidesVisibility() to ensure all
+            // slides that *must* be visible, will be, and those that must not, aren't.
+            showSlide( slide );
+
+            // Layout the contents of the slide.
+
+            // Setting a fixed width helps to produce a consistent layout and slide dimensions measurement.
+            dom.slides.style.width = targetInfo.slideWidth + 'px';
+
+            // When the current slide is a 'scrollable slide' we need to make some special preparations.
+            // Do note however that we bluntly clip such a node in overview as there all slides are
+            // supposed to have fixed, identical dimensions. 
+            var isScrollableSlide = slide.hasAttribute( 'data-scrollable' );
+            if ( isScrollableSlide ) {
+                dom.slides_wrapper.classList.add( 'scrollable-slide' );
+
+                // let the browser reflow the scrollable content so we can decide what to do next:
+                dom.slides.style.width = targetInfo.slideWidth + 'px';
+                dom.slides.style.height = targetInfo.slideHeight + 'px';
+            }
+            slide.style.width = targetInfo.slideWidth + 'px';
+
+            // Handle sizing of elements with the 'stretch' class
+            toArray( slide.querySelectorAll( ':scope > .stretch' ) ).forEach( function( element ) {
+                layoutSlideContents( element, targetInfo.slideWidth, ( isScrollableSlide ? Infinity : targetInfo.slideHeight ) );
+            });
+
+            // Calculate the dimensions of the slide
+            var slideDimensions = getComputedSlideSize( slide );
+
+            // Calculate the amount of vertical padding required to *center* the slide.
+            // That is, IFF we want the slide to be centered at all?
+            //
+            // Also note that, when we are rendering this slide in CSS *box content model* than classic *box border model*, that
+            // we only need to set the slide height to have it center!
+            var display_style = getStyle( slide, 'display' );
+
+            console.log("layout: slide ", x, y, " -> display: ", display_style, ", class:", slide.classList, slide.classList.contains( 'visible' ));
+
+            // If the display mode is 'block' flexbox is not supported by
+            // the current browser so we fall back on JavaScript centering
+            if( display_style === 'block' ) {
+                var center_pad = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2));
+
+                // Do not apply the center padding is the user didn't ask for it via configuration, either globally or for this particular slide
+                if ( config.center || slide.classList.contains( 'center' ) ) {
+                    slide.style.paddingTop = center_pad + 'px';
+                    slide.style.paddingBottom = center_pad + 'px';
+                }
+            }
+            else {
+                // We must set height:100% for flexbox layout to work for us.
+                // 
+                // In a sense, we're doing so further below, where we always set a slide height in pixels.
+            }
+
+            // Pin the height of every slide as otherwise the overview rendering will be botched
+            // and so will the regular view, when the slide is 'scrollable'.
+            //
+            // WARNING: it also means the user cannot set a hardwired style="height: YYY px;" style
+            // or some such for any SECTION and expect to live...
+            if ( !isOverview() ) {
+                slide.style.height = Math.max(targetInfo.slideHeight, slideDimensions.height) + 'px';
+            }
+            else {
+                // In overview mode, we treat all slides as fixed, identical sized:
+                slide.style.height = targetInfo.slideHeight + 'px';
+            }
+            slide.style.top = 0;
 
             // Determine scale of content to fit within available space
-            var realScale = Infinity;
-            if ( slideDimensions && !isScrollableSlide && !overview_slides_info ) {
-                //realScale = Math.min( targetInfo.availableWidth / slideDimensions.width, targetInfo.availableHeight / slideDimensions.height );
-                realScale = Math.min( targetInfo.slideWidth / slideDimensions.width, targetInfo.slideHeight / slideDimensions.height );
+            var realScale;
+            if ( slideDimensions && !isScrollableSlide && !isOverview() ) {
+                // Protect the scaling calculation against zero-sized slides: make those produce a sensible scale, e.g.: 1.0
+                realScale = Math.min( targetInfo.slideWidth / ( slideDimensions.width || targetInfo.slideWidth ), targetInfo.slideHeight / ( slideDimensions.height || targetInfo.slideHeight ) );
 
                 dom.slides.style.width = targetInfo.slideWidth + 'px';
                 dom.slides.style.height = targetInfo.slideHeight + 'px';
             } else {
-                if ( isScrollableSlide && !overview_slides_info ) {
-                    // when the scrollable content is higher than the slide area, we better kill the fixed height. Same for the width...
+                if ( isScrollableSlide && !isOverview() ) {
+                    realScale = 1.0; // Math.min( targetInfo.slideWidth / slideDimensions.width, targetInfo.slideHeight / slideDimensions.height );
+                    // when the scrollable content is wider/higher than the slide area, we better kill the fixed height. Same for the width...
                     if ( slideDimensions && slideDimensions.width > targetInfo.slideWidth ) {
                         dom.slides.style.width = null;
                     } else {
@@ -1917,233 +2062,222 @@ TBD end of old code, start of new code
                         dom.slides.style.height = targetInfo.slideHeight + 'px';
                     }
                 } else {
+                    realScale = 1.0;
+
                     dom.slides.style.width = targetInfo.slideWidth + 'px';
                     dom.slides.style.height = targetInfo.slideHeight + 'px';
                 }
             }
-            scale = Math.min( targetInfo.availableWidth / targetInfo.slideWidth, targetInfo.availableHeight / targetInfo.slideHeight );
-            //scale = Math.min( scale, realScale );
 
-            // Respect max/min scale settings
-            scale = Math.max( scale, config.minScale );
-            scale = Math.min( scale, config.maxScale );
+            scaleElement( slide, realScale );
 
-            console.log("layout: ", {
+            console.log("SLIDE layout: ", {
                 slideDimensions: slideDimensions,
                 isScrollableSlide: isScrollableSlide,
                 targetInfo: targetInfo,
-                overview_slides_info: overview_slides_info,
-                indices: getIndices(),
-                scale: scale,
+                overview_slides_info: getSlidesOverviewInfo(),
+                scale: fundamentalScale,
                 realScale: realScale,
                 slide: slide
             });
 
-			// Prefer zooming in desktop Chrome so that content remains crisp
-            // with nested transforms.
+        }
+
+
+        if ( targetInfo && dom.slides ) {
+
             //
-            // Unfortunately, CSS3 zoom in Chrome has the very bad habit to scale text correctly only down to zoom factors of about 0.4,
-            // go below that number and your text gets bigger and bigger (relatively speaking).
-            // Try this at: http://jsbin.com/aluniv/3
-            // Hence we must revert to using CSS3 transform scale() or scale3d() for Chrome:
-			if( useZoomFallback ) {
-                dom.slides.style.zoom = scale;
+            // Calculated slide dimensions code properties:
+            //
+            // - the way these are cached must be easy & fast to be invalidated: 
+            //   this is accomplished by storing them in a DOM data attribute
+            //
+            // - as the user may decide to render a different view of a slide 
+            //   in overview mode, e.g. only showing the H1-H3 elements in there, 
+            //   we store two different size + scale sets to facilitate this
+            //   specialized 'overview mode' behaviour of each slide
+            //
+            // - we assume slide dimensions (width / height) do not change very
+            //   frequently, but individual slides may change their layout anywhere
+            //   in user code. We assume the user code, upon changing a slide's
+            //   layout, also ensures the slide dimensions cache (mentioned
+            //   above) is invalidated.
+            //
+            // - each slide caches its own dimensions, hence moving slides around
+            //   and/or removing slides should not invalidate the caches. New
+            //   added slides of course won't yet have a valid dimension cache
+            //   hence these will be calculated on demand.
+            //
+            // Notes/Warnings:
+            //
+            // The cache recalculation logic assumes that no user code is required 
+            // to produce the correct numbers, but that inspection of the DOM
+            // under the proper conditions (classes applied to the DOM) produces 
+            // the correct numbers.
+            //
+            // The recalculation logic also assumes it can freely remove/add
+            // top/right/bottom/left and width/height/padding/zoom styles to any slide and
+            // to the reveal and slides' wrapper DOM nodes.
+            //
+            // ----------------------------------------------------------------
+
+            // Before recalculating the slide height(s), position, etc., we must nuke 
+            // the previously patched in padding/top/etc. to get a correct measurement.
+
+            // Reset wrapper scale for both single sheet view / overview modes:
+            scaleElement( dom.slides_wrapper, null );
+
+            dom.slides.style.width = null;
+            dom.slides.style.height = null;
+            // Setting a fixed width helps to produce a consistent layout and slide dimensions measurement.
+            dom.slides.style.width = targetInfo.slideWidth + 'px';
+
+            // Calculate the fundamental scale for each slide to ensure it will fit the viewport.
+            // This scale factor assumes all slides to be equal in dimensions; 'scrollable slides'
+            // will therefor most probably end up with a scrollbar (as per CSS styling) and 
+            // all slides will be be made to fit this 'one size fits all' by scaling them individually 
+            // as the need arises.
+            //
+            // We assume a 'fundamental scale factor' of 1.0 when we're rendering an Overview layout.
+
+            var fundamentalScale = 1.0;
+
+            if ( !isOverview() ) {
+                fundamentalScale = Math.min( targetInfo.availableWidth / targetInfo.slideWidth, targetInfo.availableHeight / targetInfo.slideHeight );
+
+                // Respect max/min scale settings
+                fundamentalScale = Math.max( fundamentalScale, config.minScale );
+                fundamentalScale = Math.min( fundamentalScale, config.maxScale );
+
+                // nuke the overview layout info cache
+                currentOverviewInfo = null;
             }
-            // Apply scale transform
             else {
-                dom.slides.style.left = 0;
-                dom.slides.style.top = 0;
-                dom.slides.style.bottom = 0;
-                dom.slides.style.right = 0;
-                transformElement( dom.slides, 'scale('+ scale +')', '50% 50%' );
+                // On the other hand, when we're doing the layout for the Overview mode, then we need
+                // to know the fundamental scale for the entire *visible* series of slides so that they
+                // will fit in the viewport together.
+                //
+                // We calculate the scale such that the two outermost slides are partially obscured
+                // (hence the times-2 instead of the seemingly more proper times-2-plus-1 below). This
+                // is done to make horizontal navigation through the slide set seem 'better' as it is 
+                // harder to notice that the slides farther away from the current focus are simply never
+                // rendered (display:none) to speed up the display.
+
+                var info = getSlidesOverviewInfo();
+
+                // The number of steps away from the present slide that will be visible
+                var viewDistance = getViewDistance();
+                var hcount = Math.min(info.horizontal_count, viewDistance * 2); // notice the lacking '+1' in here: both outermost slides are shown *half*.
+                var vcount = Math.min(info.vertical_count, viewDistance * 2); // as above, but now for the vertical direction.
+
+                // And remember the current overview layout's viewDistance settings:
+                currentOverviewInfo = {
+                    hcount: hcount,
+                    vcount: vcount
+                };
+
+                var totalSlidesWidth = targetInfo.slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
+                var totalSlidesHeight = targetInfo.slideHeight * vcount * 1.05;
+
+                // Determine scale of content to fit within available space
+                fundamentalScale = Math.min( targetInfo.availableWidth / totalSlidesWidth, targetInfo.availableHeight / totalSlidesHeight );
+
+                // Respect max/min scale settings
+                fundamentalScale = Math.max( fundamentalScale, config.overviewMinScale );
+                fundamentalScale = Math.min( fundamentalScale, config.overviewMaxScale );
             }
 
+            var currentSlideScale = null;
 
+            // Now process each slide individually, as they can be dimensioned and 
+            // positioned independently (this only works because each slide has
+            // the 'position: absolute' style, hence their layouts do not 
+            // influence one other in the DOM irrespective of where they are
+            // currently located -- all are overlapping at (x=0, y=0, z=0).
+            //
+            // Noe that we always position *all* slides, also when we're not in overview mode,
+            // to facilitate CSS3 transitions: once the slides become visible (display:block)
+            // then this work will pay out as the transition(s) will already have registered
+            // previous layout.
 
-            var realSlideDimensions = false;
-            if (slide) {
-                if( slide.hasAttribute( 'data-scrollable' ) ) {
-                    isScrollableSlide = true;
-                    dom.slides_wrapper.classList.add( 'scrollable-slide' );
+            var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
+            var info = getSlidesOverviewInfo();
 
-                    // let the browser reflow the scrollable content so we can decide what to do next:
-                    dom.slides.style.width = targetInfo.slideWidth + 'px';
-                    dom.slides.style.height = targetInfo.slideHeight + 'px';
+            for ( var i = 0, hlen = horizontalSlides.length; i < hlen; i++ ) {
+                var hslide = horizontalSlides[i],
+                    hoffset = config.rtl ? -105 : 105,
+                    voffset = 105;
+
+                if( hslide.classList.contains( 'stack' ) ) {
+
+                    if ( isOverview() ) {
+                        // Apply CSS transform to position the slide for the overview.
+                        transformElement( hslide, 'translate3d( ' + ( ( i - indexh ) * hoffset ) + '%, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                    }
+
+                    var verticalSlides = hslide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
+
+                    for ( var j = 0, vlen = verticalSlides.length; j < vlen; j++ ) {
+                        var verticalIndex = ( i === indexh ? indexv : getPreviousVerticalIndex( hslide ) );
+
+                        var vslide = verticalSlides[j];
+
+                        layoutSingleSlide( vslide, i, j );
+
+                        if ( isOverview() ) {
+                            // Apply CSS transform
+                            transformElement( vslide, 'translate3d( 0px, ' + ( ( j - verticalIndex ) * voffset ) + '%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                        }
+                    }
+
                 }
-                realSlideDimensions = getAbsoluteSize( slide );
-                if (0) {
-                    slide.style.paddingTop = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2)) + 'px';
-                    slide.style.paddingBottom = Math.max(0, Math.floor((targetInfo.slideHeight - slideDimensions.height) / 2)) + 'px';
-                    slide.style.height = Math.max(targetInfo.slideHeight, slideDimensions.height) + 'px';
-                    slide.style.top = '0px';
-                }
-            }
-
-            // Layout the contents of the slides
-            layoutSlideContents( targetInfo.slideWidth, targetInfo.slideHeight );
-
-            // Determine scale of content to fit within available space
-            var realScale = Infinity;
-            if ( realSlideDimensions && !isScrollableSlide && !overview_slides_info ) {
-                //realScale = Math.min( targetInfo.availableWidth / slideDimensions.width, targetInfo.availableHeight / slideDimensions.height );
-                realScale = Math.min( targetInfo.slideWidth / realSlideDimensions.width, targetInfo.slideHeight / realSlideDimensions.height );
-
-                dom.slides.style.width = targetInfo.slideWidth + 'px';
-                dom.slides.style.height = targetInfo.slideHeight + 'px';
-            }
-
-            realScale = Math.min( 1, realScale );
-
-            if (slide) {
-                if( useZoomFallback ) {
-                    slide.style.zoom = realScale;
-                }
-                // Apply scale transform
                 else {
-                    slide.style.left = 0;
-                    slide.style.top = 0;
-                    slide.style.bottom = 0;
-                    slide.style.right = 0;
-                    transformElement( slide, 'scale('+ realScale +')', '50% 50%' );
+
+                    layoutSingleSlide( hslide, i, 0 );
+
+                    if ( isOverview() ) {
+                        // Apply CSS transform to position the slide for the overview.
+                        transformElement( hslide, 'translate3d( ' + ( ( i - indexh ) * hoffset ) + '%, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                    }
+
                 }
+
+            }
+
+            // Ensure only the current slide is visible when in regular display mode; 
+            // the previous and next siblings will be visible for a while though too to facilitate
+            // smooth fore- and background transitions.
+            //
+            // When in Overview mode, here is where we limit the visibility of the 
+            // viewDistance-restricted set of slides.
+            updateSlidesVisibility();
+
+
+
+
+            // set the scale for the slide(s) is the last thing we do, so it gets CSS3 animation applied:
+            console.log("layout: ", {
+                targetInfo: targetInfo,
+                overview_slides_info: getSlidesOverviewInfo(),
+                indices: getIndices(),
+                scale: fundamentalScale
+            });
+
+            if (0) {
+                dom.wrapper.classList.add( 'reset-transitions' );
+                // now re-render the DOM to enforce the 'reset-transitions' style above:
+                dom.wrapper.offsetHeight;
+                dom.wrapper.classList.remove( 'reset-transitions' );
             }
 
 
-            // When overview mode is active (and the relevant data available), do scale the slides' collective too:
-            if (overview_slides_info) {
 
-                var overviewScale = 1.0;
 
-                // 'zoom/perspective' mode uses the perspective to zoom out and show the overview; all others rely on CSS3 scale() one way or another.
-                if (getSpecialOverviewMode() !== 1) {
-                    // The number of steps away from the present slide that will be visible
-                    var viewDistance = getViewDistance();
-                    var hcount = Math.min(overview_slides_info.horizontal_count, viewDistance * 2);
-                    var vcount = Math.min(overview_slides_info.vertical_count, viewDistance * 2);
-
-                    var totalSlidesWidth = targetInfo.slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
-                    var totalSlidesHeight = targetInfo.slideHeight * vcount * 1.05;
-
-                    // Determine scale of content to fit within available space
-                    overviewScale = Math.min( targetInfo.availableWidth / totalSlidesWidth, targetInfo.availableHeight / totalSlidesHeight );
-                    overviewScale /= scale;
-
-                    // Respect max/min scale settings
-                    overviewScale = Math.max( overviewScale, config.overviewMinScale );
-                    overviewScale = Math.min( overviewScale, config.overviewMaxScale );
-                } else {
-                    // The number of steps away from the present slide that will be visible
-                    var viewDistance = getViewDistance();
-                    var hcount = Math.min(overview_slides_info.horizontal_count, viewDistance * 2);
-                    var vcount = Math.min(overview_slides_info.vertical_count, viewDistance * 2);
-
-                    var totalSlidesWidth = targetInfo.slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
-                    var totalSlidesHeight = targetInfo.slideHeight * vcount * 1.05;
-
-                    // Determine scale of content to fit within available space
-                    overviewScale = Math.min( targetInfo.availableWidth / totalSlidesWidth, targetInfo.availableHeight / totalSlidesHeight );
-                    overviewScale /= scale;
-
-                    // compensate for the 3D depth (heuristic)
-                    // there's ZERO depth, as the depth caused all kinds of flukes in the animation;
-                    // now we simply scale the overview to fit the viewport.
-                    //overviewScale *= 50 / Math.max(1, Math.min(getViewDistance(), overview_slides_info.horizontal_count));
-
-                    // Respect max/min scale settings
-                    overviewScale = Math.max( overviewScale, config.overviewMinScale );
-                    overviewScale = Math.min( overviewScale, config.overviewMaxScale );
-                }
-
-                if( useZoomFallback ) {
-                    dom.slides_wrapper.style.zoom = overviewScale;
-                }
-                // Apply scale transform
-                else {
-                    transformElement( dom.slides_wrapper, 'scale('+ overviewScale +')', '50% 50%' );
-                }
-
-                // Pin the height of all slides as otherwise the overview rendering will be botched;
-                // this action will be undone as soon as the overview mode is exited.
-                // WARNING: it also means the user cannot set a hardwired style="height: YYY px;" style
-                // for any SECTION and expect to live...
-                for( i = 0, len = slides.length; i < len; i++ ) {
-                    var slide = slides[ i ];
-                    // before calculating the slide height, we must nuke the previously patching in padding/top/etc. to get a correct measurement:
-                    slide.style.paddingTop = null;
-                    slide.style.paddingBottom = null;
-                    slide.style.height = null;
-                    slide.style.top = null;
-                    var wh = getAbsoluteSize( slide );
-                    slide.style.paddingTop = Math.max(0, Math.floor((targetInfo.slideHeight - wh.height) / 2)) + 'px';
-                    slide.style.paddingBottom = Math.max(0, Math.floor((targetInfo.slideHeight - wh.height) / 2)) + 'px';
-                    slide.style.height = Math.max(targetInfo.slideHeight, wh.height) + 'px';
-                    slide.style.top = '0px';
-                }
-
-                // Select all slides, vertical and horizontal
-                var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
-
-                for( i = 0, len = slides.length; i < len; i++ ) {
-                    var slide = slides[ i ];
-                    var display_style = getStyle( slide, 'display' );
-
-                    console.log("layout: slide ", i, " -> display: ", display_style, ", class:", slide.classList, slide.classList.contains( 'visible' ));
-                    // Don't update invisible slides
-                    if( !slide.classList.contains( 'visible' ) ) {
-                        continue;
-                    }
-                    // If the display mode is 'block' flexbox is not supported by
-                    // the current browser so we fall back on JavaScript centering
-                    if( display_style === 'block' ) {
-                        if( config.center || slide.classList.contains( 'center' ) ) {
-                            // Vertical stacks are not centred since their section children will be
-                            if( slide.classList.contains( 'stack' ) ) {
-                                slide.style.top = 0;
-                            }
-                            else {
-                                // before calculating the slide height, we must nuke the previously patching in padding/top/etc. to get a correct measurement:
-                                slide.style.paddingTop = null;
-                                slide.style.paddingBottom = null;
-                                slide.style.height = null;
-                                slide.style.top = null;
-                                var wh = getAbsoluteSize( slide );
-                                slide.style.paddingTop = Math.max(0, Math.floor((targetInfo.slideHeight - wh.height) / 2)) + 'px';
-                                slide.style.paddingBottom = Math.max(0, Math.floor((targetInfo.slideHeight - wh.height) / 2)) + 'px';
-                                if (0) {
-                                    slide.style.height = Math.max(targetInfo.slideHeight, wh.height) + 'px';
-                                } else {
-                                    // clip bottom off the slide in overview mode when slide is overlarge: 
-                                    // we have a fixed space to show each slide in there and we don't want 
-                                    // to be bothered with extra scaling (which will shrink the slide horizontally as well).
-                                    slide.style.height = targetInfo.slideHeight + 'px';
-                                }
-                                slide.style.top = '0px';
-                            }
-                        }
-                        else {
-                            slide.style.top = null;
-                        }
-                    }
-                    else {
-                        // We must set height:100% for flexbox layout to work for us:
-                        if( config.center || slide.classList.contains( 'center' ) ) {
-                            // Vertical stacks are not centred since their section children will be
-                            if( slide.classList.contains( 'stack' ) ) {
-                                slide.style.height = null;
-                                slide.style.top = 0;
-                            }
-                            else {
-                                slide.style.height = '100%';
-                                slide.style.top = 0;
-                            }
-                        }
-                        else {
-                            slide.style.height = null;
-                            slide.style.top = null;
-                        }
-
-                    }
-                }
+            if ( !isOverview() ) {
+                scaleElement( dom.slides, fundamentalScale );
+            } 
+            else {
+                scaleElement( dom.slides_wrapper, fundamentalScale );
             }
 
             updateProgress();
@@ -2154,33 +2288,32 @@ TBD end of old code, start of new code
     }
 
     /**
-     * Applies layout logic to the contents of all slides in
-     * the presentation.
+     * Applies layout logic to the contents of the target slide.
      */
-    function layoutSlideContents( width, height ) {
+    function layoutSlideContents( element, width, height ) {
 
-        // Handle sizing of elements with the 'stretch' class
-        toArray( dom.slides.querySelectorAll( 'section > .stretch' ) ).forEach( function( element ) {
+        element.style.width = null;
+        element.style.height = null;
 
-            // Determine how much vertical space we can use
-            var remainingHeight = getRemainingHeight( element, height );
+        // Determine how much vertical space we can use
+        var remainingHeight = isFinite( height ) ? getRemainingHeight( element, height ) : height;
 
-            // Consider the aspect ratio of media elements
-            if( /(img|video)/gi.test( element.nodeName ) ) {
-                var nw = element.naturalWidth || element.videoWidth,
-                    nh = element.naturalHeight || element.videoHeight;
+        // Consider the aspect ratio of media elements
+        if( /(img|video)/gi.test( element.nodeName ) ) {
+            var nw = element.naturalWidth || element.videoWidth,
+                nh = element.naturalHeight || element.videoHeight;
 
-                var es = Math.min( width / nw, remainingHeight / nh );
+            var es = Math.min( width / nw, remainingHeight / nh );
 
-                element.style.width = ( nw * es ) + 'px';
-                element.style.height = ( nh * es ) + 'px';
-            }
-            else {
-                element.style.width = width + 'px';
+            element.style.width = ( nw * es ) + 'px';
+            element.style.height = ( nh * es ) + 'px';
+        }
+        else {
+            element.style.width = width + 'px';
+            if ( isFinite( remainingHeight ) ) {
                 element.style.height = remainingHeight + 'px';
             }
-
-        } );
+        }
 
 	}
 
@@ -2291,13 +2424,33 @@ TBD end of old code, start of new code
      */
     function activateOverview() {
 
+        if ( isOverview() ) {
+            var info = getSlidesOverviewInfo();
+
+            // The number of steps away from the present slide that will be visible
+            var viewDistance = getViewDistance();
+            var hcount = Math.min(info.horizontal_count, viewDistance * 2); // notice the lacking '+1' in here: both outermost slides are shown *half*.
+            var vcount = Math.min(info.vertical_count, viewDistance * 2); // as above, but now for the vertical direction.
+
+            // We only have to re-render the overview when the viewDistance has changed with probable noticeable effect.
+            if ( currentOverviewInfo && ( hcount === currentOverviewInfo.hcount || vcount === currentOverviewInfo.vcount ) ) {
+                return;
+            }
+        }
+
         // Only proceed if enabled in config
         if( config.overview && dom.wrapper ) {
 
+            // Notify observers of the overview coming up
+            dispatchEvent( 'overviewshown:before', {
+                indexh: indexh,
+                indexv: indexv,
+                currentSlide: currentSlide,
+                slidesMatrixInfo: getSlidesOverviewInfo()
+            } );
+
             // Don't auto-slide while in overview mode
             cancelAutoSlide();
-
-            var wasActive = dom.wrapper.classList.contains( 'overview' );
 
             // Vary the depth of the overview based on screen size
             //var depth = window.innerWidth < 400 ? 1000 : 2500;
@@ -2305,76 +2458,28 @@ TBD end of old code, start of new code
             dom.wrapper.classList.add( 'overview' );
             dom.wrapper.classList.remove( 'overview-deactivating' );
 
-            clearTimeout( activateOverviewTimeout );
+            // clearTimeout( activateOverviewTimeout );
             clearTimeout( deactivateOverviewTimeout );
             deactivateOverviewTimeout = null;
 
-            // Not the prettiest solution, but need to let the overview
-            // class apply first so that slides are measured accurately
-            // before we can position them
-            activateOverviewTimeout = setTimeout( function() {
+            console.log('Feed the slides matrix to LAYOUT so we can determine properly how far to zoom/transform: ', overview_slides_info);
 
-    			var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
-                overview_slides_info = {
-                    horizontal_count: horizontalSlides.length,
-                    vertical_count: 1
-                };
+            // Select all slides
+            toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
+                slide.addEventListener( 'click', onOverviewSlideClicked, true );
+            } );
 
-                for( var i = 0, len1 = horizontalSlides.length; i < len1; i++ ) {
-                    var hslide = horizontalSlides[i],
-                        hoffset = config.rtl ? -105 : 105;
+            layout();
 
-                    hslide.setAttribute( 'data-index-h', i );
+            // Notify observers of the overview showing
+            dispatchEvent( 'overviewshown', {
+                indexh: indexh,
+                indexv: indexv,
+                currentSlide: currentSlide,
+                slidesMatrixInfo: getSlidesOverviewInfo()
+            } );
 
-                    // Apply CSS transform
-                    transformElement( hslide, 'translate3d( ' + ( ( i - indexh ) * hoffset ) + '%, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)', '50% 50%' );
-
-                    if( hslide.classList.contains( 'stack' ) ) {
-
-                        var verticalSlides = hslide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
-                        overview_slides_info.vertical_count = Math.max(overview_slides_info.vertical_count, verticalSlides.length);
-
-                        for( var j = 0, len2 = verticalSlides.length; j < len2; j++ ) {
-                            var verticalIndex = i === indexh ? indexv : getPreviousVerticalIndex( hslide );
-
-                            var vslide = verticalSlides[j];
-
-                            vslide.setAttribute( 'data-index-h', i );
-                            vslide.setAttribute( 'data-index-v', j );
-
-                            // Apply CSS transform
-                            transformElement( vslide, 'translate3d( 0px, ' + ( ( j - verticalIndex ) * 105 ) + '%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)', '50% 50%' );
-
-                            // Navigate to this slide on click
-                            vslide.addEventListener( 'click', onOverviewSlideClicked, true );
-                        }
-
-                    }
-                    else {
-
-                        // Navigate to this slide on click
-                        hslide.addEventListener( 'click', onOverviewSlideClicked, true );
-
-                    }
-                }
-
-                updateSlidesVisibility();
-
-                console.log('Feed the slides matrix to LAYOUT so we can determine properly how far to zoom/transform: ', overview_slides_info);
-
-                layout();
-
-                if( !wasActive ) {
-                    // Notify observers of the overview showing
-                    dispatchEvent( 'overviewshown', {
-                        indexh: indexh,
-                        indexv: indexv,
-                        currentSlide: currentSlide,
-                        slidesMatrixInfo: overview_slides_info
-                    } );
-                }
-
-            }, 10 );
+            // }, 10 );
 
         }
 
@@ -2386,14 +2491,25 @@ TBD end of old code, start of new code
      */
     function deactivateOverview() {
 
+        if ( !isOverview() ) {
+            return;
+        }
+
         // Only proceed if enabled in config
         if( config.overview && dom.wrapper ) {
 
-            overview_slides_info = null;
+            // overview_slides_info = null;
 
-            clearTimeout( activateOverviewTimeout );
+            // Notify observers of the overview hiding
+            dispatchEvent( 'overviewhidden:before', {
+                indexh: indexh,
+                indexv: indexv,
+                currentSlide: currentSlide
+            } );
+
+            // clearTimeout( activateOverviewTimeout );
             clearTimeout( deactivateOverviewTimeout );
-            activateOverviewTimeout = null;
+            // activateOverviewTimeout = null;
 
             dom.wrapper.classList.remove( 'overview' );
 
@@ -2403,14 +2519,12 @@ TBD end of old code, start of new code
             dom.wrapper.classList.add( 'overview-deactivating' );
 
             deactivateOverviewTimeout = setTimeout( function () {
+                deactivateOverviewTimeout = null;
                 dom.wrapper.classList.remove( 'overview-deactivating' );
             }, 50 );
 
             // Select all slides
 			toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
-                // Resets all transforms to use the external styles
-                transformElement( slide, null, null );
-
                 slide.removeEventListener( 'click', onOverviewSlideClicked, true );
             } );
 
@@ -2465,6 +2579,51 @@ TBD end of old code, start of new code
         return dom.wrapper && dom.wrapper.classList.contains( 'overview' );
 
     }
+
+    /**
+     * Produce the slides' info: 
+     * - number of horizontal slides
+     * - maximum number of vertical slides
+     * and updates the each slide's `data-index-h` and `data-index-v` slide coordinate DOM attributes.
+     *
+     * This info is cached and recalculated on demand, i.e. when this function is invoked while the cache is flushed.
+     */
+    function getSlidesOverviewInfo() {
+
+        if ( overview_slides_info ) {
+            return overview_slides_info;
+        }
+
+        var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
+        var len1 = horizontalSlides.length;
+        overview_slides_info = {
+            horizontal_count: len1,
+            vertical_count: 1
+        };
+
+        for( var i = 0; i < len1; i++ ) {
+            var hslide = horizontalSlides[i];
+
+            hslide.setAttribute( 'data-index-h', i );
+
+            // this assumes we have invoked prepSlideHierarchy() at the appropriate time.
+            if( hslide.classList.contains( 'stack' ) ) {
+
+                var verticalSlides = hslide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
+                var len2 = verticalSlides.length;
+                overview_slides_info.vertical_count = Math.max( overview_slides_info.vertical_count, len2 );
+
+                for( var j = 0; j < len2; j++ ) {
+                    var vslide = verticalSlides[j];
+
+                    vslide.setAttribute( 'data-index-h', i );
+                    vslide.setAttribute( 'data-index-v', j );
+                }
+            }
+        }
+
+
+    } 
 
     /**
      * Return the overview rendering mode:
@@ -2634,6 +2793,8 @@ TBD end of old code, start of new code
 
         // Remember where we were at before
         previousSlide = currentSlide;
+        previousIndexv = indexv;
+        previousIndexh = indexh;
 
         // Query all horizontal slides in the deck
 		var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
@@ -2662,9 +2823,6 @@ TBD end of old code, start of new code
         // Activate and transition to the new slide
         indexh = updateSlides( HORIZONTAL_SLIDES_SELECTOR, h === undefined ? indexh : h );
         indexv = updateSlides( VERTICAL_SLIDES_SELECTOR, v === undefined ? indexv : v );
-
-        // Update the visibility of slides now that the indices have changed
-        updateSlidesVisibility();
 
         // Apply the new state
         stateLoop: for( var i = 0, len = state.length; i < len; i++ ) {
@@ -2696,12 +2854,9 @@ TBD end of old code, start of new code
         // Store references to the previous and current slides
         currentSlide = (currentVerticalSlides && currentVerticalSlides[ indexv ]) || currentHorizontalSlide;
 
+        // - Update the visibility of slides now that the indices have changed.
+        // - If the overview is active, update positions.
         layout();
-
-        // If the overview is active, re-activate it to update positions
-        if( isOverview() ) {
-            activateOverview();
-        }
 
         // Show fragment, if specified
         if( f != null ) {
@@ -2722,6 +2877,8 @@ TBD end of old code, start of new code
         else {
             // Ensure that the previous slide is never the same as the current
             previousSlide = null;
+            previousIndexv = null;
+            previousIndexh = null;
         }
 
         // Solves an edge case where the previous slide maintains the
@@ -2730,22 +2887,12 @@ TBD end of old code, start of new code
         if( previousSlide ) {
             previousSlide.classList.remove( 'present' );
 			previousSlide.setAttribute( 'aria-hidden', 'true' );
+        }
 
+        if ( indexh === 0 && indexv === 0 && slideChanged ) {
             // Reset all slides upon navigate to home
             // Issue: #285
-			if ( dom.wrapper.querySelector( HOME_SLIDE_SELECTOR ).classList.contains( 'present' ) ) {
-                // Launch async task
-                setTimeout( function () {
-					var slides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.stack') );
-                    var i;
-                    for( i in slides ) {
-                        if( slides[i] ) {
-                            // Reset stack
-                            setPreviousVerticalIndex( slides[i], 0 );
-                        }
-                    }
-                }, 0 );
-            }
+            resetSlideStacks();
         }
 
         // Handle embedded content
@@ -2804,7 +2951,6 @@ TBD end of old code, start of new code
         updateProgress();
         updateBackground();
         updateSlideNumber();
-		updateSlidesVisibility();
 
 		formatEmbeddedContent();
 
@@ -2817,17 +2963,19 @@ TBD end of old code, start of new code
     function resetVerticalSlides() {
 
 		var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
-        horizontalSlides.forEach( function( horizontalSlide ) {
+        horizontalSlides.forEach( function( horizontalSlide, x ) {
+
+            var lower_bound = ( x === indexh ? 1 : 0 );
 
             var verticalSlides = toArray( horizontalSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) );
             verticalSlides.forEach( function( verticalSlide, y ) {
 
-                if( y > 0 ) {
+                if( y >= lower_bound ) {
                     verticalSlide.classList.remove( 'past-1' );
                     verticalSlide.classList.remove( 'past' );
                     verticalSlide.classList.remove( 'present' );
                     verticalSlide.classList.add( 'future' );
-                    if (y === 1) {
+                    if ( y === lower_bound ) {
                         verticalSlide.classList.add( 'future-1' );
                     }
 					verticalSlide.setAttribute( 'aria-hidden', 'true' );
@@ -2836,6 +2984,19 @@ TBD end of old code, start of new code
             } );
 
         } );
+
+    }
+
+    /**
+     * Resets slide stack to their initial state (i.e. show the top vertical slide when navigated to).
+     */
+    function resetSlideStacks() {
+
+        var slides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.stack') );
+        for( var i = 0, len = slides.length; i < len; i++ ) {
+            // Reset stack
+            setPreviousVerticalIndex( slides[i], 0 );
+        }
 
     }
 
@@ -3044,7 +3205,7 @@ TBD end of old code, start of new code
 
         // The number of steps away from the present slide that will
         // be visible
-        var viewDistance = isOverview() ? config.overviewViewDistance : config.viewDistance;
+        var viewDistance = isOverview() ? config.viewDistance : SLIDE_NO_DISPLAY_DISTANCE;
 
         // Limit view distance on weaker devices
         if( isMobileDevice ) {
@@ -3066,6 +3227,23 @@ TBD end of old code, start of new code
      * from the present slide.
      */
     function updateSlidesVisibility() {
+
+        // the list of slides which must be made invisible after the transitions are completed.
+        var slides_to_clear = [];
+
+        function hideSiblingSlides() {
+            for ( var i = 0, len = slides_to_clear.length; i < len; i++ ) {
+                hideSlide( slides_to_clear[i] );
+            }
+            slides_to_clear = [];
+            transitionMaxDurationTimeout = null;
+        }
+
+        // Reset the kill timer, as we don't care about old transitions: those will
+        // be handled immediately by the code below. We are only interested in *delayed hiding*
+        // of the new prev/next siblings!
+        clearTimeout( transitionMaxDurationTimeout );
+        transitionMaxDurationTimeout = setTimeout( hideSiblingSlides, Math.max( config.transitionMaxDuration, 1 ) );
 
         // Select all slides and convert the NodeList result to
         // an array
@@ -3094,10 +3272,16 @@ TBD end of old code, start of new code
                     distanceX = Math.abs( ( indexh || 0 ) - x ) || 0;
                 }
 
-                // Show the horizontal slide if it's within the view distance
-                if( distanceX <= viewDistance ) {
+                // Show the horizontal slide if it's within the view distance.
+                //
+                // In regular display mode, we only ever want to see the previous slide and the current slide,
+                // for the sake of smooth transitions. 
+                if( distanceX <= viewDistance && ( isOverview() || distanceX === 0 || x === previousIndexh ) ) {
                     console.log("updateSlidesVisibility: slide ", x, " SHOW: ", distanceX, "<=", viewDistance);
 					showSlide( horizontalSlide );
+                    if ( distanceX !== 0 && !isOverview() ) {
+                        slides_to_clear.push( horizontalSlide );
+                    }
                 }
                 else {
                     console.log("updateSlidesVisibility: slide ", x, " HIDE: ", distanceX, ">", viewDistance);
@@ -3113,9 +3297,12 @@ TBD end of old code, start of new code
 
 						distanceY = x === ( indexh || 0 ) ? Math.abs( ( indexv || 0 ) - y ) : Math.abs( y - oy );
 
-                        if( distanceX + distanceY <= viewDistance ) {
+                        if( distanceX + distanceY <= viewDistance && ( isOverview() || distanceX + distanceY === 0 || ( x === previousIndexh && y === previousIndexv ) ) ) {
                             console.log("updateSlidesVisibility: slide ", x, ", ", y, " SHOW: ", distanceX, "+", distanceY, "<=", viewDistance);
 							showSlide( verticalSlide );
+                            if ( distanceX + distanceY !== 0 && !isOverview() ) {
+                                slides_to_clear.push( verticalSlide );
+                            }
                         }
                         else {
                             console.log("updateSlidesVisibility: slide ", x, ", ", y, " HIDE: ", distanceX, "+", distanceY, ">", viewDistance);
@@ -3601,12 +3788,11 @@ TBD end of old code, start of new code
                 if( el.hasAttribute( 'data-autoplay' ) ) {
                     el.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
 				}
-			});
+			} );
 
 			// Vimeo embeds
 			toArray( slide.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
 				if( el.hasAttribute( 'data-autoplay' ) ) {
-					console.log(11);
 					el.contentWindow.postMessage( '{"method":"play"}', '*' );
                 }
             } );
@@ -3638,7 +3824,7 @@ TBD end of old code, start of new code
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
                     el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
 				}
-			});
+			} );
 
 			// Vimeo embeds
 			toArray( slide.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
@@ -4136,7 +4322,7 @@ TBD end of old code, start of new code
                 // thus preventing the last fragment from becoming 'not-current': that
                 // situation should be handled by the calling navigation code by moving
                 // to the next slide.
-                index = Math.max(-1, Math.min(index, fragments.length - 1));
+                index = Math.max( -1, Math.min( index, fragments.length - 1 ) );
 
                 var fragmentsShown = [],
                     fragmentsHidden = [];
@@ -4484,6 +4670,8 @@ TBD end of old code, start of new code
 			else {
 				showHelp( true );
 			}
+			event.preventDefault && event.preventDefault();
+			event.stopPropagation && event.stopPropagation();
 		}
 
 	}
@@ -4550,7 +4738,7 @@ TBD end of old code, start of new code
             paused: isPaused()
         });
 		if( activeElementIsCE || activeElementIsInput || (event.shiftKey && event.keyCode !== 32) || event.altKey || event.ctrlKey || event.metaKey ) {
-            return false;
+            return 0;
         }
 
 		// While paused only allow 'unpausing' keyboard events ('b', '.' or any key specifically mapped to togglePause)
@@ -4560,6 +4748,8 @@ TBD end of old code, start of new code
 			}
 		}));
 		if( isPaused() && allowedKeys.indexOf( event.keyCode ) === -1 ) {
+			event.preventDefault && event.preventDefault();
+			event.stopPropagation && event.stopPropagation();
             return false;
         }
 
@@ -4686,21 +4876,21 @@ TBD end of old code, start of new code
                 case 55:
                     if (isOverview()) {
                         if ( config.__overviewViewDistance_backup == null ) {
-                            config.__overviewViewDistance_backup = config.overviewViewDistance;
+                            config.__overviewViewDistance_backup = config.viewDistance;
                         }
                         // set a ridiculous distance equivalent to 'infinity'
-                        config.overviewViewDistance = 1E3;
+                        config.viewDistance = 1E3;
                         activateOverview();
                     }
                     break;
 
                 // 8:
                 case 56:
-                    if ( config.__overviewViewDistance_backup == null ) {
-                        config.__overviewViewDistance_backup = config.overviewViewDistance;
-                    }
-                    config.overviewViewDistance = config.__overviewViewDistance_backup;
                     if (isOverview()) {
+                        if ( config.__overviewViewDistance_backup == null ) {
+                            config.__overviewViewDistance_backup = config.viewDistance;
+                        }
+                        config.viewDistance = config.__overviewViewDistance_backup;
                         activateOverview();
                     }
                     break;
@@ -4727,6 +4917,7 @@ TBD end of old code, start of new code
         // the browsers default behavior
         if( triggered ) {
 			event.preventDefault && event.preventDefault();
+			event.stopPropagation && event.stopPropagation();
         }
 
         // If auto-sliding is enabled we need to cue up
@@ -4786,7 +4977,7 @@ TBD end of old code, start of new code
                     y: touch.startY
                 } );
 
-                // If the span is larger than the desire amount we've got
+                // If the span is larger than the desired amount we've got
                 // ourselves a pinch
                 if( Math.abs( touch.startSpan - currentSpan ) > touch.threshold ) {
                     touch.captured = true;
@@ -5016,7 +5207,7 @@ TBD end of old code, start of new code
     }
 
     /**
-     * Invoked when a slide is and we're in the overview.
+     * Invoked when a slide is clicked and we're in the overview.
      */
     function onOverviewSlideClicked( event ) {
 
@@ -5258,6 +5449,8 @@ TBD end of old code, start of new code
         sync: sync,
         restart: restart,
 
+        generateKickstarter: generateKickstarter,
+
         // Navigation methods
         slide: slide,
         left: navigateLeft,
@@ -5336,7 +5529,7 @@ TBD end of old code, start of new code
             return currentSlide;
         },
 
-        getSlideSizeInfo: getAbsoluteSize,
+        getComputedSlideSizeInfo: getComputedSlideSize,
 
         getViewPortSizeInfo: getViewportAndSlideDimensionsInfo,
 
