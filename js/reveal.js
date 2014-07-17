@@ -188,10 +188,6 @@
         indexh /* = undefined */,
         indexv /* = undefined */,
 
-        // The horizontal and vertical index of the previously active slide
-        previousIndexh = null,
-        previousIndexv = null,
-
         // The previous and current slide HTML elements
         previousSlide = null,
         currentSlide /* = undefined */,
@@ -651,8 +647,6 @@
         // The horizontal and vertical index of the currently active slide
         indexh = undefined;
         indexv = undefined;
-        previousIndexh = null;
-        previousIndexv = null;
 
         // The previous and current slide HTML elements
         previousSlide = null;
@@ -2793,8 +2787,6 @@ TBD end of old code, start of new code
 
         // Remember where we were at before
         previousSlide = currentSlide;
-        previousIndexv = indexv;
-        previousIndexh = indexh;
 
         // Query all horizontal slides in the deck
 		var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
@@ -2877,8 +2869,6 @@ TBD end of old code, start of new code
         else {
             // Ensure that the previous slide is never the same as the current
             previousSlide = null;
-            previousIndexv = null;
-            previousIndexh = null;
         }
 
         // Solves an edge case where the previous slide maintains the
