@@ -42,7 +42,7 @@ var normalizeDirectory;         // function
     normalizeDirectory = d;
 
     function rootdir(path) {
-        return d('../../' + path);
+        return d(libdir + '../../' + path);
     }
 
     //
