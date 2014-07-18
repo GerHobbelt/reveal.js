@@ -3120,7 +3120,7 @@ TBD end of old code, start of new code
 			// previousSlide.setAttribute( 'aria-hidden', 'true' );
    //      }
 
-        if ( indexh === 0 && indexv === 0 && slideChanged ) {
+        if ( indexh === 0 && indexv === 0 && slideChanged && !isOverview() ) {
             // Reset all slides upon navigate to home
             // Issue: #285
             resetSlideStacks();
