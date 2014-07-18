@@ -1541,7 +1541,7 @@ TBD end of old code, start of new code
             element.style.right = 0;
 
             // if scale is within epsilon = 1e-3 range of 1.0, then we don't apply the scale: the CSS default is scale=1 anyway.
-            if ( scale >= 1.0 - 1e-3 && scale <= 1.0 + 1e-3 ) {
+            if ( scale >= 1.0 - 1e-3 && scale <= 1.0 + 1e-3 && 0 ) {
                 // nothing to do...
             }
             else if( useZoomFallback ) {
@@ -1949,26 +1949,94 @@ TBD end of old code, start of new code
     /**
      * Applies JavaScript-controlled layout rules to the
      * presentation.
-     *
-     * The `prevIndexv` and `prevIndexh` parameters are mere helpers when rendering the overview mode:
-     * when these are given, the layout renders the layout positioned as it would be 
-     * for these 'old' coordinates, while using the 'visibility rules' for the new `indexh/indexv`
-     * coordinates.
-     *
-     * This ensures that the overview mode exhibits nice transitions while we walk through the deck
-     * while staying in overview mode.
      */
-    function layout( prevIndexh, prevIndexv ) {
-
-        if ( prevIndexh == null ) {
-            prevIndexh = indexh;
-        }
-        if ( prevIndexv == null ) {
-            prevIndexv = indexv;
-        }
+    function layout() {
 
         var i, j, len, hlen, vlen;
         var targetInfo = getViewportAndSlideDimensionsInfo();
+
+        var oldStylesBackup = [];
+        var renderQueue = [];
+
+        // Backup the set of styles and classes for the target element
+        // *which are subject to CSS transition/animation.
+        function backupCurrentStyles(slide) {
+            oldStylesBackup.push(slide);
+            oldStylesBackup.push({
+                //paddingTop: slide.style.paddingTop,
+                //paddingRight: slide.style.paddingRight,
+                //paddingBottom: slide.style.paddingBottom,
+                //paddingLeft: slide.style.paddingLeft,
+                //top: slide.style.top,
+                //right: slide.style.right,
+                //bottom: slide.style.bottom,
+                //left: slide.style.left,
+                //height: slide.style.height,
+                //width: slide.style.width,
+                zoom: slide.style.zoom,
+                WebkitTransform: slide.style.WebkitTransform,
+                MozTransform: slide.style.MozTransform,
+                msTransform: slide.style.msTransform,
+                OTransform: slide.style.OTransform,
+                transform: slide.style.transform,
+                className: slide.className
+            });
+        }
+
+        function restoreAllCurrentStyles() {
+            for ( var i = 0, len = oldStylesBackup.length; i < len; i += 2 ) {
+                var slide = oldStylesBackup[i];
+                var data = oldStylesBackup[i + 1];
+
+                //slide.style.paddingTop = data.paddingTop;
+                //slide.style.paddingRight = data.paddingRight;
+                //slide.style.paddingBottom = data.paddingBottom;
+                //slide.style.paddingLeft = data.paddingLeft;
+                //slide.style.top = data.top;
+                //slide.style.right = data.right;
+                //slide.style.bottom = data.bottom;
+                //slide.style.left = data.left;
+                //slide.style.height = data.height;
+                //slide.style.width = data.width;
+                slide.style.zoom = data.zoom;
+                slide.style.WebkitTransform = data.WebkitTransform;
+                slide.style.MozTransform = data.MozTransform;
+                slide.style.msTransform = data.msTransform;
+                slide.style.OTransform = data.OTransform;
+                slide.style.transform = data.transform;
+                slide.className = data.className;
+            }
+        }
+
+        function queueReset( slide ) {
+            console.log( 'Q reset: ', slide );
+            renderQueue.push(function () {
+                scaleElement( slide, null );    // this also implies: transformElement( slide, null )
+            });            
+        }
+
+        function queueScale( slide, realScale ) {
+            console.log( 'Q scale: ', slide, realScale );
+            renderQueue.push(function () {
+                scaleElement( slide, realScale, targetInfo );
+            });            
+        }
+
+        function queueTransform( slide, transform ) {
+            console.log( 'Q transform: ', slide, transform );
+            assert( transform.indexOf('NaN') === -1 );
+            renderQueue.push(function () {
+                transformElement( slide, transform );
+            });
+        }
+
+        function runQueue() {
+            for ( var i = 0, len = renderQueue.length; i < len; i++ ) {
+                renderQueue[i]();
+            }
+            console.log( 'Q ------- ' );
+            renderQueue = null;
+        }
 
         function layoutSingleSlide( slide, x, y ) {
         
@@ -1988,14 +2056,14 @@ TBD end of old code, start of new code
                 }
             }
 
-            var isCurrentSlide = (slide === currentSlide);
+            // Remember the current styles, at least temporarily, so that we can restore them
+            // at the end and ensure the proper transitions always take place, despite us
+            // performing some DOM-render-triggering measurements in here next (getComputedSlideSize()).
+            backupCurrentStyles(slide);
 
-            // Resets all transforms to use the external styles?
-            // Do *not* do this here! It has already been done by the caller 
-            // and is very dangerous to repeat here as the scale/transformElement()
-            // are *cummulative* and resetting the transform would destroy already
-            // prepared settings.
-            //scaleElement( slide, null );
+
+            // Resets all transforms before we measure the slide:
+            scaleElement( slide, null );
 
             // Remove the previous height/size pinning.
             slide.style.height = null;
@@ -2150,7 +2218,8 @@ TBD end of old code, start of new code
                 }
             }
 
-            scaleElement( slide, realScale, targetInfo );
+            //scaleElement( slide, realScale, targetInfo );
+            queueScale( slide, realScale, targetInfo );
 
             console.log("SLIDE layout: ", {
                 slideDimensions: slideDimensions,
@@ -2295,29 +2364,25 @@ TBD end of old code, start of new code
                     voffset = 105;
 
                 // reset transform: the stack is at (0,0,0) in regular view mode and overview mode performs its own positioning at the end in this loop
-                transformElement( hslide, null );
+                queueReset( hslide );
 
                 if( hslide.classList.contains( 'stack' ) ) {
 
-                    if ( isOverview() ) {
-                        // Apply CSS transform to position the slide for the overview.
-                        transformElement( hslide, 'translate3d( ' + ( ( i - prevIndexh ) * hoffset ) + '%, 0%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
-                    }
+                    // Apply CSS transform to position the slide for the overview. Use the same for the regular view.
+                    queueTransform( hslide, 'translate3d( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '%, 0%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
 
                     var verticalSlides = hslide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
 
-                    for ( var j = 0, vlen = verticalSlides.length; j < vlen; j++ ) {
-                        var verticalIndex = ( i === prevIndexh ? prevIndexv : getPreviousVerticalIndex( hslide ) );
+                    var verticalIndex = ( i === indexh ? ( indexv || 0 ) : getPreviousVerticalIndex( hslide ) );
 
+                    for ( var j = 0, vlen = verticalSlides.length; j < vlen; j++ ) {
                         var vslide = verticalSlides[j];
 
                         // reset transform
-                        transformElement( vslide, null );
+                        queueReset( vslide );
 
-                        if ( isOverview() ) {
-                            // Apply CSS transform
-                            transformElement( vslide, 'translate3d( 0%, ' + ( ( j - verticalIndex ) * voffset ) + '%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
-                        }
+                        // Apply CSS transform
+                        queueTransform( vslide, 'translate3d( 0%, ' + ( ( j - verticalIndex ) * voffset ) + '%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
 
                         layoutSingleSlide( vslide, i, j );
                     }
@@ -2325,10 +2390,8 @@ TBD end of old code, start of new code
                 }
                 else {
 
-                    if ( isOverview() ) {
-                        // Apply CSS transform to position the slide for the overview.
-                        transformElement( hslide, 'translate3d( ' + ( ( i - prevIndexh ) * hoffset ) + '%, 0%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
-                    }
+                    // Apply CSS transform to position the slide for the overview.
+                    queueTransform( hslide, 'translate3d( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '%, 0%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
 
                     layoutSingleSlide( hslide, i, 0 );
 
@@ -2336,6 +2399,16 @@ TBD end of old code, start of new code
 
             }
 
+            // Now that we have done all layout work re positioning, scaling, etc., we are
+            // going to restore all elements' styles & classes as they were before this call.
+            restoreAllCurrentStyles();            
+            // After which we tickle the DOM into re-rendering once again: this will be 
+            // our departure point for all the queued transformations, which the browser will
+            // thus observe as *changes* and execute all the programmed CSS transitions:
+            /* @void */ dom.wrapper.offsetHeight;
+
+            // Now continue and turn the slides visible/invisible according to the new layout.
+            //            
             // Ensure only the current slide is visible when in regular display mode; 
             // the previous and next siblings will be visible for a while though too to facilitate
             // smooth fore- and background transitions.
@@ -2344,7 +2417,15 @@ TBD end of old code, start of new code
             // viewDistance-restricted set of slides.
             updateSlidesVisibility();
 
+            // And register all the transforms, etc. which were produced by the layout process above.
+            runQueue();
 
+            if ( !isOverview() ) {
+                scaleElement( dom.slides, fundamentalScale );
+            } 
+            else {
+                scaleElement( dom.slides_wrapper, fundamentalScale );
+            }
 
 
             // set the scale for the slide(s) is the last thing we do, so it gets CSS3 animation applied:
@@ -2354,14 +2435,6 @@ TBD end of old code, start of new code
                 indices: getIndices(),
                 scale: fundamentalScale
             });
-
-
-            if ( !isOverview() ) {
-                scaleElement( dom.slides, fundamentalScale );
-            } 
-            else {
-                scaleElement( dom.slides_wrapper, fundamentalScale );
-            }
 
             updateProgress();
             updateParallax();
@@ -2678,13 +2751,13 @@ TBD end of old code, start of new code
         }
 
         var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
-        var len1 = horizontalSlides.length;
+        var hlen = horizontalSlides.length;
         overview_slides_info = {
-            horizontal_count: len1,
+            horizontal_count: hlen,
             vertical_count: 1
         };
 
-        for( var i = 0; i < len1; i++ ) {
+        for( var i = 0; i < hlen; i++ ) {
             var hslide = horizontalSlides[i];
 
             hslide.setAttribute( 'data-index-h', i );
@@ -2693,10 +2766,10 @@ TBD end of old code, start of new code
             if( hslide.classList.contains( 'stack' ) ) {
 
                 var verticalSlides = hslide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
-                var len2 = verticalSlides.length;
-                overview_slides_info.vertical_count = Math.max( overview_slides_info.vertical_count, len2 );
+                var vlen = verticalSlides.length;
+                overview_slides_info.vertical_count = Math.max( overview_slides_info.vertical_count, vlen );
 
-                for( var j = 0; j < len2; j++ ) {
+                for( var j = 0; j < vlen; j++ ) {
                     var vslide = verticalSlides[j];
 
                     vslide.setAttribute( 'data-index-h', i );
@@ -3410,7 +3483,7 @@ TBD end of old code, start of new code
             distanceX,
             distanceY;
 
-		if( horizontalSlidesLength && typeof indexh !== 'undefined' ) {
+		if( horizontalSlidesLength ) {
 
             // The number of steps away from the present slide that will
             // be visible
@@ -3453,7 +3526,7 @@ TBD end of old code, start of new code
                     for( var y = 0; y < verticalSlidesLength; y++ ) {
                         var verticalSlide = verticalSlides[y];
 
-						distanceY = x === ( indexh || 0 ) ? Math.abs( ( indexv || 0 ) - y ) : Math.abs( y - oy );
+						distanceY = ( x === ( indexh || 0 ) ? Math.abs( ( indexv || 0 ) - y ) : Math.abs( y - oy ) );
 
                         if( distanceX + distanceY <= viewDistance ) {
                             console.log("updateSlidesVisibility: slide ", x, ", ", y, " SHOW: ", distanceX, "+", distanceY, "<=", viewDistance);
