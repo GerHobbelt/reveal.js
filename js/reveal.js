@@ -1540,7 +1540,11 @@ TBD end of old code, start of new code
             element.style.bottom = 0;
             element.style.right = 0;
 
-            if( useZoomFallback ) {
+            // if scale is within epsilon = 1e-3 range of 1.0, then we don't apply the scale: the CSS default is scale=1 anyway.
+            if ( scale >= 1.0 - 1e-3 && scale <= 1.0 + 1e-3 ) {
+                // nothing to do...
+            }
+            else if( useZoomFallback ) {
                 element.style.zoom = scale;
             }
             // Apply scale transform
@@ -1986,9 +1990,12 @@ TBD end of old code, start of new code
 
             var isCurrentSlide = (slide === currentSlide);
 
-            // Resets all transforms to use the external styles
-            scaleElement( slide, null );
-            transformElement( slide, null );
+            // Resets all transforms to use the external styles?
+            // Do *not* do this here! It has already been done by the caller 
+            // and is very dangerous to repeat here as the scale/transformElement()
+            // are *cummulative* and resetting the transform would destroy already
+            // prepared settings.
+            //scaleElement( slide, null );
 
             // Remove the previous height/size pinning.
             slide.style.height = null;
@@ -2277,20 +2284,24 @@ TBD end of old code, start of new code
             var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
             var info = getSlidesOverviewInfo();
 
+            // Note: keep in mind that transformElement() and scaleElement() are *additive* so we always need to
+            // *reset* the transform for each element when we start the layout positioning/scaling process!
+            //
+            // Also note that we first position the slide for the overlay and only then do we layout the slide itself,
+            // as that part will apply a slide-specific scaling.
             for ( var i = 0, hlen = horizontalSlides.length; i < hlen; i++ ) {
                 var hslide = horizontalSlides[i],
                     hoffset = config.rtl ? -105 : 105,
                     voffset = 105;
 
+                // reset transform: the stack is at (0,0,0) in regular view mode and overview mode performs its own positioning at the end in this loop
+                transformElement( hslide, null );
+
                 if( hslide.classList.contains( 'stack' ) ) {
 
                     if ( isOverview() ) {
                         // Apply CSS transform to position the slide for the overview.
-                        transformElement( hslide, 'translate3d( ' + ( ( i - prevIndexh ) * hoffset ) + '%, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
-                    }
-                    else {
-                        // reset transform: the stack is at (0,0,0) in regular view mode
-                        transformElement( hslide, null );
+                        transformElement( hslide, 'translate3d( ' + ( ( i - prevIndexh ) * hoffset ) + '%, 0%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
                     }
 
                     var verticalSlides = hslide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
@@ -2300,23 +2311,26 @@ TBD end of old code, start of new code
 
                         var vslide = verticalSlides[j];
 
-                        layoutSingleSlide( vslide, i, j );
+                        // reset transform
+                        transformElement( vslide, null );
 
                         if ( isOverview() ) {
                             // Apply CSS transform
-                            transformElement( vslide, 'translate3d( 0px, ' + ( ( j - verticalIndex ) * voffset ) + '%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                            transformElement( vslide, 'translate3d( 0%, ' + ( ( j - verticalIndex ) * voffset ) + '%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
                         }
+
+                        layoutSingleSlide( vslide, i, j );
                     }
 
                 }
                 else {
 
-                    layoutSingleSlide( hslide, i, 0 );
-
                     if ( isOverview() ) {
                         // Apply CSS transform to position the slide for the overview.
-                        transformElement( hslide, 'translate3d( ' + ( ( i - prevIndexh ) * hoffset ) + '%, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                        transformElement( hslide, 'translate3d( ' + ( ( i - prevIndexh ) * hoffset ) + '%, 0%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
                     }
+
+                    layoutSingleSlide( hslide, i, 0 );
 
                 }
 
