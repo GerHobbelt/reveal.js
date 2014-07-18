@@ -83,6 +83,21 @@ body
   overflow: hidden;             /* and, yes, we know we bluntly *clip* the contents here. Readability of this kind of content isn't the purpose of the overview mode anyway. */ 
 }
 
+.slides-wrapper {
+    transform-origin: 50% 50% 0px;
+}
+
+.slides-wrapper .slides {
+    transform-origin: 50% 50% 0px;
+}
+
+.slides-wrapper .slides > section {
+    transform-origin: 0px 0px 0px;
+}
+.slides-wrapper .slides > section > section {
+    transform-origin: 0px 0px 0px;
+}
+
 /*********************************************
  * VIEW FRAGMENTS
  *********************************************/

@@ -12,11 +12,11 @@
             var nextindexv;
 
             var fragmentindex = Reveal.getIndices().f;
-            if (typeof fragmentindex == 'undefined') {
+            if (typeof fragmentindex === 'undefined') {
                 fragmentindex = 0;
             }
 
-            if (slideElement.nextElementSibling && slideElement.parentNode.nodeName == 'SECTION') {
+            if ( slideElement.nextElementSibling && slideElement.parentNode.nodeName.match( /^section$/i ) ) {
                 nextindexh = indexh;
                 nextindexv = indexv + 1;
             } else {

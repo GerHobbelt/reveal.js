@@ -383,29 +383,44 @@ require('reveal').slide(2, 3);
                     <h2>Examples and Test Pages</h2>
                     <style>
                     ul.longlist {
-                        float: left;
                         font-size: 80%;
                     }
+                    table.longlist-multicolumn td {
+                        vertical-align: top;
+                    }
+                    table.longlist-multicolumn {
+                        margin: 0;
+                    }
                     </style>
-                    <ul class="longlist">
-                        <li><a href="./test/examples/barebones.html">Examples :: barebones</a></li>
-                        <li><a href="./test/examples/embedded-media.html">Examples :: embedded-media</a></li>
-                        <li><a href="./test/examples/math.html">Examples :: math</a></li>
-                        <li><a href="./test/examples/slide-backgrounds.html">Examples :: slide-backgrounds</a></li>
-                        <li><a href="./test/examples/slide-number.html">Examples :: slide-number</a></li>
-                        <li><a href="./test/examples/postmessage-example.html">Examples :: postmessage</a></li>
-                    </ul>
-                    <ul class="longlist">
-                        <li><a href="./plugin/markdown/example.html"> Plugin :: markdown/example</a></li>
-                        <li><a href="./plugin/notes/notes.html"> Plugin :: notes/notes</a></li>
-                        <li><a href="./plugin/notes-server/notes.html"> Plugin :: notes-server/notes</a></li>
-                        <li><a href="./test/test-markdown.html"> Test :: test-markdown</a></li>
-                        <li><a href="./test/test.html"> Test :: test</a></li>
-                    </ul>
-                    <ul class="longlist">
-                        <li><a href="./howto_reveal_js.html"> Demo :: HowTo work with RevealJS</a></li>
-                        <li><a href="./index-jolicode.html"> Demo :: The Jolicode Template</a></li>
-                    </ul>
+                    <table class="longlist-multicolumn">
+                        <tr>
+                            <td>
+                                <ul class="longlist">
+                                    <li><a href="./test/examples/barebones.html">Examples :: barebones</a></li>
+                                    <li><a href="./test/examples/embedded-media.html">Examples :: embedded-media</a></li>
+                                    <li><a href="./test/examples/math.html">Examples :: math</a></li>
+                                    <li><a href="./test/examples/slide-backgrounds.html">Examples :: slide-backgrounds</a></li>
+                                    <li><a href="./test/examples/slide-number.html">Examples :: slide-number</a></li>
+                                    <li><a href="./test/examples/postmessage-example.html">Examples :: postmessage</a></li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="longlist">
+                                    <li><a href="./plugin/markdown/example.html"> Plugin :: markdown/example</a></li>
+                                    <li><a href="./plugin/notes/notes.html"> Plugin :: notes/notes</a></li>
+                                    <li><a href="./plugin/notes-server/notes.html"> Plugin :: notes-server/notes</a></li>
+                                    <li><a href="./test/test-markdown.html"> Test :: test-markdown</a></li>
+                                    <li><a href="./test/test.html"> Test :: test</a></li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="longlist">
+                                    <li><a href="./howto_reveal_js.html"> Demo :: HowTo work with RevealJS</a></li>
+                                    <li><a href="./index-jolicode.html"> Demo :: The Jolicode Template</a></li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
                 </section>
                 <section>
                     <h2>Stellar Links</h2>
