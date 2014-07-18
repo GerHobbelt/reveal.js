@@ -32,7 +32,12 @@
 
     var isEnabled = true;
 
-    document.querySelector( '.reveal' ).addEventListener( 'mousedown', function( event ) {
+    var rootElement = document.querySelector( '.reveal' );
+
+    // Inform the zoom tool that the .reveal DIV is the element which should receive the transform.
+    zoom.init(rootElement);
+
+    rootElement.addEventListener( 'mousedown', function( event ) {
         var modifier = ( Reveal.getConfig().zoomKey ? Reveal.getConfig().zoomKey : 'alt' ) + 'Key';
 
         if( event[ modifier ] && isEnabled ) {
