@@ -1504,18 +1504,27 @@ TBD end of old code, start of new code
      */
     function transformElement( element, transform ) {
 
-        element.style.WebkitTransform = transform;
-        element.style.MozTransform = transform;
-        element.style.msTransform = transform;
-        element.style.OTransform = transform;
-        element.style.transform = transform;
+        if ( transform == null ) {
+            element.style.WebkitTransform = transform;
+            element.style.MozTransform = transform;
+            element.style.msTransform = transform;
+            element.style.OTransform = transform;
+            element.style.transform = transform;
+        }
+        else {
+            element.style.WebkitTransform += transform;
+            element.style.MozTransform += transform;
+            element.style.msTransform += transform;
+            element.style.OTransform += transform;
+            element.style.transform += transform;
+        }
 
     }
 
     /**
      * Applies the given scale to the target element.
      */
-    function scaleElement( element, scale ) {
+    function scaleElement( element, scale, targetInfo ) {
         if ( scale == null ) {
             // reset the scale and related attributes:
             element.style.left = null;
@@ -1536,7 +1545,17 @@ TBD end of old code, start of new code
             }
             // Apply scale transform
             else {
-                transformElement( element, 'scale(' + scale + ')' );
+                var post_translation = '';
+                if ( targetInfo ) {
+                    // compensation: -0.5 * delta_of_origin / scale
+                    var scale_inv = 1 / scale;
+                    var delta_h = targetInfo.slideHeight * scale_inv - targetInfo.slideHeight;
+                    var c_h = -0.5 * delta_h * scale_inv; 
+                    var delta_w = targetInfo.slideWidth * scale_inv - targetInfo.slideWidth;
+                    var c_w = -0.5 * delta_w * scale_inv; 
+                    post_translation = ' translate3d(' + c_w + 'px, ' + c_h + 'px, 0px)';
+                }
+                transformElement( element, 'scale(' + scale + ') ' + post_translation );
             }
         }
     }
@@ -2124,7 +2143,7 @@ TBD end of old code, start of new code
                 }
             }
 
-            scaleElement( slide, realScale );
+            scaleElement( slide, realScale, targetInfo );
 
             console.log("SLIDE layout: ", {
                 slideDimensions: slideDimensions,

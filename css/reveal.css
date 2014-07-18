@@ -84,18 +84,24 @@ body
 }
 
 .slides-wrapper {
-    transform-origin: 50% 50% 0px;
+    transform-origin: 50% 50%;
 }
 
 .slides-wrapper .slides {
-    transform-origin: 50% 50% 0px;
+    transform-origin: 50% 50%;
 }
 
 .slides-wrapper .slides > section {
-    transform-origin: 0px 0px 0px;
+    -webkit-transform-origin: 50% 50%;
+       -moz-transform-origin: 50% 50%;
+        -ms-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
 }
 .slides-wrapper .slides > section > section {
-    transform-origin: 0px 0px 0px;
+    -webkit-transform-origin: 50% 50%;
+       -moz-transform-origin: 50% 50%;
+        -ms-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
 }
 
 /*********************************************
