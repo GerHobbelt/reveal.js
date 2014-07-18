@@ -3112,14 +3112,6 @@ TBD end of old code, start of new code
             } );
         }
 
-   //      // Solves an edge case where the previous slide maintains the
-   //      // 'present' class when navigating between adjacent vertical
-   //      // stacks
-   //      if( previousSlide ) {
-   //          previousSlide.classList.remove( 'present' );
-			// previousSlide.setAttribute( 'aria-hidden', 'true' );
-   //      }
-
         if ( indexh === 0 && indexv === 0 && slideChanged && !isOverview() ) {
             // Reset all slides upon navigate to home
             // Issue: #285
@@ -3294,24 +3286,6 @@ TBD end of old code, start of new code
             for( var i = 0; i < slidesLength; i++ ) {
                 var element = slides[i];
 
-                // // Optimization; hide all slides that are N or more steps
-                // // away from the present slide
-                // if( isOverview() === false ) {
-                //     // The distance loops so that it measures 1 between the first
-                //     // and last slides -- in fact it calculates the minimum distance from
-                //     // slide [index] to slide [i] while assuming the sequence is a loop.
-                //     var d1 = Math.abs(index - i);
-                //     var d2 = slidesLength - d1;   // this will always produce a positive 'd2' value as  d1 <= slidesLength
-                //     var distance = Math.min(d1, d2);
-
-                //     if (distance <= SLIDE_NO_DISPLAY_DISTANCE) {
-                //         showSlide( element );
-                //     }
-                //     else {
-                //         hideSlide( element );
-                //     }
-                // }
-
                 var reverse = config.rtl && !isVerticalSlide( element );
 
                 element.classList.remove( 'past-1' );
@@ -3323,12 +3297,6 @@ TBD end of old code, start of new code
                 // http://www.w3.org/html/wg/drafts/html/master/editing.html#the-hidden-attribute
                 element.setAttribute( 'hidden', '' );
 				element.setAttribute( 'aria-hidden', 'true' );
-
-                // // If we're printing static slides, all slides are 'present'
-                // if( printMode ) {
-                //     element.classList.add( 'present' );
-                //     continue;
-                // }
 
                 if( i < index ) {
                     // Any element previous to index is given the 'past' class
