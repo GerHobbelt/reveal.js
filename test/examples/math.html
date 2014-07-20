@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" style="height: 100%;">
 
     <head>
@@ -13,6 +13,8 @@
 
         <link rel='stylesheet' href='../../lib/js/nprogress/nprogress.css'>
         <script src='../../lib/js/nprogress/nprogress.js'></script>
+
+        <script src="../../js/reveal-global-utilities.js"></script>
     </head>
 
     <body class="reveal-viewport">
@@ -168,6 +170,7 @@
             // Full list of configuration options available here:
             // https://github.com/hakimel/reveal.js#configuration
             var RevealConfiguration = function () {
+                // We don't extend the set specified in the loader and passed on to us via `cfg` but rather overrule those here.
 				return {
 	                history: true,
 	                transition: 'linear',
@@ -183,6 +186,8 @@
 	            };
 			};
         </script>
+
+        <script src="../../js/reveal-pagestart-driver.js"></script>
 
         <!-- data-main attribute tells require.js to load
              scripts/main.js after require.js loads. -->

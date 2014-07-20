@@ -7,10 +7,11 @@
         <title>reveal.js - Barebones</title>
 
         <link rel="stylesheet" href="../../css/reveal.css">
-        <link rel="stylesheet" href="../../css/theme/default.css" id="theme">
 
         <link rel='stylesheet' href='../../lib/js/nprogress/nprogress.css'>
         <script src='../../lib/js/nprogress/nprogress.js'></script>
+
+        <script src="../../js/reveal-global-utilities.js"></script>
     </head>
 
     <body class="reveal-viewport">
@@ -38,9 +39,10 @@
 
             // Full list of configuration options available here:
             // https://github.com/hakimel/reveal.js#configuration
-            var RevealConfiguration = {
-                // kill loading the dependencies (plugins) which we list in the require-reveal-init.js file:
-				dependencies: []
+            var RevealConfiguration = function (cfg) {
+                // We don't extend the set specified in the loader and passed on to us via `cfg` but rather overrule those here.
+                return {
+                };
             };
         </script>
 

@@ -359,7 +359,7 @@ body
  *********************************************/
 
 .reveal .progress {
-    position: absolute; /* fixed? */
+    position: fixed;
     display: none;
     height: 3px;
     width: 100%;
@@ -371,6 +371,7 @@ body
 }
     .reveal .progress:after {
         content: '';
+        font-size: 16px;
         display: block;
         position: absolute;
         height: 20px;
@@ -485,9 +486,12 @@ body
     bottom: 3px;
     left: 0;
     z-index: 10;
+
+    background-color: rgba( 0, 0, 0, 0.2 );
 }
     .reveal .time-remaining:after {
         content: '';
+        font-size: 16px;
         display: 'block';
         position: absolute;
         height: 20px;
@@ -498,6 +502,8 @@ body
         display: block;
         height: 100%;
         width: 0px;
+
+        background-color: #000;
 
         -webkit-transition: width 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
            -moz-transition: width 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
@@ -550,6 +556,7 @@ body
 
     -webkit-transition: -webkit-perspective 3s ease;
        -moz-transition: -moz-perspective 3s ease;
+        -ms-transition: -ms-perspective 3s ease;
             transition: perspective 3s ease;
 
     -webkit-perspective: 600px;
@@ -589,6 +596,10 @@ body
                         -moz-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
                         visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
                         opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+        -ms-transition: -ms-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -ms-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
             transition: transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
                         transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
                         visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
@@ -598,6 +609,14 @@ body
 .reveal .slides > section.visible,
 .reveal .slides > section > section.visible {
     display: block;
+}
+
+/*
+ * special layout fixes for when we measure the slide(s)' dimensions:
+ */
+.reveal .slides > section.slide-measurement,
+.reveal .slides > section > section.slide-measurement {
+    width: auto;
 }
 
 .reveal.center .slides {
@@ -702,34 +721,6 @@ body
     pointer-events: auto;
 }
 
-/* 
- * Reset all transforms that may be active for a slide when we switch to overview mode.
- */
-.reveal.overview .slides > section,
-.reveal.overview .slides > section > section {
-        -webkit-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
-           -moz-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
-            -ms-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
-             -o-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
-                transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
-}
-
-/*
- * This 'reset-transitions' class is used to RESET any pending transitions when we go from 
- * regular to overview mode.
- *
- * Inspired by: http://www.bennadel.com/blog/2462-understanding-css-transitions-and-class-timing-revisited.htm;
- */
-.reveal.reset-transitions .slides section,
-.reveal.reset-transitions .slides > section > section,
-.reveal.reset-transitions .slides section,
-.reveal.reset-transitions .slides > section > section {
-    -webkit-transition: none !important;
-       -moz-transition: none !important;
-        -ms-transition: none !important;
-         -o-transition: none !important;
-            transition: none !important;
-}
 
 
 .reveal .slides > section.past,
@@ -772,6 +763,7 @@ x.reveal.overview .slides > section blockquote
             backface-visibility: hidden;
 }
 
+/*
 .reveal .slides > section[data-transition=slide].past,
 .reveal.slide .slides > section:not([data-transition]).past,
 .reveal .slides > section[data-transition=linear].past,
@@ -813,7 +805,7 @@ x.reveal.overview .slides > section blockquote
          -o-transform: translate3d(0, 150%, 0);
             transform: translate3d(0, 150%, 0);
 }
-
+*/
 
 
 /*********************************************
@@ -821,6 +813,7 @@ x.reveal.overview .slides > section blockquote
  * Aliased 'default' for backwards compatibility
  *********************************************/
 
+/*
 .reveal .slides > section[data-transition=default].past,
 .reveal.default .slides > section:not([data-transition]).past,
 .reveal .slides > section[data-transition=convex].past,
@@ -858,13 +851,14 @@ x.reveal.overview .slides > section blockquote
         -ms-transform: translate3d(0, 300px, 0) rotateX(-70deg) translate3d(0, 300px, 0);
             transform: translate3d(0, 300px, 0) rotateX(-70deg) translate3d(0, 300px, 0);
 }
-
+*/
 
 
 /*********************************************
  * CONCAVE TRANSITION
  *********************************************/
 
+/*
 .reveal .slides > section[data-transition=concave].past,
 .reveal.concave .slides > section:not([data-transition]).past {
     -webkit-transform: translate3d(-100%, 0, 0) rotateY(90deg) translate3d(-100%, 0, 0);
@@ -894,11 +888,13 @@ x.reveal.overview .slides > section blockquote
         -ms-transform: translate3d(0, 80%, 0) rotateX(70deg) translate3d(0, 80%, 0);
             transform: translate3d(0, 80%, 0) rotateX(70deg) translate3d(0, 80%, 0);
 }
+*/
 
 
 /*********************************************
  * ZOOM TRANSITION
  *********************************************/
+
 
 .reveal .slides > section[data-transition=zoom],
 .reveal.zoom .slides > section:not([data-transition]) {
@@ -907,6 +903,7 @@ x.reveal.overview .slides > section blockquote
             transition-timing-function: ease;
 }
 
+/*
 .reveal .slides > section[data-transition=zoom].past,
 .reveal.zoom .slides > section:not([data-transition]).past {
     visibility: hidden;
@@ -944,7 +941,7 @@ x.reveal.overview .slides > section blockquote
          -o-transform: translate3d(0, 150%, 0);
             transform: translate3d(0, 150%, 0);
 }
-
+*/
 
 /*********************************************
  * CUBE TRANSITION
@@ -958,7 +955,7 @@ x.reveal.overview .slides > section blockquote
 }
 
 .reveal.cube .slides section {
-    padding: 30px;
+    /* padding: 30px; */
     /* min-height: 700px; */
 
     -webkit-backface-visibility: hidden;
@@ -1191,12 +1188,6 @@ x.reveal.overview .slides > section blockquote
         -ms-transform: none;
          -o-transform: none;
             transform: none;
-
-    -webkit-transition: opacity 3s;
-       -moz-transition: opacity 3s;
-        -ms-transition: opacity 3s;
-         -o-transition: opacity 3s;
-            transition: opacity 3s;
 }
 
 
@@ -1271,15 +1262,6 @@ x.reveal.overview .slides > section blockquote
        -moz-transform-style: flat !important;
         -ms-transform-style: flat !important;
             transform-style: flat !important;
-}
-
-.reveal.overview[data-overview-transition=none] .slides section,
-.reveal.overview-deactivating[data-overview-transition=none] .slides section {
-    -webkit-transition: none;
-       -moz-transition: none;
-        -ms-transition: none;
-         -o-transition: none;
-            transition: none;
 }
 
 .reveal.overview .slides section .fragment {
@@ -1378,14 +1360,20 @@ x.reveal.overview .slides > section blockquote
     left: 0;
 }
 
-.reveal .no-transition,
-.reveal .no-transition * {
+/*
+ * This 'no-transition' class is used to RESET any pending transitions when we manipulate the DOM. 
+ *
+ * See also: http://www.bennadel.com/blog/2462-understanding-css-transitions-and-class-timing-revisited.htm;
+ */
+.no-transition,
+.no-transition * {
     -webkit-transition: none !important;
        -moz-transition: none !important;
         -ms-transition: none !important;
          -o-transition: none !important;
             transition: none !important;
 }
+
 
 
 /*********************************************

@@ -62,11 +62,14 @@
             height: '100%', //700,
 
             // Dimensions of the content when produced onto printed media
-            printWidth: 1122 /* 2974 */,
-            printHeight: 867 /* 2159 */,
+            printWidth: 2974,           // landscape A4
+            printHeight: 2159,
 
             // Factor of the display size that should remain empty around the content
             margin: 0.05,
+
+            // Factor of the print page size that should remain empty around the content (e.g. because your printer cannot print edge-to-edge)
+            printMargin: 50 / 2159,
 
             // Bounds for smallest/largest possible scale to apply to content
             minScale: 0.05,
@@ -135,19 +138,19 @@
             mouseWheel: false,
 
             // {boolean} Apply a 3D roll to links on hover
-            rollingLinks: false,
+            rollingLinks: true,
 
             // {boolean} Hides the address bar on mobile devices
             hideAddressBar: true,
 
             // {boolean} Opens links in an iframe preview overlay
-            previewLinks: false,
+            previewLinks: true,
 
             // {boolean} Exposes the reveal.js API through window.postMessage
             postMessage: true,
 
             // {boolean} Dispatches all reveal.js events to the parent window through postMessage
-            postMessageEvents: false,
+            postMessageEvents: true,
 
             // {boolean} Focuses body when page changes visibility to ensure keyboard shortcuts work
             focusBodyOnPageVisibilityChange: true,
@@ -157,6 +160,9 @@
 
             // Transition style
             transition: 'default', // default/cube/page/slide/concave/convex/zoom/linear/fade/none
+
+            // Overview Transition style: the transition applied to changes when browsing the slides in overview mode
+            overviewTransition: 'default', // default/cube/page/slide/concave/convex/zoom/linear/fade/none
 
             // Transition speed
             transitionSpeed: 'default', // default/fast/slow
@@ -176,6 +182,12 @@
             // Number of slides away from the current that are visible in overview mode
             viewDistance: 6,
 
+            // When not NULL, this decides whether we use CSS style:zoom (TRUE) or CSS3 transform:scale(); 
+            // the latter is GPU accelerated, but can produce cruddy output when the slides are scaled up.
+            // 
+            // The default (NULL) lets the machine decide (CSS3:scale for mobile devices, CSS:zoom for desktops)
+            useCSSZoom: null,
+
             // Script dependencies to load
             dependencies: []
 
@@ -188,11 +200,20 @@
         indexh /* = undefined */,
         indexv /* = undefined */,
 
+        // the index to the currently displayed fragment of the currently active slide 
+        currentFragmentIndex = null, 
+
         // The previous and current slide HTML elements
         previousSlide = null,
         currentSlide /* = undefined */,
 
         previousBackground,
+
+        // the previously shown slide/fragment/state:
+        previousSlideIndexH = null, 
+        previousSlideIndexV = null, 
+        previousFragmentIndex = null, 
+        previousMode = null,
 
         // Slides may hold a data-state attribute which we pick up and apply
         // as a class to the body. This list contains the combined state of
@@ -229,11 +250,8 @@
         // Registers what the viewDistance settings are for the present overview
         currentOverviewInfo = null,
 
-        // {setTimeout handler} A delay used to activate the overview mode
-        // activateOverviewTimeout = null,
-
-        // {setTimeout handler} A delay used to deactivate the overview mode
-        deactivateOverviewTimeout = null,
+        // {setTimeout handler} A delay used during (de)activation of the overview mode
+        activateOverviewTimeout = null,
 
         // {setTimeout handler} A delay used to hide next/previous slides in the deck after the transition to the new current slide has completed.
         transitionMaxDurationTimeout = null,
@@ -282,11 +300,11 @@
         if (typeof window.assert === 'function') {
             return window.assert(condition);
         } else if (!condition) {
-            msg = Array.prototype.slice.call(arguments, 1).join(' ').trim();
+            var msg = Array.prototype.slice.call(arguments, 1).join(' ').trim();
             if (console && console.log) {
                 console.log('@@@@@@ assertion failed: ', arguments, (msg || ''));
             }
-            if (window.QUnit.begin) {
+            if (window.QUnit && window.QUnit.begin) {
                 throw new Error('ASSERTION failed' + (msg ? ': ' + msg : ''));
             } else if (window.invoke_debugger !== false) {
                 debugger;
@@ -360,8 +378,7 @@
         // See the augmented extend() function below.
         if( typeof query.dependencies !== 'undefined' ) delete query.dependencies;
 
-        // Copy options over to our config object
-        extend( config, options );
+        // Copy options specified in the URI query and/or hash parts over to our config object
         extend( config, query, function( fieldname ) {
             // filter 1: only accept query parameters which do already exist in our `config` object.
             //
@@ -369,6 +386,8 @@
             return typeof config[fieldname] !== 'undefined'
                 && typeof config[fieldname] !== 'function';
         } );
+        // Copy options over to our config object
+        extend( config, options );
 
         // Hide the address bar in mobile browsers
         hideAddressBar();
@@ -422,18 +441,23 @@
 
 		isMobileDevice = navigator.userAgent.match( /(iphone|ipod|ipad|android)/gi );
 
-        // Prefer zooming in desktop Chrome (and other browsers) so that content remains crisp
-        // with nested transforms.
-        //
-        // Unfortunately, CSS3 zoom in Chrome has the very bad habit to scale text correctly only down to zoom factors of about 0.4,
-        // go below that number and your text gets bigger and bigger (relatively speaking).
-        // Try this at: http://jsbin.com/aluniv/3
-        // Hence we must revert to using CSS3 transform scale() or scale3d() for Chrome.
-        //
-        // However, using CSS zoom produces a changed layout compared to a layout which is transform:scale()d, hence
-        // we should enhance the layout() code further below to account for this artifact.
-        var isChromeBrowser = /chrome/gi.test( navigator.userAgent ) && 0;  
-        useZoomFallback = !isMobileDevice && isChromeBrowser && typeof document.createElement( 'div' ).style.zoom !== 'undefined';
+        if ( config.useCSSZoom != null && ( config.useCSSZoom ? typeof document.createElement( 'div' ).style.zoom !== 'undefined' : true ) ) {
+            useZoomFallback = config.useCSSZoom;
+        }
+        else {
+            // Prefer zooming in desktop Chrome (and other browsers) so that content remains crisp
+            // with nested transforms.
+            //
+            // Unfortunately, CSS3 zoom in Chrome has the very bad habit to scale text correctly only down to zoom factors of about 0.4,
+            // go below that number and your text gets bigger and bigger (relatively speaking).
+            // Try this at: http://jsbin.com/aluniv/3
+            // Hence we must revert to using CSS3 transform scale() or scale3d() for Chrome.
+            //
+            // However, using CSS zoom produces a changed layout compared to a layout which is transform:scale()d, hence
+            // we should enhance the layout() code further below to account for this artifact.
+            var isChromeBrowser = /chrome/gi.test( navigator.userAgent );  
+            useZoomFallback = !isMobileDevice && isChromeBrowser && typeof document.createElement( 'div' ).style.zoom !== 'undefined';
+        }
     }
 
     /**
@@ -596,11 +620,28 @@
         // Update all backgrounds
         updateBackground();
 
+        // Special setup and config is required when printing to PDF
+        if( isPrintingPDF() ) {
+            removeEventListeners();
+
+            // The document needs to have loaded for the PDF layout
+            // measurements to be accurate
+            if( document.readyState === 'complete' ) {
+                if (!setupPDF()) {
+                    return false;
+                }
+            }
+            else {
+                window.addEventListener( 'load', setupPDF );
+                return false;
+            }
+        }
+
         // Notify listeners that the presentation is ready but use a 1ms
         // timeout to ensure it's not fired synchronously after #initialize()
         setTimeout( function() {
             // Enable transitions now that we're loaded
-            dom.slides.classList.remove( 'no-transition' );
+            dom.wrapper.classList.remove( 'no-transition' );
 
             loaded = true;
 
@@ -611,22 +652,6 @@
                 restarting: restarting
             } );
         }, 1 );
-
-		// Special setup and config is required when printing to PDF
-		if( isPrintingPDF() ) {
-			removeEventListeners();
-
-			// The document needs to have loaded for the PDF layout
-			// measurements to be accurate
-			if( document.readyState === 'complete' ) {
-				if (!setupPDF()) {
-                    return false;
-                }
-			}
-			else {
-				window.addEventListener( 'load', setupPDF );
-			}
-		}
 
         return true;
     }
@@ -705,7 +730,7 @@
         if (!dom.wrapper || !dom.slides) return false;
 
         // Prevent transitions while we're loading
-        dom.slides.classList.add( 'no-transition' );
+        dom.wrapper.classList.add( 'no-transition' );
 
 		dom.wrapper.setAttribute( 'role', 'application' );
 
@@ -834,12 +859,9 @@
      * PDF.
      */
     function setupPDF() {
-/*
-TBD: we need something completely different for printing slides [GerHobbelt]
-*/
 
-		var slideSize = getViewportAndSlideDimensionsInfo();
-        if (slideSize === false) {
+		var targetInfo = getViewportAndSlideDimensionsInfo();
+        if ( targetInfo === false ) {
             return false;
         }
 
@@ -857,15 +879,11 @@ TBD: we need something completely different for printing slides [GerHobbelt]
 		// Limit the size of certain elements to the dimensions of the slide
 		injectStyleSheet( '.reveal section > img, .reveal section > video, .reveal section > iframe{max-width: ' + slideWidth + 'px; max-height:' + slideHeight + 'px}' );
 
-/*
-TBD end
-*/
+
 
 
         // mark the current context as print rather than screen display
         document.body.classList.add( 'print-pdf' );
-
-        var targetInfo = getViewportAndSlideDimensionsInfo();
 
         document.body.style.width = targetInfo.rawAvailableWidth + 'px';
         document.body.style.height = targetInfo.rawAvailableHeight + 'px';
@@ -950,9 +968,9 @@ TBD end of old code, start of new code
 		var node = document.createElement( tagname );
 			node.classList.add( classname );
 		if( typeof innerHTML === 'string' ) {
-				node.innerHTML = innerHTML;
-			}
-			container.appendChild( node );
+			node.innerHTML = innerHTML;
+		}
+		container.appendChild( node );
 
         return node;
 
@@ -1155,12 +1173,13 @@ TBD end of old code, start of new code
 
         // New config options may be passed when this method
         // is invoked through the API after initialization
-        if( typeof options === 'object' ) extend( config, options );
+        extend( config, options );
 
         // Force linear transition based on browser capabilities
         if( features.transforms3d === false ) {
             config.transition = 'linear';
             config.backgroundTransition = 'linear';
+            config.overviewTransition = 'linear';
         }
 
         if( !dom.wrapper ) {
@@ -1168,8 +1187,6 @@ TBD end of old code, start of new code
         }
 
         var numberOfSlides = getTotalSlides();
-
-        dom.wrapper.classList.remove( config.transition );
 
         dom.wrapper.classList.add( config.transition );
 
@@ -1425,12 +1442,14 @@ TBD end of old code, start of new code
         if( b ) {
             if( !filter ) {
                 for( var i in b ) {
-                    a[ i ] = b[ i ];
+                    if ( b.hasOwnProperty(i) ) {
+                        a[ i ] = b[ i ];
+                    }
                 }
             } 
             else {
                 for( var i in b ) {
-                    if( filter( i ) ) {
+                    if ( b.hasOwnProperty(i) && filter( i ) ) {
                         a[ i ] = b[ i ];
                     }
                 }
@@ -1594,8 +1613,9 @@ TBD end of old code, start of new code
         if( element ) {
 
             // account for padding/margins around children by inspecting the node itself too:
-            height = Math.max( height, element.offsetTop + element.offsetHeight );
-            width = Math.max( width, element.offsetLeft + element.offsetWidth );
+            var bbox = element.getBoundingClientRect();
+            height = Math.max( bbox.bottom - bbox.top, element.offsetTop + element.offsetHeight, element.scrollHeight );
+            width = Math.max( bbox.right - bbox.left, element.offsetLeft + element.offsetWidth, element.scrollWidth );
 
             toArray( element.childNodes ).forEach( function( child ) {
 
@@ -2009,21 +2029,18 @@ TBD end of old code, start of new code
         }
 
         function queueReset( slide ) {
-            console.log( 'Q reset: ', slide );
             renderQueue.push(function () {
                 scaleElement( slide, null );    // this also implies: transformElement( slide, null )
             });            
         }
 
         function queueScale( slide, realScale ) {
-            console.log( 'Q scale: ', slide, realScale );
             renderQueue.push(function () {
                 scaleElement( slide, realScale, targetInfo );
             });            
         }
 
         function queueTransform( slide, transform ) {
-            console.log( 'Q transform: ', slide, transform );
             assert( transform.indexOf('NaN') === -1 );
             renderQueue.push(function () {
                 transformElement( slide, transform );
@@ -2034,11 +2051,10 @@ TBD end of old code, start of new code
             for ( var i = 0, len = renderQueue.length; i < len; i++ ) {
                 renderQueue[i]();
             }
-            console.log( 'Q ------- ' );
             renderQueue = null;
         }
 
-        function layoutSingleSlide( slide, x, y ) {
+        function layoutSingleSlide( slide, parentSlide, x, y ) {
         
             // Check if this slide comes with a dimensions/scale cache.
             var cache = slide.getAttribute( 'data-reveal-dim-cache' ) || '';
@@ -2059,11 +2075,28 @@ TBD end of old code, start of new code
             // Remember the current styles, at least temporarily, so that we can restore them
             // at the end and ensure the proper transitions always take place, despite us
             // performing some DOM-render-triggering measurements in here next (getComputedSlideSize()).
-            backupCurrentStyles(slide);
+            backupCurrentStyles( slide );
 
 
             // Resets all transforms before we measure the slide:
             scaleElement( slide, null );
+
+            slide.classList.remove( 'past-1' );
+            slide.classList.remove( 'past' );
+            slide.classList.add( 'present' );
+            slide.classList.add( 'slide-measurement' );
+            slide.classList.remove( 'future' );
+            slide.classList.remove( 'future-1' );
+
+            if ( parentSlide ) {
+                scaleElement( parentSlide, null );
+
+                parentSlide.classList.remove( 'past-1' );
+                parentSlide.classList.remove( 'past' );
+                parentSlide.classList.add( 'present' );
+                parentSlide.classList.remove( 'future' );
+                parentSlide.classList.remove( 'future-1' );
+            }
 
             // Remove the previous height/size pinning.
             slide.style.height = null;
@@ -2079,6 +2112,9 @@ TBD end of old code, start of new code
             // Make sure the slide is visible in the DOM for otherwise we cannot obtain measurements.
             // Later on in the layout process we'll invoke updateSlidesVisibility() to ensure all
             // slides that *must* be visible, will be, and those that must not, aren't.
+            if ( parentSlide ) {
+                showSlide( parentSlide );
+            }
             showSlide( slide );
 
             // Layout the contents of the slide.
@@ -2129,7 +2165,6 @@ TBD end of old code, start of new code
             var targetSlideHeight = Math.round(targetInfo.slideHeight / realScale);
             var targetSlideWidth = Math.round(targetInfo.slideWidth / realScale);
 
-
             // Allow user code to modify the slide layout and/or dimensions during the layout phase:
             var eventData = {
                 x: x,
@@ -2152,70 +2187,196 @@ TBD end of old code, start of new code
             targetSlideWidth = eventData.scaledTargetSlideWidth;
             realScale = eventData.slideScale;
 
+            // Complication: when we use CSS:zoom to scale a slide, it won't be an 'exact' scaling: the dimensions of individual
+            // elements will change depending on choices made by the browser, so for best results we should re-calculate 
+            // the slide dimensions after applying the scale; theoretically this will produce another layout, hence yet another
+            // dimension set, so theoretically we would have to iterate until the slide 'fits' within a certain epsilon tolerance.
+            //
+            // As this layout action is very costly, we restrict ourselves to N extra rounds only. And we don't involve the user
+            // code again: the slide will have render as-is without further tweaks.
+            //
+            // Additionally this process attempts to produce a 'nicer' layout by attempting to coerce slides, which turn up to be 
+            // very wide and thin, towards the current preferred slide ratio.
+            var masterTargetSlideHeight = targetSlideHeight;
+            var masterTargetSlideWidth = targetSlideWidth;
+            var masterRealScale = realScale;
+            var preferredRatio = targetInfo.slideWidth / targetInfo.slideHeight;
+
+            var masterSurfaceArea = slideDimensions.width * slideDimensions.height;
+
+            if ( slideDimensions && !isScrollableSlide ) {
+                // The user code executed in the event above may have tweaked the scale while *not* adjusting the slide dimensions:
+                // we want to keep that manual compensation intact during our fill iterative process below.
+                slideDimensions = getComputedSlideSize( slide );
+                realScale = Math.min( targetInfo.slideWidth / ( slideDimensions.width || targetInfo.slideWidth ), targetInfo.slideHeight / ( slideDimensions.height || targetInfo.slideHeight ) );
+
+                // For 'optimum fill layout' we go & hunt for the nearest approximation of our preferred slide h/w ratio:
+                var optimum = {
+                    scale: NaN,
+                    width: NaN,
+                    height: NaN,
+                    surfaceArea: Infinity,
+                    preferredRatio: targetInfo.slideWidth / targetInfo.slideHeight,
+                    slideRatio: 1E12,
+                };
+                // Keep track of which scales we tested so we don't go around in circles when there's not much options to layout a slide differently
+                var processed_scales = [];
+
+                for ( var iter_rounds = 0; /* useZoomFallback */; iter_rounds-- ) {
+                    // apply the scale and recheck:
+                    scaleElement( slide, realScale );
+                    slide.style.left = null;
+                    slide.style.top = null;
+                    slide.style.bottom = null;
+                    slide.style.right = null;
+
+                    // As CSS:zoom does affect the computed size, we *must* obtain the actual dimensions after having applied the scale,
+                    // in order to gt precise numbers from the start.
+                    slideDimensions = getComputedSlideSize( slide );
+
+                    // Compensate for some minimal clipping occurring at large zoom scale factors when using CSS:zoom:
+                    if ( useZoomFallback && realScale > 1 ) {
+                        slideDimensions.height += 1;
+                    }
+
+                    // Fixup scale of content to fit within available space in case we have a zoom goof due to CSS:zoom altering the BBox.
+                    realScale = Math.min( realScale, targetInfo.slideWidth / slideDimensions.width, targetInfo.slideHeight / slideDimensions.height );
+
+                    var newAttempt = {
+                        scale: realScale,
+                        width: slideDimensions.width,
+                        height: slideDimensions.height,
+                        surfaceArea: slideDimensions.width * slideDimensions.height,
+                        preferredRatio: targetInfo.slideWidth / targetInfo.slideHeight,
+                        slideRatio: slideDimensions.width / slideDimensions.height,
+                    };
+
+                    var opti_ratio = optimum.slideRatio;
+                    if ( opti_ratio < 1 ) {
+                        opti_ratio = 1 / opti_ratio;
+                    }
+                    var new_ratio = newAttempt.slideRatio;
+                    if ( new_ratio < 1 ) {
+                        new_ratio = 1 / new_ratio;
+                    }
+                    if (new_ratio < opti_ratio) {
+                        optimum = newAttempt;
+                    }
+
+                    if ( iter_rounds <= 0 ) {
+                        break;
+                    }
+                    if ( processed_scales.indexOf( Math.round( newAttempt.scale * 1000 ) ) !== -1 ) {
+                        console.log('ITER: exit @ ', iter_rounds, ' because scale has been tested before --> cycle!')
+                        break;
+                    }
+                    processed_scales.push( Math.round( newAttempt.scale * 1000 ) );
+
+
+                    // shape the slide in an attempt to coerce the slide towards a more filling & pleasing layout:
+                    var surfaceArea = slideDimensions.width * slideDimensions.height;
+                    var adjustedWidth = Math.sqrt( surfaceArea / preferredRatio ) * preferredRatio;
+                    console.log('iter dim: surf area: ', iter_rounds, surfaceArea, masterSurfaceArea, 'adj width', adjustedWidth, realScale);
+
+                    // Note: the user can force/manipulate the slide layout by specifying style `min-width` for every slide: modern browsers
+                    // ensure that that style will win over any smaller widths set up in here!
+                    slideDimensions.width = Math.ceil( adjustedWidth );
+                    // Estimate the slide dimensions (calculating the height before scaling is expensive not always accurate either anyway...)
+                    var newHeight = Math.ceil( Math.sqrt( surfaceArea / preferredRatio ) );
+                    slideDimensions.height = Math.max( slideDimensions.height, newHeight );
+                    slide.style.width = slideDimensions.width + 'px';
+
+                    if (0) {
+                        // Calculate the dimensions of the slide
+                        slideDimensions = getComputedSlideSize( slide );
+
+                        // Compensate for some minimal clipping occurring at large zoom scale factors when using CSS:zoom:
+                        if ( useZoomFallback && realScale > 1 ) {
+                            slideDimensions.height += 1;
+                        }
+                    }
+
+                    // Determine scale of content to fit within available space
+                    // Protect the scaling calculation against zero-sized slides: make those produce a sensible scale, e.g.: 1.0
+                    realScale = Math.min( targetInfo.slideWidth / slideDimensions.width, targetInfo.slideHeight / slideDimensions.height );
+                }
+
+                // Apply the optimum layout (it may not have to be the last one we tried above!)
+                scaleElement( slide, optimum.scale );
+                slide.style.width = optimum.width + 'px';
+                slide.style.height = optimum.height + 'px';
+
+                realScale = optimum.scale;
+                
+                // Because CSS:zoom will alter the layout when the width changes, we do NOT apply the scale-corrected target width / height 
+                // after having obtained the slide dimensions one last time.
+                slideDimensions.width = optimum.width;
+                slideDimensions.height = optimum.height;
+
+                // We need to compensate for the scale factor, which is applied to the entire slide,
+                // hence for centering properly *and* covering the entire intended slide area, we need
+                // to scale the target size accordingly and use this scaled up/down version: 
+                targetSlideHeight = Math.round(targetInfo.slideHeight / realScale);
+                targetSlideWidth = Math.round(targetInfo.slideWidth / realScale);
+            }
+
             // Pin the height of every slide as otherwise the overview rendering will be botched
             // and so will the regular view, when the slide is 'scrollable'.
             //
             // WARNING: it also means the user cannot set a hardwired style="height: YYY px;" style
             // or some such for any SECTION and expect to live...
-            if ( !isOverview() ) {
-                slide.style.height = Math.max(targetSlideHeight, slideDimensions.height) + 'px';
-                slide.style.width = Math.max(targetSlideWidth, slideDimensions.width) + 'px';
-            }
-            else {
-                // In overview mode, we treat all slides as fixed, identical sized:
-                slide.style.height = targetInfo.slideHeight + 'px';
-                slide.style.width = targetInfo.slideWidth + 'px';
-            }
+            slide.style.height = slideDimensions.height + 'px';
+            slide.style.width = slideDimensions.width + 'px';
+
             slide.style.top = 0;
             slide.style.left = 0;
 
-            // If the display mode is 'block' flexbox is not supported by
-            // the current browser so we fall back on JavaScript centering
-            if( display_style === 'block' ) {
-                var center_pad_v = Math.max(0, Math.floor((targetSlideHeight - slideDimensions.height) / 2));
-                var center_pad_h = Math.max(0, Math.floor((targetSlideWidth - slideDimensions.width) / 2));
+            var center_pad_v = Math.max(0, Math.floor((targetSlideHeight - slideDimensions.height) / 2));
+            var center_pad_h = Math.max(0, Math.floor((targetSlideWidth - slideDimensions.width) / 2));
 
-                // Do not apply the center padding if the user didn't ask for it via configuration, either globally or for this particular slide
-                if ( config.center || slide.classList.contains( 'center' ) ) {
-                    if (center_pad_v > 0) {
-                        slide.style.paddingTop = center_pad_v + 'px';
-                        slide.style.paddingBottom = center_pad_v + 'px';
-                    }
-                    if (center_pad_h > 0) {
-                        slide.style.paddingLeft = center_pad_h + 'px';
-                        slide.style.paddingRight = center_pad_h + 'px';
-                    }
+            // Do not apply the center padding if the user didn't ask for it via configuration, either globally or for this particular slide
+            if ( config.center || slide.classList.contains( 'center' ) ) {
+                if (center_pad_v > 0) {
+                    slide.style.paddingTop = center_pad_v + 'px';
+                    slide.style.paddingBottom = center_pad_v + 'px';
+                }
+                if (center_pad_h > 0) {
+                    slide.style.paddingLeft = center_pad_h + 'px';
+                    slide.style.paddingRight = center_pad_h + 'px';
                 }
             }
-            else {
-                // We must set height:100% for flexbox layout to work for us.
-                // 
-                // In a sense, we're doing so further below, where we always set a slide height in pixels.
+            else if ( isOverview() ) {
+                // Make sure all slides have the same size no matter what!
+                //
+                // Assume left/top alignment now.
+                if (center_pad_v > 0) {
+                    slide.style.paddingTop = (2 * center_pad_v) + 'px';
+                    slide.style.paddingBottom = 0;
+                }
+                if (center_pad_h > 0) {
+                    slide.style.paddingLeft = (2 * center_pad_h) + 'px';
+                    slide.style.paddingRight = 0;
+                }
             }
 
             // Set the slide height/width where appropriate, keeping the slide scale in mind:
             // it is applied to the individual slide, hence its dimensions will differ from those
             // of its wrapper.
-            if ( slideDimensions && !isScrollableSlide && !isOverview() ) {
-                dom.slides.style.width = targetInfo.slideWidth + 'px';
-                dom.slides.style.height = targetInfo.slideHeight + 'px';
-            } else {
-                if ( isScrollableSlide && !isOverview() ) {
-                    // when the scrollable content is wider/higher than the slide area, we better kill the fixed height. Same for the width...
-                    if ( slideDimensions && slideDimensions.width > targetInfo.slideWidth ) {
-                        dom.slides.style.width = null;
-                    } else {
-                        dom.slides.style.width = targetInfo.slideWidth + 'px';
-                    }
-                    if ( slideDimensions && slideDimensions.height > targetInfo.slideHeight ) {
-                        dom.slides.style.height = null;
-                    } else {
-                        dom.slides.style.height = targetInfo.slideHeight + 'px';
-                    }
+            if ( slideDimensions && isScrollableSlide && !isOverview() ) {
+                // when the scrollable content is wider/higher than the slide area, we better kill the fixed height. Same for the width...
+                if ( slideDimensions && slideDimensions.width > targetInfo.slideWidth ) {
+                    dom.slides.style.width = null;
                 } else {
                     dom.slides.style.width = targetInfo.slideWidth + 'px';
+                }
+                if ( slideDimensions && slideDimensions.height > targetInfo.slideHeight ) {
+                    dom.slides.style.height = null;
+                } else {
                     dom.slides.style.height = targetInfo.slideHeight + 'px';
                 }
+            } else {
+                dom.slides.style.width = targetInfo.slideWidth + 'px';
+                dom.slides.style.height = targetInfo.slideHeight + 'px';
             }
 
             //scaleElement( slide, realScale, targetInfo );
@@ -2368,6 +2529,8 @@ TBD end of old code, start of new code
 
                 if( hslide.classList.contains( 'stack' ) ) {
 
+                    backupCurrentStyles( hslide );
+    
                     // Apply CSS transform to position the slide for the overview. Use the same for the regular view.
                     queueTransform( hslide, 'translate3d( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '%, 0%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
 
@@ -2384,7 +2547,7 @@ TBD end of old code, start of new code
                         // Apply CSS transform
                         queueTransform( vslide, 'translate3d( 0%, ' + ( ( j - verticalIndex ) * voffset ) + '%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
 
-                        layoutSingleSlide( vslide, i, j );
+                        layoutSingleSlide( vslide, hslide, i, j );
                     }
 
                 }
@@ -2393,7 +2556,7 @@ TBD end of old code, start of new code
                     // Apply CSS transform to position the slide for the overview.
                     queueTransform( hslide, 'translate3d( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '%, 0%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
 
-                    layoutSingleSlide( hslide, i, 0 );
+                    layoutSingleSlide( hslide, null, i, 0 );
 
                 }
 
@@ -2487,26 +2650,21 @@ TBD end of old code, start of new code
 
         var rawAvailableWidth, rawAvailableHeight, availableWidth, availableHeight;
 
-        if ( isPrintingPDF() ) {
-            // Dimensions of the page surface
-            rawAvailableWidth = config.printWidth;
-            rawAvailableHeight = config.printHeight;
-        }
-        else {
-            // Available space to scale within
-            rawAvailableWidth = dom.wrapper.offsetWidth;
-            rawAvailableHeight = dom.wrapper.offsetHeight;
-        }
+        // Available space to scale within
+        rawAvailableWidth = dom.wrapper.offsetWidth;
+        rawAvailableHeight = dom.wrapper.offsetHeight;
 
         // Reduce available space by margin
         var shrinkage = 1 - config.margin;
+        assert(shrinkage > 0.5);
+        assert(shrinkage <= 1.0);
         availableWidth = Math.floor(rawAvailableWidth * shrinkage); // ... and round down to whole pixels
         availableHeight = Math.floor(rawAvailableHeight * shrinkage);
 
         // Dimensions of the content
         var slideWidth = config.width,
             slideHeight = config.height,
-            slidePadding = 20; // TODO Dig this out of DOM
+            slidePadding = Math.min(rawAvailableWidth - availableWidth, rawAvailableHeight - availableHeight); // TODO Dig this out of DOM (20)
 
         // Slide width may be a percentage of available width
         if( typeof slideWidth === 'string' && /%$/.test( slideWidth ) ) {
@@ -2518,6 +2676,19 @@ TBD end of old code, start of new code
             slideHeight = parseInt( slideHeight, 10 ) / 100 * availableHeight;
         }
 
+        var rawAvailablePrintWidth, rawAvailablePrintHeight, availablePrintWidth, availablePrintHeight;
+
+        // Dimensions of the page surface
+        rawAvailablePrintWidth = config.printWidth;
+        rawAvailablePrintHeight = config.printHeight;
+
+        shrinkage = 1 - config.printMargin;
+        assert(shrinkage > 0.5);
+        assert(shrinkage <= 1.0);
+        
+        availablePrintWidth = Math.floor(rawAvailablePrintWidth * shrinkage); // ... and round down to whole pixels
+        availablePrintHeight = Math.floor(rawAvailablePrintHeight * shrinkage);
+
         return {
             rawAvailableWidth: rawAvailableWidth,
             rawAvailableHeight: rawAvailableHeight,
@@ -2525,6 +2696,13 @@ TBD end of old code, start of new code
             // available space reduced by margin
             availableWidth: availableWidth,             // a.k.a. presentationWidth
             availableHeight: availableHeight,
+
+            rawAvailablePrintWidth: rawAvailablePrintWidth,
+            rawAvailablePrintHeight: rawAvailablePrintHeight,
+
+            // available space reduced by (print) margin
+            availablePrintWidth: availablePrintWidth,
+            availablePrintHeight: availablePrintHeight,
 
             // (Target) Dimensions of the content
             slideWidth: slideWidth,                     // a.k.a. width ~ slide width
@@ -2614,9 +2792,19 @@ TBD end of old code, start of new code
             dom.wrapper.classList.add( 'overview' );
             dom.wrapper.classList.remove( 'overview-deactivating' );
 
-            // clearTimeout( activateOverviewTimeout );
-            clearTimeout( deactivateOverviewTimeout );
-            deactivateOverviewTimeout = null;
+            dom.wrapper.classList.add( config.overviewTransition );
+
+            clearTimeout( activateOverviewTimeout );
+
+            // Temporarily add a class so that transitions can do different things
+            // depending on whether they are exiting/entering overview, or just
+            // moving from slide to slide
+            dom.wrapper.classList.add( 'overview-activating' );
+
+            activateOverviewTimeout = setTimeout( function () {
+                activateOverviewTimeout = null;
+                dom.wrapper.classList.remove( 'overview-activating' );
+            }, 50 );
 
             console.log('Feed the slides matrix to LAYOUT so we can determine properly how far to zoom/transform: ', overview_slides_info);
 
@@ -2663,19 +2851,20 @@ TBD end of old code, start of new code
                 currentSlide: currentSlide
             } );
 
-            // clearTimeout( activateOverviewTimeout );
-            clearTimeout( deactivateOverviewTimeout );
-            // activateOverviewTimeout = null;
-
             dom.wrapper.classList.remove( 'overview' );
+            dom.wrapper.classList.remove( 'overview-activating' );
+
+            dom.wrapper.classList.add( config.transition );
+
+            clearTimeout( activateOverviewTimeout );
 
             // Temporarily add a class so that transitions can do different things
             // depending on whether they are exiting/entering overview, or just
             // moving from slide to slide
             dom.wrapper.classList.add( 'overview-deactivating' );
 
-            deactivateOverviewTimeout = setTimeout( function () {
-                deactivateOverviewTimeout = null;
+            activateOverviewTimeout = setTimeout( function () {
+                activateOverviewTimeout = null;
                 dom.wrapper.classList.remove( 'overview-deactivating' );
             }, 50 );
 
@@ -2974,12 +3163,6 @@ TBD end of old code, start of new code
         // Remember where we were at before
         var oldSlide = currentSlide;
 
-        // If we were on a vertical stack, remember what vertical index
-        // it was on so we can resume at the same position when returning
-        if( oldSlide && oldSlide.parentNode && oldSlide.parentNode.classList.contains( 'stack' ) ) {
-            setPreviousVerticalIndex( oldSlide.parentNode, indexv );
-        }
-
         var indexhBefore = indexh || 0,
             indexvBefore = indexv || 0;
 
@@ -3015,6 +3198,7 @@ TBD end of old code, start of new code
         // Apply vertical index heuristics (assuming there's a vertical slide stack here)
         if ( !currentVerticalSlides || currentVerticalSlides.length === 0 ) {
             v = 0;
+            currentVerticalSlides = false;
         }
         else {
             if ( v >= currentVerticalSlides.length ) {
@@ -3039,12 +3223,41 @@ TBD end of old code, start of new code
             assert( currentVerticalSlide );
         }
 
+        // mode: 0: regular, 1: overview, 2: regular slide in print, 3: overview in print
+        var currentMode = 1 * !!isOverview() + 2 * !!isPrintingPDF();
+
+        // Do we change to another the slide or not?
+        var slideChanged = ( h !== indexhBefore || v !== indexvBefore || !oldSlide );
+        var fragmentChanged = (!slideChanged ? f != null ? f !== previousFragmentIndex : false : false);
+        var modeChanged = (previousMode !== currentMode);
+
+        if ( !slideChanged && !fragmentChanged && !modeChanged ) {
+            // do not layout the same slide+fragment again when nothing really changed; this can only corrupt CSS transitions, etc.
+            return false;
+        }
+
+        if ( slideChanged ) {
+            // Ensure that the previous slide is never the same as the current
+            previousSlide = oldSlide;
+            previousSlideIndexV = indexvBefore;
+            previousSlideIndexH = indexhBefore;
+        }
+        if ( slideChanged || fragmentChanged ) {
+            previousFragmentIndex = currentFragmentIndex;
+            currentFragmentIndex = null;
+        }
+
         // Store reference to the current slide
         currentSlide = currentVerticalSlide;
         assert( currentSlide );
 
-        // Do we change to another the slide or not?
-        var slideChanged = ( h !== indexhBefore || v !== indexvBefore || !oldSlide );
+        // If we were on a vertical stack, remember what vertical index
+        // it was on so we can resume at the same position when returning.
+        if ( currentVerticalSlides !== false ) {
+            assert( currentVerticalSlide.parentNode.classList.contains( 'stack' ) );
+            setPreviousVerticalIndex( currentVerticalSlide.parentNode, indexv );
+        }
+
 
         // Activate and transition to the new slide
         indexh = updateSlides( HORIZONTAL_SLIDES_SELECTOR, h );
@@ -3053,40 +3266,29 @@ TBD end of old code, start of new code
         assert( indexv === v );
 
         // Apply the new state
-        stateLoop: for( var i = 0, len = state.length; i < len; i++ ) {
+        for( var i = 0, len = state.length; i < len; i++ ) {
             // Check if this state existed on the previous slide. If it
             // did, we will avoid adding it repeatedly
-            for( var j = 0; j < stateBefore.length; j++ ) {
-                if( stateBefore[j] === state[i] ) {
-                    stateBefore.splice( j, 1 );
-                    continue stateLoop;
-                }
+            var j = stateBefore.indexOf( state[i] );
+            if ( j !== -1 ) {
+                stateBefore.splice( j, 1 );
             }
+            else {
+                document.documentElement.classList.add( state[i] );
 
-            document.documentElement.classList.add( state[i] );
-
-            // Dispatch custom event matching the state's name
-            dispatchEvent( state[i] );
+                // Dispatch custom event matching the state's name
+                dispatchEvent( state[i] );
+            }
         }
 
         // Clean up the remains of the previous state
         while( stateBefore.length ) {
-            document.documentElement.classList.remove( stateBefore.pop() );
-        }
+            var sb = stateBefore.pop();
 
-        if ( isOverview() && 0 ) {
-            // Make sure the next layout discards all transitions resulting from it:
-            dom.wrapper.classList.add( 'reset-transitions' );
+            // Dispatch custom event matching the state's name
+            dispatchEvent( sb + ':removed' );
 
-            // This initial layout will position all slides in their 'old' coordinates, while 
-            // already adjusting their visibility (show/hide) to the new situation.
-            layout( indexhBefore, indexvBefore );
-            // Then we force the browser to render the DOM to fixate these locations for the
-            // purpose of smooth transitions while moving around inside the overview.
-            //
-            // Re-render the DOM to enforce the 'reset-transitions' style above:
-            dom.wrapper.offsetHeight;
-            dom.wrapper.classList.remove( 'reset-transitions' );
+            document.documentElement.classList.remove( sb );
         }
 
         // - Update the visibility of slides now that the indices have changed.
@@ -3094,18 +3296,14 @@ TBD end of old code, start of new code
         layout();
 
         // Show fragment, if specified
-        if( f != null ) {
-            navigateFragment( f );
-        }
+        fragmentChanged = navigateFragment( f );
 
         // Dispatch an event if the slide changed
         if( slideChanged ) {
-            // Ensure that the previous slide is never the same as the current
-            previousSlide = oldSlide;
-
             dispatchEvent( 'slidechanged', {
                 indexh: indexh,
                 indexv: indexv,
+                indexf: currentFragmentIndex,
                 previousSlide: previousSlide,
                 currentSlide: currentSlide,
                 origin: o
@@ -3127,7 +3325,7 @@ TBD end of old code, start of new code
         }
 
 		// Announce the current slide contents, for screen readers
-		dom.statusDiv.textContent = currentSlide.textContent;
+		dom.statusDiv.textContent = ( currentSlide ? currentSlide.textContent : '' );
 
         updateControls();
         updateProgress();
@@ -3139,6 +3337,8 @@ TBD end of old code, start of new code
         writeURL();
 
         cueAutoSlide();
+
+        return slideChanged || fragmentChanged || modeChanged;
 
     }
 
@@ -3424,17 +3624,19 @@ TBD end of old code, start of new code
     /**
      * Optimization method; hide all slides that are far away
      * from the present slide.
+     *
+     * Return the set of slides which will become visible, and the set of slides which will disappear (hide) now.
      */
     function updateSlidesVisibility() {
 
-        // the list of slides which must be made invisible after the transitions are completed.
+        // The list of slides which must be made invisible after the transitions are completed.
         var slides_to_clear = [];
 
-        function hideSiblingSlides() {
+        // And this is the function that will take care of that once the delay expires.
+        function delayedHideSiblingSlides() {
             for ( var i = 0, len = slides_to_clear.length; i < len; i++ ) {
                 hideSlide( slides_to_clear[i] );
             }
-            slides_to_clear = [];
             transitionMaxDurationTimeout = null;
         }
 
@@ -3442,7 +3644,7 @@ TBD end of old code, start of new code
         // be handled immediately by the code below. We are only interested in *delayed hiding*
         // of the new prev/next siblings!
         clearTimeout( transitionMaxDurationTimeout );
-        transitionMaxDurationTimeout = setTimeout( hideSiblingSlides, Math.max( config.transitionMaxDuration, 1 ) );
+        transitionMaxDurationTimeout = setTimeout( delayedHideSiblingSlides, Math.max( config.transitionMaxDuration, 1 ) );
 
         // Select all slides and convert the NodeList result to
         // an array
@@ -3476,14 +3678,12 @@ TBD end of old code, start of new code
                 // In regular display mode, we only ever want to see the previous slide and the current slide,
                 // for the sake of smooth transitions. 
                 if( distanceX <= viewDistance ) {
-                    console.log("updateSlidesVisibility: slide ", x, " SHOW: ", distanceX, "<=", viewDistance);
 					showSlide( horizontalSlide );
                     if ( distanceX !== 0 && !isOverview() ) {
                         slides_to_clear.push( horizontalSlide );
                     }
                 }
                 else {
-                    console.log("updateSlidesVisibility: slide ", x, " HIDE: ", distanceX, ">", viewDistance);
 					hideSlide( horizontalSlide );
                 }
 
@@ -3497,14 +3697,12 @@ TBD end of old code, start of new code
 						distanceY = ( x === ( indexh || 0 ) ? Math.abs( ( indexv || 0 ) - y ) : Math.abs( y - oy ) );
 
                         if( distanceX + distanceY <= viewDistance ) {
-                            console.log("updateSlidesVisibility: slide ", x, ", ", y, " SHOW: ", distanceX, "+", distanceY, "<=", viewDistance);
 							showSlide( verticalSlide );
                             if ( distanceX + distanceY !== 0 && !isOverview() ) {
                                 slides_to_clear.push( verticalSlide );
                             }
                         }
                         else {
-                            console.log("updateSlidesVisibility: slide ", x, ", ", y, " HIDE: ", distanceX, "+", distanceY, ">", viewDistance);
 							hideSlide( verticalSlide );
                         }
                     }
@@ -4118,15 +4316,15 @@ TBD end of old code, start of new code
      */
     function readURL() {
 
-        var hash = window.location.hash;
+        var hash = URIparameters().hash.route || '';
 
         // Attempt to parse the hash as either an index or name
-        var bits = hash.slice( 2 ).split( '/' ),
+        var bits = hash.split( '/' ),
             name = hash.replace( /#|\//gi, '' );
 
         // If the first bit is invalid and there is a name we can
         // assume that this is a named link
-        if( isNaN( parseInt( bits[0], 10 ) ) && name.length ) {
+        if( isNaN( parseInt( bits[1], 10 ) ) && name.length ) {
             var element;
 
 			// Ensure the named link is a valid HTML ID attribute
@@ -4147,12 +4345,10 @@ TBD end of old code, start of new code
         }
         else {
             // Read the index components of the hash
-            var h = parseInt( bits[0], 10 ) || 0,
-                v = parseInt( bits[1], 10 ) || 0;
+            var h = parseInt( bits[1], 10 ) || 0,
+                v = parseInt( bits[2], 10 ) || 0;
 
-            if( h !== indexh || v !== indexv ) {
-                slide( h, v );
-            }
+            slide( h, v );
         }
 
     }
@@ -4192,7 +4388,10 @@ TBD end of old code, start of new code
                     if( indexv > 0 ) url += '/' + indexv;
                 }
 
-                window.location.hash = url;
+                URIparameters().updateHash({ 
+                    route: url
+                });                
+                //window.location.hash = url;
             }
         }
 
@@ -4555,29 +4754,39 @@ TBD end of old code, start of new code
 
                 } );
 
+                currentFragmentIndex = index;
+
                 if( fragmentsHidden.length ) {
                     dispatchEvent( 'fragmenthidden', { 
+                        indexh: indexh,
+                        indexv: indexv,
+                        indexf: currentFragmentIndex,
                         fragment: fragmentsHidden[0], 
                         fragments: fragmentsHidden,
-                        currentFragmentIndex: index,
                         fragmentHiddenCount: fragmentsHidden.length
                     } );
                 }
 
                 if( fragmentsShown.length ) {
                     dispatchEvent( 'fragmentshown', { 
+                        indexh: indexh,
+                        indexv: indexv,
+                        indexf: currentFragmentIndex,
                         fragment: fragmentsShown[0], 
                         fragments: fragmentsShown,
-                        currentFragmentIndex: index,
                         fragmentShownCount: fragmentsShown.length 
                     } );
                 }
 
-                updateControls();
-                updateProgress();
-                updateSlideNumber();
+                var changed = ( fragmentsShown.length !== 0 || fragmentsHidden.length !== 0 );
 
-                return !!( fragmentsShown.length || fragmentsHidden.length );
+                if ( changed ) {
+                    updateControls();
+                    updateProgress();
+                    updateSlideNumber();
+                }
+
+                return changed;
 
             }
 
@@ -4850,6 +5059,11 @@ TBD end of old code, start of new code
 
 		// Check if the pressed key is question mark
 		if( event.charCode === 63 ) {
+            console.log( 'EVENT keypress: ', {
+                keyCode: event.keyCode,
+                overlay: dom.overlay,
+                event: event,
+            });
 			if( dom.overlay ) {
 				closeOverlay();
 			}
@@ -5078,6 +5292,10 @@ TBD end of old code, start of new code
         // If the input resulted in a triggered action we should prevent
         // the browsers default behavior
         if( triggered ) {
+            console.log( 'EVENT keydown: ', {
+                keyCode: event.keyCode,
+                event: event,
+            });
 			event.preventDefault && event.preventDefault();
 			event.stopPropagation && event.stopPropagation();
         }
@@ -5717,7 +5935,7 @@ TBD end of old code, start of new code
             for( var i in query ) {
                 var value = query[ i ];
 
-                query[ i ] = deserialize( unescape( value ) );
+                query[ i ] = deserialize( decodeURIComponent( value ) );
             }
 
             return query;

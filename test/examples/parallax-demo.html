@@ -50,6 +50,8 @@
 
         <link rel='stylesheet' href='../../lib/js/nprogress/nprogress.css'>
         <script src='../../lib/js/nprogress/nprogress.js'></script>
+
+        <script src="../../js/reveal-global-utilities.js"></script>
     </head>
 
     <body class="reveal-viewport">
@@ -449,51 +451,9 @@ function linkify( selector ) {
             // https://github.com/hakimel/reveal.js#configuration
             var RevealConfiguration = {
             };
-
         </script>
 
-        <script>
-            (function () {
-                var body = document.getElementsByTagName('body')[0];
-                body.style.display = 'block'; // $('body').show();
-                var version_el = body.getElementsByClassName('version');
-                for (var i = version_el.length; i-- > 0; ) {
-                  version_el[i].innerHTML = NProgress.version; // $('.version').text(NProgress.version);
-                }
-                NProgress.start("Loading the presentation...");
-
-                // invoke this when the load phase is completed (`NProgress.done()`)
-                NProgress.settings.onDoneBegin = slow_fade_all_ends_all;
-
-                var timerh = null;
-
-                function tick() {
-                  // NProgress.inc() will never arrive at 'done' all by itself as it won't push the .status beyond the 0.994 mark.
-                  //
-                  // Note: we call 'done' when Reveal has loaded itself and all its plugins, see `js/require-reveal-init.js`
-                  if (NProgress.isStarted()) {
-                    NProgress.inc();
-                    timerh = setTimeout(tick, 200);
-                  }
-                }
-                tick();
-
-                function slow_fade_all_ends_all() {
-                  clearTimeout(timerh);
-                  timerh = null;
-
-                  function slow_fade_one(el, i) {
-                    setTimeout(function() {
-                      NProgress.Internals.removeClass(el, 'out');
-                    }, i * 500);
-                  }
-                  var fade_el = body.getElementsByClassName('fade');
-                  for (var i = fade_el.length; i-- > 0; ) {
-                    slow_fade_one(fade_el[i], i);
-                  }
-                }
-            })();
-        </script>
+        <script src="../../js/reveal-pagestart-driver.js"></script>
 
         <!-- data-main attribute tells require.js to load
              scripts/main.js after require.js loads. -->
