@@ -735,15 +735,16 @@ body
  *
  * This assumes the slide headings are encoded in <H1 > , etc.
  */
-x.reveal.overview .slides > section div,
-x.reveal.overview .slides > section p,
-x.reveal.overview .slides > section table,
-x.reveal.overview .slides > section ol,
-x.reveal.overview .slides > section ul,
-x.reveal.overview .slides > section dl,
-x.reveal.overview .slides > section pre,
-x.reveal.overview .slides > section form,
-x.reveal.overview .slides > section blockquote
+.reveal.overview .slides > section div,
+.reveal.overview .slides > section p,
+.reveal.overview .slides > section img,
+.reveal.overview .slides > section table,
+.reveal.overview .slides > section ol,
+.reveal.overview .slides > section ul,
+.reveal.overview .slides > section dl,
+.reveal.overview .slides > section pre,
+.reveal.overview .slides > section form,
+.reveal.overview .slides > section blockquote
 {
     display: none;
 }

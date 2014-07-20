@@ -22,26 +22,6 @@
         <!-- For syntax highlighting -->
         <link rel="stylesheet" href="../../lib/css/highlight/styles/zenburn.css">
 
-        <!-- If the query includes 'print-pdf', include the PDF print sheet -->
-        <script>
-            // local scope for code:
-            (function () {
-                // media="print"; alternative is 'css/print/paper.css'
-                var link = document.createElement( 'link' );
-                link.rel = 'stylesheet';
-                link.type = 'text/css';
-                if( window.location.search.match( /print-pdf/gi ) ) {
-                    link.href = '../../css/print/pdf.css';
-    				// no media type specified for this one: it applies to both screen and print...
-                }
-    			else {
-                    link.href = '../../css/print/paper.css';
-    				link.media = 'print';
-    			}
-                document.getElementsByTagName( 'head' )[0].appendChild( link );
-            })();
-        </script>
-
         <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,700,400italic'>
 
         <!--[if lt IE 9]>
