@@ -2634,8 +2634,6 @@ TBD end of old code, start of new code
 
                     if( hslide.classList.contains( 'stack' ) ) {
 
-                        backupCurrentStyles( hslide );
-        
                         // Apply CSS transform to position the slide for the overview. Use the same for the regular view.
                         queueTransform( hslide, 'translate3d( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '%, 0%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
 

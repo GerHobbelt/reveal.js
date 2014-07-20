@@ -85,6 +85,15 @@ body
 
 .slides-wrapper {
     transform-origin: 50% 50%;
+
+    -webkit-transition: -webkit-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -webkit-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+       -moz-transition: -moz-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -moz-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+        -ms-transition: -ms-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -ms-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+            transition: transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
 }
 
 .slides-wrapper .slides {
@@ -554,10 +563,18 @@ body
     /* z-index: 1;          -- removing this one ensures that the search plugin always shows up on top like it should. */
     text-align: center;
 
-    -webkit-transition: -webkit-perspective 3s ease;
-       -moz-transition: -moz-perspective 3s ease;
-        -ms-transition: -ms-perspective 3s ease;
-            transition: perspective 3s ease;
+    -webkit-transition: -webkit-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -webkit-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -webkit-perspective 3s ease;
+       -moz-transition: -moz-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -moz-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -moz-perspective 3s ease;
+        -ms-transition: -ms-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -ms-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -ms-perspective 3s ease;
+            transition: transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        perspective 3s ease;
 
     -webkit-perspective: 600px;
        -moz-perspective: 600px;
