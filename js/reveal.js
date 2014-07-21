@@ -652,6 +652,10 @@
             // Nuke the slide layout cache: it can contain data that's calculated based on incomplete page loads
             nukeSlideLayoutCache();
 
+            //layout();
+            // And trigger browser layout:
+            /* @void */ dom.wrapper.offsetHeight;
+
             // Enable transitions now that we're loaded
             dom.wrapper.classList.remove( 'no-transition' );
 
@@ -2096,7 +2100,7 @@ TBD end of old code, start of new code
             for ( var i = 0, len = renderQueue.length; i < len; i++ ) {
                 renderQueue[i]();
             }
-            renderQueue = null;
+            renderQueue = [];
         }
 
         function layoutSingleSlide( slide, parentSlide, x, y ) {
@@ -2683,6 +2687,11 @@ TBD end of old code, start of new code
             restoreAllCurrentStyles();            
             if ( kill_transforms ) {
                 dom.viewport.classList.remove('reset-transitions');
+            }
+            // Fixup jumping behaviour when transitioning *to* the overview mode:
+            if ( currentMode !== previousMode && isOverview() ) {
+                scaleElement( dom.slides, null );
+                scaleElement( dom.slides, 1.0 );
             }
             
             // After which we tickle the DOM into re-rendering once again: this will be 
@@ -3417,10 +3426,8 @@ TBD end of old code, start of new code
             previousFragmentIndex = currentFragmentIndex;
             currentFragmentIndex = null;
         }
-        if ( modeChanged ) {
-            previousMode = currentMode;
-            currentMode = mode;
-        }
+        previousMode = currentMode;
+        currentMode = mode;
 
         // Store reference to the current slide
         currentSlide = currentVerticalSlide;
@@ -5447,6 +5454,14 @@ TBD end of old code, start of new code
                         config.viewDistance = config.__overviewViewDistance_backup;
                         activateOverview();
                     }
+                    break;
+
+                // 9: nuke the layout cache and re-render.
+                case 57:
+                    // Nuke the slide layout cache: it can contain data that's calculated based on incomplete page loads
+                    nukeSlideLayoutCache();
+
+                    layout();
                     break;
 
                 // ESC or O key
