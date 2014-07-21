@@ -738,6 +738,35 @@ body
     pointer-events: auto;
 }
 
+/* 
+ * Reset all transforms that may be active for a slide when we switch to overview mode.
+ */
+/*
+.reveal.overview .slides > section,
+.reveal.overview .slides > section > section {
+        -webkit-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
+           -moz-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
+            -ms-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
+             -o-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
+                transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
+}
+*/
+/*
+ * This 'reset-transitions' class is used to RESET any pending transitions when we go from 
+ * regular to overview mode.
+ *
+ * Inspired by: http://www.bennadel.com/blog/2462-understanding-css-transitions-and-class-timing-revisited.htm;
+ */
+.reveal.reset-transitions .slides section,
+.reveal.reset-transitions .slides > section > section,
+.reveal.reset-transitions .slides section,
+.reveal.reset-transitions .slides > section > section {
+    -webkit-transition: none !important;
+       -moz-transition: none !important;
+        -ms-transition: none !important;
+         -o-transition: none !important;
+            transition: none !important;
+}
 
 
 .reveal .slides > section.past,

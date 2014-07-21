@@ -186,7 +186,7 @@
             // the latter is GPU accelerated, but can produce cruddy output when the slides are scaled up.
             // 
             // The default (NULL) lets the machine decide (CSS3:scale for mobile devices, CSS:zoom for desktops)
-            useCSSZoom: null,
+            useCSSZoom: false,
 
             // When set, all slides will have the same scaling factor applied (Smallest Common Scale) for a unified look of both empty and busy slides
             oneScaleForAll: false,
@@ -2513,8 +2513,29 @@ TBD end of old code, start of new code
             //
             // ----------------------------------------------------------------
 
+            // Backup all styles, etc. which will be changed in here, but are otherwise subject to CSS transitions (animation).
             backupCurrentStyles( dom.slides_wrapper );
             backupCurrentStyles( dom.slides );
+            var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
+            slides.forEach( function( slide ) {
+                // Remember the current styles, at least temporarily, so that we can restore them
+                // at the end and ensure the proper transitions always take place, despite us
+                // performing some DOM-render-triggering measurements in here next (getComputedSlideSize()).
+                backupCurrentStyles( slide );
+                var indices = getIndices( slide );
+                assert( indices );
+                var background = getSlideBackground( indices.h, indices.v );
+                if ( background ) {
+                    backupCurrentStyles( background );
+                }
+            } );
+            // The backup is done!
+
+            var kill_transforms = false;
+            if (!dom.viewport.classList.contains('reset-transitions')) {
+                dom.viewport.classList.add('reset-transitions');
+                kill_transforms = true;
+            }
 
             // Before recalculating the slide height(s), position, etc., we must nuke 
             // the previously patched in padding/top/etc. to get a correct measurement.
@@ -2598,18 +2619,7 @@ TBD end of old code, start of new code
             // Before we start, hide *all* slides; when we layout each slide in the next loop, we will
             // (temporarily) unhide it, so that we have the minimum amount of active DOM nodes to reflow
             // on every iteration. 
-            toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
-                // Remember the current styles, at least temporarily, so that we can restore them
-                // at the end and ensure the proper transitions always take place, despite us
-                // performing some DOM-render-triggering measurements in here next (getComputedSlideSize()).
-                backupCurrentStyles( slide );
-                var indices = getIndices( slide );
-                assert( indices );
-                var background = getSlideBackground( indices.h, indices.v );
-                if ( background ) {
-                    backupCurrentStyles( background );
-                }
-
+            slides.forEach( function( slide ) {
                 hideSlide( slide );
             } );
 
@@ -2647,19 +2657,19 @@ TBD end of old code, start of new code
                             // reset transform
                             queueReset( vslide );
 
+                            layoutSingleSlide( vslide, hslide, i, j );
+
                             // Apply CSS transform
                             queueTransform( vslide, 'translate3d( 0%, ' + ( ( j - verticalIndex ) * voffset ) + '%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
-
-                            layoutSingleSlide( vslide, hslide, i, j );
                         }
 
                     }
                     else {
 
+                        layoutSingleSlide( hslide, null, i, 0 );
+
                         // Apply CSS transform to position the slide for the overview.
                         queueTransform( hslide, 'translate3d( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '%, 0%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
-
-                        layoutSingleSlide( hslide, null, i, 0 );
 
                     }
 
@@ -2669,6 +2679,10 @@ TBD end of old code, start of new code
             // Now that we have done all layout work re positioning, scaling, etc., we are
             // going to restore all elements' styles & classes as they were before this call.
             restoreAllCurrentStyles();            
+            if ( kill_transforms ) {
+                dom.viewport.classList.remove('reset-transitions');
+            }
+            
             // After which we tickle the DOM into re-rendering once again: this will be 
             // our departure point for all the queued transformations, which the browser will
             // thus observe as *changes* and execute all the programmed CSS transitions:
@@ -2687,13 +2701,13 @@ TBD end of old code, start of new code
             // And register all the transforms, etc. which were produced by the layout process above.
             runQueue();
 
+            scaleElement( dom.slides_wrapper, null );
+            scaleElement( dom.slides, null );
             if ( !isOverview() ) {
-                scaleElement( dom.slides_wrapper, null );
                 scaleElement( dom.slides, fundamentalScale );
             } 
             else {
                 scaleElement( dom.slides_wrapper, fundamentalScale );
-                scaleElement( dom.slides, null );
             }
 
 
