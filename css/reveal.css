@@ -950,7 +950,6 @@ body
             transition-timing-function: ease;
 }
 
-/*
 .reveal .slides > section[data-transition=zoom].past,
 .reveal.zoom .slides > section:not([data-transition]).past {
     visibility: hidden;
@@ -972,23 +971,6 @@ body
             transform: scale(0.2);
 }
 
-.reveal .slides > section > section[data-transition=zoom].past,
-.reveal.zoom .slides > section > section:not([data-transition]).past {
-    -webkit-transform: translate3d(0, -150%, 0);
-       -moz-transform: translate3d(0, -150%, 0);
-        -ms-transform: translate3d(0, -150%, 0);
-         -o-transform: translate3d(0, -150%, 0);
-            transform: translate3d(0, -150%, 0);
-}
-.reveal .slides > section > section[data-transition=zoom].future,
-.reveal.zoom .slides > section > section:not([data-transition]).future {
-    -webkit-transform: translate3d(0, 150%, 0);
-       -moz-transform: translate3d(0, 150%, 0);
-        -ms-transform: translate3d(0, 150%, 0);
-         -o-transform: translate3d(0, 150%, 0);
-            transform: translate3d(0, 150%, 0);
-}
-*/
 
 /*********************************************
  * CUBE TRANSITION

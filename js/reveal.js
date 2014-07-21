@@ -2541,7 +2541,8 @@ TBD end of old code, start of new code
             // the previously patched in padding/top/etc. to get a correct measurement.
 
             // Reset wrapper scale for both single sheet view / overview modes:
-            scaleElement( dom.slides_wrapper, null );
+            scaleElement( dom.slides, null );
+            scaleElement( dom.slides, fundamentalScale );
 
             dom.slides.style.width = null;
             dom.slides.style.height = null;
@@ -2634,10 +2635,11 @@ TBD end of old code, start of new code
                 //
                 // Also note that we first position the slide for the overlay and only then do we layout the slide itself,
                 // as that part will apply a slide-specific scaling.
+                var percentage = isOverview() ? 105 : 150;
                 for ( var i = 0, hlen = horizontalSlides.length; i < hlen; i++ ) {
                     var hslide = horizontalSlides[i],
-                        hoffset = config.rtl ? -105 : 105,
-                        voffset = 105;
+                        hoffset = config.rtl ? -percentage : percentage,
+                        voffset = percentage;
 
                     // reset transform: the stack is at (0,0,0) in regular view mode and overview mode performs its own positioning at the end in this loop
                     queueReset( hslide );
@@ -2645,7 +2647,7 @@ TBD end of old code, start of new code
                     if( hslide.classList.contains( 'stack' ) ) {
 
                         // Apply CSS transform to position the slide for the overview. Use the same for the regular view.
-                        queueTransform( hslide, 'translate3d( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '%, 0%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                        queueTransform( hslide, 'translate3d( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '%, 0%, 0px )' );
 
                         var verticalSlides = hslide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
 
@@ -2660,7 +2662,7 @@ TBD end of old code, start of new code
                             layoutSingleSlide( vslide, hslide, i, j );
 
                             // Apply CSS transform
-                            queueTransform( vslide, 'translate3d( 0%, ' + ( ( j - verticalIndex ) * voffset ) + '%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                            queueTransform( vslide, 'translate3d( 0%, ' + ( ( j - verticalIndex ) * voffset ) + '%, 0px )' );
                         }
 
                     }
@@ -2669,7 +2671,7 @@ TBD end of old code, start of new code
                         layoutSingleSlide( hslide, null, i, 0 );
 
                         // Apply CSS transform to position the slide for the overview.
-                        queueTransform( hslide, 'translate3d( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '%, 0%, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1)' );
+                        queueTransform( hslide, 'translate3d( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '%, 0%, 0px )' );
 
                     }
 
@@ -2701,14 +2703,8 @@ TBD end of old code, start of new code
             // And register all the transforms, etc. which were produced by the layout process above.
             runQueue();
 
-            scaleElement( dom.slides_wrapper, null );
             scaleElement( dom.slides, null );
-            if ( !isOverview() ) {
-                scaleElement( dom.slides, fundamentalScale );
-            } 
-            else {
-                scaleElement( dom.slides_wrapper, fundamentalScale );
-            }
+            scaleElement( dom.slides, fundamentalScale );
 
 
             // set the scale for the slide(s) is the last thing we do, so it gets CSS3 animation applied:
@@ -2948,6 +2944,7 @@ TBD end of old code, start of new code
             dom.wrapper.classList.add( 'overview' );
             dom.wrapper.classList.remove( 'overview-deactivating' );
 
+            dom.wrapper.classList.remove( config.transition );
             dom.wrapper.classList.add( config.overviewTransition );
 
             clearTimeout( activateOverviewTimeout );
@@ -3016,6 +3013,7 @@ TBD end of old code, start of new code
             dom.wrapper.classList.remove( 'overview' );
             dom.wrapper.classList.remove( 'overview-activating' );
 
+            dom.wrapper.classList.remove( config.overviewTransition );
             dom.wrapper.classList.add( config.transition );
 
             clearTimeout( activateOverviewTimeout );
@@ -3858,9 +3856,9 @@ TBD end of old code, start of new code
                 if( distanceX <= viewDistance ) {
                     assert( !isOverview() ? distanceX <= 1 : true );
 					showSlide( horizontalSlide );
-                    // if ( distanceX !== 0 && !isOverview() ) {
-                    //     slides_to_clear.push( horizontalSlide );
-                    // }
+                    if ( distanceX !== 0 && !isOverview() ) {
+                        slides_to_clear.push( horizontalSlide );
+                    }
                 }
                 else {
 					hideSlide( horizontalSlide );
@@ -3878,9 +3876,9 @@ TBD end of old code, start of new code
                         if( distanceX + distanceY <= viewDistance ) {
                             assert( !isOverview() ? distanceX + distanceY <= 1 : true );
 							showSlide( verticalSlide );
-                            // if ( distanceX + distanceY !== 0 && !isOverview() ) {
-                            //     slides_to_clear.push( verticalSlide );
-                            // }
+                            if ( distanceX + distanceY !== 0 && !isOverview() ) {
+                                slides_to_clear.push( verticalSlide );
+                            }
                         }
                         else {
 							hideSlide( verticalSlide );
