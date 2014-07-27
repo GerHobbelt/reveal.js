@@ -190,6 +190,16 @@ function URIparameters() {
     // Update the URI hash and URI history
     //
     // `argset` is an object containing the hash parameters which must be updated
+    //
+    // Notes from impress.js:
+    //
+    // > `#/step-id` is used instead of `#step-id` to prevent default browser
+    // > scrolling to element in hash.
+    // >
+    // > And it has to be set after animation finishes, because in Chrome it
+    // > makes transition laggy.
+    // >
+    // > BUG: http://code.google.com/p/chromium/issues/detail?id=62820
     rv.updateHash = function(argset) {
         argset = argset || {};
         var store = URIparameters();

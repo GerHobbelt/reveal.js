@@ -1535,6 +1535,21 @@ TBD end of old code, start of new code
     }
 
     /**
+     * Checks if a floating point value is zero 'for all practical intents and purposes':
+     * as machine floating point is inaccurate we check whether the value is within the
+     * 'epsilon' range of zero.
+     *
+     * See also: 
+     * http://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
+     * http://developer.download.nvidia.com/assets/cuda/files/NVIDIA-CUDA-Floating-Point.pdf
+     * http://floating-point-gui.de/
+     */
+    function is0( value ) {
+        // epsilon is assumed to be 1.0e-5, which is fine for checking zoom factors, etc.
+        return ( value > -1.0e-5 && value < 1.0e-5 );
+    }  
+
+    /**
      * Applies a CSS transform to the target element.
      */
     function transformElement( element, transform ) {
@@ -1575,11 +1590,16 @@ TBD end of old code, start of new code
             element.style.bottom = 0;
             element.style.right = 0;
 
-            // if scale is within epsilon = 1e-3 range of 1.0, then we don't apply the scale: the CSS default is scale=1 anyway.
-            if ( scale >= 1.0 - 1e-3 && scale <= 1.0 + 1e-3 && 0 ) {
-                // nothing to do...
+            // if scale is within epsilon range of 1.0, then we don't apply the scale: the CSS default is scale=1 anyway.
+            if ( is0( scale - 1.0 ) ) {
+                // nothing to do... means: RESET the scale.
+                //
+                // This is an important optimization as *nesting* the scales in Chrome produces very blocky render results,
+                // i.e. applying a CSS transform:scale to both a parent and child node will cause the child to render
+                // very 'roughly'.
+                element.style.zoom = null;
             }
-            else if( useZoomFallback ) {
+            else if ( useZoomFallback ) {
                 element.style.zoom = scale;
             }
             // Apply scale transform
@@ -4544,6 +4564,16 @@ TBD end of old code, start of new code
      *
      * @param {Number} delay The time in ms to wait before
      * writing the hash
+     *
+     * Notes from impress.js:
+     *
+     * > `#/step-id` is used instead of `#step-id` to prevent default browser
+     * > scrolling to element in hash.
+     * >
+     * > And it has to be set after animation finishes, because in Chrome it
+     * > makes transition laggy.
+     * >
+     * > BUG: http://code.google.com/p/chromium/issues/detail?id=62820
      */
     function writeURL( delay ) {
 
