@@ -295,6 +295,8 @@ body
     z-index: 30;
     right: 10px;
     bottom: 10px;
+
+	-webkit-user-select: none;
 }
 
 .reveal .controls div {
@@ -305,6 +307,7 @@ body
     border: 12px solid transparent;
 
     -moz-transform: scale(.9999);
+	-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
 
     -webkit-transition: all 2s ease;
        -moz-transition: all 2s ease;
