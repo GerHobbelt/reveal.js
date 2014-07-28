@@ -83,39 +83,34 @@ body
   overflow: hidden;             /* and, yes, we know we bluntly *clip* the contents here. Readability of this kind of content isn't the purpose of the overview mode anyway. */ 
 }
 
-.slides-wrapper,
-.slides-wrapper .slides,
-.slides-wrapper .slides > section,
+.slides-wrapper {
+    transform-origin: 50% 50%;
+
+    -webkit-transition: -webkit-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -webkit-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+       -moz-transition: -moz-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -moz-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+        -ms-transition: -ms-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -ms-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+            transition: transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+}
+
+.slides-wrapper .slides {
+    transform-origin: 50% 50%;
+}
+
+.slides-wrapper .slides > section {
+    -webkit-transform-origin: 50% 50%;
+       -moz-transform-origin: 50% 50%;
+        -ms-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+}
 .slides-wrapper .slides > section > section {
     -webkit-transform-origin: 50% 50%;
        -moz-transform-origin: 50% 50%;
         -ms-transform-origin: 50% 50%;
             transform-origin: 50% 50%;
-
-    -webkit-transition: -webkit-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        -webkit-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        -webkit-perspective-origin 3s ease,
-                        -webkit-perspective 3s ease,
-                        visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
-       -moz-transition: -moz-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        -moz-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        -moz-perspective-origin 3s ease,
-                        -moz-perspective 3s ease,
-                        visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
-        -ms-transition: -ms-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        -ms-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        -ms-perspective-origin 3s ease,
-                        -ms-perspective 3s ease,
-                        visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
-            transition: transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        perspective-origin 3s ease,
-                        perspective 3s ease,
-                        visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
-                        opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
 }
 
 /*********************************************
@@ -571,6 +566,19 @@ body
     /* z-index: 1;          -- removing this one ensures that the search plugin always shows up on top like it should. */
     text-align: center;
 
+    -webkit-transition: -webkit-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -webkit-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -webkit-perspective 3s ease;
+       -moz-transition: -moz-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -moz-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -moz-perspective 3s ease;
+        -ms-transition: -ms-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -ms-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -ms-perspective 3s ease;
+            transition: transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        perspective 3s ease;
+
     -webkit-perspective: 600px;
        -moz-perspective: 600px;
         -ms-perspective: 600px;
@@ -599,6 +607,23 @@ body
        -moz-transform-style: preserve-3d;
         -ms-transform-style: preserve-3d;
             transform-style: preserve-3d;
+
+    -webkit-transition: -webkit-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -webkit-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+       -moz-transition: -moz-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -moz-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+        -ms-transition: -ms-transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        -ms-transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
+            transition: transform-origin 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        transform 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        visibility 3s cubic-bezier(0.260, 0.860, 0.440, 0.985),
+                        opacity 3s cubic-bezier(0.260, 0.860, 0.440, 0.985);
 }
 
 .reveal .slides > section.visible,
@@ -717,6 +742,37 @@ body
     pointer-events: auto;
 }
 
+/* 
+ * Reset all transforms that may be active for a slide when we switch to overview mode.
+ */
+/*
+.reveal.overview .slides > section,
+.reveal.overview .slides > section > section {
+        -webkit-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
+           -moz-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
+            -ms-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
+             -o-transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
+                transform: translate3d( 0px, 0px, 0px ) rotateX( 0deg ) rotateY( 0deg ) scale(1);
+}
+*/
+/*
+ * This 'reset-transitions' class is used to RESET any pending transitions when we go from 
+ * regular to overview mode.
+ *
+ * Inspired by: http://www.bennadel.com/blog/2462-understanding-css-transitions-and-class-timing-revisited.htm;
+ */
+.reveal.reset-transitions .slides section,
+.reveal.reset-transitions .slides > section > section,
+.reveal.reset-transitions .slides section,
+.reveal.reset-transitions .slides > section > section {
+    -webkit-transition: none !important;
+       -moz-transition: none !important;
+        -ms-transition: none !important;
+         -o-transition: none !important;
+            transition: none !important;
+}
+
+
 .reveal .slides > section.past,
 .reveal .slides > section.future,
 .reveal .slides > section > section.past,
@@ -729,20 +785,475 @@ body
  *
  * This assumes the slide headings are encoded in <H1 > , etc.
  */
-.reveal.overviewx .slides > section div,
-.reveal.overviewx .slides > section p,
-.reveal.overviewx .slides > section img,
-.reveal.overviewx .slides > section table,
-.reveal.overviewx .slides > section ol,
-.reveal.overviewx .slides > section ul,
-.reveal.overviewx .slides > section dl,
-.reveal.overviewx .slides > section pre,
-.reveal.overviewx .slides > section form,
-.reveal.overviewx .slides > section blockquote
+.reveal.overview .slides > section div,
+.reveal.overview .slides > section p,
+.reveal.overview .slides > section img,
+.reveal.overview .slides > section table,
+.reveal.overview .slides > section ol,
+.reveal.overview .slides > section ul,
+.reveal.overview .slides > section dl,
+.reveal.overview .slides > section pre,
+.reveal.overview .slides > section form,
+.reveal.overview .slides > section blockquote
 {
     display: none;
 }
 
+
+
+/*********************************************
+ * SLIDE TRANSITION
+ * Aliased 'linear' for backwards compatibility
+ *********************************************/
+
+.reveal.slide section,
+.reveal.linear section {
+    -webkit-backface-visibility: hidden;
+       -moz-backface-visibility: hidden;
+        -ms-backface-visibility: hidden;
+            backface-visibility: hidden;
+}
+
+/*
+.reveal .slides > section[data-transition=slide].past,
+.reveal.slide .slides > section:not([data-transition]).past,
+.reveal .slides > section[data-transition=linear].past,
+.reveal.linear .slides > section:not([data-transition]).past {
+    -webkit-transform: translate3d(-150%, 0, 0);
+       -moz-transform: translate3d(-150%, 0, 0);
+        -ms-transform: translate3d(-150%, 0, 0);
+         -o-transform: translate3d(-150%, 0, 0);
+            transform: translate3d(-150%, 0, 0);
+}
+.reveal .slides > section[data-transition=slide].future,
+.reveal.slide .slides > section:not([data-transition]).future,
+.reveal .slides > section[data-transition=linear].future,
+.reveal.linear .slides > section:not([data-transition]).future {
+    -webkit-transform: translate3d(150%, 0, 0);
+       -moz-transform: translate3d(150%, 0, 0);
+        -ms-transform: translate3d(150%, 0, 0);
+         -o-transform: translate3d(150%, 0, 0);
+            transform: translate3d(150%, 0, 0);
+}
+
+.reveal .slides > section > section[data-transition=slide].past,
+.reveal.slide .slides > section > section:not([data-transition]).past,
+.reveal .slides > section > section[data-transition=linear].past,
+.reveal.linear .slides > section > section:not([data-transition]).past {
+    -webkit-transform: translate3d(0, -150%, 0);
+       -moz-transform: translate3d(0, -150%, 0);
+        -ms-transform: translate3d(0, -150%, 0);
+         -o-transform: translate3d(0, -150%, 0);
+            transform: translate3d(0, -150%, 0);
+}
+.reveal .slides > section > section[data-transition=slide].future,
+.reveal.slide .slides > section > section:not([data-transition]).future,
+.reveal .slides > section > section[data-transition=linear].future,
+.reveal.linear .slides > section > section:not([data-transition]).future {
+    -webkit-transform: translate3d(0, 150%, 0);
+       -moz-transform: translate3d(0, 150%, 0);
+        -ms-transform: translate3d(0, 150%, 0);
+         -o-transform: translate3d(0, 150%, 0);
+            transform: translate3d(0, 150%, 0);
+}
+*/
+
+
+/*********************************************
+ * CONVEX TRANSITION
+ * Aliased 'default' for backwards compatibility
+ *********************************************/
+
+/*
+.reveal .slides > section[data-transition=default].past,
+.reveal.default .slides > section:not([data-transition]).past,
+.reveal .slides > section[data-transition=convex].past,
+.reveal.convex .slides > section:not([data-transition]).past {
+    -webkit-transform: translate3d(-100%, 0, 0) rotateY(-90deg) translate3d(-100%, 0, 0);
+       -moz-transform: translate3d(-100%, 0, 0) rotateY(-90deg) translate3d(-100%, 0, 0);
+        -ms-transform: translate3d(-100%, 0, 0) rotateY(-90deg) translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0) rotateY(-90deg) translate3d(-100%, 0, 0);
+}
+.reveal .slides > section[data-transition=default].future,
+.reveal.default .slides > section:not([data-transition]).future,
+.reveal .slides > section[data-transition=convex].future,
+.reveal.convex .slides > section:not([data-transition]).future {
+    -webkit-transform: translate3d(100%, 0, 0) rotateY(90deg) translate3d(100%, 0, 0);
+       -moz-transform: translate3d(100%, 0, 0) rotateY(90deg) translate3d(100%, 0, 0);
+        -ms-transform: translate3d(100%, 0, 0) rotateY(90deg) translate3d(100%, 0, 0);
+            transform: translate3d(100%, 0, 0) rotateY(90deg) translate3d(100%, 0, 0);
+}
+
+.reveal .slides > section > section[data-transition=default].past,
+.reveal.default .slides > section > section:not([data-transition]).past,
+.reveal .slides > section > section[data-transition=convex].past,
+.reveal.convex .slides > section > section:not([data-transition]).past {
+    -webkit-transform: translate3d(0, -300px, 0) rotateX(70deg) translate3d(0, -300px, 0);
+       -moz-transform: translate3d(0, -300px, 0) rotateX(70deg) translate3d(0, -300px, 0);
+        -ms-transform: translate3d(0, -300px, 0) rotateX(70deg) translate3d(0, -300px, 0);
+            transform: translate3d(0, -300px, 0) rotateX(70deg) translate3d(0, -300px, 0);
+}
+.reveal .slides > section > section[data-transition=default].future,
+.reveal.default .slides > section > section:not([data-transition]).future,
+.reveal .slides > section > section[data-transition=convex].future,
+.reveal.convex .slides > section > section:not([data-transition]).future {
+    -webkit-transform: translate3d(0, 300px, 0) rotateX(-70deg) translate3d(0, 300px, 0);
+       -moz-transform: translate3d(0, 300px, 0) rotateX(-70deg) translate3d(0, 300px, 0);
+        -ms-transform: translate3d(0, 300px, 0) rotateX(-70deg) translate3d(0, 300px, 0);
+            transform: translate3d(0, 300px, 0) rotateX(-70deg) translate3d(0, 300px, 0);
+}
+*/
+
+
+/*********************************************
+ * CONCAVE TRANSITION
+ *********************************************/
+
+/*
+.reveal .slides > section[data-transition=concave].past,
+.reveal.concave .slides > section:not([data-transition]).past {
+    -webkit-transform: translate3d(-100%, 0, 0) rotateY(90deg) translate3d(-100%, 0, 0);
+       -moz-transform: translate3d(-100%, 0, 0) rotateY(90deg) translate3d(-100%, 0, 0);
+        -ms-transform: translate3d(-100%, 0, 0) rotateY(90deg) translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0) rotateY(90deg) translate3d(-100%, 0, 0);
+}
+.reveal .slides > section[data-transition=concave].future,
+.reveal.concave .slides > section:not([data-transition]).future {
+    -webkit-transform: translate3d(100%, 0, 0) rotateY(-90deg) translate3d(100%, 0, 0);
+       -moz-transform: translate3d(100%, 0, 0) rotateY(-90deg) translate3d(100%, 0, 0);
+        -ms-transform: translate3d(100%, 0, 0) rotateY(-90deg) translate3d(100%, 0, 0);
+            transform: translate3d(100%, 0, 0) rotateY(-90deg) translate3d(100%, 0, 0);
+}
+
+.reveal .slides > section > section[data-transition=concave].past,
+.reveal.concave .slides > section > section:not([data-transition]).past {
+    -webkit-transform: translate3d(0, -80%, 0) rotateX(-70deg) translate3d(0, -80%, 0);
+       -moz-transform: translate3d(0, -80%, 0) rotateX(-70deg) translate3d(0, -80%, 0);
+        -ms-transform: translate3d(0, -80%, 0) rotateX(-70deg) translate3d(0, -80%, 0);
+            transform: translate3d(0, -80%, 0) rotateX(-70deg) translate3d(0, -80%, 0);
+}
+.reveal .slides > section > section[data-transition=concave].future,
+.reveal.concave .slides > section > section:not([data-transition]).future {
+    -webkit-transform: translate3d(0, 80%, 0) rotateX(70deg) translate3d(0, 80%, 0);
+       -moz-transform: translate3d(0, 80%, 0) rotateX(70deg) translate3d(0, 80%, 0);
+        -ms-transform: translate3d(0, 80%, 0) rotateX(70deg) translate3d(0, 80%, 0);
+            transform: translate3d(0, 80%, 0) rotateX(70deg) translate3d(0, 80%, 0);
+}
+*/
+
+
+/*********************************************
+ * ZOOM TRANSITION
+ *********************************************/
+
+
+.reveal .slides > section[data-transition=zoom],
+.reveal.zoom .slides > section:not([data-transition]) {
+    -webkit-transition-timing-function: ease;
+       -moz-transition-timing-function: ease;
+            transition-timing-function: ease;
+}
+
+.reveal .slides > section[data-transition=zoom].past,
+.reveal.zoom .slides > section:not([data-transition]).past {
+    visibility: hidden;
+
+    -webkit-transform: scale(16);
+       -moz-transform: scale(16);
+        -ms-transform: scale(16);
+         -o-transform: scale(16);
+            transform: scale(16);
+}
+.reveal .slides > section[data-transition=zoom].future,
+.reveal.zoom .slides > section:not([data-transition]).future {
+    visibility: hidden;
+
+    -webkit-transform: scale(0.2);
+       -moz-transform: scale(0.2);
+        -ms-transform: scale(0.2);
+         -o-transform: scale(0.2);
+            transform: scale(0.2);
+}
+
+
+/*********************************************
+ * CUBE TRANSITION
+ *********************************************/
+
+.reveal.cube .slides {
+    -webkit-perspective: 1300px;
+       -moz-perspective: 1300px;
+        -ms-perspective: 1300px;
+            perspective: 1300px;
+}
+
+.reveal.cube .slides section {
+    /* padding: 30px; */
+    /* min-height: 700px; */
+
+    -webkit-backface-visibility: hidden;
+       -moz-backface-visibility: hidden;
+        -ms-backface-visibility: hidden;
+            backface-visibility: hidden;
+
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+    .reveal.center.cube .slides section {
+        min-height: auto;
+    }
+    .reveal.cube .slides section:not(.stack):before {
+        content: '';
+        position: absolute;
+        display: block;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background: rgba(0,0,0,0.1);
+        border-radius: 4px;
+
+        -webkit-transform: translateZ( -20px );
+           -moz-transform: translateZ( -20px );
+            -ms-transform: translateZ( -20px );
+             -o-transform: translateZ( -20px );
+                transform: translateZ( -20px );
+    }
+    .reveal.cube .slides section:not(.stack):after {
+        content: '';
+        position: absolute;
+        display: block;
+        width: 90%;
+        height: 30px;
+        left: 5%;
+        bottom: 0;
+        background: none;
+        z-index: 1;
+
+        border-radius: 4px;
+        box-shadow: 0px 95px 25px rgba(0,0,0,0.2);
+
+        -webkit-transform: translateZ(-90px) rotateX( 65deg );
+           -moz-transform: translateZ(-90px) rotateX( 65deg );
+            -ms-transform: translateZ(-90px) rotateX( 65deg );
+             -o-transform: translateZ(-90px) rotateX( 65deg );
+                transform: translateZ(-90px) rotateX( 65deg );
+    }
+
+.reveal.cube .slides > section.stack {
+    padding: 0;
+    background: none;
+}
+
+.reveal.cube .slides > section.past {
+    -webkit-transform-origin: 100% 0%;
+       -moz-transform-origin: 100% 0%;
+        -ms-transform-origin: 100% 0%;
+            transform-origin: 100% 0%;
+
+    -webkit-transform: translate3d(-100%, 0, 0) rotateY(-90deg);
+       -moz-transform: translate3d(-100%, 0, 0) rotateY(-90deg);
+        -ms-transform: translate3d(-100%, 0, 0) rotateY(-90deg);
+            transform: translate3d(-100%, 0, 0) rotateY(-90deg);
+}
+
+.reveal.cube .slides > section.future {
+    -webkit-transform-origin: 0% 0%;
+       -moz-transform-origin: 0% 0%;
+        -ms-transform-origin: 0% 0%;
+            transform-origin: 0% 0%;
+
+    -webkit-transform: translate3d(100%, 0, 0) rotateY(90deg);
+       -moz-transform: translate3d(100%, 0, 0) rotateY(90deg);
+        -ms-transform: translate3d(100%, 0, 0) rotateY(90deg);
+            transform: translate3d(100%, 0, 0) rotateY(90deg);
+}
+
+.reveal.cube .slides > section > section.past {
+    -webkit-transform-origin: 0% 100%;
+       -moz-transform-origin: 0% 100%;
+        -ms-transform-origin: 0% 100%;
+            transform-origin: 0% 100%;
+
+    -webkit-transform: translate3d(0, -100%, 0) rotateX(90deg);
+       -moz-transform: translate3d(0, -100%, 0) rotateX(90deg);
+        -ms-transform: translate3d(0, -100%, 0) rotateX(90deg);
+            transform: translate3d(0, -100%, 0) rotateX(90deg);
+}
+
+.reveal.cube .slides > section > section.future {
+    -webkit-transform-origin: 0% 0%;
+       -moz-transform-origin: 0% 0%;
+        -ms-transform-origin: 0% 0%;
+            transform-origin: 0% 0%;
+
+    -webkit-transform: translate3d(0, 100%, 0) rotateX(-90deg);
+       -moz-transform: translate3d(0, 100%, 0) rotateX(-90deg);
+        -ms-transform: translate3d(0, 100%, 0) rotateX(-90deg);
+            transform: translate3d(0, 100%, 0) rotateX(-90deg);
+}
+
+
+/*********************************************
+ * PAGE TRANSITION
+ *********************************************/
+
+.reveal.page .slides {
+    -webkit-perspective-origin: 0% 50%;
+       -moz-perspective-origin: 0% 50%;
+        -ms-perspective-origin: 0% 50%;
+            perspective-origin: 0% 50%;
+
+    -webkit-perspective: 3000px;
+       -moz-perspective: 3000px;
+        -ms-perspective: 3000px;
+            perspective: 3000px;
+}
+
+.reveal.page .slides section {
+    padding: 30px;
+    /* min-height: 700px; */
+
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+    .reveal.page .slides section.past {
+        z-index: 12;
+    }
+    .reveal.page .slides section:not(.stack):before {
+        content: '';
+        position: absolute;
+        display: block;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background: rgba(0,0,0,0.1);
+
+        -webkit-transform: translateZ( -20px );
+           -moz-transform: translateZ( -20px );
+            -ms-transform: translateZ( -20px );
+             -o-transform: translateZ( -20px );
+                transform: translateZ( -20px );
+    }
+    .reveal.page .slides section:not(.stack):after {
+        content: '';
+        position: absolute;
+        display: block;
+        width: 90%;
+        height: 30px;
+        left: 5%;
+        bottom: 0;
+        background: none;
+        z-index: 1;
+
+        border-radius: 4px;
+        box-shadow: 0px 95px 25px rgba(0,0,0,0.2);
+
+        -webkit-transform: translateZ(-90px) rotateX( 65deg );
+    }
+
+.reveal.page .slides > section.stack {
+    padding: 0;
+    background: none;
+}
+
+.reveal.page .slides > section.past {
+    -webkit-transform-origin: 0% 0%;
+       -moz-transform-origin: 0% 0%;
+        -ms-transform-origin: 0% 0%;
+            transform-origin: 0% 0%;
+
+    -webkit-transform: translate3d(-40%, 0, 0) rotateY(-80deg);
+       -moz-transform: translate3d(-40%, 0, 0) rotateY(-80deg);
+        -ms-transform: translate3d(-40%, 0, 0) rotateY(-80deg);
+            transform: translate3d(-40%, 0, 0) rotateY(-80deg);
+}
+
+.reveal.page .slides > section.future {
+    -webkit-transform-origin: 100% 0%;
+       -moz-transform-origin: 100% 0%;
+        -ms-transform-origin: 100% 0%;
+            transform-origin: 100% 0%;
+
+    -webkit-transform: translate3d(0, 0, 0);
+       -moz-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+}
+
+.reveal.page .slides > section > section.past {
+    -webkit-transform-origin: 0% 0%;
+       -moz-transform-origin: 0% 0%;
+        -ms-transform-origin: 0% 0%;
+            transform-origin: 0% 0%;
+
+    -webkit-transform: translate3d(0, -40%, 0) rotateX(80deg);
+       -moz-transform: translate3d(0, -40%, 0) rotateX(80deg);
+        -ms-transform: translate3d(0, -40%, 0) rotateX(80deg);
+            transform: translate3d(0, -40%, 0) rotateX(80deg);
+}
+
+.reveal.page .slides > section > section.future {
+    -webkit-transform-origin: 0% 100%;
+       -moz-transform-origin: 0% 100%;
+        -ms-transform-origin: 0% 100%;
+            transform-origin: 0% 100%;
+
+    -webkit-transform: translate3d(0, 0, 0);
+       -moz-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+}
+
+
+/*********************************************
+ * FADE TRANSITION
+ *********************************************/
+
+.reveal .slides section[data-transition=fade],
+.reveal.fade .slides section:not([data-transition]),
+.reveal.fade .slides > section > section:not([data-transition]) {
+    -webkit-transform: none;
+       -moz-transform: none;
+        -ms-transform: none;
+         -o-transform: none;
+            transform: none;
+}
+
+
+.reveal.fade.overview .slides section,
+.reveal.fade.overview .slides > section > section,
+.reveal.fade.overview-deactivating .slides section,
+.reveal.fade.overview-deactivating .slides > section > section {
+    -webkit-transition: none;
+       -moz-transition: none;
+        -ms-transition: none;
+         -o-transition: none;
+            transition: none;
+}
+
+
+/*********************************************
+ * NO TRANSITION
+ *********************************************/
+
+.reveal .slides section[data-transition=none],
+.reveal.none .slides section:not([data-transition]) {
+    -webkit-transform: none;
+       -moz-transform: none;
+        -ms-transform: none;
+         -o-transform: none;
+            transform: none;
+
+    -webkit-transition: none;
+       -moz-transition: none;
+        -ms-transition: none;
+         -o-transition: none;
+            transition: none;
+}
 
 
 /*********************************************
@@ -766,7 +1277,6 @@ body
 
     overflow: hidden; /* <-- removing this one made slide 20 in the demo page show consistently in the ESC overview; with this style, it would disappear when you moved past it.   :-S */
                         /* turns out you can accomplish the same overview 'fix' by killing the -webkit-transform-style: preserve-3d style as well! Definitely tickling a browser bug here! */
-
     /* Chrome bugfix: */
     -webkit-transform-style: flat;
        -moz-transform-style: flat;
@@ -872,27 +1382,21 @@ body
     left: -50%;
     margin: 70px 0;
 
-    -webkit-transform: none !important;
-       -moz-transform: none !important;
-        -ms-transform: none !important;
-         -o-transform: none !important;
-            transform: none !important;
+    -webkit-transform: none;
+       -moz-transform: none;
+        -ms-transform: none;
+         -o-transform: none;
+            transform: none;
 }
 
 .no-transforms .reveal .slides section section {
     left: 0;
-
-    -webkit-transform: none !important;
-       -moz-transform: none !important;
-        -ms-transform: none !important;
-         -o-transform: none !important;
-            transform: none !important;
 }
 
 /*
  * This 'no-transition' class is used to RESET any pending transitions when we manipulate the DOM. 
  *
- * Inspired by: http://www.bennadel.com/blog/2462-understanding-css-transitions-and-class-timing-revisited.htm
+ * See also: http://www.bennadel.com/blog/2462-understanding-css-transitions-and-class-timing-revisited.htm;
  */
 .no-transition,
 .no-transition * {

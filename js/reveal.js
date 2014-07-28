@@ -49,6 +49,8 @@
     var SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR = ':scope > section',
         SLIDE_NO_DISPLAY_DISTANCE = 1;
 
+    var DEBUG_SHOW_ALL = 1;
+
     var nil_function = function () {};
 
     var Reveal = null,
@@ -68,12 +70,23 @@
             // Factor of the display size that should remain empty around the content
             margin: 0.05,
 
+            // Factor of the display size that should remain empty around the content.
+            // Reveal uses 5% spacing between slides in the overview display.
+            overviewGutter: 0.05,
+
+            // Factor of the display size that should remain empty around the content
+            slideGutter: 0.05,  // 0.5
+
             // Factor of the print page size that should remain empty around the content (e.g. because your printer cannot print edge-to-edge)
             printMargin: 50 / 2159,
 
-            // Bounds for smallest/largest possible scale to apply to content
+            // Bounds for smallest/largest possible scale to apply to content (fundamentalScale)
             minScale: 0.05,
             maxScale: 1.0,
+
+            // Bounds for smallest/largest possible scale to apply to content (per-slide scale correction)
+            minSlideScale: 0.05,
+            maxSlideScale: 1.0,
 
             // Bounds for smallest/largest possible scale to apply to overview display
             overviewMinScale: 0.01,
@@ -255,6 +268,9 @@
 
         // Delays updates to the URL due to a Chrome thumbnailer bug
         writeURLTimeout = 0,
+
+        // Debounce timer handle for the window resize event.
+        resizeDebounceTimer = null,
 
         // Registers what the viewDistance settings are for the present overview
         currentOverviewInfo = null,
@@ -652,9 +668,9 @@
             // Nuke the slide layout cache: it can contain data that's calculated based on incomplete page loads
             nukeSlideLayoutCache();
 
-            //layout();
             // And trigger browser layout:
-            /* @void */ dom.wrapper.offsetHeight;
+            layout();
+            // /* @void */ dom.wrapper.offsetHeight;
 
             // Enable transitions now that we're loaded
             dom.wrapper.classList.remove( 'no-transition' );
@@ -1607,16 +1623,23 @@ TBD end of old code, start of new code
                 var post_translation = '';
                 if ( targetInfo ) {
                     // compensation: -0.5 * delta_of_origin / scale
-                    var scale_inv = 1 / scale;
-                    var delta_h = targetInfo.slideHeight * scale_inv - targetInfo.slideHeight;
-                    var c_h = -0.5 * delta_h * scale_inv; 
-                    var delta_w = targetInfo.slideWidth * scale_inv - targetInfo.slideWidth;
-                    var c_w = -0.5 * delta_w * scale_inv; 
-                    post_translation = ' translate3d(' + c_w + 'px, ' + c_h + 'px, 0px)';
+                    var scale_inv = 0.5 * ( 1 - 1 / scale );
+                    var delta_h = targetInfo.slideHeight * scale_inv;
+                    var delta_w = targetInfo.slideWidth * scale_inv;
+                    post_translation = '  translateX(' + Math.round(delta_w) + 'px) translateY(' + Math.round(delta_h) + 'px) ';
                 }
-                transformElement( element, 'scale(' + scale + ') ' + post_translation );
+                transformElement( element, post_translation + ' scale(' + scale + ') ' );
             }
         }
+    }
+
+
+    /**
+     * Applies the given width/height dimensions to the target element.
+     */
+    function dimensionElement( element, width, height, targetInfo ) {
+        element.style.width = width;
+        element.style.height = height;
     }
 
 
@@ -1655,12 +1678,28 @@ TBD end of old code, start of new code
             //
             // See also: https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
             //
-            // However, note that at least Chrome does *not* match the behaviour described there, where
-            // element.getBoundingClientRect() is described as incorporating the transform:scale() in the 
-            // numbers produced: tests show that it does not.
-            var bbox = element.getBoundingClientRect();
-            height = Math.max( bbox.bottom - bbox.top, element.offsetTop + element.offsetHeight, element.scrollHeight );
-            width = Math.max( bbox.right - bbox.left, element.offsetLeft + element.offsetWidth, element.scrollWidth );
+            // Note that element.getBoundingClientRect() *does* incorporate the transform:scale() in the 
+            // numbers produced, hence we must compensate for this behaviour as the `.offsetXYZ` properties do not.
+            // 
+            // Also note that element.getBoundingClientRect() *does not* incorporate the style:zoom() scale in the 
+            // numbers produced, so it does matter a lot which scaling method we employ! 
+            height = Math.max( element.offsetTop + element.offsetHeight, element.scrollHeight );
+            width = Math.max( element.offsetLeft + element.offsetWidth, element.scrollWidth );
+            if ( compensate_for_scale ) {
+                var bbox = element.getBoundingClientRect();
+                var h = bbox.bottom - bbox.top;
+                var w = bbox.right - bbox.left;
+                
+                if ( !useZoomFallback ) {
+                    // transform:scale()d sizes produce the *scaled* size; this contrasts with classic style:zoom based
+                    // scaling, so we adjust the width/height by the specified scale factor to match both modes up:
+                    w /= compensate_for_scale;
+                    h /= compensate_for_scale;
+                }
+
+                height = Math.max( h, height );
+                width = Math.max( w, width );
+            }
 
             toArray( element.childNodes ).forEach( function( child ) {
 
@@ -1690,16 +1729,16 @@ TBD end of old code, start of new code
 
             } );
 
+            // Compensate for some minimal clipping occurring at large zoom scale factors when using CSS:zoom:
+            if ( useZoomFallback ) {
+                if ( compensate_for_scale > 1 ) {
+                    height += 1;
+                }
+            }
+
             if ( !fractional_okay ) {
                 height = Math.ceil( height );
                 width = Math.ceil( width );
-            }
-
-            if ( compensate_for_scale > 1 ) {
-                // Compensate for some minimal clipping occurring at large zoom scale factors when using CSS:zoom:
-                if ( useZoomFallback ) {
-                    height += 1;
-                }
             }
         }
 
@@ -2097,6 +2136,15 @@ TBD end of old code, start of new code
             }
         }
 
+        function queueDimensions( slide, width, height ) {
+            // Only queue/exec action when we have the *final* scale set up for this particular slide!
+            if ( !wantCommonScale || enforceCommonScale ) {
+                renderQueue.push(function () {
+                    dimensionElement( slide, width, height, targetInfo );
+                });            
+            }
+        }
+
         function queueScale( slide, realScale ) {
             // Only queue/exec action when we have the *final* scale set up for this particular slide!
             if ( !wantCommonScale || enforceCommonScale ) {
@@ -2174,6 +2222,7 @@ TBD end of old code, start of new code
                     parentSlide.classList.remove( 'past-1' );
                     parentSlide.classList.remove( 'past' );
                     parentSlide.classList.add( 'present' );
+                    parentSlide.classList.add( 'slide-measurement' );
                     parentSlide.classList.remove( 'future' );
                     parentSlide.classList.remove( 'future-1' );
                 }
@@ -2200,7 +2249,13 @@ TBD end of old code, start of new code
                 // Layout the contents of the slide.
 
                 // Setting a fixed width helps to produce a consistent layout and slide dimensions measurement.
+                dom.slides.style.height = null;
                 dom.slides.style.width = targetInfo.slideWidth + 'px';
+
+                if ( parentSlide ) {
+                    parentSlide.style.height = null;
+                    parentSlide.style.width = targetInfo.slideWidth + 'px';
+                }
 
                 // When the current slide is a 'scrollable slide' we need to make some special preparations.
                 // Do note however that we bluntly clip such a node in overview as there all slides are
@@ -2212,6 +2267,11 @@ TBD end of old code, start of new code
                     // let the browser reflow the scrollable content so we can decide what to do next:
                     dom.slides.style.width = targetInfo.slideWidth + 'px';
                     dom.slides.style.height = targetInfo.slideHeight + 'px';
+
+                    if ( parentSlide ) {
+                        parentSlide.style.width = targetInfo.slideWidth + 'px';
+                        parentSlide.style.height = targetInfo.slideHeight + 'px';
+                    }
                 }
                 //slide.style.width = targetInfo.slideWidth + 'px';
 
@@ -2225,6 +2285,12 @@ TBD end of old code, start of new code
 
                 if ( enforceCommonScale ) {
                     realScale = commonScale;
+
+                    // Respect max/min scale settings, but not in overview mode, where we want the slide to fit the maximum available (yet very small) part of our viewport real estate
+                    if ( !isOverview() ) {
+                        realScale = Math.max( realScale, config.minSlideScale );
+                        realScale = Math.min( realScale, config.maxSlideScale );
+                    }
 
                     targetSlideHeight = Math.round(targetInfo.slideHeight / realScale);
                     targetSlideWidth = Math.round(targetInfo.slideWidth / realScale);
@@ -2244,6 +2310,12 @@ TBD end of old code, start of new code
                     if ( slideDimensions && !isScrollableSlide ) {
                         // Protect the scaling calculation against zero-sized slides: make those produce a sensible scale, e.g.: 1.0
                         realScale = Math.min( targetInfo.slideWidth / ( slideDimensions.width || targetInfo.slideWidth ), targetInfo.slideHeight / ( slideDimensions.height || targetInfo.slideHeight ) );
+                    }
+
+                    // Respect max/min scale settings, but not in overview mode, where we want the slide to fit the maximum available (yet very small) part of our viewport real estate
+                    if ( !isOverview() ) {
+                        realScale = Math.max( realScale, config.minSlideScale );
+                        realScale = Math.min( realScale, config.maxSlideScale );
                     }
 
                     // We need to compensate for the scale factor, which is applied to the entire slide,
@@ -2290,6 +2362,12 @@ TBD end of old code, start of new code
                         if ( !realScale || !eventData.slideDimensions || !eventData.slideDimensions.width || !eventData.slideDimensions.height ) { 
                             realScale = Math.min( targetInfo.slideWidth / slideDimensions.width, targetInfo.slideHeight / slideDimensions.height );
 
+                            // Respect max/min scale settings, but not in overview mode, where we want the slide to fit the maximum available (yet very small) part of our viewport real estate
+                            if ( !isOverview() ) {
+                                realScale = Math.max( realScale, config.minSlideScale );
+                                realScale = Math.min( realScale, config.maxSlideScale );
+                            }
+
                             targetSlideHeight = Math.round(targetInfo.slideHeight / realScale);
                             targetSlideWidth = Math.round(targetInfo.slideWidth / realScale);
                         }
@@ -2323,7 +2401,8 @@ TBD end of old code, start of new code
                     var processed_scales = [];
 
                     for ( var iter_rounds = config.maxLayoutIterations; /* useZoomFallback */; iter_rounds-- ) {
-                        // apply the scale and recheck:
+                        // Reset scale, apply the new scale and recheck:
+                        scaleElement( slide, null );
                         scaleElement( slide, realScale );
                         slide.style.left = null;
                         slide.style.top = null;
@@ -2336,6 +2415,12 @@ TBD end of old code, start of new code
 
                         // Fixup scale of content to fit within available space in case we have a zoom goof due to CSS:zoom altering the BBox.
                         realScale = Math.min( realScale, targetInfo.slideWidth / slideDimensions.width, targetInfo.slideHeight / slideDimensions.height );
+
+                        // Respect max/min scale settings, but not in overview mode, where we want the slide to fit the maximum available (yet very small) part of our viewport real estate
+                        if ( !isOverview() ) {
+                            realScale = Math.max( realScale, config.minSlideScale );
+                            realScale = Math.min( realScale, config.maxSlideScale );
+                        }
 
                         var newAttempt = {
                             scale: realScale,
@@ -2366,7 +2451,6 @@ TBD end of old code, start of new code
                         }
                         processed_scales.push( Math.round( newAttempt.scale * 1000 ) );
 
-
                         // shape the slide in an attempt to coerce the slide towards a more filling & pleasing layout:
                         var surfaceArea = slideDimensions.width * slideDimensions.height;
                         var adjustedWidth = Math.sqrt( surfaceArea / preferredRatio ) * preferredRatio;
@@ -2387,12 +2471,21 @@ TBD end of old code, start of new code
                         // Determine scale of content to fit within available space
                         // Protect the scaling calculation against zero-sized slides: make those produce a sensible scale, e.g.: 1.0
                         realScale = Math.min( targetInfo.slideWidth / slideDimensions.width, targetInfo.slideHeight / slideDimensions.height );
+
+                        // Respect max/min scale settings, but not in overview mode, where we want the slide to fit the maximum available (yet very small) part of our viewport real estate
+                        if ( !isOverview() ) {
+                            realScale = Math.max( realScale, config.minSlideScale );
+                            realScale = Math.min( realScale, config.maxSlideScale );
+                        }
                     }
 
-                    // Apply the optimum layout (it may not have to be the last one we tried above!)
-                    scaleElement( slide, optimum.scale );
-                    slide.style.width = optimum.width + 'px';
-                    slide.style.height = optimum.height + 'px';
+                    if (0 /* this section is only useful when debugging */) {
+                        // Reset & apply the optimum layout (it may not have to be the last one we tried above!)
+                        scaleElement( slide, null );
+                        scaleElement( slide, optimum.scale );
+                        slide.style.width = optimum.width + 'px';
+                        slide.style.height = optimum.height + 'px';
+                    }
 
                     realScale = optimum.scale;
                     
@@ -2401,7 +2494,6 @@ TBD end of old code, start of new code
                     slideDimensions.width = optimum.width;
                     slideDimensions.height = optimum.height;
                 }
-
 
                 // We should update the cache now that we have calculated the scale, etc. for the current slide & mode.
                 // However, we should only update the cache once we have the *final* data.
@@ -2442,6 +2534,16 @@ TBD end of old code, start of new code
             var center_pad_v = Math.max(0, targetSlideHeight - slideDimensions.height);
             var center_pad_h = Math.max(0, targetSlideWidth - slideDimensions.width);
 
+            // Erase *all* padding before we apply the new calculated slide padding: we need to do
+            // this as 'regular' view mode and 'overview' mode may apply different scales and have
+            // different content showing, which can result in different axes maxing out, e.g. 
+            // vertical axis in 'regular' mode, while the horizontal axis may max out when the slide
+            // is displayed in 'overview' mode.
+            slide.style.paddingTop = null;
+            slide.style.paddingBottom = null;
+            slide.style.paddingLeft = null;
+            slide.style.paddingRight = null;
+
             // Do not apply the center padding if the user didn't ask for it via configuration, either globally or for this particular slide
             if ( config.center || slide.classList.contains( 'center' ) ) {
                 if (center_pad_v > 0) {
@@ -2470,21 +2572,28 @@ TBD end of old code, start of new code
             // Set the slide height/width where appropriate, keeping the slide scale in mind:
             // it is applied to the individual slide, hence its dimensions will differ from those
             // of its wrapper.
+            var parentWidth, parentHeight;
+
             if ( slideDimensions && isScrollableSlide && !isOverview() ) {
                 // when the scrollable content is wider/higher than the slide area, we better kill the fixed height. Same for the width...
                 if ( slideDimensions && slideDimensions.width > targetInfo.slideWidth ) {
-                    dom.slides.style.width = null;
+                    parentWidth = null;
                 } else {
-                    dom.slides.style.width = targetInfo.slideWidth + 'px';
+                    parentWidth = targetInfo.slideWidth + 'px';
                 }
                 if ( slideDimensions && slideDimensions.height > targetInfo.slideHeight ) {
-                    dom.slides.style.height = null;
+                    parentHeight = null;
                 } else {
-                    dom.slides.style.height = targetInfo.slideHeight + 'px';
+                    parentHeight = targetInfo.slideHeight + 'px';
                 }
             } else {
-                dom.slides.style.width = targetInfo.slideWidth + 'px';
-                dom.slides.style.height = targetInfo.slideHeight + 'px';
+                parentWidth = targetInfo.slideWidth + 'px';
+                parentHeight = targetInfo.slideHeight + 'px';
+            }
+
+            queueDimensions( dom.slides, parentWidth, parentHeight );
+            if ( parentSlide ) {
+                queueDimensions( parentSlide, parentWidth, parentHeight );
             }
 
             commonScale = Math.min( commonScale, realScale );
@@ -2492,9 +2601,27 @@ TBD end of old code, start of new code
             queueScale( slide, realScale );
 
             // Hide the slide again; it'll be shown if necessary at the end of the layout process
+
+            slide.classList.remove( 'past-1' );
+            slide.classList.remove( 'past' );
+            slide.classList.remove( 'present' );
+            slide.classList.remove( 'slide-measurement' );
+            slide.classList.remove( 'future' );
+            slide.classList.remove( 'future-1' );
+
             if ( parentSlide ) {
+                scaleElement( parentSlide, null );
+
+                parentSlide.classList.remove( 'past-1' );
+                parentSlide.classList.remove( 'past' );
+                parentSlide.classList.remove( 'present' );
+                parentSlide.classList.remove( 'slide-measurement' );
+                parentSlide.classList.remove( 'future' );
+                parentSlide.classList.remove( 'future-1' );
+
                 hideSlide( parentSlide );
             }
+
             hideSlide( slide );
 
         }
@@ -2538,6 +2665,8 @@ TBD end of old code, start of new code
             // ----------------------------------------------------------------
 
             // Backup all styles, etc. which will be changed in here, but are otherwise subject to CSS transitions (animation).
+            backupCurrentStyles( dom.viewport );
+            backupCurrentStyles( dom.wrapper );
             backupCurrentStyles( dom.slides_wrapper );
             backupCurrentStyles( dom.slides );
             var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
@@ -2555,11 +2684,10 @@ TBD end of old code, start of new code
             } );
             // The backup is done!
 
-            var kill_transforms = false;
-            if (!dom.viewport.classList.contains('reset-transitions')) {
-                dom.viewport.classList.add('reset-transitions');
-                kill_transforms = true;
-            }
+            var fundamentalScale = 1.0;
+
+            // Prevent transitions while we're layout-ing
+            dom.wrapper.classList.add( 'no-transition' );
 
             // Before recalculating the slide height(s), position, etc., we must nuke 
             // the previously patched in padding/top/etc. to get a correct measurement.
@@ -2580,8 +2708,6 @@ TBD end of old code, start of new code
             // as the need arises.
             //
             // We assume a 'fundamental scale factor' of 1.0 when we're rendering an Overview layout.
-
-            var fundamentalScale = 1.0;
 
             if ( !isOverview() ) {
                 fundamentalScale = Math.min( targetInfo.availableWidth / targetInfo.slideWidth, targetInfo.availableHeight / targetInfo.slideHeight );
@@ -2617,11 +2743,11 @@ TBD end of old code, start of new code
                     vcount: vcount
                 };
 
-                var totalSlidesWidth = targetInfo.slideWidth * hcount * 1.05; // Reveal uses 5% spacing between slides in the overview display
-                var totalSlidesHeight = targetInfo.slideHeight * vcount * 1.05;
+                var totalSlidesWidth = targetInfo.slideWidth * hcount * ( 1 + config.overviewGutter ); 
+                var totalSlidesHeight = targetInfo.slideHeight * vcount * ( 1 + config.overviewGutter );
 
-                // Determine scale of content to fit within available space
-                fundamentalScale = Math.min( targetInfo.availableWidth / totalSlidesWidth, targetInfo.availableHeight / totalSlidesHeight );
+                // Determine scale of content to fit within RAW available space: the entire viewport (at least the part that's reserved for *us*)
+                fundamentalScale = Math.min( targetInfo.rawAvailableWidth / totalSlidesWidth, targetInfo.rawAvailableHeight / totalSlidesHeight );
 
                 // Respect max/min scale settings
                 fundamentalScale = Math.max( fundamentalScale, config.overviewMinScale );
@@ -2659,7 +2785,7 @@ TBD end of old code, start of new code
                 //
                 // Also note that we first position the slide for the overlay and only then do we layout the slide itself,
                 // as that part will apply a slide-specific scaling.
-                var percentage = isOverview() ? 105 : 150;
+                var percentage = 100 * ( 1 + ( isOverview() ? config.overviewGutter : config.slideGutter ) );
                 for ( var i = 0, hlen = horizontalSlides.length; i < hlen; i++ ) {
                     var hslide = horizontalSlides[i],
                         hoffset = config.rtl ? -percentage : percentage,
@@ -2671,7 +2797,7 @@ TBD end of old code, start of new code
                     if( hslide.classList.contains( 'stack' ) ) {
 
                         // Apply CSS transform to position the slide for the overview. Use the same for the regular view.
-                        queueTransform( hslide, 'translate3d( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '%, 0%, 0px )' );
+                        queueTransform( hslide, 'translateX( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '% )' );
 
                         var verticalSlides = hslide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
 
@@ -2686,7 +2812,7 @@ TBD end of old code, start of new code
                             layoutSingleSlide( vslide, hslide, i, j );
 
                             // Apply CSS transform
-                            queueTransform( vslide, 'translate3d( 0%, ' + ( ( j - verticalIndex ) * voffset ) + '%, 0px )' );
+                            queueTransform( vslide, 'translateY( ' + ( ( j - verticalIndex ) * voffset ) + '% )' );
                         }
 
                     }
@@ -2695,7 +2821,7 @@ TBD end of old code, start of new code
                         layoutSingleSlide( hslide, null, i, 0 );
 
                         // Apply CSS transform to position the slide for the overview.
-                        queueTransform( hslide, 'translate3d( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '%, 0%, 0px )' );
+                        queueTransform( hslide, 'translateX( ' + ( ( i - ( indexh || 0 ) ) * hoffset ) + '% )' );
 
                     }
 
@@ -2705,14 +2831,12 @@ TBD end of old code, start of new code
             // Now that we have done all layout work re positioning, scaling, etc., we are
             // going to restore all elements' styles & classes as they were before this call.
             restoreAllCurrentStyles();            
-            if ( kill_transforms ) {
-                dom.viewport.classList.remove('reset-transitions');
-            }
-            // Fixup jumping behaviour when transitioning *to* the overview mode:
-            if ( currentMode !== previousMode && isOverview() ) {
-                scaleElement( dom.slides, null );
-                scaleElement( dom.slides, 1.0 );
-            }
+
+            // // Fixup jumping behaviour when transitioning *to* the overview mode:
+            // if ( currentMode !== previousMode && isOverview() ) {
+            //     scaleElement( dom.slides, null );
+            //     scaleElement( dom.slides, 1.0 );
+            // }
             
             // After which we tickle the DOM into re-rendering once again: this will be 
             // our departure point for all the queued transformations, which the browser will
@@ -2733,7 +2857,7 @@ TBD end of old code, start of new code
             runQueue();
 
             scaleElement( dom.slides, null );
-            scaleElement( dom.slides, fundamentalScale );
+            scaleElement( dom.slides, fundamentalScale * ( isOverview() ? 1 : 0.25 ) );
 
 
             // set the scale for the slide(s) is the last thing we do, so it gets CSS3 animation applied:
@@ -2869,6 +2993,28 @@ TBD end of old code, start of new code
         
         availablePrintWidth = Math.floor(rawAvailablePrintWidth * shrinkage); // ... and round down to whole pixels
         availablePrintHeight = Math.floor(rawAvailablePrintHeight * shrinkage);
+
+        console.log("getViewportAndSlideDimensionsInfo: ", 
+            dom.wrapper.offsetWidth,
+            dom.wrapper.offsetHeight,
+            dom.slides_wrapper.offsetWidth,
+            dom.slides_wrapper.offsetHeight,
+            dom.slides.offsetWidth,
+            dom.slides.offsetHeight,
+            dom.wrapper.style.width,
+            dom.wrapper.style.height,
+            dom.slides_wrapper.style.width,
+            dom.slides_wrapper.style.height,
+            dom.slides.style.width,
+            dom.slides.style.height,
+            rawAvailableWidth,
+            rawAvailableHeight,
+            availableWidth,             // a.k.a. presentationWidth
+            availableHeight,
+            slideWidth,                     // a.k.a. width ~ slide width
+            slideHeight,
+            slidePadding
+        );
 
         return {
             rawAvailableWidth: rawAvailableWidth,
@@ -3823,7 +3969,6 @@ TBD end of old code, start of new code
 
     }
 
-
     /**
      * Optimization method; hide all slides that are far away
      * from the present slide.
@@ -3880,11 +4025,14 @@ TBD end of old code, start of new code
                 //
                 // In regular display mode, we only ever want to see the previous slide and the current slide,
                 // for the sake of smooth transitions. 
-                if( distanceX <= viewDistance ) {
-                    assert( !isOverview() ? distanceX <= 1 : true );
+                if( distanceX <= viewDistance || DEBUG_SHOW_ALL ) {
+                    assert( !isOverview() ? distanceX <= 1 || DEBUG_SHOW_ALL : true );
 					showSlide( horizontalSlide );
-                    if ( distanceX !== 0 && !isOverview() ) {
+                    if ( distanceX !== 0 && !isOverview() && !DEBUG_SHOW_ALL ) {
                         slides_to_clear.push( horizontalSlide );
+                    }
+                    if ( DEBUG_SHOW_ALL ) {
+                        horizontalSlide.classList.add( 'present' );
                     }
                 }
                 else {
@@ -3900,11 +4048,14 @@ TBD end of old code, start of new code
 
 						distanceY = ( x === ( indexh || 0 ) ? Math.abs( ( indexv || 0 ) - y ) : Math.abs( y - oy ) );
 
-                        if( distanceX + distanceY <= viewDistance ) {
-                            assert( !isOverview() ? distanceX + distanceY <= 1 : true );
+                        if( distanceX + distanceY <= viewDistance || DEBUG_SHOW_ALL ) {
+                            assert( !isOverview() ? distanceX + distanceY <= 1 || DEBUG_SHOW_ALL : true );
 							showSlide( verticalSlide );
-                            if ( distanceX + distanceY !== 0 && !isOverview() ) {
+                            if ( distanceX + distanceY !== 0 && !isOverview() && !DEBUG_SHOW_ALL ) {
                                 slides_to_clear.push( verticalSlide );
+                            }
+                            if ( DEBUG_SHOW_ALL ) {
+                                verticalSlide.classList.add( 'present' );
                             }
                         }
                         else {
@@ -5783,13 +5934,26 @@ TBD end of old code, start of new code
     }
 
     /**
-     * Handler for the window level 'resize' event.
+     * Debounced handler for the window level 'resize' event.
      */
-    function onWindowResize( event ) {
+    function onDebouncedWindowResize( event ) {
+
+        resizeDebounceTimer = null;
 
         nukeSlideLayoutCache();
 
         layout();
+
+    }
+
+    /**
+     * Debouncing handler for the window level 'resize' event.
+     */
+    function onWindowResize( event ) {
+
+        // 'debounce' the resize event: it can be fired many times while the user resizes her viewport.
+        clearTimeout( resizeDebounceTimer );
+        resizeDebounceTimer = setTimeout( onDebouncedWindowResize, 100 );
 
     }
 
