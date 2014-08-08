@@ -80,16 +80,15 @@ module.exports = function(grunt) {
         },
 
         less: {
-          compileCore: {
+          reveal: {
             options: {
               strictMath: true,
               sourceMap: true,
-              outputSourceFiles: true,
-              sourceMapURL: '<%= pkg.name %>.css.map',
-              sourceMapFilename: 'css/<%= pkg.name %>.css.map'
+              outputSourceFiles: true
             },
             files: {
-              'css/<%= pkg.name %>.css': 'less/bootstrap.less'
+              src: 'css/reveal.less',
+              dst: 'less/bootstrap.less'
             }
           },
           themes: {

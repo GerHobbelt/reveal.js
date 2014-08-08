@@ -44,8 +44,7 @@ html {
 .reveal .playback,
 .reveal.overview,
 .fork-reveal,
-.share-reveal,
-.state-background {
+.share-reveal {
     display: none !important;
 }
 

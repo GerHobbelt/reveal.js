@@ -160,16 +160,39 @@ function URIparameters() {
     var has_route = false;
     if (rv.hash_raw) {
         var ha = rv.hash_raw.split(';');
+        // first find the 'route' component: `/Hnn/Vnn` or `IDentifier` cf. http://www.w3.org/TR/html5-author/global-attributes.html#the-id-attribute
+        has_route = ha.some(function (item, i) {
+            // special handling for Reveal slide routes, a.k.a. current slide coordinates:
+            if (item[0] === '/') {
+                assign(rv.hash, 'route', DEC(item));
+                ha.splice(i, 1);
+                return true;
+            }
+            return false;
+        });
+        // Otherwise we expect the 'route' to be the first argument following the '#' hash;
+        // despite the HTML5 allowing this, we do *not* accept routes which contain a '='
+        // character, so that we can easily discern between parameters (param=value) and 
+        // labeled routes.
+        // 
+        // In fact, we are rather strict: we only allow HTML4-compliant IDs a labeled routes
+        // ( http://www.htmlhelp.com/reference/html40/attrs.html )
+        // 
+        // When such a labeled route is preceded by a '/' it would already have been caught 
+        // in the .some() check above, so we only need to worry about straight IDs here.
+        //  
+        // Yes, we do *not* accept URIencoded IDs this way; if you want to read those,
+        // they *must* be prefixed with a '/' slash. 
+        if ( !has_route && /^[A-Za-z][\w.:_-]*$/.test( ha[0] ) ) {
+            assign(rv.hash, 'route', ha[0]);
+            ha.shift();
+            has_route = true;
+        }
+
+        // Now process the remaining arguments
         var no_val_counter = 0;
         ha.forEach(function (item, i) {
-            var pair;
-            // special handling for Reveal slide routes, a.k.a. current slide coordinates:
-            if (!has_route && item[0] === '/') {
-                pair = ['route', item];
-                has_route = true;
-            } else { 
-                pair = item.split('=');
-            }
+            var pair = item.split('=');
             // special handling for non-'a=b'-type hash parameters:
             if (pair.length === 1) {
                 var id = DEC(pair[0]);
