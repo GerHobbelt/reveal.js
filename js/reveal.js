@@ -18,22 +18,22 @@
             if ( !w.document ) {
                 throw new Error('RevealJS requires a window with a document');
             }
-            return factory( w, w.document );
+            return factory( w, w.document, require('verge') );
         };
     } else {
         if ( typeof define === 'function' && define.amd ) {
             // AMD. Register as a named module.
-            define( [], function () {
-                return factory(window, document);
+            define( ['verge'], function ( verge ) {
+                return factory( window, document, verge );
             });
         } else {
             // Browser globals
-            window.Reveal = factory(window, document);
+            window.Reveal = factory( window, document, verge );
         }
     }
 
 // Pass this, window may not be defined yet
-}(this, function ( window, document, undefined ) {
+}(this, function ( window, document, verge, undefined ) {
 
     'use strict';
 
@@ -228,7 +228,8 @@
 
         // The previous and current slide HTML elements
         previousSlide = null,
-        currentSlide /* = undefined */,
+        currentSlide = null,
+        currentParentSlide = null,
 
         previousBackground,
 
@@ -683,6 +684,7 @@
                 indexh: indexh,
                 indexv: indexv,
                 currentSlide: currentSlide,
+                currentParentSlide: currentParentSlide,
                 restarting: restarting
             } );
         }, 1 );
@@ -713,7 +715,8 @@
 
         // The previous and current slide HTML elements
         previousSlide = null;
-        currentSlide = undefined;
+        currentSlide = null;
+        currentParentSlide = null;
 
         // Slides may hold a data-state attribute which we pick up and apply
         // as a class to the body. This list contains the combined state of
@@ -807,7 +810,11 @@
         if (dom.arrow_controls) {
             // inspired by http://www.quirksmode.org/dom/events/blurfocus.html when mixing reveal with contenteditable areas and 100% keyboard control:
             // this should make sure that TAB should end up at a node which we recognize as presentation control area and hence process the keys pressed.
-            dom.arrow_controls.setAttribute( 'tabindex', '9999' );
+            var controls = toArray( dom.arrow_controls.querySelectorAll('div') );
+            var tabindex = 9999 - controls.length;
+            controls.forEach( function (control) {
+                control.setAttribute( 'tabindex', tabindex++ );
+            }); 
         }
 
         // Slide number
@@ -1749,6 +1756,12 @@ TBD end of old code, start of new code
         element.style.height = height;
     }
 
+    /**
+     * Adds the specified class to the class list of the target element.
+     */
+    function addClass( element, className ) {
+        element.classList.add( className );
+    }
 
     /**
 	 * Injects the given CSS styles into the DOM.
@@ -2174,15 +2187,16 @@ TBD end of old code, start of new code
      */
     function layout() {
 
-        __layout( dom.slides_wrapper, dom.slides );
-        __layout( dom.slides_overview_outer, dom.slides_overview_inner );
+        var targetInfo = getViewportAndSlideDimensionsInfo();
+
+        __layout( dom.slides_wrapper, dom.slides, targetInfo );
+        __layout( dom.slides_overview_outer, dom.slides_overview_inner, targetInfo );
 
     }
 
-    function __layout( dom_slides_outer, dom_slides_inner ) {
+    function __layout( dom_slides_outer, dom_slides_inner, targetInfo ) {
 
         var i, j, len, hlen, vlen;
-        var targetInfo = getViewportAndSlideDimensionsInfo();
         var commonScale = Infinity;
         var enforceCommonScale = false;
         var wantCommonScale = config.oneScaleForAll && !isOverview();   // we don't care about 'common scale' in overview mode: there we want everything to be as large as possible for optimal readability.
@@ -2274,6 +2288,15 @@ TBD end of old code, start of new code
             if ( !wantCommonScale || enforceCommonScale ) {
                 renderQueue.push(function () {
                     transformElement( slide, transform );
+                });
+            }
+        }
+
+        function queueAddClass( slide, className ) {
+            // Only queue/exec action when we have the *final* scale set up for this particular slide!
+            if ( !wantCommonScale || enforceCommonScale ) {
+                renderQueue.push(function () {
+                    addClass( slide, className );
                 });
             }
         }
@@ -2378,6 +2401,7 @@ TBD end of old code, start of new code
                 isScrollable = isScrollableSlide( slide );
                 if ( isScrollable ) {
                     dom_slides_outer.classList.add( 'scrollable-slide' );
+                    slide.classList.add( 'scrollable-slide' );
 
                     // let the browser reflow the scrollable content so we can decide what to do next:
                     dom_slides_inner.style.width = targetInfo.slideWidth + 'px';
@@ -2387,6 +2411,9 @@ TBD end of old code, start of new code
                         parentSlide.style.width = targetInfo.slideWidth + 'px';
                         parentSlide.style.height = targetInfo.slideHeight + 'px';
                     }
+                }
+                else {
+                    dom_slides_outer.classList.remove( 'scrollable-slide' );
                 }
                 //slide.style.width = targetInfo.slideWidth + 'px';
 
@@ -2453,6 +2480,7 @@ TBD end of old code, start of new code
                         scaledTargetSlideWidth: targetSlideWidth,
                         inOverviewMode: isOverview(),
                         inPrintingMode: isPrintingPDF(),
+                        isScrollableSlide: isScrollable,
                         targetInfo: targetInfo,
                         slidesMatrixInfo: getSlidesOverviewInfo()
                     }; 
@@ -2609,6 +2637,10 @@ TBD end of old code, start of new code
                     slideDimensions.width = optimum.width;
                     slideDimensions.height = optimum.height;
                 }
+                else if ( slideDimensions && isScrollable && !isOverview() ) {
+                    slideDimensions.width = targetSlideWidth * realScale;
+                    slideDimensions.height = targetSlideHeight * realScale;
+                }
 
                 // We should update the cache now that we have calculated the scale, etc. for the current slide & mode.
                 // However, we should only update the cache once we have the *final* data.
@@ -2714,6 +2746,10 @@ TBD end of old code, start of new code
             commonScale = Math.min( commonScale, realScale );
 
             queueScale( slide, realScale );
+
+            if ( isScrollable ) {
+                queueAddClass( slide, 'scrollable-slide' );
+            }
 
             // Hide the slide again; it'll be shown if necessary at the end of the layout process
 
@@ -2943,6 +2979,10 @@ TBD end of old code, start of new code
                 }
             }
 
+            if ( currentSlide && isScrollableSlide( currentSlide ) ) {
+                queueAddClass( dom_slides_outer, 'scrollable-slide' );
+            }
+
             // Now that we have done all layout work re positioning, scaling, etc., we are
             // going to restore all elements' styles & classes as they were before this call.
             restoreAllCurrentStyles();            
@@ -2972,7 +3012,7 @@ TBD end of old code, start of new code
             runQueue();
 
             scaleElement( dom_slides_inner, null );
-            scaleElement( dom_slides_inner, fundamentalScale * ( isOverview() ? 1 : 0.25 ) );
+            scaleElement( dom_slides_inner, fundamentalScale * ( isOverview() ? 1 : 1.0 ) );
 
 
             // set the scale for the slide(s) is the last thing we do, so it gets CSS3 animation applied:
@@ -3069,10 +3109,32 @@ TBD end of old code, start of new code
         if (!dom.wrapper || !dom.slides) return false;
 
         var rawAvailableWidth, rawAvailableHeight, availableWidth, availableHeight;
+        var viewportInfo, documentInfo;
+
+        // When the document does not readily occupy the entire viewport, then we make sure it does:
+        viewportInfo = verge.viewport();
+        var htmlNode = document.querySelector( 'html' );
+        documentInfo = verge.rectangle( htmlNode );
+
+        var remeasureWidth = ( documentInfo.width < viewportInfo.width );
+        var remeasureHeight = ( documentInfo.height < viewportInfo.height );
+        if ( remeasureWidth ) {
+            htmlNode.style.width = '100%';
+        }
+        if ( remeasureHeight ) {
+            htmlNode.style.height = '100%';
+        }
 
         // Available space to scale within
         rawAvailableWidth = dom.wrapper.offsetWidth;
         rawAvailableHeight = dom.wrapper.offsetHeight;
+ 
+        if ( remeasureWidth ) {
+            htmlNode.style.width = null;
+        }
+        if ( remeasureHeight ) {
+            htmlNode.style.height = null;
+        }
 
         // Reduce available space by margin
         var shrinkage = 1 - config.margin;
@@ -3222,6 +3284,7 @@ TBD end of old code, start of new code
                 indexh: indexh,
                 indexv: indexv,
                 currentSlide: currentSlide,
+                currentParentSlide: currentParentSlide,
                 slidesMatrixInfo: getSlidesOverviewInfo()
             } );
 
@@ -3269,6 +3332,7 @@ TBD end of old code, start of new code
                 indexh: indexh,
                 indexv: indexv,
                 currentSlide: currentSlide,
+                currentParentSlide: currentParentSlide,
                 slidesMatrixInfo: getSlidesOverviewInfo()
             } );
 
@@ -3749,6 +3813,7 @@ TBD end of old code, start of new code
         // Store reference to the current slide
         currentSlide = currentVerticalSlide;
         assert( currentSlide );
+        currentParentSlide = ( currentVerticalSlide !== currentHorizontalSlide ? currentHorizontalSlide : null );
 
         // Activate and transition to the new slide
         indexh = updateSlides( HORIZONTAL_SLIDES_SELECTOR, h );
@@ -3805,6 +3870,7 @@ TBD end of old code, start of new code
                 indexf: currentFragmentIndex,
                 previousSlide: previousSlide,
                 currentSlide: currentSlide,
+                currentParentSlide: currentParentSlide,
                 origin: o
             } );
         }
@@ -4491,7 +4557,7 @@ TBD end of old code, start of new code
 
                 var slideHeight = dom.background.offsetHeight;
                 var verticalSlideCount = verticalSlides.length;
-                var verticalOffset = verticalSlideCount > 1 ? -( backgroundHeight - slideHeight ) / ( verticalSlideCount-1 ) * indexv : 0;
+                var verticalOffset = verticalSlideCount > 1 ? -( backgroundHeight - slideHeight ) / ( verticalSlideCount - 1 ) * indexv : 0;
 
                 dom.background.style.backgroundPosition = horizontalOffset + 'px ' + verticalOffset + 'px';
 
@@ -4609,13 +4675,13 @@ TBD end of old code, start of new code
     function availableRoutes() {
 
 		var horizontalSlides = dom.slides.querySelectorAll( SCOPED_FROM_WRAPPER_HORIZONTAL_SLIDES_SELECTOR ),
-			verticalSlides = dom.wrapper.querySelectorAll( VERTICAL_SLIDES_SELECTOR );
+            verticalSlides = currentParentSlide && currentParentSlide.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR );
 
         var routes = {
             left: indexh > 0 || !!config.loop,
             right: indexh < horizontalSlides.length - 1 || !!config.loop,
             up: indexv > 0,
-            down: indexv < verticalSlides.length - 1
+            down: verticalSlides && indexv < verticalSlides.length - 1
         };
 
         // reverse horizontal controls for rtl
@@ -6470,6 +6536,11 @@ TBD end of old code, start of new code
         // Returns the current slide element
         getCurrentSlide: function() {
             return currentSlide;
+        },
+
+        // Returns the current parent slide element (it only delivers when the current slide is a *vertical slide*)
+        getCurrentParentSlide: function() {
+            return currentParentSlide;
         },
 
         getComputedSlideSizeInfo: getComputedSlideSize,

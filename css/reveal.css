@@ -89,6 +89,7 @@ body
     left: 0;
     right: 0;
     bottom: 0;
+    display: none;
 }
 
 .slides-wrapper,
@@ -294,6 +295,7 @@ body
     bottom: 10px;
 
 	-webkit-user-select: none;
+    pointer-events: none;
 }
 
 .reveal .controls div {
@@ -302,6 +304,9 @@ body
     width: 0;
     height: 0;
     border: 12px solid transparent;
+
+    pointer-events: all;
+    outline: none;
 
     -moz-transform: scale(.9999);
 	-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
@@ -379,12 +384,12 @@ body
     background-color: rgba( 0, 0, 0, 0.2 );
 }
     .reveal .progress:after {
-        content: '';
+        content: attr(data-progress-report);
         font-size: 16px;
         display: block;
         position: absolute;
         height: 20px;
-        width: 100%;
+        /* width: 100%; -- this would cover the lower 20px of the screen and catch all mouse activity there without showing anything */
         top: -20px;
     }
     .reveal .progress span {
@@ -499,12 +504,12 @@ body
     background-color: rgba( 0, 0, 0, 0.2 );
 }
     .reveal .time-remaining:after {
-        content: '';
+        content: attr(data-time-remaining-report);
         font-size: 16px;
-        display: 'block';
+        display: block;
         position: absolute;
         height: 20px;
-        width: 100%;
+        /* width: 100%; -- this would cover the lower 20px of the screen and catch all mouse activity there without showing anything */
         top: -20px;
     }
     .reveal .time-remaining span {
@@ -612,10 +617,14 @@ body
 .reveal .slides-overview > section.slide-measurement,
 .reveal .slides-overview > section > section.slide-measurement {
     width: auto;
+    height: auto;
 }
 
 .reveal.center .slides {
-    top: -40px;
+    overflow: hidden;
+}
+.reveal.center .slides section.visible.scrollable-slide {
+    /* overflow: auto; */
 }
 
 .reveal.center .slides,
