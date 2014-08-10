@@ -5013,7 +5013,7 @@ TBD end of old code, start of new code
 
         // Find out if this is a slide DOM node or a child node:
         // in the latter case, we need to find the parent fragment / slide.
-        var slide = produceSlideElement( element, function ( node ) {
+        var slideElement = produceSlideElement( element, function ( node ) {
             if ( node.classList && node.classList.contains( 'fragment' ) ) {
                 if( node.hasAttribute( 'data-fragment-index' ) ) {
                     f = parseInt( node.getAttribute( 'data-fragment-index' ), 10 ) || 0;
@@ -5022,18 +5022,18 @@ TBD end of old code, start of new code
         } );
 
         // When the element was specified but proved not to be a slide or a child thereof, we return FALSE.
-        if ( element && !slide ) {
+        if ( element && !slideElement ) {
             return false;
         }
         // When no element/slide was specified and we don't have a 'current' slide yet, we also return FALSE.
-        if ( !slide && !currentSlide ) {
+        if ( !slideElement && !currentSlide ) {
             return false;
         }
 
         // If a slide is specified, return the indices of that slide
-        if( slide ) {
-            var isVertical = isVerticalSlide( slide );
-            var slideh = isVertical ? slide.parentNode : slide;
+        if( slideElement ) {
+            var isVertical = isVerticalSlide( slideElement );
+            var slideh = isVertical ? slideElement.parentNode : slideElement;
 
             // Select all horizontal slides
 			var horizontalSlides = toArray( dom.slides.querySelectorAll( SCOPED_FROM_WRAPPER_HORIZONTAL_SLIDES_SELECTOR ) );
@@ -5046,12 +5046,12 @@ TBD end of old code, start of new code
 
             // If this is a vertical slide, grab the vertical index
             if( isVertical ) {
-                v = Math.max( toArray( slideh.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).indexOf( slide ), 0 );
+                v = Math.max( toArray( slideh.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).indexOf( slideElement ), 0 );
             }
         }
 
         if( config.fragments ) {
-            if( !slide ) {
+            if( !slideElement ) {
                 var currentFragment = currentSlide.querySelector( '.fragment.visible.current-fragment' );
                 if( currentFragment ) {
                     f = parseInt( currentFragment.getAttribute( 'data-fragment-index' ), 10 ) || 0;
@@ -5068,9 +5068,9 @@ TBD end of old code, start of new code
                 if ( f === undefined ) {
                     // We didn't get an element that's inside a fragment, so it's part of the entire slide.
                     // Nevertheless, we'ld like to know which fragments are visible, already.
-                    fragments = slide.querySelectorAll( '.fragment' );
+                    fragments = slideElement.querySelectorAll( '.fragment' );
                     if ( fragments.length ) {
-                        var visibleFragments = slide.querySelectorAll( '.fragment.visible' );
+                        var visibleFragments = slideElement.querySelectorAll( '.fragment.visible' );
                         if ( visibleFragments.length === 0 ) {
                             // signal that we are not yet showing *any* of the fragments yet
                             f = -1;
@@ -5693,8 +5693,8 @@ TBD end of old code, start of new code
         var hasFocus = !!( document.activeElement && ( document.activeElement.type || document.activeElement.href || document.activeElement.contentEditable !== 'inherit' ) );
 
         // Disregard the event if the focused element is located in a hidden slide (a 'past' or 'future' slide)
-        var slide = produceSlideElement( document.activeElement );
-        if ( slide && ( slide.classList.contains( 'past' ) || slide.classList.contains( 'future' ) ) ) {
+        var slideElement = produceSlideElement( document.activeElement );
+        if ( slideElement && ( slideElement.classList.contains( 'past' ) || slideElement.classList.contains( 'future' ) ) ) {
             hasFocus = false;
 
             // http://stackoverflow.com/questions/6976486/is-there-any-way-in-javascript-to-focus-the-document-content-area
