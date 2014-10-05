@@ -141,6 +141,9 @@
 			// key is pressed
 			help: true,
 
+			// Flags if it should be possible to pause the presentation (blackout)
+			pause: true,
+
             // Number of milliseconds between automatically proceeding to the
             // next slide, disabled when set to 0, this value can be overwritten
             // by using a data-autoslide attribute on your slides
@@ -1131,6 +1134,30 @@ TBD end of old code, start of new code
             container.appendChild( element );
         }
         
+		// If backgrounds are being recreated, clear old classes
+		slide.classList.remove( 'has-dark-background' );
+		slide.classList.remove( 'has-light-background' );
+        
+		// If this slide has a background color, add a class that
+		// signals if it is light or dark. If the slide has no background
+		// color, no class will be set
+		var computedBackgroundColor = window.getComputedStyle( element ).backgroundColor;
+		if( computedBackgroundColor ) {
+			var rgb = colorToRgb( computedBackgroundColor );
+
+			// Ignore fully transparent backgrounds. Some browsers return
+			// rgba(0,0,0,0) when reading the computed background color of
+			// an element with no background
+			if( rgb && rgb.a !== 0 ) {
+				if( colorBrightness( computedBackgroundColor ) < 128 ) {
+					slide.classList.add( 'has-dark-background' );
+				}
+				else {
+					slide.classList.add( 'has-light-background' );
+				}
+			}
+		}
+
         return element;
 
     }
@@ -1333,6 +1360,11 @@ TBD end of old code, start of new code
         }
         else {
             dom.wrapper.classList.remove( 'center' );
+		}
+
+		// Exit the paused mode if it was configured off
+		if( config.pause === false ) {
+			resume();
         }
 
         if( config.mouseWheel ) {
@@ -1757,6 +1789,77 @@ TBD end of old code, start of new code
 			tag.appendChild( document.createTextNode( value ) );
 		}
 		document.getElementsByTagName( 'head' )[0].appendChild( tag );
+
+	}
+
+	/**
+	 * Measures the distance in pixels between point a and point b.
+	 *
+	 * @param {String} color The string representation of a color,
+	 * the following formats are supported:
+	 * - #000
+	 * - #000000
+	 * - rgb(0,0,0)
+	 */
+	function colorToRgb( color ) {
+
+		var hex3 = color.match( /^#([0-9a-f]{3})$/i );
+		if( hex3 && hex3[1] ) {
+			hex3 = hex3[1];
+			return {
+				r: parseInt( hex3.charAt( 0 ), 16 ) * 0x11,
+				g: parseInt( hex3.charAt( 1 ), 16 ) * 0x11,
+				b: parseInt( hex3.charAt( 2 ), 16 ) * 0x11
+			};
+		}
+
+		var hex6 = color.match( /^#([0-9a-f]{6})$/i );
+		if( hex6 && hex6[1] ) {
+			hex6 = hex6[1];
+			return {
+				r: parseInt( hex6.substr( 0, 2 ), 16 ),
+				g: parseInt( hex6.substr( 2, 2 ), 16 ),
+				b: parseInt( hex6.substr( 4, 2 ), 16 )
+			};
+		}
+
+		var rgb = color.match( /^rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i );
+		if( rgb ) {
+			return {
+				r: parseInt( rgb[1], 10 ),
+				g: parseInt( rgb[2], 10 ),
+				b: parseInt( rgb[3], 10 )
+			};
+		}
+
+		var rgba = color.match( /^rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*([\d]+|[\d]*.[\d]+)\s*\)$/i );
+		if( rgba ) {
+			return {
+				r: parseInt( rgba[1], 10 ),
+				g: parseInt( rgba[2], 10 ),
+				b: parseInt( rgba[3], 10 ),
+				a: parseFloat( rgba[4] )
+			};
+		}
+
+		return null;
+
+	}
+
+	/**
+	 * Calculates brightness on a scale of 0-255.
+	 *
+	 * @param color See colorStringToRgb for supported formats.
+	 */
+	function colorBrightness( color ) {
+
+		if( typeof color === 'string' ) color = colorToRgb( color );
+
+		if( color ) {
+			return ( color.r * 299 + color.g * 587 + color.b * 114 ) / 1000;
+		}
+
+		return null;
 
 	}
 
@@ -3686,7 +3789,7 @@ TBD end of old code, start of new code
      */
     function pause() {
 
-        if( dom.wrapper ) {
+        if( dom.wrapper && config.pause ) {
             var wasPaused = dom.wrapper.classList.contains( 'paused' );
 
             cancelAutoSlide();
@@ -4597,6 +4700,19 @@ TBD end of old code, start of new code
 
         }
 
+		// If there's a background brightness flag for this slide,
+		// bubble it to the .reveal container
+		if( currentSlide ) {
+			[ 'has-light-background', 'has-dark-background' ].forEach( function( classToBubble ) {
+				if( currentSlide.classList.contains( classToBubble ) ) {
+					dom.wrapper.classList.add( classToBubble );
+				}
+				else {
+					dom.wrapper.classList.remove( classToBubble );
+				}
+			} );
+		}
+
         // Allow the first background to apply without transition
         setTimeout( function() {
             dom.background.classList.remove( 'no-transition' );
@@ -5136,7 +5252,7 @@ TBD end of old code, start of new code
         if( config.fragments ) {
             if( !slideElement ) {
                 var currentFragment = currentSlide.querySelector( '.fragment.visible.current-fragment' );
-                if( currentFragment ) {
+                if( currentFragment && currentFragment.hasAttribute( 'data-fragment-index' ) ) {
                     f = parseInt( currentFragment.getAttribute( 'data-fragment-index' ), 10 ) || 0;
                 }
                 else {
@@ -6333,10 +6449,12 @@ TBD end of old code, start of new code
      */
     function onPreviewLinkClicked( event ) {
 
-        var url = event.target.getAttribute( 'href' );
-        if( url ) {
-			showPreview( url );
-            event.preventDefault();
+		if( event.currentTarget && event.currentTarget.hasAttribute( 'href' ) ) {
+			var url = event.currentTarget.getAttribute( 'href' );
+		    if( url ) {
+				showPreview( url );
+			    event.preventDefault();
+			}
         }
 
     }
