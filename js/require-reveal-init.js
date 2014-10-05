@@ -69,19 +69,19 @@ var RevealConfiguration;        // object or function-returning-an-object
                 // { src: require.toUrl('../js/classList/classList.js'), condition: function() { 
                 //     return !document.body.classList; 
                 // } },
-                { src: require.toUrl('../../plugin/markdown/markdown.js'), condition: function() { 
+                { src: '../../plugin/markdown/markdown.js', condition: function() {
                     return !!document.querySelector( '[data-markdown]' ); 
                 } },
-                { src: require.toUrl('../../plugin/highlight/highlight.js'), async: true, condition: function() { 
+                { src: '../../plugin/highlight/highlight.js', async: true, condition: function() { 
                     return !!document.querySelector( 'pre code' ); 
                 }, callback: function() { 
                     console.log('highlight plugin callback arguments: ', arguments); 
                 } },
-                { src: require.toUrl('../../plugin/zoom-js/zoom.js'), async: true, condition: true },
-                { src: require.toUrl('../../plugin/notes/notes.js'), async: true, condition: true },
-                // { src: require.toUrl('../../plugin/leap/leap.js'), async: true },
-                { src: require.toUrl('../../plugin/search/search.js'), async: true, condition: true }
-                // { src: require.toUrl('../../plugin/remotes/remotes.js'), async: true }
+                { src: '../../plugin/zoom-js/zoom.js', async: true, condition: true },
+                { src: '../../plugin/notes/notes.js', async: true, condition: true },
+                // { src: '../../plugin/leap/leap.js', async: true },
+                { src: '../../plugin/search/search.js', async: true, condition: true }
+                // { src: '../../plugin/remotes/remotes.js', async: true }
             ]
         };
 

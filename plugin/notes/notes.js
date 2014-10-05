@@ -127,22 +127,24 @@
 
 	if( !/receiver/i.test( window.location.search ) ) {
 
-	// If the there's a 'notes' query set, open directly
-	if( window.location.search.match( /(\?|\&)notes/gi ) !== null ) {
-		openNotes();
-	}
-
-	// Open the notes when the 's' key is hit
-	document.addEventListener( 'keydown', function( event ) {
-		// Disregard the event if the target is editable or a
-		// modifier is present
-		if ( document.querySelector( ':focus' ) !== null || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey ) return;
-
-		if( event.keyCode === 83 ) {
-			event.preventDefault();
+		// If the there's a 'notes' query set, open directly
+		if( window.location.search.match( /(\?|\&)notes/gi ) !== null ) {
 			openNotes();
 		}
-	}, false );
+
+		// Open the notes when the 's' key is hit
+		document.addEventListener( 'keydown', function( event ) {
+			// Disregard the event if the target is editable or a
+			// modifier is present
+			if ( document.querySelector( ':focus' ) !== null || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey ) return;
+
+			if( event.keyCode === 83 ) {
+				event.preventDefault();
+				openNotes();
+			}
+		}, false );
+
+	}
 
     if (!Reveal.AddOn) {
         Reveal.AddOn = {};
