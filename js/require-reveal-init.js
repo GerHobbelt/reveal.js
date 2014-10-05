@@ -26,7 +26,7 @@ var RevealConfiguration;        // object or function-returning-an-object
             highlight: plugin('highlight/dist/highlight-umd'),
             marked: plugin('marked/lib/marked'),
             classList: jslib('classList/classList'),
-
+            assert: d('../../js/reveal-assert'),             
             verge: jslib('verge/verge')
         },
         onCompleteLoadOne: function (e) {

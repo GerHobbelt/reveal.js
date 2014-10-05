@@ -18,22 +18,22 @@
             if ( !w.document ) {
                 throw new Error('RevealJS requires a window with a document');
             }
-            return factory( w, w.document, require('verge') );
+            return factory( w, w.document, require('assert'), require('verge') );
         };
     } else {
         if ( typeof define === 'function' && define.amd ) {
             // AMD. Register as a named module.
-            define( ['verge'], function ( verge ) {
-                return factory( window, document, verge );
+            define( ['assert', 'verge'], function ( assert, verge ) {
+                return factory( window, document, assert, verge );
             });
         } else {
             // Browser globals
-            window.Reveal = factory( window, document, verge );
+            window.Reveal = factory( window, document, assert, verge );
         }
     }
 
 // Pass this, window may not be defined yet
-}(this, function ( window, document, verge, undefined ) {
+}(this, function ( window, document, assert, verge, undefined ) {
 
     'use strict';
 
@@ -320,26 +320,6 @@
 			'F':					'Fullscreen',
 			'ESC, O':				'Slide overview'
         };
-
-    /*
-     * debug /test assistant
-     */
-    function assert( condition ) {
-        if (typeof window.assert === 'function') {
-            return window.assert(condition);
-        } else if (!condition) {
-            var msg = Array.prototype.slice.call(arguments, 1).join(' ').trim();
-            if (console && console.log) {
-                console.log('@@@@@@ assertion failed: ', arguments, (msg || ''));
-            }
-            if (window.QUnit && window.QUnit.begin) {
-                throw new Error('ASSERTION failed' + (msg ? ': ' + msg : ''));
-            } else if (window.invoke_debugger !== false) {
-                debugger;
-            }
-        }
-        return !!condition;
-    }
 
 
     /**
@@ -764,7 +744,7 @@
         dom.theme = document.querySelector( '#theme' );
         dom.wrapper = document.querySelector( '.reveal' );
         dom.slides = document.querySelector( '.reveal .slides' );
-        if (!dom.wrapper || !dom.slides) return false;
+        if ( !dom.wrapper || !dom.slides ) return false;
 
         // Prevent transitions while we're loading
         dom.wrapper.classList.add( 'no-transition' );
@@ -906,7 +886,7 @@
      */
     function setupPDF() {
 
-		var targetInfo = getViewportAndSlideDimensionsInfo();
+		var targetInfo = getViewportDimensionsInfo();
         if ( targetInfo === false ) {
             return false;
         }
@@ -2187,7 +2167,7 @@ TBD end of old code, start of new code
      */
     function layout() {
 
-        var targetInfo = getViewportAndSlideDimensionsInfo();
+        var targetInfo = getViewportDimensionsInfo();
 
         __layout( dom.slides_wrapper, dom.slides, targetInfo );
         __layout( dom.slides_overview_outer, dom.slides_overview_inner, targetInfo );
@@ -2210,16 +2190,20 @@ TBD end of old code, start of new code
         function backupCurrentStyles(slide) {
             oldStylesBackup.push(slide);
             oldStylesBackup.push({
-                //paddingTop: slide.style.paddingTop,
-                //paddingRight: slide.style.paddingRight,
-                //paddingBottom: slide.style.paddingBottom,
-                //paddingLeft: slide.style.paddingLeft,
-                //top: slide.style.top,
-                //right: slide.style.right,
-                //bottom: slide.style.bottom,
-                //left: slide.style.left,
-                //height: slide.style.height,
-                //width: slide.style.width,
+                marginTop: slide.style.marginTop,
+                marginRight: slide.style.marginRight,
+                marginBottom: slide.style.marginBottom,
+                marginLeft: slide.style.marginLeft,
+                paddingTop: slide.style.paddingTop,
+                paddingRight: slide.style.paddingRight,
+                paddingBottom: slide.style.paddingBottom,
+                paddingLeft: slide.style.paddingLeft,
+                top: slide.style.top,
+                right: slide.style.right,
+                bottom: slide.style.bottom,
+                left: slide.style.left,
+                height: slide.style.height,
+                width: slide.style.width,
                 zoom: slide.style.zoom,
                 WebkitTransform: slide.style.WebkitTransform,
                 MozTransform: slide.style.MozTransform,
@@ -2235,16 +2219,20 @@ TBD end of old code, start of new code
                 var slide = oldStylesBackup[i];
                 var data = oldStylesBackup[i + 1];
 
-                //slide.style.paddingTop = data.paddingTop;
-                //slide.style.paddingRight = data.paddingRight;
-                //slide.style.paddingBottom = data.paddingBottom;
-                //slide.style.paddingLeft = data.paddingLeft;
-                //slide.style.top = data.top;
-                //slide.style.right = data.right;
-                //slide.style.bottom = data.bottom;
-                //slide.style.left = data.left;
-                //slide.style.height = data.height;
-                //slide.style.width = data.width;
+                slide.style.marginTop = data.marginTop;
+                slide.style.marginRight = data.marginRight;
+                slide.style.marginBottom = data.marginBottom;
+                slide.style.marginLeft = data.marginLeft;
+                slide.style.paddingTop = data.paddingTop;
+                slide.style.paddingRight = data.paddingRight;
+                slide.style.paddingBottom = data.paddingBottom;
+                slide.style.paddingLeft = data.paddingLeft;
+                slide.style.top = data.top;
+                slide.style.right = data.right;
+                slide.style.bottom = data.bottom;
+                slide.style.left = data.left;
+                slide.style.height = data.height;
+                slide.style.width = data.width;
                 slide.style.zoom = data.zoom;
                 slide.style.WebkitTransform = data.WebkitTransform;
                 slide.style.MozTransform = data.MozTransform;
@@ -2309,7 +2297,9 @@ TBD end of old code, start of new code
         }
 
         function layoutSingleSlide( slide, parentSlide, x, y ) {
-        
+
+            targetInfo = getAvailableSlideDimensionsInfo( slide, targetInfo );
+
             // Check if this slide comes with a dimensions/scale cache.
             var cache = slide.getAttribute( 'data-reveal-dim-cache' ) || '';
             var cache_entry = false;
@@ -2369,6 +2359,10 @@ TBD end of old code, start of new code
                 slide.style.height = null;
                 slide.style.width = null;
         
+                slide.style.marginTop = null;
+                slide.style.marginBottom = null;
+                slide.style.marginLeft = null;
+                slide.style.marginRight = null;
                 slide.style.paddingTop = null;
                 slide.style.paddingBottom = null;
                 slide.style.paddingLeft = null;
@@ -2396,8 +2390,6 @@ TBD end of old code, start of new code
                 }
 
                 // When the current slide is a 'scrollable slide' we need to make some special preparations.
-                // Do note however that we bluntly clip such a node in overview as there all slides are
-                // supposed to have fixed, identical dimensions. 
                 isScrollable = isScrollableSlide( slide );
                 if ( isScrollable ) {
                     dom_slides_outer.classList.add( 'scrollable-slide' );
@@ -2637,7 +2629,7 @@ TBD end of old code, start of new code
                     slideDimensions.width = optimum.width;
                     slideDimensions.height = optimum.height;
                 }
-                else if ( slideDimensions && isScrollable && !isOverview() ) {
+                else if ( slideDimensions && isScrollable /* && !isOverview() */ ) {
                     slideDimensions.width = targetSlideWidth * realScale;
                     slideDimensions.height = targetSlideHeight * realScale;
                 }
@@ -2686,6 +2678,10 @@ TBD end of old code, start of new code
             // different content showing, which can result in different axes maxing out, e.g. 
             // vertical axis in 'regular' mode, while the horizontal axis may max out when the slide
             // is displayed in 'overview' mode.
+            slide.style.marginTop = null;
+            slide.style.marginBottom = null;
+            slide.style.marginLeft = null;
+            slide.style.marginRight = null;
             slide.style.paddingTop = null;
             slide.style.paddingBottom = null;
             slide.style.paddingLeft = null;
@@ -2777,6 +2773,8 @@ TBD end of old code, start of new code
 
         }
 
+
+        targetInfo = getAvailableSlideDimensionsInfo( null, targetInfo );
 
         if ( targetInfo && dom_slides_inner ) {
 
@@ -3097,16 +3095,13 @@ TBD end of old code, start of new code
 	}
 
 	/**
-	 * Calculates the computed pixel size of our slides. These
-	 * values are based on the width and height configuration
-	 * options.
+	 * Calculates the computed pixel size of our viewport.
      *
-     * Returns the viewport and slide display sizes in pixels
-     * (percentage-based slide width and height are converted to pixels).
+     * Returns the viewport display sizes in pixels.
      */
-    function getViewportAndSlideDimensionsInfo() {
+    function getViewportDimensionsInfo() {
 
-        if (!dom.wrapper || !dom.slides) return false;
+        if ( !dom.wrapper || !dom.slides ) return false;
 
         var rawAvailableWidth, rawAvailableHeight, availableWidth, availableHeight;
         var viewportInfo, documentInfo;
@@ -3136,42 +3131,20 @@ TBD end of old code, start of new code
             htmlNode.style.height = null;
         }
 
-        // Reduce available space by margin
-        var shrinkage = 1 - config.margin;
-        assert(shrinkage > 0.5);
-        assert(shrinkage <= 1.0);
-        availableWidth = Math.floor(rawAvailableWidth * shrinkage); // ... and round down to whole pixels
-        availableHeight = Math.floor(rawAvailableHeight * shrinkage);
-
-        // Dimensions of the content
-        var slideWidth = config.width,
-            slideHeight = config.height,
-            slidePadding = Math.min(rawAvailableWidth - availableWidth, rawAvailableHeight - availableHeight); // TODO Dig this out of DOM (20)
-
-        // Slide width may be a percentage of available width
-        if( typeof slideWidth === 'string' && /%$/.test( slideWidth ) ) {
-            slideWidth = parseInt( slideWidth, 10 ) / 100 * availableWidth;
-        }
-
-        // Slide height may be a percentage of available height
-        if( typeof slideHeight === 'string' && /%$/.test( slideHeight ) ) {
-            slideHeight = parseInt( slideHeight, 10 ) / 100 * availableHeight;
-        }
-
         var rawAvailablePrintWidth, rawAvailablePrintHeight, availablePrintWidth, availablePrintHeight;
 
         // Dimensions of the page surface
         rawAvailablePrintWidth = config.printWidth;
         rawAvailablePrintHeight = config.printHeight;
 
-        shrinkage = 1 - config.printMargin;
+        var shrinkage = 1 - config.printMargin;
         assert(shrinkage > 0.5);
         assert(shrinkage <= 1.0);
         
         availablePrintWidth = Math.floor(rawAvailablePrintWidth * shrinkage); // ... and round down to whole pixels
         availablePrintHeight = Math.floor(rawAvailablePrintHeight * shrinkage);
 
-        console.log("getViewportAndSlideDimensionsInfo: ", 
+        console.log("getViewportDimensionsInfo: ", 
             dom.wrapper.offsetWidth,
             dom.wrapper.offsetHeight,
             dom.slides_wrapper.offsetWidth,
@@ -3185,12 +3158,7 @@ TBD end of old code, start of new code
             dom.slides.style.width,
             dom.slides.style.height,
             rawAvailableWidth,
-            rawAvailableHeight,
-            availableWidth,             // a.k.a. presentationWidth
-            availableHeight,
-            slideWidth,                     // a.k.a. width ~ slide width
-            slideHeight,
-            slidePadding
+            rawAvailableHeight
         );
 
         return {
@@ -3198,8 +3166,8 @@ TBD end of old code, start of new code
             rawAvailableHeight: rawAvailableHeight,
 
             // available space reduced by margin
-            availableWidth: availableWidth,             // a.k.a. presentationWidth
-            availableHeight: availableHeight,
+            availableWidth: -1,             // i.e. not determined yet
+            availableHeight: -1,
 
             rawAvailablePrintWidth: rawAvailablePrintWidth,
             rawAvailablePrintHeight: rawAvailablePrintHeight,
@@ -3209,10 +3177,125 @@ TBD end of old code, start of new code
             availablePrintHeight: availablePrintHeight,
 
             // (Target) Dimensions of the content
-            slideWidth: slideWidth,                     // a.k.a. width ~ slide width
-            slideHeight: slideHeight,
-            slidePadding: slidePadding
+            slideWidth: -1,                     // i.e. not determined yet
+            slideHeight: -1,
+
+            slideMarginWidth: -1,
+            slideMarginHeight: -1
         };
+
+    }
+
+    /**
+     * Get the width / height margins specified for this slide in pixels 
+     * (slides may override the configured default perunage).
+     */
+    function getSlideMargin( slideElement, rawAvailableWidth, rawAvailableHeight ) {
+
+        // Reduce available space by margin
+        var margin = config.margin;
+        var marginXdata, marginYdata, margindata;
+        var marginX, marginY;
+        var marginWidth, marginHeight;
+
+        assert(margin < 0.5);
+        assert(margin >= 0.0);
+
+        var slide = produceSlideElement( slideElement );
+        if ( !slide ) {
+            // Slide margin is a perunage
+            marginWidth = margin * rawAvailableWidth;
+            marginHeight = margin * rawAvailableHeight;
+        }
+        else {
+            margindata = slide.getAttribute( 'data-slide-margin' ); // percentage or pixels
+
+            // TODO: check if margindata is a JSON object listing top/right/bottom/left margins....
+            
+            // marginXdata = slide.getAttribute( 'data-slide-margin-width' ) || margindata; // percentage or pixels
+            // marginYdata = slide.getAttribute( 'data-slide-margin-height' ) || margindata; // percentage or pixels
+
+            if ( typeof marginXdata === 'string' && /%$/.test( marginXdata ) ) {
+                // Slide margin width is a percentage of available width
+                marginX = ( parseInt( marginXdata, 10 ) || 0 ) / 100;
+                marginWidth = marginX * rawAvailableWidth;
+            }
+            else {
+                // Slide margin width is a fixed number in pixels
+                marginWidth = ( parseInt( marginXdata, 10 ) || 0 );
+            }
+
+            if ( typeof marginYdata === 'string' && /%$/.test( marginYdata ) ) {
+                // Slide margin height is a percentage of available height
+                marginY = ( parseInt( marginYdata, 10 ) || 0 ) / 100;
+                marginHeight = marginY * rawAvailableHeight;
+            }
+            else {
+                // Slide margin width is a fixed number in pixels
+                marginHeight = ( parseInt( marginYdata, 10 ) || 0 );
+            }
+
+            assert(marginWidth < 0.5 * rawAvailableWidth);
+            assert(marginWidth >= 0.0);
+            assert(marginHeight < 0.5 * rawAvailableHeight);
+            assert(marginHeight >= 0.0);
+        }
+
+        return {
+            width: Math.floor(marginWidth / 2), // ... and round down to whole pixels
+            height: Math.floor(marginHeight / 2)
+        };
+
+    }
+
+    /**
+     * Calculates the computed pixel size of the real estate available for our slide. These
+     * values are based on the width and height configuration
+     * options and the input produced by the #getViewportDimensionsInfo() API.
+     *
+     * Returns the viewport and slide display sizes in pixels
+     * (percentage-based slide width and height are converted to pixels).
+     */
+    function getAvailableSlideDimensionsInfo( slide, targetInfo ) {
+
+        slide = produceSlideElement( slide );
+
+        if ( !dom.wrapper || !dom.slides || !targetInfo ) return false;
+
+        var viewportInfo, documentInfo;
+
+        // Reduce available space by margin
+        var margin = getSlideMargin( slide, targetInfo.rawAvailableWidth, targetInfo.rawAvailableHeight );
+
+        var availableWidth = targetInfo.rawAvailableWidth - margin.width * 2;
+        var availableHeight = targetInfo.rawAvailableHeight - margin.height * 2;
+
+        // Dimensions of the content
+        var slideWidth = config.width,
+            slideHeight = config.height;
+
+        // Slide width may be a percentage of available width
+        if( typeof slideWidth === 'string' && /%$/.test( slideWidth ) ) {
+            slideWidth = parseInt( slideWidth, 10 ) / 100 * availableWidth;
+        }
+
+        // Slide height may be a percentage of available height
+        if( typeof slideHeight === 'string' && /%$/.test( slideHeight ) ) {
+            slideHeight = parseInt( slideHeight, 10 ) / 100 * availableHeight;
+        }
+
+        // available space reduced by margin
+        targetInfo.availableWidth = availableWidth;             // a.k.a. presentationWidth
+        targetInfo.availableHeight = availableHeight;
+
+        // (Target) Dimensions of the content
+        targetInfo.slideWidth = slideWidth;                     // a.k.a. width ~ slide width
+        targetInfo.slideHeight = slideHeight;
+
+        targetInfo.slideMarginWidth = margin.width;
+        targetInfo.slideMarginHeight = margin.height;
+
+        return targetInfo;
 
     }
 
@@ -6545,7 +6628,7 @@ TBD end of old code, start of new code
 
         getComputedSlideSizeInfo: getComputedSlideSize,
 
-        getViewPortSizeInfo: getViewportAndSlideDimensionsInfo,
+        getViewPortSizeInfo: getViewportDimensionsInfo,
 
         getElementStyle: getStyle,
 
