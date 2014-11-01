@@ -65,6 +65,12 @@ body
     color: #000;
 }
 
+::-moz-selection {
+  background: #FF5E99;
+  color: #fff;
+  text-shadow: none; 
+}
+
 ::selection {
     background: #FF5E99;
     color: #fff;
@@ -201,6 +207,13 @@ body
         visibility: visible;
     }
 
+.reveal .slides section .fragment.strike {
+    opacity: 1;
+}
+    .reveal .slides section .fragment.strike.visible {
+        text-decoration: line-through;
+    }
+
 .reveal .slides section .fragment.current-visible {
     opacity: 0;
     visibility: hidden;
@@ -239,12 +252,6 @@ body
     color: #1b91ff;
 }
 
-.reveal .slides section .fragment.strike {
-    opacity: 1;
-}
-    .reveal .slides section .fragment.strike.visible {
-        text-decoration: line-through;
-    }
 
 
 /*********************************************
@@ -311,9 +318,15 @@ body
     -moz-transform: scale(.9999);
 	-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
 
+  -webkit-transform: scale(0.9999);
+      -ms-transform: scale(0.9999);
+          transform: scale(0.9999);
+
     -webkit-transition: all 2s ease;
        -moz-transition: all 2s ease;
             transition: all 2s ease;
+            
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);            
 }
 
 .reveal .controls div.enabled {
@@ -600,6 +613,10 @@ body
        -moz-transform-style: preserve-3d;
         -ms-transform-style: preserve-3d;
             transform-style: preserve-3d;
+
+  -webkit-transition: -webkit-transform-origin 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985), -webkit-transform 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985), visibility 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985), opacity 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
+          transition: -ms-transform-origin 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985), transform 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985), visibility 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985), opacity 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
+          transition: transform-origin 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985), transform 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985), visibility 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985), opacity 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985); 
 }
 
 .reveal .slides > section.visible,
@@ -877,7 +894,7 @@ body
     opacity: 1 !important;
     position: relative !important;
     height: auto;
-    min-height: auto;
+    min-height: 0;
     top: 0;
     left: -50%;
     margin: 70px 0;
@@ -1120,6 +1137,7 @@ body
  			float: right;
  			opacity: 0.6;
 
+       -moz-box-sizing: border-box;
  			box-sizing: border-box;
  		}
 			.reveal .overlay header a:hover {
