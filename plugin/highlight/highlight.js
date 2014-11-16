@@ -1,5 +1,5 @@
 // START CUSTOM REVEAL.JS INTEGRATION
-[].slice.call( document.querySelectorAll( 'pre code' ) ).forEach( function( element ) {
+[].slice.call( document.querySelectorAll( 'pre code:not(.no-highlight)' ) ).forEach( function( element ) {
 	element.addEventListener( 'focusout', function( event ) {
 		hljs.highlightBlock( event.currentTarget );
 	}, false );
