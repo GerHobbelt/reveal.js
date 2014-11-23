@@ -17,6 +17,9 @@
 		<link rel="stylesheet" href="css/reveal.min.css">
 		<link rel="stylesheet" href="css/theme/default.css" id="theme">
 
+        <!-- Ubuntu Mono font susceptible to homograph attack -->
+        <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
+
 		<!-- For syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
 
@@ -37,14 +40,16 @@
       }
 
       .reveal pre code {
-        font-size: 140%;
+        font-family: 'Ubuntu Mono', monospace;
+        font-size: 145%;
         line-height: 1.25em;
+        letter-spacing: 1px;
       }
 
       .reveal pre code.small {
         font-size: 125%;
         font-weight: bold;
-        line-height: 1em;
+        line-height: 1.15em;
       }
 
       .reveal pre code .comment,
@@ -326,8 +331,7 @@
 
         <section>
           <h3>Processing UTF-8</h3>
-          <pre><code style="line-height: 1.2em;">
-        // u + &#x0306; &nbsp;= u&#x0306; = 3 bytes
+          <pre><code style="line-height: 1.2em; padding-top: 0.5em; padding-bottom: 0.5em;">        // u + &nbsp;&#x0306; = u&#x0306; = 3 bytes
         $char = json_decode("\"u\\u0306\"");
         $str = "abc".$char;
 
@@ -336,8 +340,7 @@
         echo strtoupper($char);                 // = U&#x0306;
         // but:
         echo strlen($char);                     // = 3
-        echo strtoupper("&eacute;");                   // = &eacute;
-          </code></pre>
+        echo strtoupper("&eacute;");                   // = &eacute;</code></pre>
           <p>Works fine, if...</p>
           <ul class="fragment">
             <li>All string lengths are in bytes (DB!)</li>
@@ -412,13 +415,13 @@
         <section>
           <h3>mbstring</h3>
           <pre><code>
-    mb_internal_encoding("UTF-8");
+      mb_internal_encoding("UTF-8");
 
-    $str = "аbcxyz";             // cyrillic a
+      $str = "аbcxyz";             // cyrillic a
 
-    echo mb_strlen($str);        // --> 6
-    echo mb_strpos($str, "xyz"); // --> 3
-    echo mb_substr($str, 3, 3);  // --> xyz
+      echo mb_strlen($str);        // --> 6
+      echo mb_strpos($str, "xyz"); // --> 3
+      echo mb_substr($str, 3, 3);  // --> xyz
           </code></pre>
           <div>
             <ul>
@@ -473,7 +476,7 @@
         <section>
           <h3>String length roulette</h3>
           <pre><code>
-      $str = json_decode("\"u\\u0306\""); // u + &#x0306; &nbsp;= u&#x0306;
+      $str = json_decode("\"u\\u0306\""); // u + &nbsp;&#x0306; = u&#x0306;
 
       echo strlen($str);          // 3 = bytes
       echo mb_strlen($str);       // 2 = code points
@@ -650,8 +653,8 @@
         </section>
         <section>
           <h3>mysql to the rescue</h3>
-          <pre><code>  create database test character set utf8;<br>  create table words (word varchar(20));</code></pre>
-          <pre><code>  $db = new PDO(
+          <pre><code class="small">  create database test character set utf8;<br>  create table words (word varchar(20));</code></pre>
+          <pre><code class="small">  $db = new PDO(
     "mysql:host=localhost;dbname=strings;charset=utf8");
   // for mysqli: mysqli_set_charset("utf8");
   $db->exec("insert into words " .
@@ -735,8 +738,7 @@
         </section>
         <section>
           <h3>Making do with PHP built-ins</h3>
-          <pre><code class="no-highlight small">
-  &lt;html&gt;
+          <pre><code class="no-highlight small" style="padding-top: 0.5em; padding-bottom: 0.5em;">  &lt;html&gt;
     &lt;head&gt;
       &lt;style type="text/css"&gt;
         <strong class="string" style="text-decoration: line-through;">avoid untrusted content</strong>
@@ -748,15 +750,12 @@
         <strong> use encodeForHTML() </strong>
       &lt;/button&gt;
     &lt;/body&gt;
-  &lt;/html&gt;
-          </code></pre>
+  &lt;/html&gt;</code></pre>
           <div class="fragment">
-            <pre><code>
-  function encodeForHTML($str) {
+            <pre><code style="padding-top: 0.5em; padding-bottom: 0.5em;">  function encodeForHTML($str) {
     return str_replace("/", "&amp;#x27;",
       htmlentities($str, ENT_QUOTES, "UTF-8");
-  }
-            </code></pre>
+  }</code></pre>
           </div>
           <aside class="notes">
             / is included because it helps end an element.
