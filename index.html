@@ -4,10 +4,10 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Strings</title>
+		<title>Strange Strings</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+		<meta name="description" content="Strange Strings, a presentation about unicode and PHP">
+		<meta name="author" content="Joeri Sebrechts">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -17,6 +17,7 @@
 		<link rel="stylesheet" href="css/reveal.min.css">
 		<link rel="stylesheet" href="css/theme/default.css" id="theme">
 
+    <!-- TODO: put font locally -->
         <!-- Ubuntu Mono font susceptible to homograph attack -->
         <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
 
@@ -52,8 +53,7 @@
         line-height: 1.15em;
       }
 
-      .reveal pre code .comment,
-      .reveal pre code .pi {
+      .reveal pre code .comment {
         color: #a0c8a0;
       }
 
@@ -61,9 +61,6 @@
         color: #edabab;
       }
 
-      .reveal pre code .javascript {
-        opacity: 1;
-      }
     </style>
 	</head>
 
@@ -76,9 +73,20 @@
 
 				<section>
 					<h1>Strange Strings</h1>
-          <p>Joeri Sebrechts</p>
-					<p>js@mcs.fm</p>
 				</section>
+
+        <section style="padding-top: 0; padding-bottom: 0;">
+          <img src="images/molen.jpg" height="660">
+          <div style="position: absolute; top: 18px; height: 660px; width: 422px; right: 54px; background: #000; opacity: 0.5;"></div>
+          <div style="position: absolute; top: 18px; height: 660px; width: 422px; right: 54px; color: white; padding-top: 20%;">
+            <h3>Joeri Sebrechts</h3>
+            <br>
+            js@mcs.fm<br>
+            10<br>
+            1 million<br>
+            1
+          </div>
+        </section>
 
         <section>
           <h3>Everybody knows this</h3>
@@ -91,7 +99,6 @@
           echo strlen($str);        // --> 6
           echo substr($str, 3, 3);  // --> xyz
           </code></pre>
-          <p>&nbsp;</p>
           <aside class="notes">
             Strings are arrays of characters.
           </aside>
@@ -108,42 +115,26 @@
           echo strlen($str);        // --> 7
           echo substr($str, 3, 3);  // --> cxy
           </code></pre>
-          <p class="fragment">
+          <aside class="notes">
+            Strings are not arrays of characters.
+            Strings are arrays of numbers.
+            Strings in PHP are arrays of bytes.
             The a is cyrillic (2 bytes in UTF-8).
-          </p>
-          <aside class="notes">
-            PHP strings are arrays of bytes.
           </aside>
         </section>
 
         <section>
-          <h3>Strings are arrays of ...</h3>
-          <div class="fragment">
-            <h2>Numbers</h2>
-            <table style="margin: 1em auto;" cellspacing="8">
-              <tr style="background-color: #666;"><th>Type</th><th>Range</th><th>Fits</th></tr>
-              <tr><td>Byte</td><td>0 - 255</td><td>ASCII / ANSI / latin1</td></tr>
-              <tr><td>2 Bytes</td><td>0 - 65535</td><td>BMP / common scripts</td></tr>
-              <tr><td>4 Bytes</td><td>0 - 4 billion</td><td>Unicode</td></tr>
-            </table>
-          </div>
+          <h2>I � Unicode</h2>
         </section>
 
-        <section>
-          <h2>Unicode</h2>
-          <h3>To the minimum and beyond</h3>
-          <aside class="notes">
-            <a href="http://www.joelonsoftware.com/articles/Unicode.html">The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)</a>
-          </aside>
-        </section>
         <section>
           <h3>ASCII</h3>
 
           <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
-            <tr><th>From</th><td>1960</td><td rowspan="6" style="vertical-align: middle; padding-left: 1em;"><img width="379" height="475" src="images/acoustic-coupler.jpg" /></td></tr>
+            <tr><th>From</th><td>1963</td><td rowspan="6" style="vertical-align: middle; padding-left: 1em;"><img width="379" height="475" src="images/acoustic-coupler.jpg" /></td></tr>
             <tr><th>By</th><td>ASA (now ANSI)</td></tr>
-            <tr><th>Purpose</th><td>Telegraph / teletype</td></tr>
-            <tr><th>Range</th><td>7-bit = 0 - 127</td></tr>
+            <tr><th>Purpose</th><td>Teletype</td></tr>
+            <tr><th>Range</th><td>7-bit</td></tr>
             <tr><th>Encodes</th><td>Source code<br>Parts of English</td></tr>
             <tr><th>Hello</th><td>72 101 108 108 111<br>48 65 6c 6c 6f (00)</td></tr>
           </table>
@@ -151,7 +142,9 @@
           <aside class="notes">
             ASA = American Standards Association.
             ANSI = American National Standards Institute.
-            ASCII can't represent all of English because of French words (e.g. résumé).
+            <a href="http://www.bobbemer.com/ASCII.HTM">Bob Bemer (IBM) was the father of ASCII.</a>
+            IBM had 9 character sets in use before this.
+            However, IBM failed to switch to ASCII until 1981, with the introduction of the PC.
             <strong>The nul character</strong> at the end marks the end of the string on most systems.
           </aside>
         </section>
@@ -160,8 +153,8 @@
           <table style="margin: 1em auto; font-size: 85%;" cellspacing="8" class="th-header-col">
             <tr><th>From</th><td>1985</td><td rowspan="6" style="vertical-align: middle; padding-left: 0.5em;"><img src="images/Windows1.0.png"></td></tr>
             <tr><th>By</th><td>ISO (ISO 8859-x)<br>Microsoft (ANSI)</td></tr>
-            <tr><th>Purpose</th><td>Reliable digital communication<br>Standardizing the 8th bit</td></tr>
-            <tr><th>Range</th><td>8-bit = 0 - 255</td></tr>
+            <tr><th>Purpose</th><td>Standardizing the 8th bit</td></tr>
+            <tr><th>Range</th><td>~ 8-bit</td></tr>
             <tr><th>Encodes</th><td style="white-space: nowrap;">
               West-European languages (latin1)<br>
               latin1 + € + word quotes (CP1252)<br>
@@ -181,25 +174,13 @@
           <img src="images/mojibake.png">
         </section>
         <section>
-          <h3>Unicode</h3>
-          <img height="631" src="images/unicode.png">
-          <aside class="notes">
-            Unicode was made by a bunch of guys from Xerox and Apple (and later Microsoft),
-            to solve the problem of the conflicting code pages by having a single convention
-            for what code point (or number) corresponded to which character, for all
-            languages and scripts in common use.
-
-            The code points started with the numbering of latin1 and then expanded from there.
-          </aside>
-        </section>
-        <section>
           <h3>Unicode / UCS-2</h3>
           <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
             <tr><th>From</th><td>1991</td><td rowspan="7" style="vertical-align: middle;"><img src="images/nt31logo.gif"></td></tr>
             <tr><th>By</th><td>Unicode Consortium<br><small style="font-size: 80%;">(Xerox, Apple, IBM, Microsoft, ...)</small></td></tr>
             <tr><th>Purpose</th><td style="white-space: nowrap;">Single encoding for all languages</td></tr>
             <tr><th>Range</th><td>2 bytes per char (64k)</td></tr>
-            <tr><th>Encodes</th><td>BMP, mainstream languages</td></tr>
+            <tr><th>Encodes</th><td>Mainstream languages</td></tr>
             <tr><th>Hello</th><td style="font-size: 80%;">00 48 00 65 00 6c 00 6c 00 6f (00 00)</td></tr>
             <tr><th>Gotcha</th><td>
               c4 8d (č) == 00 63 cc 8c (c + ◌̌ )<br>
@@ -208,7 +189,7 @@
           <aside class="notes">
             The null bytes mean that existing string handling code sees a zero-length string,
             so all string handling code had to be rewritten and have two paths, one for legacy text and one for "wide" text.
-            Still, many systems chose to rewrite it all and adopt this solution: Windows NT, Java, JavaScript and NextStep / OS X, but not unix / linux.
+            Still, many systems chose to rewrite it all and adopt this solution: Windows NT, Java, JavaScript and NextStep / OS X, but not unix / linux (or PHP).
             If you're interested in the history of how Windows NT was developed, the book "Showstopper" describes the death march project led by Dave Cutler.
             Dave Cutler is still at Microsoft and works on Hyper-V.
             <p>
@@ -228,16 +209,24 @@
           <table style="margin: 0.5em auto;" cellspacing="8" class="th-header-col">
             <tr><th>From</th><td>1996</td><td rowspan="7" style="vertical-align: middle; padding-left: 0.5em;"><img src="images/Windows2000.jpg"></td></tr>
             <tr><th>Range</th><td>2 or 4 bytes per char<br>1.1 million code points</td></tr>
-            <tr><th>Encodes</th><td>All that is written</td></tr>
-            <tr><th>Hello</th><td style="font-size: 70%; white-space:nowrap;">
+            <tr><th>Purpose</th><td style="font-size: 90%;">Actually encode all languages</td></tr>
+            <tr><th>Hello</th><td style="font-size: 80%; white-space:nowrap;">
               BE: 00 48 00 65 00 6c 00 6c 00 6f (00 00)<br>
               LE: 48 00 65 00 6c 00 6c 00 6f 00 (00 00)</td></tr>
-            <tr><th>Gotcha</th><td style="font-size: 80%;">ASCII-compatibility, null bytes<br>Variable-width, endianness, BOM</td></tr>
+            <tr><th>Gotcha</th><td>ASCII-compatibility,<br>null bytes, variable-width,<br>endianness, BOM</td></tr>
           </table>
-          <table style="background-color: #666; margin: 0 auto; font-size: 80%;">
-            <tr><th>Range</th><th>From</th><th>To</th><th>Byte 1</th><th>Byte 2</th><th>Byte 3</th><th>Byte 4</th></tr>
-            <tr><td>BMP</td><td>U+0000<br>U+E000</td><td>U+D7FF<br>U+FFFF</td><td>xxxxxxxx</td><td>xxxxxxxx</td></tr>
-            <tr><td>Supplementary</td><td>U+10000</td><td>U+10FFFF</td><td>11011xxx</td><td>xxxxxxxx</td><td>110111xx</td><td>xxxxxxxx</td></tr>
+        </section>
+        <section>
+          <h3>Unicode / UTF-16</h3>
+          <p style="margin: 1em;">BMP / UCS-2</p>
+          <table style="background-color: #666; margin: 0 auto; font-size: 100%;">
+            <tr><th>From</th><th>To</th><th>Byte 1</th><th>Byte 2</th></tr>
+            <tr><td>U+0000<br>U+E000</td><td>U+D7FF<br>U+FFFF</td><td>xxxxxxxx</td><td>xxxxxxxx</td></tr>
+          </table>
+          <p style="margin: 1em;">Supplementary</p>
+          <table style="background-color: #666; margin: 0 auto; font-size: 100%;">
+            <tr><th>From</th><th>To</th><th>Byte 1</th><th>Byte 2</th><th>Byte 3</th><th>Byte 4</th></tr>
+            <tr><td>U+10000</td><td>U+10FFFF</td><td>11011xxx</td><td>xxxxxxxx</td><td>110111xx</td><td>xxxxxxxx</td></tr>
           </table>
 
           <aside class="notes">
@@ -258,12 +247,15 @@
             <tr><th>Hello</th><td>48 65 6c 6c 6f (00)</td></tr>
             <tr><th>Gotcha</th><td>Variable-width, BOM</td></tr>
           </table>
-          <table style="background-color: #666; margin: 0 auto; font-size: 80%;">
+        </section>
+        <section>
+          <h3>Unicode / UTF-8</h3>
+          <table style="background-color: #666; margin: 1em auto; font-size: 95%;">
             <tr><th>Range</th><th>From</th><th>To</th><th>Byte 1</th><th>Byte 2</th><th>Byte 3</th><th>Byte 4</th></tr>
             <tr><td>ASCII</td><td>U+0000</td><td>U+007F</td><td>0xxxxxxx</td></tr>
-            <tr><td>Latin-derived</td><td>U+0080</td><td>U+07FF</td><td>110xxxxx</td><td>10xxxxxx</td></tr>
+            <tr><td>Latin</td><td>U+0080</td><td>U+07FF</td><td>110xxxxx</td><td>10xxxxxx</td></tr>
             <tr><td>BMP</td><td>U+0800</td><td>U+FFFF</td><td>1110xxxx</td><td>10xxxxxx</td><td>10xxxxxx</td></tr>
-            <tr><td>Supplementary</td><td>U+10000</td><td>U+10FFFF</td><td>11110xxx</td><td>10xxxxxx</td><td>10xxxxxx</td><td>10xxxxxx</td></tr>
+            <tr><td>Suppl.</td><td>U+10000</td><td>U+10FFFF</td><td>11110xxx</td><td>10xxxxxx</td><td>10xxxxxx</td><td>10xxxxxx</td></tr>
           </table>
 
           <aside class="notes">
@@ -299,10 +291,9 @@
             </td>
           </tr>
           </table>
-          <p>Only the ASCII bytes have special meaning.</p>
           <p>Byte values 0x7F-0xFF are allowed in identifiers.</p>
-          <p>UTF-8 .php files are ok, but don't use a BOM.</p>
           <aside class="notes">
+            UTF-8 .php files are ok, but don't use a BOM.
             A BOM will cause headers to be sent.<br>
             Byte parsing means you can use PHP in binary files (e.g. png).<br>
             PHP 5.4 allows you to throw the parser into UTF-16 mode by setting:<br>
@@ -331,21 +322,16 @@
 
         <section>
           <h3>Processing UTF-8</h3>
-          <pre><code style="line-height: 1.2em; padding-top: 0.5em; padding-bottom: 0.5em;">        // u + &nbsp;&#x0306; = u&#x0306; = 3 bytes
+          <pre><code style="line-height: 1.2em; padding-top: 0.5em; padding-bottom: 0.5em;">        // u + &#x0306;&nbsp; = &#x1FE0; = 3 bytes
         $char = json_decode("\"u\\u0306\"");
         $str = "abc".$char;
 
         $pos = strpos($str, $char);             // = 3
-        echo substr($str, $pos, strlen($char)); // = u&#x0306;
-        echo strtoupper($char);                 // = U&#x0306;
+        echo substr($str, $pos, strlen($char)); // = &#x1FE0;
+        echo strtoupper($char);                 // = &#x1FE0;
         // but:
         echo strlen($char);                     // = 3
         echo strtoupper("&eacute;");                   // = &eacute;</code></pre>
-          <p>Works fine, if...</p>
-          <ul class="fragment">
-            <li>All string lengths are in bytes (DB!)</li>
-            <li>You avoid "smart" things like strtoupper()</li>
-          </ul>
           <aside class="notes">
             If you treat strings consistently as bytes it mostly works fine.
             But you have to be careful to always treat the length as bytes,
@@ -400,7 +386,10 @@
             <p style="font-size: 70%;">And if not, use mb_convert_encoding()</p>
           </div>
           <aside class="notes">
-            This is because this function only encodes ISO-8859-1 text.
+            This is because this function only encodes ISO-8859-1 text,
+            while in the real world never occurs (typically you see Windows-1252 instead).
+            mb_convert_encoding is preferable because it does not require an external library,
+            and because it handles broken input more elegantly (iconv cuts off text sometimes).
           </aside>
         </section>
 
@@ -415,45 +404,53 @@
         <section>
           <h3>mbstring</h3>
           <pre><code>
+      $str = "аbcxyz";               // cyrillic a
+
       mb_internal_encoding("UTF-8");
-
-      $str = "аbcxyz";             // cyrillic a
-
-      echo mb_strlen($str);        // --> 6
-      echo mb_strpos($str, "xyz"); // --> 3
-      echo mb_substr($str, 3, 3);  // --> xyz
+      echo mb_strlen($str);          // --> 6
+      echo mb_strpos($str, "xyz");   // --> 3
+      echo mb_substr($str, 3, 3);    // --> xyz
           </code></pre>
-          <div>
-            <ul>
-              <li>Supports all character sets</li>
-              <li>Lots of functions, but no mb_strpad, mb_strcmp</li>
-              <li>Code points, not characters</li>
-            </ul>
+          <div class="fragment">
+            <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+              <tr><th>From</th><td>PHP 4.0.6</td></tr>
+              <tr><th>Based on</th><td>mbfilter (sgk)</td></tr>
+              <tr><th>Charsets</th><td>most</td></tr>
+              <tr><th>Functions</th><td>most, but not mb_strcmp</td></tr>
+              <tr><th>Units</th><td>Code points, not characters</td></tr>
+            </table>
           </div>
           <aside class="notes">
             No mb_strcmp means no sorting.
             mbstring.func_overload was convenient, but it's deprecated now.
+            sgk = Shigeru Kanemoto (HappySize Inc.)
           </aside>
         </section>
 
         <section>
           <h3>iconv</h3>
           <pre><code>
-      iconv_set_encoding("internal_encoding", "UTF-8");
-
       $str = "аbcxyz";                // cyrillic a
 
+      iconv_set_encoding("internal_encoding", "UTF-8");
       echo iconv_strlen($str);        // --> 6
       echo iconv_strpos($str, "xyz"); // --> 3
       echo iconv_substr($str, 3, 3);  // --> xyz
           </code></pre>
-          <div>
-            <ul>
-              <li>Supports all character sets</li>
-              <li>No other functions</li>
-              <li>Code points, not characters</li>
-            </ul>
+          <div class="fragment">
+            <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+              <tr><th>From</th><td>PHP 4.0.5</td></tr>
+              <tr><th>Based on</th><td>libiconv</td></tr>
+              <tr><th>Charsets</th><td>platform-dependent</td></tr>
+              <tr><th>Functions</th><td>few</td></tr>
+              <tr><th>Units</th><td>Code points, not characters</td></tr>
+            </table>
           </div>
+          <aside class="notes">
+            iconv is the standard unix library for character set conversion.
+            It came from HP-UX and was standardized in 1992 as part of the XPG4 standard.
+            XPG = X/Open Portability Guide
+          </aside>
         </section>
         <section>
           <h3>intl</h3>
@@ -464,19 +461,26 @@
       echo grapheme_strpos($str, "xyz"); // --> 3
       echo grapheme_substr($str, 3, 3);  // --> xyz
           </code></pre>
-          <div>
-            <ul>
-              <li>Supports only UTF-8</li>
-              <li>PHP &gt;= 5.3.0</li>
-              <li>Characters, not code points</li>
-            </ul>
-            <p>&nbsp;</p>
+          <div class="fragment">
+            <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+              <tr><th>From</th><td>PHP 5.3.0</td></tr>
+              <tr><th>Based on</th><td>libicu</td></tr>
+              <tr><th>Charsets</th><td>UTF-8</td></tr>
+              <tr><th>Functions</th><td>many</td></tr>
+              <tr><th>Units</th><td>Graphemes, not characters</td></tr>
+            </table>
           </div>
+          <aside class="notes">
+            ICU = International Components for Unicode.
+            Originally developed by IBM in the late 90's.
+            The standard library for doing advanced unicode arithmetic
+            (collation, transliteration, etc...)
+          </aside>
         </section>
         <section>
           <h3>String length roulette</h3>
           <pre><code>
-      $str = json_decode("\"u\\u0306\""); // u + &nbsp;&#x0306; = u&#x0306;
+      $str = json_decode("\"u\\u0306\""); // u + &#x0306;&nbsp; = &#x1FE0;
 
       echo strlen($str);          // 3 = bytes
       echo mb_strlen($str);       // 2 = code points
@@ -493,7 +497,6 @@
           <h3>WWFD?</h3>
           <p></p>
           <ul>
-            <li>Zend Framework 2: StringUtils / <a href="https://github.com/zendframework/zf2/tree/221f1855b9759e80555915d14beeaa87770e1705/library/Zend/Stdlib/StringWrapper">StringWrapper</a></li>
             <li>Symfony 2: if / else structure, e.g. LengthValidator<br>
               <pre style="width: 100%;"><code>  if (function_exists('grapheme_strlen') &&
         'UTF-8' === $charset) {
@@ -504,6 +507,7 @@
     $length = strlen($stringValue);
   }</code></pre>
             </li>
+            <li>Zend Framework 2: StringUtils / <a href="https://github.com/zendframework/zf2/tree/221f1855b9759e80555915d14beeaa87770e1705/library/Zend/Stdlib/StringWrapper">StringWrapper</a></li>
             <li>Laravel 4: Illuminate\Support\Str</li>
             <li>Cake: Cake/Utility/String</li>
           </ul>
@@ -515,27 +519,31 @@
         </section>
         <section>
           <h2>Sorting</h2>
-          <h3>Be warned ye who trespass</h3>
+          <h3>Fear this should you</h3>
         </section>
 
         <section>
           <h3>Unicode Collation</h3>
-          <p style="margin-top: 0.5em;">The problem:</p>
-          <table style="margin: 0 auto;">
-            <tr>
-              <td><img src="images/collationproblem.png"></td>
-              <td><img src="images/ucalevels.png"></td>
-            </tr>
+          <h4>The problem</h4>
+          <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+            <tr><th rowspan="2">Language</th><td>Swedish:</td><td>z < ö</td></tr>
+            <tr><td>German:</td><td>ö < z</td></tr>
+            <tr><th rowspan="2">Usage</th><td>German dictionary:</td><td>of < öf</td></tr>
+            <tr><td>German telephone:</td><td>öf < of</td></tr>
+            <tr><th rowspan="2">Customizations</th><td>Upper-first:</td><td>A < a</td></tr>
+            <tr><td>Lower-first:</td><td>a < A</td></tr>
           </table>
-          <div class="fragment">
-            <p style="margin: 0.5em 0;">Unicode Collation Algorithm:</p>
-            <ol>
-              <li style="margin-bottom: 0.3em;">Normalization</li>
-              <li>Sort key (weighted levels)<br>
-                <small>(DUCET, CLDR, custom weighting)</small></li>
-              <li>Binary sort</li>
-            </ol>
-          </div>
+        </section>
+        <section>
+          <h3>Unicode Collation</h3>
+          <h4>Unicode Collation Algorithm</h4>
+          <table style="width: 100%;"><tr><td style="text-align: center;"><img src="images/ucalevels.png"></td></tr></table>
+          <ol>
+            <li style="margin-bottom: 0.3em;">Normalization</li>
+            <li>Sort key (weighted levels)<br>
+              <small style="font-size: 85%;">(DUCET, CLDR, custom weighting)</small></li>
+            <li>Binary sort</li>
+          </ol>
           <aside class="notes">
             Collation = sorting for clever people.
             DUCET = Default Unicode Collation Element Table.
@@ -557,7 +565,7 @@
           <aside class="notes">
             sort() uses strcmp(). strcmp() calls C memcmp().
             memcmp() does byte value comparison.
-            In other words, sort()'s default behavior is always wrong.
+            In other words, sort()'s default behavior is always wrong for text.
           </aside>
         </section>
         <section>
@@ -728,13 +736,9 @@
         </section>
         <section>
           <h3>Entity encoding</h3>
-          <p><a href="https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet" target="_blank">OWASP XSS prevention cheat sheet:</a></p>
-          <ul>
-            <li>Context-sensitive encoding</li>
-            <li>Many edge cases</li>
-            <li>PHP built-ins not sufficient</li>
-            <li><a href="http://code.google.com/p/owasp-esapi-php/">ESAPI</a>: reference encoder</li>
-          </ul>
+          <p><a href="https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet" target="_blank">OWASP XSS prevention cheat sheet</a></p>
+          <center><img src="images/xsscheatsheettoc.png" style="height: 400px;"></center>
+          <p>PHP built-ins not sufficient, use <a href="http://code.google.com/p/owasp-esapi-php/">ESAPI</a></p>
         </section>
         <section>
           <h3>Making do with PHP built-ins</h3>
@@ -889,7 +893,7 @@
           </section>
         </section>
         <section>
-          TODO: downloading files (filename)
+          idea: section on downloading files (filename)
         </section>
         -->
         <section>
