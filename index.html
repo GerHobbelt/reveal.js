@@ -17,7 +17,6 @@
 		<link rel="stylesheet" href="css/reveal.min.css">
 		<link rel="stylesheet" href="css/theme/default.css" id="theme">
 
-    <!-- TODO: put font locally -->
         <!-- Ubuntu Mono font susceptible to homograph attack -->
         <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
 
@@ -190,6 +189,7 @@
             The null bytes mean that existing string handling code sees a zero-length string,
             so all string handling code had to be rewritten and have two paths, one for legacy text and one for "wide" text.
             Still, many systems chose to rewrite it all and adopt this solution: Windows NT, Java, JavaScript and NextStep / OS X, but not unix / linux (or PHP).
+            A "big rewrite" to UTF-16 was tried for PHP in PHP 6, but it ran out of steam.
             If you're interested in the history of how Windows NT was developed, the book "Showstopper" describes the death march project led by Dave Cutler.
             Dave Cutler is still at Microsoft and works on Hyper-V.
             <p>
@@ -396,20 +396,46 @@
         <section>
           <h3>The holy trinity</h3>
           <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
-            <tr><th>mbstring</th><th>iconv</th><th>intl</th></tr>
+            <tr><th>iconv</th><th>mbstring</th><th>intl</th></tr>
             <tr><td></td><td></td><td></td></tr>
           </table>
         </section>
 
         <section>
+          <h3>iconv</h3>
+          <pre><code>
+    $str = "аbcxyz";                   // cyrillic a
+
+    iconv_set_encoding("internal_encoding", "UTF-8");
+    echo iconv_strlen($str);           // --> 6
+    echo iconv_strpos($str, "xyz");    // --> 3
+    echo iconv_substr($str, 3, 3);     // --> xyz
+          </code></pre>
+          <div class="fragment">
+            <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+              <tr><th>From</th><td>PHP 4.0.5</td></tr>
+              <tr><th>Based on</th><td>libiconv</td></tr>
+              <tr><th>Charsets</th><td>platform-dependent</td></tr>
+              <tr><th>Functions</th><td>few</td></tr>
+              <tr><th>Units</th><td>Code points, not characters</td></tr>
+            </table>
+          </div>
+          <aside class="notes">
+            iconv is the standard unix library for character set conversion.
+            It came from HP-UX and was standardized in 1992 as part of the XPG4 standard.
+            XPG = X/Open Portability Guide
+          </aside>
+        </section>
+
+        <section>
           <h3>mbstring</h3>
           <pre><code>
-      $str = "аbcxyz";               // cyrillic a
+    $str = "аbcxyz";                   // cyrillic a
 
-      mb_internal_encoding("UTF-8");
-      echo mb_strlen($str);          // --> 6
-      echo mb_strpos($str, "xyz");   // --> 3
-      echo mb_substr($str, 3, 3);    // --> xyz
+    mb_internal_encoding("UTF-8");
+    echo mb_strlen($str);              // --> 6
+    echo mb_strpos($str, "xyz");       // --> 3
+    echo mb_substr($str, 3, 3);        // --> xyz
           </code></pre>
           <div class="fragment">
             <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
@@ -428,38 +454,13 @@
         </section>
 
         <section>
-          <h3>iconv</h3>
-          <pre><code>
-      $str = "аbcxyz";                // cyrillic a
-
-      iconv_set_encoding("internal_encoding", "UTF-8");
-      echo iconv_strlen($str);        // --> 6
-      echo iconv_strpos($str, "xyz"); // --> 3
-      echo iconv_substr($str, 3, 3);  // --> xyz
-          </code></pre>
-          <div class="fragment">
-            <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
-              <tr><th>From</th><td>PHP 4.0.5</td></tr>
-              <tr><th>Based on</th><td>libiconv</td></tr>
-              <tr><th>Charsets</th><td>platform-dependent</td></tr>
-              <tr><th>Functions</th><td>few</td></tr>
-              <tr><th>Units</th><td>Code points, not characters</td></tr>
-            </table>
-          </div>
-          <aside class="notes">
-            iconv is the standard unix library for character set conversion.
-            It came from HP-UX and was standardized in 1992 as part of the XPG4 standard.
-            XPG = X/Open Portability Guide
-          </aside>
-        </section>
-        <section>
           <h3>intl</h3>
           <pre><code>
-      $str = "аbcxyz";                   // cyrillic a
+    $str = "аbcxyz";                   // cyrillic a
 
-      echo grapheme_strlen($str);        // --> 6
-      echo grapheme_strpos($str, "xyz"); // --> 3
-      echo grapheme_substr($str, 3, 3);  // --> xyz
+    echo grapheme_strlen($str);        // --> 6
+    echo grapheme_strpos($str, "xyz"); // --> 3
+    echo grapheme_substr($str, 3, 3);  // --> xyz
           </code></pre>
           <div class="fragment">
             <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
@@ -477,7 +478,7 @@
             (collation, transliteration, etc...)
           </aside>
         </section>
-        <section>
+        <section><
           <h3>String length roulette</h3>
           <pre><code>
       $str = json_decode("\"u\\u0306\""); // u + &#x0306;&nbsp; = &#x1FE0;
@@ -528,10 +529,14 @@
           <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
             <tr><th rowspan="2">Language</th><td>Swedish:</td><td>z < ö</td></tr>
             <tr><td>German:</td><td>ö < z</td></tr>
-            <tr><th rowspan="2">Usage</th><td>German dictionary:</td><td>of < öf</td></tr>
-            <tr><td>German telephone:</td><td>öf < of</td></tr>
-            <tr><th rowspan="2">Customizations</th><td>Upper-first:</td><td>A < a</td></tr>
-            <tr><td>Lower-first:</td><td>a < A</td></tr>
+            <tbody class="fragment">
+              <tr><th rowspan="2">Usage</th><td>German dictionary:</td><td>of < öf</td></tr>
+              <tr><td>German telephone:</td><td>öf < of</td></tr>
+            </tbody>
+            <tbody class="fragment">
+              <tr><th rowspan="2">Customizations</th><td>Upper-first:</td><td>A < a</td></tr>
+              <tr><td>Lower-first:</td><td>a < A</td></tr>
+            </tbody>
           </table>
         </section>
         <section>
@@ -622,7 +627,7 @@
       sort($arr, SORT_LOCALE_STRING);
       echo implode($arr, ", ");
             </code></pre>
-            <p>resume, résumé, rope</p>
+            <p class="fragment">resume, résumé, rope</p>
           </div>
           <aside class="notes">
             Uses underlying system libraries, sorts using CLDR, except...
@@ -708,6 +713,23 @@
         </section>
 
         <section>
+          <h3>JavaScript is no better</h3>
+          <pre><code>
+          ['resume', 'résumé', 'rope'].sort()
+          </code></pre>
+          <p class="fragment">resume, rope, résumé</p>
+          <pre class="fragment"><code>
+    ['resume', 'résumé', 'rope'].sort(function(a, b) {
+      return a.localeCompare(b);
+    });
+          </code></pre>
+          <p class="fragment">resume, résumé, rope</p>
+          <aside class="notes">
+            JavaScript sorts by code point value.
+          </aside>
+        </section>
+
+        <section>
           <h2>Browser output</h2>
           <h3>Easy as 355 / 113</h3>
         </section>
@@ -734,10 +756,12 @@
             </code></pre>
           </div>
         </section>
-        <section>
+<!--        <section>
           <h3>Entity encoding</h3>
           <p><a href="https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet" target="_blank">OWASP XSS prevention cheat sheet</a></p>
-          <center><img src="images/xsscheatsheettoc.png" style="height: 400px;"></center>
+          <div>
+            <img src="images/xsscheatsheettoc.png" style="height: 400px; margin: 0 auto;">
+          </div>
           <p>PHP built-ins not sufficient, use <a href="http://code.google.com/p/owasp-esapi-php/">ESAPI</a></p>
         </section>
         <section>
@@ -803,6 +827,10 @@
             This is also a good place to check for json_last_error()
             and throw an exception.
           </aside>
+        </section> -->
+        <section>
+          <h2>Recap</h2>
+          <h3>What I said while you were sleeping</h3>
         </section>
         <section>
           <img src="images/kitten-with-yarn.jpg">
@@ -814,22 +842,21 @@
             <li class="fragment">Use UTF-8</li>
             <li class="fragment">Manipulation
               <ul>
-                <li>Use str*() if you don't care that byte != char</li>
-                <li>Use mb_str*() if you do</li>
+                <li>Use str* when shuffling bytes</li>
+                <li>Use mb_strlen() for validation</li>
+                <li>Use mb_str*() for character handling</li>
               </ul>
             </li>
             <li class="fragment">Sorting
               <ul>
                 <li>Collator, not sort()</li>
-                <li>Avoid mysql</li>
+                <li>Accept mysql for what it is</li>
+                <li>String.localeCompare</li>
               </ul>
             </li>
             <li class="fragment">Output
               <ul>
                 <li><code style="font-size: 80%;">ini_set('default_charset', 'UTF-8')</code></li>
-                <li>encodeForHTML, not raw htmlentities</li>
-                <li>encodeForJSON, not raw json_encode</li>
-                <li>Use ESAPI in unusual encoding contexts</li>
               </ul>
             </li>
           </ul>
