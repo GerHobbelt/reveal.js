@@ -144,6 +144,7 @@
             <a href="http://www.bobbemer.com/ASCII.HTM">Bob Bemer (IBM) was the father of ASCII.</a>
             IBM had 9 character sets in use before this.
             However, IBM failed to switch to ASCII until 1981, with the introduction of the PC.
+            See history of character sets: http://tronweb.super-nova.co.jp/characcodehist.html
             <strong>The nul character</strong> at the end marks the end of the string on most systems.
           </aside>
         </section>
@@ -177,7 +178,7 @@
           <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
             <tr><th>From</th><td>1991</td><td rowspan="7" style="vertical-align: middle;"><img src="images/nt31logo.gif"></td></tr>
             <tr><th>By</th><td>Unicode Consortium<br><small style="font-size: 80%;">(Xerox, Apple, IBM, Microsoft, ...)</small></td></tr>
-            <tr><th>Purpose</th><td style="white-space: nowrap;">Single encoding for all languages</td></tr>
+            <tr><th>Purpose</th><td style="white-space: nowrap;">Simple encoding for all languages</td></tr>
             <tr><th>Range</th><td>2 bytes per char (64k)</td></tr>
             <tr><th>Encodes</th><td>Mainstream languages</td></tr>
             <tr><th>Hello</th><td style="font-size: 80%;">00 48 00 65 00 6c 00 6c 00 6f (00 00)</td></tr>
@@ -478,7 +479,7 @@
             (collation, transliteration, etc...)
           </aside>
         </section>
-        <section><
+        <section>
           <h3>String length roulette</h3>
           <pre><code>
       $str = json_decode("\"u\\u0306\""); // u + &#x0306;&nbsp; = &#x1FE0;
@@ -545,7 +546,8 @@
           <table style="width: 100%;"><tr><td style="text-align: center;"><img src="images/ucalevels.png"></td></tr></table>
           <ol>
             <li style="margin-bottom: 0.3em;">Normalization</li>
-            <li>Sort key (weighted levels)<br>
+            <li style="margin-bottom: 0.3em;">Collation element lookup</li>
+            <li>Sort key composition<br>
               <small style="font-size: 85%;">(DUCET, CLDR, custom weighting)</small></li>
             <li>Binary sort</li>
           </ol>
@@ -928,7 +930,7 @@
 
           <p><a href="mailto:js@mcs.fm">js@mcs.fm</a></p>
           <p><a href="http://github.com/jsebrech">http://github.com/jsebrech</a></p>
-          <p><a href="http://sebrechts.net/slides/strings">http://sebrechts.net/slides/strings/</a></p>
+          <p><a href="http://sebrechts.net/blog/">http://sebrechts.net/blog/</a></p>
         </section>
 			</div>
 
