@@ -169,10 +169,10 @@
             <a href="http://blogs.msdn.com/b/oldnewthing/archive/2004/05/31/144893.aspx">Why is it called ANSI?</a>
           </aside>
         </section>
-        <section>
+<!--        <section>
           <h3>Mojibake</h3>
           <img src="images/mojibake.png">
-        </section>
+        </section>-->
         <section>
           <h3>Unicode / UCS-2</h3>
           <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
@@ -191,8 +191,13 @@
             so all string handling code had to be rewritten and have two paths, one for legacy text and one for "wide" text.
             Still, many systems chose to rewrite it all and adopt this solution: Windows NT, Java, JavaScript and NextStep / OS X, but not unix / linux (or PHP).
             A "big rewrite" to UTF-16 was tried for PHP in PHP 6, but it ran out of steam.
-            If you're interested in the history of how Windows NT was developed, the book "Showstopper" describes the death march project led by Dave Cutler.
-            Dave Cutler is still at Microsoft and works on Hyper-V.
+          </aside>
+        </section>
+        <section>
+          <img src="images/davidcutler.jpg" height="600">
+          <aside class="notes">
+            Dave Cutler was the lead developer behind Windows NT.
+            He was someone who was very exacting. His coworkers mailed each other this fake news story about him:
             <p>
               Washington, D.C.<br>
               A four-foot tsunami, or tidal wave, devastated much of the west coast today.
@@ -203,6 +208,9 @@
               He reported having a pissing match with another Microsoft employee right before the tsunami.
               Cutler's only injury appeared to be mild dehydration.
             </p>
+            He would have never settled for the codepages mess, only something consistent like Unicode would suffice.
+            If you're interested in the history of how Windows NT was developed, the book "Showstopper" describes the death march project led by Dave Cutler.
+            Dave Cutler is still at Microsoft and worked on the Hyper-V host OS that is in the Xbox One.
           </aside>
         </section>
         <section>
