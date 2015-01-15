@@ -519,6 +519,10 @@
 
 		dom.wrapper.setAttribute( 'role', 'application' );
 
+		if( isSpeakerNotes() && document.documentElement.classList ) {
+			document.documentElement.classList.add( 'speaker-notes' );
+		}
+
 		// There can be multiple instances of controls throughout the page
 		dom.controlsLeft = toArray( document.querySelectorAll( '.navigate-left' ) );
 		dom.controlsRight = toArray( document.querySelectorAll( '.navigate-right' ) );
