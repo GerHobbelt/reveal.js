@@ -337,7 +337,7 @@
 
         $pos = strpos($str, $char);             // = 3
         echo substr($str, $pos, strlen($char)); // = &#x1FE0;
-        echo strtoupper($char);                 // = &#x1FE0;
+
         // but:
         echo strlen($char);                     // = 3
         echo strtoupper("&eacute;");                   // = &eacute;</code></pre>
@@ -503,7 +503,7 @@
           </code></pre>
           <p>mysql, postgres, oracle: char_length() = 2</p>
         </section>
-        <section>
+<!--        <section>
           <h3>WWFD?</h3>
           <p></p>
           <ul>
@@ -526,7 +526,7 @@
             It's like PHP's API designers found themselves in a hole and tried to dig their way out.
             Let's dig that hole a little deeper.
           </aside>
-        </section>
+        </section>-->
         <section>
           <h2>Sorting</h2>
           <h3>Fear this should you</h3>
