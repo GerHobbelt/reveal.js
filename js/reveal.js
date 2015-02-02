@@ -169,6 +169,9 @@
         // Flags if reveal.js is loaded (has dispatched the 'ready' event)
         loaded = false,
 
+		// Flags if the overview mode is currently active
+		overview = false,
+
         // The horizontal and vertical index of the currently active slide
         indexh /* = undefined */,
         indexv /* = undefined */,
@@ -189,6 +192,10 @@
 
         // The current scale of the presentation (see width/height config)
         scale = 1,
+
+		// CSS transform that is currently applied to the slides container,
+		// split into two groups
+		slidesTransform = { layout: '', overview: '' },
 
         // Cached references to DOM elements
         dom = {},
@@ -333,7 +340,11 @@
 
 		features.touch = !!( 'ontouchstart' in window );
 
-		isMobileDevice = navigator.userAgent.match( /(iphone|ipod|ipad|android)/gi );
+		// Transitions in the overview are disabled in desktop and
+		// mobile Safari due to lag
+		features.overviewTransitions = !/Version\/[\d\.]+.*Safari/.test( navigator.userAgent );
+
+		isMobileDevice = /(iphone|ipod|ipad|android)/gi.test( navigator.userAgent );
 
     }
 
@@ -1240,6 +1251,27 @@
             element.style.transformOrigin = origin;
         }
 
+	}
+
+	/**
+	 * Applies CSS transforms to the slides container. The container
+	 * is transformed from two separate sources: layout and the overview
+	 * mode.
+	 */
+	function transformSlides( transforms ) {
+
+		// Pick up new transforms from arguments
+		if( typeof transforms.layout === 'string' ) slidesTransform.layout = transforms.layout;
+		if( typeof transforms.overview === 'string' ) slidesTransform.overview = transforms.overview;
+
+		// Apply the transforms to the slides container
+		if( slidesTransform.layout ) {
+			transformElement( dom.slides, slidesTransform.layout + ' ' + slidesTransform.overview );
+		}
+		else {
+			transformElement( dom.slides, slidesTransform.overview );
+		}
+
     }
 
     /**
@@ -1656,12 +1688,13 @@
 				dom.slides.style.top = '';
 				dom.slides.style.bottom = '';
 				dom.slides.style.right = '';
-				transformElement( dom.slides, '' );
+				transformSlides( { layout: '' } );
 			}
 			else {
 				// Prefer zooming in desktop Chrome so that content remains crisp
 				if( !isMobileDevice && /chrome/i.test( navigator.userAgent ) && typeof dom.slides.style.zoom !== 'undefined' ) {
 					dom.slides.style.zoom = scale;
+					transformSlides( { layout: '' } );
 				}
 				// Apply scale transform as a fallback
 				else {
@@ -1669,7 +1702,7 @@
 					dom.slides.style.top = '50%';
 					dom.slides.style.bottom = 'auto';
 					dom.slides.style.right = 'auto';
-					transformElement( dom.slides, 'translate(-50%, -50%) scale('+ scale +')' );
+					transformSlides( { layout: 'translate(-50%, -50%) scale('+ scale +')' } );
 				}
 			}
 */
@@ -1858,85 +1891,123 @@
     }
 
     /**
-     * Displays the overview of slides (quick nav) by
-     * scaling down and arranging all slide elements.
-     *
-     * Experimental feature, might be dropped if perf
-     * can't be improved.
+	 * Displays the overview of slides (quick nav) by scaling
+	 * down and arranging all slide elements.
      */
     function activateOverview() {
 
         // Only proceed if enabled in config
-        if( config.overview && dom.wrapper ) {
+		if( config.overview && dom.wrapper && !isOverview() ) {
 
-            // Don't auto-slide while in overview mode
-            cancelAutoSlide();
-
-            var wasActive = dom.wrapper.classList.contains( 'overview' );
-
-            // Vary the depth of the overview based on screen size
-            var depth = window.innerWidth < 400 ? 1000 : 2500;
+			overview = true;
 
             dom.wrapper.classList.add( 'overview' );
             dom.wrapper.classList.remove( 'overview-deactivating' );
 
-			var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
-
-			for( var i = 0, len1 = horizontalSlides.length; i < len1; i++ ) {
-				var hslide = horizontalSlides[i],
-					hoffset = config.rtl ? -105 : 105;
-
-				hslide.setAttribute( 'data-index-h', i );
-
-				// Apply CSS transform
-                transformElement( hslide, (!getSpecialOverviewMode() ? 'translateZ(-'+ depth +'px) ' : '') + 'translate(' + ( ( i - indexh ) * hoffset ) + '%, 0%)' );
-
-				if( hslide.classList.contains( 'stack' ) ) {
-
-					var verticalSlides = hslide.querySelectorAll( 'section' );
-                    overview_slides_info.vertical_count = Math.max(overview_slides_info.vertical_count, verticalSlides.length);
-
-					for( var j = 0, len2 = verticalSlides.length; j < len2; j++ ) {
-						var verticalIndex = i === indexh ? indexv : getPreviousVerticalIndex( hslide );
-
-						var vslide = verticalSlides[j];
-
-						vslide.setAttribute( 'data-index-h', i );
-						vslide.setAttribute( 'data-index-v', j );
-
-						// Apply CSS transform
-						transformElement( vslide, 'translate(0%, ' + ( ( j - verticalIndex ) * 105 ) + '%)' );
-
-						// Navigate to this slide on click
-						vslide.addEventListener( 'click', onOverviewSlideClicked, true );
-					}
-
-				}
-				else {
-
-					// Navigate to this slide on click
-					hslide.addEventListener( 'click', onOverviewSlideClicked, true );
-
-				}
+			if( features.overviewTransitions ) {
+				setTimeout( function() {
+					dom.wrapper.classList.add( 'overview-animated' );
+				}, 1 );
 			}
 
+			// Don't auto-slide while in overview mode
+			cancelAutoSlide();
+
+			// Move the backgrounds element into the slide container to
+			// that the same scaling is applied
+			dom.slides.appendChild( dom.background );
+
+			// Clicking on an overview slide navigates to it
+			toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
+				if( !slide.classList.contains( 'stack' ) ) {
+					slide.addEventListener( 'click', onOverviewSlideClicked, true );
+				}
+			} );
+
 			updateSlidesVisibility();
+			layoutOverview();
+			updateOverview();
 
             console.log("Feed the slides matrix to LAYOUT so we can determine properly how far to zoom/transform: ", overview_slides_info);
 
 			layout();
 
-			if( !wasActive ) {
-				// Notify observers of the overview showing
-				dispatchEvent( 'overviewshown', {
-					'indexh': indexh,
-					'indexv': indexv,
-                    'currentSlide': currentSlide,
-                    'slidesMatrixInfo': overview_slides_info
-				} );
-			}
+			// Notify observers of the overview showing
+			dispatchEvent( 'overviewshown', {
+				'indexh': indexh,
+				'indexv': indexv,
+                'currentSlide': currentSlide,
+                'slidesMatrixInfo': overview_slides_info
+			} );
+		}
 
-        }
+	}
+
+	/**
+	 * Uses CSS transforms to position all slides in a grid for
+	 * display inside of the overview mode.
+	 */
+	function layoutOverview() {
+
+		var margin = 70;
+		var slideWidth = config.width + margin,
+			slideHeight = config.height + margin;
+
+		// Reverse in RTL mode
+		if( config.rtl ) {
+			slideWidth = -slideWidth;
+		}
+
+		// Layout slides
+		toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).forEach( function( hslide, h ) {
+			hslide.setAttribute( 'data-index-h', h );
+			transformElement( hslide, 'translate3d(' + ( h * slideWidth ) + 'px, 0, 0)' );
+
+			if( hslide.classList.contains( 'stack' ) ) {
+
+				toArray( hslide.querySelectorAll( 'section' ) ).forEach( function( vslide, v ) {
+					vslide.setAttribute( 'data-index-h', h );
+					vslide.setAttribute( 'data-index-v', v );
+
+					transformElement( vslide, 'translate3d(0, ' + ( v * slideHeight ) + 'px, 0)' );
+				} );
+
+			}
+		} );
+
+		// Layout slide backgrounds
+		toArray( dom.background.childNodes ).forEach( function( hbackground, h ) {
+			transformElement( hbackground, 'translate3d(' + ( h * slideWidth ) + 'px, 0, 0)' );
+
+			toArray( hbackground.querySelectorAll( '.slide-background' ) ).forEach( function( vbackground, v ) {
+				transformElement( vbackground, 'translate3d(0, ' + ( v * slideHeight ) + 'px, 0)' );
+			} );
+		} );
+
+	}
+
+	/**
+	 * Moves the overview viewport to the current slides.
+	 * Called each time the current slide changes.
+	 */
+	function updateOverview() {
+
+		var margin = 70;
+		var slideWidth = config.width + margin,
+			slideHeight = config.height + margin;
+
+		// Reverse in RTL mode
+		if( config.rtl ) {
+			slideWidth = -slideWidth;
+		}
+
+		transformSlides( {
+			overview: [
+				'translateX('+ ( -indexh * slideWidth ) +'px)',
+				'translateY('+ ( -indexv * slideHeight ) +'px)',
+				'translateZ('+ ( window.innerWidth < 400 ? -1000 : -2500 ) +'px)'
+			].join( ' ' )
+		} );
 
     }
 
@@ -1952,8 +2023,10 @@
             clearTimeout( deactivateOverviewTimeout );
 
             overview_slides_info = null;
+			overview = false;
 
             dom.wrapper.classList.remove( 'overview' );
+			dom.wrapper.classList.remove( 'overview-animated' );
 
             // Temporarily add a class so that transitions can do different things
             // depending on whether they are exiting/entering overview, or just
@@ -1964,15 +2037,26 @@
                 dom.wrapper.classList.remove( 'overview-deactivating' );
             }, 1 );
 
-            // Select all slides
+			// Move the background element back out
+			dom.wrapper.appendChild( dom.background );
+
+			// Clean up changes made to slides
 			toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
-                // Resets all transforms to use the external styles
                 transformElement( slide, '' );
 
                 slide.removeEventListener( 'click', onOverviewSlideClicked, true );
             } );
 
+			// Clean up changes made to backgrounds
+			toArray( dom.background.querySelectorAll( '.slide-background' ) ).forEach( function( background ) {
+				transformElement( background, '' );
+			} );
+
+			transformSlides( { overview: '' } );
+
             slide( indexh, indexv );
+
+			layout();
 
             cueAutoSlide();
 
@@ -2020,9 +2104,11 @@
      */
     function isOverview() {
 
-        return dom.wrapper && dom.wrapper.classList.contains( 'overview' );
+		return overview;
 
     }
+
+// GER: TODO
 
     /**
      * Return the overview rendering mode:
@@ -2197,7 +2283,7 @@
 
         // If no vertical index is specified and the upcoming slide is a
         // stack, resume at its previous vertical index
-        if( v === undefined ) {
+		if( v === undefined && !isOverview() ) {
             v = getPreviousVerticalIndex( horizontalSlides[ h ] );
         }
 
@@ -2247,9 +2333,9 @@
             document.documentElement.classList.remove( stateBefore.pop() );
         }
 
-        // If the overview is active, re-activate it to update positions
+		// Update the overview if it's currently active
         if( isOverview() ) {
-            activateOverview();
+			updateOverview();
         }
 
         // Find the current horizontal slide and any possible vertical slides
@@ -2361,6 +2447,10 @@
 		updateSlidesVisibility();
 
 		formatEmbeddedContent();
+
+		if( isOverview() ) {
+			layoutOverview();
+		}
 
     }
 
@@ -2655,19 +2745,33 @@
 
     /**
      * Updates the slide number div to reflect the current slide.
+	 *
+	 * Slide number format can be defined as a string using the
+	 * following variables:
+	 *  h: current slide's horizontal index
+	 *  v: current slide's vertical index
+	 *  c: current slide index (flattened)
+	 *  t: total number of slides (flattened)
      */
     function updateSlideNumber() {
 
         // Update slide number if enabled
         if( config.slideNumber && dom.slideNumber) {
 
-            // Display the number of the page using 'indexh - indexv' format
-            var indexString = indexh;
-            if( indexv > 0 ) {
-                indexString += ' - ' + indexv;
+			// Default to only showing the current slide number
+			var format = 'c';
+
+			// Check if a custom slide number format is available
+			if( typeof config.slideNumber === 'string' ) {
+				format = config.slideNumber;
             }
 
-            dom.slideNumber.innerHTML = indexString;
+			var totalSlides = getTotalSlides();
+
+			dom.slideNumber.innerHTML = format.replace( /h/g, indexh )
+												.replace( /v/g, indexv )
+												.replace( /c/g, Math.round( getProgress() * totalSlides ) + 1 )
+												.replace( /t/g, totalSlides + 1 );
         }
 
     }
@@ -3207,7 +3311,7 @@
 			// Ensure the named link is a valid HTML ID attribute
 			if( /^[a-zA-Z][\w:.-]*$/.test( name ) ) {
 				// Find the slide with the specified ID
-				element = document.querySelector( '#' + name );
+				element = document.getElementById( name );
 			}
 
             if( element ) {
@@ -3543,7 +3647,7 @@
                         element.classList.remove( 'current-fragment' );
 
 						// Announce the fragments one by one to the Screen Reader
-						dom.statusDiv.innerHTML = element.textContent;
+						dom.statusDiv.textContent = element.textContent;
 
                         if( i === index ) {
                             element.classList.add( 'current-fragment' );
