@@ -734,11 +734,13 @@ The framework comes with a few different themes included:
 - simple: White background, black text, blue links
 - solarized: Cream-colored background, dark green text, blue links
 
-Each theme is available as a separate stylesheet. To change theme you will need to replace **black** below with your desired theme name in index.html:
+Each theme is available as a separate stylesheet. To change the theme you will need to replace **black** below with your desired theme name in index.html:
 
 ```html
 <link rel="stylesheet" href="css/theme/black.css" id="theme">
 ```
+
+For this to work, you will need an id of "theme" added to your stylesheet link as shown above.
 
 If you want to add a theme of your own see the instructions here: [/css/theme/README.md](https://github.com/hakimel/reveal.js/blob/master/css/theme/README.md).
 
