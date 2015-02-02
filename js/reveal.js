@@ -27,7 +27,7 @@
                 return factory(window, document, head);
             });
         } else {
-            // Browser globals
+            // Browser globals.
             window.Reveal = factory(window, document, head);
         }
     }
