@@ -8,20 +8,20 @@
 
 (function ( window, factory ) {
 
-    if ( typeof module === "object" && typeof module.exports === "object" ) {
+    if ( typeof module === 'object' && typeof module.exports === 'object' ) {
         // Expose a factory as module.exports in loaders that implement the Node
         // module pattern (including browserify).
         // This accentuates the need for a real window in the environment
-        // e.g. var jQuery = require("jquery")(window);
+        // e.g. var jQuery = require('jquery')(window);
         module.exports = function( w ) {
             w = w || window;
             if ( !w.document ) {
-                throw new Error("jQuery plugin requires a window with a document");
+                throw new Error('RevealJS requires a window with a document');
             }
             return factory( w, w.document, head );
         };
     } else {
-        if ( typeof define === "function" && define.amd ) {
+        if ( typeof define === 'function' && define.amd ) {
             // AMD. Register as a named module.
             define( "reveal", [ "head" ], function(head) {
                 return factory(window, document, head);
@@ -107,7 +107,7 @@
             // i.e. contained within a limited portion of the screen
             embedded: false,
 
-			// Flags if we should show a help overlay when the questionmark
+			// Flags if we should show a help overlay when the '?' questionmark
 			// key is pressed
 			help: true,
 
@@ -263,7 +263,7 @@
 
         dom.viewport = document.querySelector( '.reveal-viewport' );
 
-        // If there's viewport defined use the body element
+        // If there's no viewport defined use the body element
         if( !dom.viewport ) {
             dom.viewport = document.body;
             if (!dom.viewport.classList.contains('reveal-viewport')) {
@@ -299,13 +299,28 @@
 
         var query = Reveal.getQueryHash();
 
-        // Do not accept new dependencies via query config to avoid
-        // the potential of malicious script injection
-        if( typeof query['dependencies'] !== 'undefined' ) delete query['dependencies'];
+        // Do not accept new dependencies via query config 
+        // (which may specify user-defined JavaScript code) to avoid
+        // the potential of malicious script injection. Same goes for
+        // keyboardCondition option which can be used to inject 
+        // malicious code.
+        //
+        // Note: 
+        // This is a blacklist approach; a better way is to 
+        // whitelist the ones that are okay. 
+        // See the augmented extend() function below.
+        if( typeof query.dependencies !== 'undefined' ) delete query.dependencies;
 
         // Copy options over to our config object
         extend( config, options );
-        extend( config, query );
+        // Copy options specified in the URI query and/or hash parts over to our config object
+        extend( config, query, function( fieldname ) {
+            // filter 1: only accept query parameters which do already exist in our `config` object.
+            //
+            // filter 2: only accept query parameters which do not contain executable JavaScript code.
+            return typeof config[fieldname] !== 'undefined'
+                && typeof config[fieldname] !== 'function';
+        } );
 
         // Hide the address bar in mobile browsers
         hideAddressBar();
@@ -554,7 +569,7 @@
         dom.wrapper = document.querySelector( '.reveal' );
         //dom.slides = document.querySelector( '.reveal .slides' );
 
-        if (!dom.wrapper || !dom.slides) return false;
+        if ( !dom.wrapper || !dom.slides ) return false;
 
 		dom.wrapper.setAttribute( 'role', 'application' );
 
@@ -628,12 +643,12 @@
 	function createStatusDiv() {
 
 		var statusDiv = document.getElementById( 'aria-status-div' );
-		if( !statusDiv ) {
+		if( !statusDiv && dom.wrapper ) {
 			statusDiv = document.createElement( 'div' );
 			statusDiv.style.position = 'absolute';
 			statusDiv.style.height = '1px';
 			statusDiv.style.width = '1px';
-			statusDiv.style.overflow ='hidden';
+			statusDiv.style.overflow = 'hidden';
 			statusDiv.style.clip = 'rect( 1px, 1px, 1px, 1px )';
 			statusDiv.setAttribute( 'id', 'aria-status-div' );
 			statusDiv.setAttribute( 'aria-live', 'polite' );
@@ -720,25 +735,20 @@
      */
     function createSingletonNode( container, tagname, classname, innerHTML ) {
 
-		// Find all nodes matching the description
-		var nodes = container.querySelectorAll( '.' + classname );
+		// Find the one which is a direct child of the specified container
+		var testNode = container.querySelector( ':scope > ' + tagname + '.' + classname );
 
-		// Check all matches to find one which is a direct child of
-		// the specified container
-		for( var i = 0; i < nodes.length; i++ ) {
-			var testNode = nodes[i];
-			if( testNode.parentNode === container ) {
-				return testNode;
-			}
+		if( testNode ) {
+			return testNode;
 		}
 
 		// If no node was found, create it now
 		var node = document.createElement( tagname );
-			node.classList.add( classname );
+		node.classList.add( classname );
 		if( typeof innerHTML === 'string' ) {
-				node.innerHTML = innerHTML;
-			}
-			container.appendChild( node );
+			node.innerHTML = innerHTML;
+		}
+		container.appendChild( node );
 
         return node;
 
@@ -832,8 +842,15 @@
 
 		var element = document.createElement( 'div' );
 
-		// Carry over custom classes from the slide to the background
-		element.className = 'slide-background ' + slide.className.replace( /present|past|future/, '' );
+        // Carry over custom classes from the slide to the background
+        //
+        // http://jsperf.com/element-classlist-vs-element-classname/6  .className vs. classList: for modern browsers it doesn't matter all that much
+        // http://jsperf.com/element-classlist-vs-element-classname/8  .classList.remove vs. .classList.toggle(X, false): latter is not available everywhere
+        element.className = slide.className;
+        element.classList.add( 'slide-background' );
+        // element.classList.remove( 'present' );
+        // element.classList.remove( 'past' );
+        // element.classList.remove( 'future' );
 
 		if( data.background ) {
 			// Auto-wrap image urls in url(...)
@@ -897,35 +914,54 @@
 
 	}
 
-	/**
-	 * Registers a listener to postMessage events, this makes it
-	 * possible to call all reveal.js API methods from another
-	 * window. For example:
-	 *
-	 * revealWindow.postMessage( JSON.stringify({
-	 *   method: 'slide',
-	 *   args: [ 2 ]
-	 * }), '*' );
-	 */
-	function setupPostMessage() {
 
-		if( config.postMessage ) {
-			window.addEventListener( 'message', function ( event ) {
-				var data = event.data;
 
-				// Make sure we're dealing with JSON
-				if( data.charAt( 0 ) === '{' && data.charAt( data.length - 1 ) === '}' ) {
-					data = JSON.parse( data );
+    /**
+     * The event listener for postMessage events, which makes it
+     * possible to call all reveal.js API methods from another
+     * window. For example:
+     *
+     * revealWindow.postMessage( JSON.stringify({
+     *   method: 'slide',
+     *   args: [ 2 ]
+     * }), '*' );
+     */
+    function postMessageListener( event ) {
 
-					// Check if the requested method can be found
-					if( data.method && typeof Reveal[data.method] === 'function' ) {
-						Reveal[data.method].apply( Reveal, data.args );
-					}
-				}
-			}, false );
-		}
+        // Make sure we're dealing with JSON
+        try {
+            data = JSON.parse( data ); 
 
-	}
+            // Check if the requested method can be found
+            if( data.method && typeof Reveal[data.method] === 'function' ) {
+                Reveal[data.method].apply( Reveal, data.args );
+            }
+        } catch (e) {
+        }
+
+    }
+
+
+    /**
+     * Registers a listener to postMessage events, this makes it
+     * possible to call all reveal.js API methods from another
+     * window. For example:
+     *
+     * revealWindow.postMessage( JSON.stringify({
+     *   method: 'slide',
+     *   args: [ 2 ]
+     * }), '*' );
+     */
+    function setupPostMessage() {
+
+        // when registered before, make sure we don't register it twice:
+        window.removeEventListener( 'message', postMessageListener, false );
+
+        if( config.postMessage ) {
+            window.addEventListener( 'message', postMessageListener, false );
+        }
+
+    }
 
 	/**
      * Applies the configuration settings from the config
@@ -948,38 +984,40 @@
         // Force linear transition based on browser capabilities
         if( features.transforms3d === false ) config.transition = 'linear';
 
-        if( dom.wrapper ) {
-            dom.wrapper.classList.add( config.transition );
-
-            dom.wrapper.setAttribute( 'data-transition-speed', config.transitionSpeed );
-            dom.wrapper.setAttribute( 'data-background-transition', config.backgroundTransition );
-
-            if( dom.controls ) {
-                dom.controls.style.display = config.controls ? 'block' : 'none';
-            }
-
-            if( dom.progress ) {
-                dom.progress.style.display = config.progress ? 'block' : 'none';
-            }
-
-            if( dom.timeRemaining ) {
-                dom.timeRemaining.style.display = config.timeRemaining ? 'block' : 'none';
-            }
-
-            if( config.rtl ) {
-                dom.wrapper.classList.add( 'rtl' );
-            }
-            else {
-                dom.wrapper.classList.remove( 'rtl' );
-            }
-
-            if( config.center ) {
-                dom.wrapper.classList.add( 'center' );
-            }
-            else {
-                dom.wrapper.classList.remove( 'center' );
-            }
+        if( !dom.wrapper ) {
+            return false;
         }
+
+        dom.wrapper.classList.add( config.transition );
+
+        dom.wrapper.setAttribute( 'data-transition-speed', config.transitionSpeed );
+        dom.wrapper.setAttribute( 'data-background-transition', config.backgroundTransition );
+
+        if( dom.controls ) {
+            dom.controls.style.display = config.controls ? 'block' : 'none';
+        }
+
+        if( dom.progress ) {
+            dom.progress.style.display = config.progress ? 'block' : 'none';
+        }
+
+        if( dom.timeRemaining ) {
+            dom.timeRemaining.style.display = config.timeRemaining ? 'block' : 'none';
+        }
+
+        if( config.rtl ) {
+            dom.wrapper.classList.add( 'rtl' );
+        }
+        else {
+            dom.wrapper.classList.remove( 'rtl' );
+        }
+
+        if( config.center ) {
+            dom.wrapper.classList.add( 'center' );
+        }
+        else {
+            dom.wrapper.classList.remove( 'center' );
+		}
 
 		// Exit the paused mode if it was configured off
 		if( config.pause === false ) {
@@ -1012,13 +1050,13 @@
             enablePreviewLinks( '[data-preview-link]' );
         }
 
-		// Remove existing auto-slide controls
-		if( autoSlidePlayer ) {
-			autoSlidePlayer.destroy();
-			autoSlidePlayer = null;
-		}
+        // Remove existing auto-slide controls
+        if( autoSlidePlayer ) {
+            autoSlidePlayer.destroy();
+            autoSlidePlayer = null;
+        }
 
-		// Generate auto-slide controls if needed
+        // Generate auto-slide controls if needed
         if( numberOfSlides > 1 && config.autoSlide && config.autoSlideStoppable && features.canvas && features.requestAnimationFrame ) {
             autoSlidePlayer = new Playback( dom.wrapper, function() {
                 return Math.min( Math.max( ( Date.now() - autoSlideStartTime ) / autoSlide, 0 ), 1 );
@@ -1052,7 +1090,7 @@
     function addEventListeners() {
 
         if (eventsAreBound) {
-            console.log("*** attempt to double-register Reveal events.");
+            console.log('*** attempt to double-register Reveal events.');
             removeEventListeners();
         }
 
@@ -1155,7 +1193,7 @@
                 dom.wrapper.removeEventListener( 'pointerup', onPointerUp, false );
             }
             // IE10
-            if( window.navigator.msPointerEnabled ) {
+            else if( window.navigator.msPointerEnabled ) {
                 dom.wrapper.removeEventListener( 'MSPointerDown', onPointerDown, false );
                 dom.wrapper.removeEventListener( 'MSPointerMove', onPointerMove, false );
                 dom.wrapper.removeEventListener( 'MSPointerUp', onPointerUp, false );
@@ -1180,14 +1218,35 @@
     }
 
     /**
-     * Extend object a with the properties of object b.
-     * If there's a conflict, object b takes precedence.
+     * Extend object `a` with the properties of object `b`.
+     * If there's a conflict, object `b` takes precedence.
+     *
+     * When function `filter` has been specified, it must return a truthy value
+     * for the `b.property` to be accepted. Use this, for example, 
+     * to only allow a specific subset of all the `b.properties` 
+     * to be copied into `a`.
+     *
+     * Return the augmented `a` object as the result. 
      */
-    function extend( a, b ) {
+    function extend( a, b, filter ) {
 
-        for( var i in b ) {
-            a[ i ] = b[ i ];
+        if( b ) {
+            if( !filter ) {
+                for( var i in b ) {
+                    if ( b.hasOwnProperty(i) ) {
+                        a[ i ] = b[ i ];
+                    }
+                }
+            } 
+            else {
+                for( var i in b ) {
+                    if ( b.hasOwnProperty(i) && filter( i ) ) {
+                        a[ i ] = b[ i ];
+                    }
+                }
+            }
         }
+        return a;
 
     }
 
@@ -1201,9 +1260,9 @@
     }
 
     /**
-	 * Utility for deserializing a value.
-	 */
-	function deserialize( value ) {
+     * Utility for de-serializing a value.
+     */
+    function deserialize( value ) {
 
 		if( typeof value === 'string' ) {
 			if( value === 'null' ) return null;
@@ -1408,17 +1467,17 @@
         height = height || 0;
 
         if( element ) {
-			var newHeight, oldHeight = element.style.height;
+            var newHeight, oldHeight = element.style.height;
 
-			// Change the .stretch element height to 0 in order find the height of all
-			// the other elements
-			element.style.height = '0px';
-			newHeight = height - element.parentNode.offsetHeight;
+            // Change the .stretch element height to 0 in order to find the height of all
+            // the other elements
+            element.style.height = '0px';
+            newHeight = height - element.parentNode.offsetHeight;
 
-			// Restore the old height, just in case
-			element.style.height = oldHeight + 'px';
+            // Restore the old height, just in case
+            element.style.height = oldHeight;
 
-			return newHeight;
+            return newHeight;
         }
 
         return height;
@@ -1598,52 +1657,56 @@
 
     }
 
-    /**
+	/**
 	 * Opens a overlay window with help material.
-     */
+	 */
 	function showHelp() {
 
-		if( config.help && dom.wrapper ) {
+		if( config.help ) {
 
 			closeOverlay();
 
-			dom.overlay = document.createElement( 'div' );
-			dom.overlay.classList.add( 'overlay' );
-			dom.overlay.classList.add( 'overlay-help' );
-			dom.wrapper.appendChild( dom.overlay );
+            if( dom.wrapper ) {
 
-			var html = '<p class="title">Keyboard Shortcuts</p><br/>';
+        		dom.overlay = document.createElement( 'div' );
+        		dom.overlay.classList.add( 'overlay' );
+        		dom.overlay.classList.add( 'overlay-help' );
+        		dom.wrapper.appendChild( dom.overlay );
 
-			html += '<table><th>KEY</th><th>ACTION</th>';
-			for( var key in keyboardShortcuts ) {
-				html += '<tr><td>' + key + '</td><td>' + keyboardShortcuts[ key ] + '</td></tr>';
-			}
+        		var html = '<p class="title">Keyboard Shortcuts</p><br/>';
 
-			html += '</table>';
+        		html += '<table><th>KEY</th><th>ACTION</th>';
+        		for( var key in keyboardShortcuts ) {
+        			html += '<tr><td>' + key + '</td><td>' + keyboardShortcuts[ key ] + '</td></tr>';
+        		}
 
-			dom.overlay.innerHTML = [
-				'<header>',
-					'<a class="close" href="#"><span class="icon"></span></a>',
-				'</header>',
-				'<div class="viewport">',
-					'<div class="viewport-inner">'+ html +'</div>',
-				'</div>'
-			].join('');
+        		html += '</table>';
 
-			dom.overlay.querySelector( '.close' ).addEventListener( 'click', function( event ) {
-				closeOverlay();
-				event.preventDefault();
-			}, false );
+        		dom.overlay.innerHTML = [
+        			'<header>',
+        				'<a class="close" href="#"><span class="icon"></span></a>',
+        			'</header>',
+        			'<div class="viewport">',
+        				'<div class="viewport-inner">'+ html +'</div>',
+        			'</div>'
+        		].join('');
 
-			setTimeout( function() {
-				dom.overlay.classList.add( 'visible' );
-			}, 1 );
+        		dom.overlay.querySelector( '.close' ).addEventListener( 'click', function( event ) {
+        			closeOverlay();
+        			event.preventDefault();
+        		}, false );
 
-		}
+        		setTimeout( function() {
+        			dom.overlay.classList.add( 'visible' );
+        		}, 1 );
 
+            }
+
+        }
+        
 	}
 
-	/**
+    /**
 	 * Closes any currently open overlay.
 	 */
 	function closeOverlay() {
@@ -2062,9 +2125,9 @@
 
             // Notify observers of the overview hiding
             dispatchEvent( 'overviewhidden', {
-                'indexh': indexh,
-                'indexv': indexv,
-                'currentSlide': currentSlide
+                indexh: indexh,
+                indexv: indexv,
+                currentSlide: currentSlide
             } );
 
         }
@@ -2080,14 +2143,14 @@
     function toggleOverview( override ) {
 
         if( typeof override === 'boolean' ) {
-            if (override) {
+            if ( override ) {
                 activateOverview();
             } else {
                 deactivateOverview();
             }
         }
         else {
-            if (isOverview()) {
+            if ( isOverview() ) {
                 deactivateOverview();
             } else {
                 activateOverview();
@@ -2147,7 +2210,7 @@
         // Prefer slide argument, otherwise use current slide
         slide = slide ? slide : currentSlide;
 
-        return slide && slide.parentNode && !!slide.parentNode.nodeName.match( /section/i );
+        return slide && slide.parentNode && !!slide.parentNode.nodeName.match( /^section$/i );
 
     }
 
@@ -2214,13 +2277,13 @@
     /**
      * Toggles the paused mode on and off.
      */
-	function togglePause( override ) {
+    function togglePause( override ) {
 
-		if( typeof override === 'boolean' ) {
-			override ? pause() : resume();
+        if( typeof override === 'boolean' ) {
+            override ? pause() : resume();
         }
         else {
-			isPaused() ? resume() : pause();
+            isPaused() ? resume() : pause();
         }
 
     }
@@ -2232,33 +2295,32 @@
 
         return dom.wrapper && dom.wrapper.classList.contains( 'paused' );
 
-	}
+    }
 
-	/**
-	 * Toggles the auto slide mode on and off.
-	 *
-	 * @param {Boolean} override Optional flag which sets the desired state.
-	 * True means autoplay starts, false means it stops.
-	 */
+    /**
+     * Toggles the auto slide mode on and off.
+     *
+	 * @param {Boolean} override Optional flag which sets the desired state. 
+     * True means autoplay starts, false means it stops.
+     */
 
-	function toggleAutoSlide( override ) {
+    function toggleAutoSlide( override ) {
 
-		if( typeof override === 'boolean' ) {
-			override ? resumeAutoSlide() : pauseAutoSlide();
-		}
+        if( typeof override === 'boolean' ) {
+            override ? resumeAutoSlide() : pauseAutoSlide();
+        }
+        else {
+            autoSlidePaused ? resumeAutoSlide() : pauseAutoSlide();
+        }
 
-		else {
-			autoSlidePaused ? resumeAutoSlide() : pauseAutoSlide();
-		}
+    }
 
-	}
+    /**
+     * Checks if the auto slide mode is currently on.
+     */
+    function isAutoSliding() {
 
-	/**
-	 * Checks if the auto slide mode is currently on.
-	 */
-	function isAutoSliding() {
-
-		return !!( autoSlide && !autoSlidePaused );
+        return !!( autoSlide && !autoSlidePaused );
 
     }
 
@@ -2712,7 +2774,7 @@
                     for( var y = 0; y < verticalSlidesLength; y++ ) {
                         var verticalSlide = verticalSlides[y];
 
-						distanceY = x === ( indexh || 0 ) ? Math.abs( ( indexv || 0 ) - y ) : Math.abs( y - oy );
+						distanceY = ( x === ( indexh || 0 ) ? Math.abs( ( indexv || 0 ) - y ) : Math.abs( y - oy ) );
 
 						if( distanceX + distanceY < viewDistance ) {
 							showSlide( verticalSlide );
@@ -3025,15 +3087,17 @@
 
 				// Images
 				if( backgroundImage ) {
-					background.style.backgroundImage = 'url('+ backgroundImage +')';
+					background.style.backgroundImage = 'url(' + backgroundImage + ')';
 				}
 				// Videos
 				else if ( backgroundVideo && !isSpeakerNotes() ) {
-					var video = document.createElement( 'video' );
-
+                    var video = background.querySelector( 'video' );
+                    if( !video ) {
+					    video = document.createElement( 'video' );
+                    }
 					// Support comma separated lists of video sources
 					backgroundVideo.split( ',' ).forEach( function( source ) {
-						video.innerHTML += '<source src="'+ source +'">';
+						video.innerHTML += '<source src="' + source + '">';
 					} );
 
 					background.appendChild( video );
@@ -3083,10 +3147,10 @@
 			verticalSlides = dom.wrapper.querySelectorAll( VERTICAL_SLIDES_SELECTOR );
 
         var routes = {
-            left: indexh > 0 || config.loop,
-            right: indexh < horizontalSlides.length - 1 || config.loop,
+            left: indexh > 0 || !!config.loop,
+            right: indexh < horizontalSlides.length - 1 || !!config.loop,
             up: indexv > 0,
-            down: indexv < verticalSlides.length - 1
+            down: verticalSlides && indexv < verticalSlides.length - 1
         };
 
         // reverse horizontal controls for rtl
@@ -3459,7 +3523,10 @@
 		var verticalSlides = horizontalSlide && horizontalSlide.querySelectorAll( 'section' );
 
 		if( verticalSlides && verticalSlides.length && typeof y === 'number' ) {
-			return verticalSlides ? verticalSlides[ y ] : undefined;
+			var slide = verticalSlides[ y ];
+            if( slide ) {
+                return slide;
+            }
 		}
 
 		return horizontalSlide;
@@ -4161,7 +4228,7 @@
                     y: touch.startY
                 } );
 
-                // If the span is larger than the desire amount we've got
+                // If the span is larger than the desired amount we've got
                 // ourselves a pinch
                 if( Math.abs( touch.startSpan - currentSpan ) > touch.threshold ) {
                     touch.captured = true;
