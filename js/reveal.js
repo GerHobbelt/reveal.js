@@ -3718,13 +3718,19 @@
                     if( i <= index ) {
                         if( !element.classList.contains( 'visible' ) ) fragmentsShown.push( element );
                         element.classList.add( 'visible' );
-                        element.classList.remove( 'current-fragment' );
 
 						// Announce the fragments one by one to the Screen Reader
 						dom.statusDiv.textContent = element.textContent;
 
                         if( i === index ) {
                             element.classList.add( 'current-fragment' );
+
+            				handleCSSFragments(element, false);
+                        }
+                        else {
+                            element.classList.remove( 'current-fragment' );
+
+            				handleCSSFragments(element, true);
                         }
                     }
                     // Hidden fragments
@@ -3732,8 +3738,8 @@
                         if( element.classList.contains( 'visible' ) ) fragmentsHidden.push( element );
                         element.classList.remove( 'visible' );
                         element.classList.remove( 'current-fragment' );
+        				handleCSSFragments(element, true);
                     }
-
 
                 } );
 
@@ -3755,6 +3761,38 @@
         }
 
         return false;
+
+    }
+
+	/**
+	 * Handles addition or removal of CSS classes when using CSS fragments.
+	 *
+	 * @param {HTMLElement} The element with the "fragment" class that has been made
+	 * visible and is now checked for CSS fragments.
+	 * @param {boolean} If the CSS fragment operation should be applied in reverse order
+	 * (when the fragment is being removed instead of shown), this flag needs to be set to
+	 * true.
+	 *
+	 * @return {void}
+	 */
+	function handleCSSFragments(element, reverse) {
+
+		if( !element.classList.contains('css-fragment') ) {
+			return;
+		}
+
+		var addClass = element.getAttribute('data-add-class');
+		var removeClass = element.getAttribute('data-remove-class');
+		var target = element.getAttribute('data-target');
+
+		if( reverse ) {
+			var temp = addClass;
+			addClass = removeClass;
+			removeClass = temp;
+		}
+
+		document.querySelectorAll( target )[0].classList.add( addClass );
+		document.querySelectorAll( target )[0].classList.remove( removeClass );
 
     }
 
@@ -3843,7 +3881,7 @@
 
         }
 
-    }
+	}
 
     /**
      * Cancels any ongoing request to auto-slide.

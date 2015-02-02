@@ -1250,12 +1250,16 @@
 /*********************************************
  * SPEAKER NOTES
  *********************************************/
+
 .reveal aside.notes {
-  display: none; }
+	display: none;
+}
+
 
 /*********************************************
  * ZOOM PLUGIN
  *********************************************/
+
 .zoomed .reveal *, .zoomed .reveal *:before, .zoomed .reveal *:after {
   -webkit-backface-visibility: visible !important;
           backface-visibility: visible !important; }
@@ -1268,3 +1272,39 @@
 
 .zoomed .reveal .roll span:after {
   visibility: hidden; }
+
+
+/*********************************************
+ * CSS FRAGMENTS
+ *********************************************/
+
+.reveal .offscreen {
+	position: absolute;
+	left: -10000px;
+}
+
+.animate {
+	-webkit-transition: all 1s ease-in-out;
+	-moz-transition: all 1s ease-in-out;
+	-o-transition: all 1s ease-in-out;
+	transition: all 1s ease-in-out;
+}
+
+.zoom {
+	font-size: 200% !important;
+}
+
+.shrink {
+	font-size: 50% !important;
+}
+
+.red {
+	color: red;
+}
+
+/* Just a marker class for css fragments */
+.css-fragment {
+
+}
+
+

@@ -55,6 +55,36 @@
                     </p>
                 </section>
 
+				<section>
+					<h2>Heads Up</h2>
+					<p>
+						reveal.js is a framework for easily creating beautiful presentations using HTML. You'll need a browser with 
+						support for CSS 3D transforms to see it in its full glory.
+					</p>
+					<p>
+						<i><small>- <a href="http://hakim.se">Hakim El Hattab</a> / <a href="http://twitter.com/hakimel">@hakimel</a></small></i>
+					</p>
+
+					<aside class="notes">
+						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you run the speaker notes server.
+					</aside>
+                </section>
+
+				<section>
+					<h2>CSS Fragments</h2>
+					<p id="someParagraph" class="animate">
+						You can also make text <span id="makeBigger" class="animate">bigger</span>
+						or <span id="makeSmaller" class="animate">smaller</span>...
+					</p>
+
+					<div class="offscreen fragment css-fragment" data-add-class="zoom" data-target="#makeBigger"></div>
+					<div class="fragment css-fragment" data-add-class="shrink" data-target="#makeSmaller">
+						using <span id="removeRed" class="red animate">CSS fragments</span>.
+					</div>
+
+					<div class="offscreen fragment css-fragment" data-remove-class="red" data-target="#removeRed"></div>
+				</section>
+
                 <!-- Example of nested vertical slides -->
                 <section>
                     <section contenteditable="true">
