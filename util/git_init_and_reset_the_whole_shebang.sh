@@ -1,17 +1,24 @@
 #! /bin/bash
 #
-# Run this script to init and RESET everything in the Visyond project.
-# THIS MEANS THAT YOU WILL LOOSE ALL CHANGES WHICH HAVEN'T BEEN COMMITTED INTO THE VISYOND REPOSITORY OR ANY OF THE SUBMODULES!
+# Run this script to init and RESET everything in the project.
+# THIS MEANS THAT YOU WILL LOOSE ALL CHANGES WHICH HAVEN'T BEEN COMMITTED INTO THE PROJECT REPOSITORY OR ANY OF THE SUBMODULES!
 #
 
-pushd $(dirname $0)                                                                                     2> /dev/null
+wd="$( pwd )";
+
+pushd $(dirname $0)                                                                                     2> /dev/null  > /dev/null
+
+# go to root of project
 cd ..
+wd=$( util/print-git-repo-base-directory.sh "$wd" )
+echo "git repository base directory: $wd"
+cd "$wd"
 
 getopts ":ifxlsh" opt
 #echo opt+arg = "$opt$OPTARG"
 case "$opt$OPTARG" in
 i )
-    echo "*** First, we RESET the Visyond project..."
+    echo "*** First, we RESET the project..."
     git reset --hard
 
     echo "*** Then, we make sure that all submodules are RESET as well..."
@@ -25,7 +32,7 @@ i )
     ;;
 
 f )
-    echo "*** First, we RESET the Visyond project..."
+    echo "*** First, we RESET the project..."
     git reset --hard
 
     echo "*** Then, we make sure that all submodules have been properly registered..."
@@ -42,7 +49,7 @@ f )
     echo "*** ... Next, we 'upgrade' each submodule by checking out the main branch and PULLing the latest..."
     util/git_checkout_submodules_head.sh
     # we also make sure there's no fuss with the pull by first RESETting each repo:
-    util/git_pull_push.sh -p git reset --hard
+    $(dirname $0)/util/git_pull_push.sh -p git reset --hard
 
     echo "*** ... and finally we make sure each submodule is moved to the commit which is linked with the current commit in the main project."
     git submodule update --recursive
@@ -70,7 +77,7 @@ x )
     git submodule foreach --recursive git fsck --full --unreachable --strict
 
 
-    echo "*** Then, we RESET the Visyond project..."
+    echo "*** Then, we RESET the project..."
     git reset --hard
 
     echo "*** Then, we make sure that all submodules have been properly registered..."
@@ -87,9 +94,9 @@ x )
     echo "*** ... Next, we 'upgrade' each submodule by checking out the main branch and PULLing the latest..."
     util/git_checkout_submodules_head.sh
     # spring cleaning, round #2
-    util/git_pull_push.sh -c
+    $(dirname $0)/util/git_pull_push.sh -c
     # we also make sure there's no fuss with the pull by first RESETting each repo:
-    util/git_pull_push.sh -p git reset --hard
+    $(dirname $0)/util/git_pull_push.sh -p git reset --hard
 
     echo "*** ... and finally we make sure each submodule is moved to the commit which is linked with the current commit in the main project."
     git submodule update --recursive
@@ -117,10 +124,10 @@ s )
     cat <<EOT
 $0 [-i | -f | -x | -l | -s]
 
-GIT INIT and GIT RESET everything in the Visyond project.
+GIT INIT and GIT RESET everything in the project.
 
 THIS MEANS THAT YOU WILL LOOSE ALL CHANGES WHICH HAVEN'T BEEN COMMITTED
-      INTO THE VISYOND REPOSITORY OR ANY OF THE SUBMODULES!
+      INTO THE PROJECT REPOSITORY OR ANY OF THE SUBMODULES!
 
 -i       : 'the basics, size S': run a complete 'git reset' on everything.
            Run this one when the panic hits: "Am I really where I'm
@@ -186,5 +193,5 @@ EOT
 esac
 
 
-popd                                                                                                    2> /dev/null
+popd                                                                                                    2> /dev/null  > /dev/null
 

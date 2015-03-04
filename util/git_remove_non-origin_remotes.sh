@@ -15,8 +15,16 @@
 #       the git repositories on the different development machines.
 #
 
+wd="$( pwd )";
+
 pushd $(dirname $0)                                                                                     2> /dev/null  > /dev/null
+
+# go to root of project
 cd ..
+
+wd=$( util/print-git-repo-base-directory.sh "$wd" )
+echo "git repository base directory: $wd"
+cd "$wd"
 
 getopts ":h" opt
 #echo opt+arg = "$opt$OPTARG"
@@ -59,6 +67,4 @@ esac
 
 
 popd                                                                                                    2> /dev/null  > /dev/null
-
-
 
