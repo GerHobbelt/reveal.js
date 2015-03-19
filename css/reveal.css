@@ -33,16 +33,6 @@ body {
   background-color: #fff;
   color: #000; }
 
-::-moz-selection {
-  background: #FF5E99;
-  color: #fff;
-  text-shadow: none; }
-
-::selection {
-  background: #FF5E99;
-  color: #fff;
-  text-shadow: none; }
-
 /*********************************************
  * VIEW FRAGMENTS
  *********************************************/
@@ -271,6 +261,7 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   -ms-touch-action: none;
       touch-action: none; }
 
@@ -286,6 +277,11 @@ body {
   overflow: visible;
   z-index: 1;
   text-align: center;
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  transition: -webkit-perspective 0.4s ease;
+  transition: perspective 0.4s ease;
   -webkit-perspective: 600px;
           perspective: 600px;
   -webkit-perspective-origin: 50% 40%;
@@ -297,8 +293,12 @@ body {
 .reveal .slides > section, .reveal .slides > section > section {
   display: none;
   position: absolute;
+  top: 0%;
+  left: 0%;
+  box-sizing: border-box;
   width: 100%;
-  padding: 20px 0px;
+  height: 100%;
+  padding: 0px 0px;
   z-index: 10;
   -webkit-transform-style: preserve-3d;
           transform-style: preserve-3d;
@@ -320,17 +320,10 @@ body {
 .reveal .slides section[data-transition-speed="slow"] {
   transition-duration: 1200ms; }
 
-.reveal .slides > section.stack {
-  padding-top: 0;
-  padding-bottom: 0; }
-
 .reveal .slides > section.present, .reveal .slides > section > section.present {
   display: block;
   z-index: 11;
   opacity: 1; }
-
-.reveal.center, .reveal.center .slides, .reveal.center .slides section {
-  min-height: 0 !important; }
 
 /* Don't allow interaction with invisible slides */
 .reveal .slides > section.future, .reveal .slides > section > section.future, .reveal .slides > section.past, .reveal .slides > section > section.past {
@@ -341,6 +334,35 @@ body {
 
 .reveal .slides > section.past, .reveal .slides > section.future, .reveal .slides > section > section.past, .reveal .slides > section > section.future {
   opacity: 0; }
+
+/*********************************************
+ * SLIDE CONTENTS
+ *********************************************/
+.reveal .slides .slide-content {
+  width: 100%; }
+
+.reveal.center .slides .slide-body {
+  min-height: 0;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translate(0%, -50%);
+      -ms-transform: translate(0%, -50%);
+          transform: translate(0%, -50%); }
+
+/*********************************************
+ * LAYOUT DEBUGGING
+ *********************************************/
+.reveal.show-canvas .slides {
+  background: rgba(150, 255, 0, 0.3); }
+
+.reveal.show-canvas .slides > section, .reveal.show-canvas .slides > section > section {
+  background: rgba(255, 155, 0, 0.3); }
+
+.reveal.show-canvas .slides > section.stack {
+  background: rgba(0, 0, 255, 0.3); }
+
+.reveal.show-canvas .slides .slide-body {
+  background: rgba(0, 255, 0, 0.3); }
 
 /*********************************************
  * SLIDE TRANSITION
@@ -518,8 +540,8 @@ body {
  * PAGE TRANSITION
  *********************************************/
 .reveal.page .slides {
-  -webkit-perspective-origin: 0% 50%;
-          perspective-origin: 0% 50%;
+  -webkit-perspective-origin: 50% 50%;
+          perspective-origin: 50% 50%;
   -webkit-perspective: 3000px;
           perspective: 3000px; }
 
@@ -611,49 +633,6 @@ body {
   transition: none; }
 
 /*********************************************
- * OVERVIEW
- *********************************************/
-.reveal.overview .slides {
-  -webkit-perspective-origin: 50% 50%;
-          perspective-origin: 50% 50%;
-  -webkit-perspective: 700px;
-          perspective: 700px; }
-
-.reveal.overview .slides section {
-  height: 700px;
-  overflow: hidden;
-  opacity: 1 !important;
-  visibility: visible !important;
-  cursor: pointer;
-  background: rgba(0, 0, 0, 0.1);
-  box-sizing: border-box; }
-
-.reveal.overview .slides section, .reveal.overview-deactivating .slides section {
-  transition: none !important; }
-
-.reveal.overview .slides section .fragment {
-  opacity: 1; }
-
-.reveal.overview .slides section:after, .reveal.overview .slides section:before {
-  display: none !important; }
-
-.reveal.overview .slides section > section {
-  opacity: 1;
-  cursor: pointer; }
-
-.reveal.overview .slides section:hover {
-  background: rgba(0, 0, 0, 0.3); }
-
-.reveal.overview .slides section.present {
-  background: rgba(0, 0, 0, 0.3); }
-
-.reveal.overview .slides > section.stack {
-  padding: 0;
-  top: 0 !important;
-  background: none;
-  overflow: visible; }
-
-/*********************************************
  * PAUSED MODE
  *********************************************/
 .reveal .pause-overlay {
@@ -712,7 +691,7 @@ body {
 /*********************************************
  * PER-SLIDE BACKGROUNDS
  *********************************************/
-.reveal > .backgrounds {
+.reveal .backgrounds {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -865,6 +844,54 @@ body {
 
 .reveal[data-transition-speed="slow"] > .backgrounds .slide-background {
   transition-duration: 1200ms; }
+
+/*********************************************
+ * OVERVIEW
+ *********************************************/
+.reveal.overview {
+  -webkit-perspective-origin: 50% 50%;
+          perspective-origin: 50% 50%;
+  -webkit-perspective: 700px;
+          perspective: 700px; }
+  .reveal.overview .slides section {
+    height: 700px;
+    opacity: 1 !important;
+    overflow: hidden;
+    visibility: visible !important;
+    cursor: pointer;
+    box-sizing: border-box; }
+  .reveal.overview .slides section:hover, .reveal.overview .slides section.present {
+    outline: 10px solid rgba(150, 150, 150, 0.4);
+    outline-offset: 10px; }
+  .reveal.overview .slides section .fragment {
+    opacity: 1;
+    transition: none; }
+  .reveal.overview .slides section:after, .reveal.overview .slides section:before {
+    display: none !important; }
+  .reveal.overview .slides > section.stack {
+    padding: 0;
+    top: 0 !important;
+    background: none;
+    outline: none;
+    overflow: visible; }
+  .reveal.overview .backgrounds {
+    -webkit-perspective: inherit;
+            perspective: inherit; }
+  .reveal.overview .backgrounds .slide-background {
+    opacity: 1;
+    visibility: visible;
+    outline: 10px solid rgba(150, 150, 150, 0.1);
+    outline-offset: 10px; }
+
+.reveal.overview .slides section, .reveal.overview-deactivating .slides section {
+  transition: none; }
+
+.reveal.overview .backgrounds .slide-background, .reveal.overview-deactivating .backgrounds .slide-background {
+  transition: none; }
+
+.reveal.overview-animated .slides {
+  transition: -webkit-transform 0.4s ease;
+  transition: transform 0.4s ease; }
 
 /*********************************************
  * RTL SUPPORT
