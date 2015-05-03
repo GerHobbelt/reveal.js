@@ -3,5 +3,5 @@ function getURLParameter(name) {
 }
 
 var url = getURLParameter("md");
-var md = document.getElementById("md");
+var md = document.getElementsByTagName("section")[0];
 md.setAttribute("data-markdown", url);
