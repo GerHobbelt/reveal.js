@@ -1,5 +1,21 @@
-.reveal p {
+.center {
+  text-align: center;
+}
+
+.left {
   text-align: left;
+}
+
+.right {
+  text-align: right;
+}
+
+
+.reveal p, ol, ul {
+  text-align: left;
+}
+
+.reveal p {
   margin-bottom: 1.5em;
 }
 
