@@ -8,3 +8,7 @@
   border:none; 
   box-shadow:none;
 }
+
+.reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+  text-align: left;
+}
