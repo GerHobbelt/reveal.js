@@ -158,6 +158,10 @@
             // Parallax background size
             parallaxBackgroundSize: '', // CSS syntax, e.g. "3000px 2000px"
 
+			// Amount of pixels to move the parallax background per slide step
+			parallaxBackgroundHorizontal: null,
+			parallaxBackgroundVertical: null,
+
             // Number of slides away from the current that are visible
             viewDistance: 3,
 
@@ -2785,7 +2789,7 @@
 				// If the presentation is looped, distance should measure
 				// 1 between the first and last slides
 				if( config.loop ) {
-					distanceX = distanceX % ( horizontalSlidesLength - viewDistance );
+					distanceX = Math.abs( ( ( indexh || 0 ) - x ) % ( horizontalSlidesLength - viewDistance ) ) || 0;
 				}
 
                 // Show the horizontal slide if it's within the view distance
@@ -3061,15 +3065,35 @@
                 backgroundHeight = parseInt( backgroundSize[1], 10 );
             }
 
-            var slideWidth = dom.background.offsetWidth;
-            var horizontalSlideCount = horizontalSlides.length;
-            var horizontalOffset = -( backgroundWidth - slideWidth ) / ( horizontalSlideCount-1 ) * indexh;
+			var slideWidth = dom.background.offsetWidth,
+				horizontalSlideCount = horizontalSlides.length,
+				horizontalOffsetMultiplier,
+				horizontalOffset;
 
-            var slideHeight = dom.background.offsetHeight;
-            var verticalSlideCount = verticalSlides.length;
-			var verticalOffset = verticalSlideCount > 1 ? -( backgroundHeight - slideHeight ) / ( verticalSlideCount-1 ) * indexv : 0;
+			if( typeof config.parallaxBackgroundHorizontal === 'number' ) {
+				horizontalOffsetMultiplier = config.parallaxBackgroundHorizontal;
+			}
+			else {
+				horizontalOffsetMultiplier = ( backgroundWidth - slideWidth ) / ( horizontalSlideCount-1 );
+			}
 
-            dom.background.style.backgroundPosition = horizontalOffset + 'px ' + verticalOffset + 'px';
+			horizontalOffset = horizontalOffsetMultiplier * indexh * -1;
+
+			var slideHeight = dom.background.offsetHeight,
+				verticalSlideCount = verticalSlides.length,
+				verticalOffsetMultiplier,
+				verticalOffset;
+
+			if( typeof config.parallaxBackgroundVertical === 'number' ) {
+				verticalOffsetMultiplier = config.parallaxBackgroundVertical;
+			}
+			else {
+				verticalOffsetMultiplier = ( backgroundHeight - slideHeight ) / ( verticalSlideCount-1 );
+			}
+
+			verticalOffset = verticalSlideCount > 0 ?  verticalOffsetMultiplier * indexv * 1 : 0;
+
+			dom.background.style.backgroundPosition = horizontalOffset + 'px ' + -verticalOffset + 'px';
 
 		}
 
