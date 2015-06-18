@@ -448,6 +448,9 @@
 		// Listen to messages posted to this window
 		setupPostMessage();
 
+		// Prevent iframes from scrolling the slides out of view
+		setupIframeScrollPrevention();
+
         // Resets all vertical slides so that only the first is visible
         resetVerticalSlides();
 
@@ -725,6 +728,26 @@
 		toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR + ' .fragment' ) ).forEach( function( fragment ) {
 			fragment.classList.add( 'visible' );
 		} );
+
+	}
+
+	/**
+	 * This is an unfortunate necessity. Iframes can trigger the
+	 * parent window to scroll, for example by focusing an input.
+	 * This scrolling can not be prevented by hiding overflow in
+	 * CSS so we have to resort to repeatedly checking if the
+	 * browser has decided to offset our slides :(
+	 */
+	function setupIframeScrollPrevention() {
+
+		if( dom.slides.querySelector( 'iframe' ) ) {
+			setInterval( function() {
+				if( dom.wrapper.scrollTop !== 0 || dom.wrapper.scrollLeft !== 0 ) {
+					dom.wrapper.scrollTop = 0;
+					dom.wrapper.scrollLeft = 0;
+				}
+			}, 500 );
+		}
 
 	}
 
@@ -2745,7 +2768,7 @@
 				viewDistance = isOverview() ? 6 : 2;
             }
 
-			// Limit view distance on weaker devices
+			// All slides need to be visible when exporting to PDF
 			if( isPrintingPDF() ) {
 				viewDistance = Number.MAX_VALUE;
 			}
@@ -2756,8 +2779,14 @@
                 var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) ),
                     verticalSlidesLength = verticalSlides.length;
 
-                // Loops so that it measures 1 between the first and last slides
-				distanceX = Math.abs( ( ( indexh || 0 ) - x ) % ( horizontalSlidesLength - viewDistance ) ) || 0;
+				// Determine how far away this slide is from the present
+				distanceX = Math.abs( ( indexh || 0 ) - x ) || 0;
+
+				// If the presentation is looped, distance should measure
+				// 1 between the first and last slides
+				if( config.loop ) {
+					distanceX = distanceX % ( horizontalSlidesLength - viewDistance );
+				}
 
                 // Show the horizontal slide if it's within the view distance
 				if( distanceX < viewDistance ) {
@@ -2967,6 +2996,15 @@
 			if( currentVideo ) {
 				currentVideo.currentTime = 0;
 				currentVideo.play();
+			}
+
+			var backgroundImageURL = currentBackground.style.backgroundImage || '';
+
+			// Restart GIFs (doesn't work in Firefox)
+			if( /\.gif/i.test( backgroundImageURL ) ) {
+				currentBackground.style.backgroundImage = '';
+				window.getComputedStyle( currentBackground ).opacity;
+				currentBackground.style.backgroundImage = backgroundImageURL;
 			}
 
 		// Don't transition between identical backgrounds. This
@@ -3217,6 +3255,13 @@
     function startEmbeddedContent( slide ) {
 
         if( slide && !isSpeakerNotes() ) {
+			// Restart GIFs
+			toArray( slide.querySelectorAll( 'img[src$=".gif"]' ) ).forEach( function( el ) {
+				// Setting the same unchanged source like this was confirmed
+				// to work in Chrome, FF & Safari
+				el.setAttribute( 'src', el.getAttribute( 'src' ) );
+			} );
+
             // HTML5 media elements
             toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
                 if( el.hasAttribute( 'data-autoplay' ) ) {
