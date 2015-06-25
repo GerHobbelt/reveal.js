@@ -21,6 +21,7 @@ At this point, those include:
 - `css-based-vertical-positioning`
 - `make-bower-package`
 - `githooks-for-depdendent-files`
+- `improve-fragments`: Note, this currently breaks unit-tests!
 
 ## Online Editor
 
