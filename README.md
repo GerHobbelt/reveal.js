@@ -20,6 +20,7 @@ At this point, those include:
 - `merged-third-party`
 - `css-based-vertical-positioning`
 - `make-bower-package`
+- `githooks-for-depdendent-files`
 
 ## Online Editor
 
