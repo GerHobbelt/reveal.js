@@ -35,6 +35,7 @@ module.exports = function(grunt) {
 			core: {
 				files: {
 					'css/reveal.css': 'css/reveal.scss',
+                    'lib/css/font-awesome.css': 'lib/css/source/font-awesome.scss'
 				}
 			},
 			themes: {
@@ -59,7 +60,8 @@ module.exports = function(grunt) {
 		cssmin: {
 			compress: {
 				files: {
-					'css/reveal.min.css': [ 'css/reveal.css' ]
+					'css/reveal.min.css': [ 'css/reveal.css' ],
+                    'lib/css/font-awesome.min.css': [ 'lib/css/font-awesome.css' ]
 				}
 			}
 		},
