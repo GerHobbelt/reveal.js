@@ -346,7 +346,7 @@ To enable lazy loading all you need to do is change your "src" attributes to "da
 ```html
 <section>
   <img data-src="image.png">
-  <iframe data-src="http://slides.com">
+  <iframe data-src="http://slides.com"></iframe>
   <video>
     <source data-src="video.webm" type="video/webm" />
     <source data-src="video.mp4" type="video/mp4" />
@@ -475,6 +475,7 @@ Make sure that the background size is much bigger than screen size to allow for 
 
 
 ### Slide Transitions
+
 The global presentation transition is set using the ```transition``` config value. You can override the global transition for a specific slide by using the ```data-transition``` attribute:
 
 ```html
@@ -584,7 +585,9 @@ By default, Reveal is configured with [highlight.js](http://softwaremaniacs.org/
 </section>
 ```
 
+
 ### Slide number
+
 If you would like to display the page number of the current slide you can do so using the ```slideNumber``` configuration value.
 
 ```javascript
@@ -1055,4 +1058,4 @@ You can change the port by using `grunt serve --port 8001`.
 
 MIT licensed
 
-Copyright (C) 2013 Hakim El Hattab, http://hakim.se
+Copyright (C) 2015 Hakim El Hattab, http://hakim.se

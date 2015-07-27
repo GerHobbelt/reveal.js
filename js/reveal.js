@@ -3,7 +3,7 @@
  * http://lab.hakim.se/reveal-js
  * MIT licensed
  *
- * Copyright (C) 2014 Hakim El Hattab, http://hakim.se
+ * Copyright (C) 2015 Hakim El Hattab, http://hakim.se
  */
 
 (function ( window, factory ) {
@@ -248,7 +248,7 @@
         // all current slides.
         state = [],
 
-        // contains the overview info (number of H/V slides, ...)
+        // NULL when a single slide is shown; in overview mode this contains the overview info (number of H/V slides, ...)
         overview_slides_info = null,
 
         // The current scale of the presentation (see width/height config)
@@ -3679,7 +3679,6 @@ TBD end of old code, start of new code
             }
         }
 
-
     } 
 
     /**
@@ -4688,7 +4687,19 @@ TBD end of old code, start of new code
 
             // Start video playback
             var currentVideo = currentBackground.querySelector( 'video' );
-            if( currentVideo ) currentVideo.play();
+			if( currentVideo ) {
+				currentVideo.currentTime = 0;
+				currentVideo.play();
+			}
+
+			var backgroundImageURL = currentBackground.style.backgroundImage || '';
+
+			// Restart GIFs (doesn't work in Firefox)
+			if( /\.gif/i.test( backgroundImageURL ) ) {
+				currentBackground.style.backgroundImage = '';
+				window.getComputedStyle( currentBackground ).opacity;
+				currentBackground.style.backgroundImage = backgroundImageURL;
+			}
 
             // Don't transition between identical backgrounds. This
             // prevents unwanted flicker.
@@ -4825,6 +4836,7 @@ TBD end of old code, start of new code
 
 				var backgroundImage = slide.getAttribute( 'data-background-image' ),
 					backgroundVideo = slide.getAttribute( 'data-background-video' ),
+					backgroundVideoLoop = slide.hasAttribute( 'data-background-video-loop' ),
 					backgroundIframe = slide.getAttribute( 'data-background-iframe' );
 
 				// Images
@@ -4832,10 +4844,14 @@ TBD end of old code, start of new code
 					background.style.backgroundImage = 'url(' + backgroundImage + ')';
 				}
 				// Videos
-				else if ( backgroundVideo ) {
+				else if ( backgroundVideo && !isSpeakerNotes() ) {
                     var video = background.querySelector( 'video' );
                     if( !video ) {
 					    video = document.createElement( 'video' );
+
+    					if( backgroundVideoLoop ) {
+    						video.setAttribute( 'loop', '' );
+    					}
                     }
 					// Support comma separated lists of video sources
 					backgroundVideo.split( ',' ).forEach( function( source ) {
@@ -4964,6 +4980,13 @@ TBD end of old code, start of new code
     function startEmbeddedContent( slide ) {
 
         if( slide && !isSpeakerNotes() ) {
+			// Restart GIFs
+			toArray( slide.querySelectorAll( 'img[src$=".gif"]' ) ).forEach( function( el ) {
+				// Setting the same unchanged source like this was confirmed
+				// to work in Chrome, FF & Safari
+				el.setAttribute( 'src', el.getAttribute( 'src' ) );
+			} );
+
             // HTML5 media elements
             toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
                 if( el.hasAttribute( 'data-autoplay' ) ) {
@@ -4980,15 +5003,22 @@ TBD end of old code, start of new code
             toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( el.hasAttribute( 'data-autoplay' ) ) {
                     el.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
-				}
-			} );
+                }
+            } );
 
 			// Vimeo embeds
 			toArray( slide.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
 				if( el.hasAttribute( 'data-autoplay' ) ) {
 					el.contentWindow.postMessage( '{"method":"play"}', '*' );
-                }
-            } );
+				}
+			});
+
+			// Asciinema embeds
+			toArray( slide.querySelectorAll( 'iframe[src*="asciinema.org/api/asciicasts/"]' ) ).forEach( function( el ) {
+				if( el.hasAttribute( 'data-autoplay' ) ) {
+					el.contentWindow.postMessage( '["asciicast:play"]', '*' );
+				}
+			});
         }
 
     }
@@ -6427,7 +6457,10 @@ TBD end of old code, start of new code
         // If, after clicking a link or similar and we're coming back,
         // focus the document.body to ensure we can use keyboard shortcuts
         if( isHidden === false && document.activeElement !== document.body ) {
-            document.activeElement.blur();
+			// Not all elements support .blur() - SVGs among them.
+			if (typeof document.activeElement.blur === 'function') {
+				document.activeElement.blur();
+			}
             document.body.focus();
         }
 
