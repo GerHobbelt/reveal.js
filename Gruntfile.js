@@ -25,7 +25,7 @@ module.exports = function(grunt) {
                 ' * http://lab.hakim.se/reveal-js\n' +
                 ' * MIT licensed\n' +
                 ' *\n' +
-                ' * Copyright (C) 2014 Hakim El Hattab, http://hakim.se\n' +
+				' * Copyright (C) 2015 Hakim El Hattab, http://hakim.se\n' +
                 ' */'
         },
 
@@ -85,22 +85,24 @@ module.exports = function(grunt) {
 			},
 			themes: {
                 files: {
-                    'css/theme/default.css': 'css/theme/source/default.scss',
-					'css/theme/black.css': 'css/theme/source/black.scss',
-                    'css/theme/beige.css': 'css/theme/source/beige.scss',
-                    'css/theme/night.css': 'css/theme/source/night.scss',
-                    'css/theme/serif.css': 'css/theme/source/serif.scss',
-                    'css/theme/simple.css': 'css/theme/source/simple.scss',
-                    'css/theme/sky.css': 'css/theme/source/sky.scss',
-                    'css/theme/moon.css': 'css/theme/source/moon.scss',
-                    'css/theme/solarized.css': 'css/theme/source/solarized.scss',
-                    'css/theme/blood.css': 'css/theme/source/blood.scss',
-                    'css/theme/jolicode.css': 'css/theme/source/jolicode.scss',
-                    'css/theme/openbossa.css': 'css/theme/source/openbossa.scss',
-                    'css/theme/aerogear.css': 'css/theme/source/aerogear.scss',
-                    'css/theme/one-mozilla.css': 'css/theme/source/one-mozilla.scss',
-                    'css/theme/parallax-demo.css': 'css/theme/source/parallax-demo.scss',
-                    'css/theme/fourkitchens.css': 'css/theme/source/fourkitchens.scss'
+                    'css/theme/default.css': 'css/theme/source-sass/default.scss',
+					'css/theme/black.css': 'css/theme/source-sass/black.scss',
+					'css/theme/white.css': 'css/theme/source-sass/white.scss',
+					'css/theme/league.css': 'css/theme/source-sass/league.scss',
+                    'css/theme/beige.css': 'css/theme/source-sass/beige.scss',
+                    'css/theme/night.css': 'css/theme/source-sass/night.scss',
+                    'css/theme/serif.css': 'css/theme/source-sass/serif.scss',
+                    'css/theme/simple.css': 'css/theme/source-sass/simple.scss',
+                    'css/theme/sky.css': 'css/theme/source-sass/sky.scss',
+                    'css/theme/moon.css': 'css/theme/source-sass/moon.scss',
+                    'css/theme/solarized.css': 'css/theme/source-sass/solarized.scss',
+                    'css/theme/blood.css': 'css/theme/source-sass/blood.scss',
+                    'css/theme/jolicode.css': 'css/theme/source-sass/jolicode.scss',
+                    'css/theme/openbossa.css': 'css/theme/source-sass/openbossa.scss',
+                    'css/theme/aerogear.css': 'css/theme/source-sass/aerogear.scss',
+                    'css/theme/one-mozilla.css': 'css/theme/source-sass/one-mozilla.scss',
+                    'css/theme/parallax-demo.css': 'css/theme/source-sass/parallax-demo.scss',
+                    'css/theme/fourkitchens.css': 'css/theme/source-sass/fourkitchens.scss'
                 }
             }
         },
@@ -123,7 +125,7 @@ module.exports = function(grunt) {
             },
             files: {
                 'css/theme/default.css': 'css/theme/source-less/default.less',
-                'css/theme/black.css': 'css/theme/source/black.less',
+                'css/theme/black.css': 'css/theme/source-less/black.less',
                 'css/theme/beige.css': 'css/theme/source-less/beige.less',
                 'css/theme/night.css': 'css/theme/source-less/night.less',
                 'css/theme/serif.css': 'css/theme/source-less/serif.less',

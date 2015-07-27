@@ -11,20 +11,8 @@
 // ---------------------------------------------
 
 
-
 // Include theme-specific fonts
-@font-face {
-  font-family: 'League Gothic';
-  src: url('../../lib/font/league_gothic-webfont.eot');
-  src: url('../../lib/font/league_gothic-webfont.eot?#iefix') format('embedded-opentype'),
-     url('../../lib/font/league_gothic-webfont.woff') format('woff'),
-     url('../../lib/font/league_gothic-webfont.ttf') format('truetype'),
-     url('../../lib/font/league_gothic-webfont.svg#LeagueGothicRegular') format('svg');
-
-  font-weight: normal;
-  font-style: normal;
-}
-
+.rv-font-face('League Gothic', 'league_gothic/league_gothic-webfont', 'LeagueGothicRegular');
 @import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
 
 // Override theme settings (see ../template/settings.less)
@@ -34,7 +22,6 @@
 .bodyBackground() {
   .radial-gradient( rgba(28,30,32,1), rgba(85,90,95,1) );
 }
-
 
 
 // Theme template ------------------------------

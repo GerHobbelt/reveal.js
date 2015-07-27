@@ -17,4 +17,3 @@ When reporting a bug make sure to include information about which browser and op
   - Single-quoted strings
 - Should be made towards the **dev branch**
 - Should be submitted from a feature/topic branch (not your master)
-- Should not include the minified **reveal.min.js** or **reveal.min.css** files

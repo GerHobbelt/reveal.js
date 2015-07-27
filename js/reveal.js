@@ -84,7 +84,7 @@
 
             // Bounds for smallest/largest possible scale to apply to content (fundamentalScale)
             minScale: 0.05,
-            maxScale: 1.0,
+			maxScale: 1.5,
 
             // Bounds for smallest/largest possible scale to apply to content (per-slide scale correction)
             minSlideScale: 0.05,
@@ -4481,7 +4481,7 @@ TBD end of old code, start of new code
         // Update progress if enabled
 		if( config.progress && dom.progressbar ) {
 
-            dom.progressbar.style.width = getProgress() * window.innerWidth + 'px';
+			dom.progressbar.style.width = getProgress() * dom.wrapper.offsetWidth + 'px';
 
         }
     }
