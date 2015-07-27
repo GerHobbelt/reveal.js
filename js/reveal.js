@@ -3145,6 +3145,7 @@
 
 				var backgroundImage = slide.getAttribute( 'data-background-image' ),
 					backgroundVideo = slide.getAttribute( 'data-background-video' ),
+					backgroundVideoLoop = slide.hasAttribute( 'data-background-video-loop' ),
 					backgroundIframe = slide.getAttribute( 'data-background-iframe' );
 
 				// Images
@@ -3156,6 +3157,10 @@
                     var video = background.querySelector( 'video' );
                     if( !video ) {
 					    video = document.createElement( 'video' );
+
+    					if( backgroundVideoLoop ) {
+    						video.setAttribute( 'loop', '' );
+    					}
                     }
 					// Support comma separated lists of video sources
 					backgroundVideo.split( ',' ).forEach( function( source ) {
@@ -3165,7 +3170,7 @@
 					background.appendChild( video );
 				}
 				// Iframes
-				else if ( backgroundIframe ) {
+				else if( backgroundIframe ) {
 					var iframe = document.createElement( 'iframe' );
 						iframe.setAttribute( 'src', backgroundIframe );
 						iframe.style.width  = '100%';
@@ -4483,6 +4488,10 @@
         var totalCount = dom.wrapper.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
         // 'round' the click position back to slide index
         var slideIndex = Math.floor( 0.5 + ( event.clientX / window.innerWidth /* dom.wrapper.offsetWidth */ ) * (totalCount - 1) );
+		if( config.rtl ) {
+			slideIndex = totalCount - slideIndex;
+		}
+
         var pastCount = 0;
         var h, v;
 
@@ -4558,7 +4567,10 @@
         // If, after clicking a link or similar and we're coming back,
         // focus the document.body to ensure we can use keyboard shortcuts
         if( isHidden === false && document.activeElement !== document.body ) {
-            document.activeElement.blur();
+			// Not all elements support .blur() - SVGs among them.
+			if (typeof document.activeElement.blur === 'function') {
+				document.activeElement.blur();
+			}
             document.body.focus();
         }
 
