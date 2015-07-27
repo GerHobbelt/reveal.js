@@ -2557,19 +2557,12 @@ TBD end of old code, start of new code
                         realScale = Math.min( realScale, config.maxSlideScale );
                     }
 
-                    // We need to compensate for the scale factor, which is applied to the entire slide,
-                    // hence for centering properly *and* covering the entire intended slide area, we need
-                    // to scale the target size accordingly and use this scaled up/down version: 
                     targetSlideHeight = Math.round(targetInfo.slideHeight / realScale);
                     targetSlideWidth = Math.round(targetInfo.slideWidth / realScale);
-
                     // Allow user code to modify the slide layout and/or dimensions during the layout phase:
                     var eventData = {
                         x: x,
                         y: y,
-                        slide: slide,
-                        slideDimensions: {
-                            width: slideDimensions.width,
                             height: slideDimensions.height
                         },
                         slideScale: realScale,
@@ -2579,10 +2572,7 @@ TBD end of old code, start of new code
                         inPrintingMode: isPrintingPDF(),
                         isScrollableSlide: isScrollable,
                         targetInfo: targetInfo,
-                        slidesMatrixInfo: getSlidesOverviewInfo()
-                    }; 
                     dispatchEvent( 'layout:before', eventData );
-
                     // The user code executed in the event above may have tweaked the scale while *not* adjusting the slide dimensions:
                     // we want to keep that manual compensation intact during our fill iterative process below.
                     if (    targetSlideHeight !== eventData.scaledTargetSlideHeight ||
@@ -2606,7 +2596,7 @@ TBD end of old code, start of new code
                             if ( !isOverview() ) {
                                 realScale = Math.max( realScale, config.minSlideScale );
                                 realScale = Math.min( realScale, config.maxSlideScale );
-                            }
+			}
 
                             targetSlideHeight = Math.round(targetInfo.slideHeight / realScale);
                             targetSlideWidth = Math.round(targetInfo.slideWidth / realScale);
@@ -2687,7 +2677,6 @@ TBD end of old code, start of new code
                         }
                         if ( processed_scales.indexOf( Math.round( newAttempt.scale * 1000 ) ) !== -1 ) {
                             console.log('ITER: exit @ ', iter_rounds, ' because scale has been tested before --> cycle!')
-                            break;
                         }
                         processed_scales.push( Math.round( newAttempt.scale * 1000 ) );
 

@@ -38,7 +38,7 @@
             <div class="slides">
                 <section>
                     <h1>Reveal.js</h1>
-                    <h3>HTML Presentations Made Easy</h3>
+					<h3>The HTML Presentation Framework</h3>
                     <p>
                         <small>Created by <a href="http://hakim.se">Hakim El Hattab</a> / <a href="http://twitter.com/hakimel">@hakimel</a></small>
                     </p>
@@ -98,77 +98,57 @@
                 </section>
 
                 <section>
-					<h2>Mobile Support</h2>
+					<h2>Touch Optimized</h2>
                     <p>
-						Presentations work on touch devices such as phones and tablets. Simply swipe through your slides.
+						Presentations look great on touch devices, like mobile phones and tablets. Simply swipe through your slides.
                     </p>
                 </section>
 
-                <section>
-                    <h2>Marvelous Unordered List</h2>
-                    <ul>
-                        <li>No order here</li>
-                        <li>Or here</li>
-                        <li>Or here</li>
-                        <li>Or here</li>
-                    </ul>
-                </section>
+				<section data-markdown>
+					<script type="text/template">
+						## Markdown support
+
+						Write content using inline or external Markdown.
+						Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
+
+						```
+						<section data-markdown>
+						  ## Markdown support
+
+						  Write content using inline or external Markdown.
+						  Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
+						</section>
+						```
+					</script>
+				</section>
 
                 <section>
-                    <h2>Fantastic Ordered List</h2>
-                    <ol>
-                        <li>One is smaller than...</li>
-                        <li>Two is smaller than...</li>
-                        <li>Three!</li>
-                    </ol>
-                </section>
+					<section id="fragments">
+						<h2>Fragments</h2>
+						<p>Hit the next arrow...</p>
+						<p class="fragment">... to step through ...</p>
+						<ol>
+							<li class="fragment"><code>any type</code></li>
+							<li class="fragment"><em>of view</em></li>
+							<li class="fragment"><strong>fragments</strong></li>
+						</ol>
 
-                <section>
-                    <h2>Superb Tables</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Item</th>
-                                <th>Value</th>
-                                <th>Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Apples</td>
-                                <td>$1</td>
-                                <td>7</td>
-                            <tr>
-                            <tr>
-                                <td>Lemonade</td>
-                                <td>$2</td>
-                                <td>18</td>
-                            <tr>
-                            <tr>
-                                <td>Bread</td>
-                                <td>$3</td>
-                                <td>2</td>
-                            <tr>
-                        </tbody>
-                    </table>
-                </section>
-
-                <section data-markdown>
-                    <script type="text/template">
-                        ## Markdown support
-
-                        For those of you who like that sort of thing. Instructions and a bit more info available [here](https://github.com/hakimel/reveal.js#markdown).
-
-                        ```
-                        <section data-markdown>
-                          ## Markdown support
-
-                          For those of you who like that sort of thing.
-                          Instructions and a bit more info available [here](https://github.com/hakimel/reveal.js#markdown).
-                        </section>
-                        ```
-                    </script>
-                </section>
+						<aside class="notes">
+							This slide has fragments which are also stepped through in the notes window.
+						</aside>
+					</section>
+					<section>
+						<h2>Fragment Styles</h2>
+						<p>There's a few styles of fragments, like:</p>
+						<p class="fragment grow">grow</p>
+						<p class="fragment shrink">shrink</p>
+						<p class="fragment roll-in">roll-in</p>
+						<p class="fragment fade-out">fade-out</p>
+						<p class="fragment highlight-red">highlight-red</p>
+						<p class="fragment current-visible">current-visible</p>
+						<p class="fragment highlight-current-blue">highlight-current-blue</p>
+					</section>
+				</section>
 
                 <section id="transitions">
                     <h2>Transition Styles</h2>
@@ -214,59 +194,108 @@
                     </p>
                 </section>
 
-                <section>
-                    <h2>Global State</h2>
-                    <p>
-                        Set <code>data-state="something"</code> on a slide and <code>"something"</code>
-                        will be added as a class to the document element when the slide is open. This lets you
-                        apply broader style changes, like switching the background.
-                    </p>
-                </section>
+				<section>
+					<h2>Global State</h2>
+					<p>
+						Set <code>data-state="something"</code> on a slide and <code>"something"</code>
+						will be added as a class to the document element when the slide is open. This lets you
+						apply broader style changes, like switching the page background.
+					</p>
+				</section>
 
-                <section data-state="customevent">
-                    <h2>Custom Events</h2>
-                    <p>
-                        Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
-                    </p>
-                    <pre><code class="javascript" data-trim contenteditable style="font-size: 18px;">
+				<section data-state="customevent">
+					<h2>State Events</h2>
+					<p>
+						Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
+					</p>
+					<pre><code class="javascript" data-trim contenteditable style="font-size: 18px;">
 Reveal.addEventListener( 'customevent', function() {
-    console.log( '"customevent" has fired' );
+	console.log( '"customevent" has fired' );
 } );
-                    </code></pre>
-                </section>
+					</code></pre>
+				</section>
 
-                <section>
+				<section>
                     <section data-background-color="#007777">
-                        <h2>Slide Backgrounds</h2>
-                        <p>
+						<h2>Slide Backgrounds</h2>
+						<p>
                             Set <code>data-background-color="#007777"</code> on a slide to change the full page background to the given color. All CSS color formats are supported.
-                        </p>
-                        <a href="#" class="navigate-down">
+						</p>
+						<a href="#" class="navigate-down">
                             <img width="178" height="238" data-src="assets/arrow.png" alt="Down arrow">
-                        </a>
-                    </section>
+						</a>
+					</section>
                     <section data-background-image="assets/arrow.png">
-                        <h2>Image Backgrounds</h2>
+						<h2>Image Backgrounds</h2>
                         <pre><code class="html">&lt;section data-background-image="image.png"&gt;</code></pre>
-                    </section>
+					</section>
                     <section data-background-image="assets/arrow.png" data-background-repeat="repeat" data-background-size="100px">
-                        <h2>Repeated Image Backgrounds</h2>
+						<h2>Tile Backgrounds</h2>
                         <pre><code class="html" style="word-wrap: break-word;">&lt;section data-background-image="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
-                    </section>
-                </section>
+					</section>
+				</section>
 
                 <section data-transition="slide" data-background-color="#4d7e65" data-background-transition="slide">
-                    <h2>Background Transitions</h2>
-                    <p>
-                        Pass reveal.js the <code>backgroundTransition: 'slide'</code> config argument to make backgrounds slide rather than fade.
-                    </p>
+					<h2>Background Transitions</h2>
+					<p>
+						Different background transitions are available via the <code>backgroundTransition</code> option. This one's called "slide".
+					</p>
+				</section>
+
+				<section data-transition="slide" data-background-color="#8c4738" data-background-transition="zoom">
+					<h2>Background Transitions</h2>
+					<p>
+						You can override background transitions per slide by using <code>data-background-transition="zoom"</code>.
+					</p>
                 </section>
 
-                <section data-transition="slide" data-background-color="#8c4738" data-background-transition="slide">
-                    <h2>Background Transition Override</h2>
-                    <p>
-                        You can override background transitions per slide by using <code>data-background-transition="slide"</code>.
-                    </p>
+				<section>
+					<h2>Marvelous List</h2>
+                    <ul>
+                        <li>No order here</li>
+                        <li>Or here</li>
+                        <li>Or here</li>
+                        <li>Or here</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Fantastic Ordered List</h2>
+                    <ol>
+                        <li>One is smaller than...</li>
+                        <li>Two is smaller than...</li>
+                        <li>Three!</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h2>Superb Tables</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Value</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Apples</td>
+                                <td>$1</td>
+                                <td>7</td>
+                            <tr>
+                            <tr>
+                                <td>Lemonade</td>
+                                <td>$2</td>
+                                <td>18</td>
+                            <tr>
+                            <tr>
+                                <td>Bread</td>
+                                <td>$3</td>
+                                <td>2</td>
+                            <tr>
+                        </tbody>
+                    </table>
                 </section>
 
                 <section>
