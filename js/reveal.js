@@ -254,6 +254,9 @@
         // The current scale of the presentation (see width/height config)
         scale = 1,
 
+		// The current z position of the presentation container
+		z = 0,
+
         // Cached references to DOM elements
         dom = {},
 
@@ -3468,11 +3471,17 @@ TBD end of old code, start of new code
             // Don't auto-slide while in overview mode
             cancelAutoSlide();
 
-            // Vary the depth of the overview based on screen size
+			// Set the depth of the presentation. This determines how far we
+			// zoom out and varies based on display size. It gets applied at
+			// the layout step.
             //var depth = window.innerWidth < 400 ? 1000 : 2500;
 
             dom.wrapper.classList.add( 'overview' );
             dom.wrapper.classList.remove( 'overview-deactivating' );
+
+			// TODO: Move the backgrounds element into the slide container to
+			// that the same scaling is applied
+			//dom.slides.appendChild( dom.background );
 
             dom.wrapper.classList.remove( config.transition );
             dom.wrapper.classList.add( config.overviewTransition );
@@ -3543,6 +3552,9 @@ TBD end of old code, start of new code
             dom.wrapper.classList.remove( 'overview' );
             dom.wrapper.classList.remove( 'overview-activating' );
 
+			// TODO: Move the background element back out
+			//dom.wrapper.appendChild( dom.background );
+
             dom.wrapper.classList.remove( config.overviewTransition );
             dom.wrapper.classList.add( config.transition );
 
@@ -3558,10 +3570,15 @@ TBD end of old code, start of new code
                 dom.wrapper.classList.remove( 'overview-deactivating' );
             }, 50 );
 
-            // Select all slides
+			// Clean up changes made to slides
 			toArray( dom.slides.querySelectorAll( SCOPED_FROM_WRAPPER_ALL_SLIDES_SELECTOR ) ).forEach( function( slide ) {
                 slide.removeEventListener( 'click', onOverviewSlideClicked, true );
             } );
+
+			// TODO: Clean up changes made to backgrounds
+			//toArray( dom.background.querySelectorAll( '.slide-background' ) ).forEach( function( background ) {
+			//	transformElement( background, '' );
+			//} );
 
             slide( indexh, indexv );
 
@@ -4488,37 +4505,57 @@ TBD end of old code, start of new code
 
     /**
      * Updates the slide number div to reflect the current slide.
+	 *
+	 * Slide number format can be defined as a string using the
+	 * following variables:
+	 *  h: current slide's horizontal index
+	 *  v: current slide's vertical index
+	 *  c: current slide index (flattened)
+	 *  t: total number of slides (flattened)
      */
     function updateSlideNumber() {
 
         // Update slide number if enabled
         if( config.slideNumber && dom.slideNumber) {
 
-            // Display the number of the page using 'indexh - indexv [ . fragment ]' format
-            var indexString = '' + indexh;
+			// Default to only showing the current slide number
+			var format = 'c';
+
+			// Check if a custom slide number format is available
+			if( typeof config.slideNumber === 'string' ) {
+				format = config.slideNumber;
+			}
+
+			var totalSlides = getTotalSlides();
+
+            var v = false;
             if( indexv > 0 ) {
-                indexString += '-' + indexv;
+                v = indexv;
             }
 
+            var f = false;
             if( config.fragments ) {
                 if( currentSlide ) {
                     var currentFragment = currentSlide.querySelector( '.fragment.visible.current-fragment' );
                     if( currentFragment ) {
-                        var f = (parseInt( currentFragment.getAttribute( 'data-fragment-index' ), 10 ) + 1) || 0;
-                        indexString += '.' + f;
+                        f = (parseInt( currentFragment.getAttribute( 'data-fragment-index' ), 10 ) + 1) || 0;
                     }
                     else {
                         var allFragments = currentSlide.querySelectorAll( '.fragment' );
                         // when the current slide has fragments but none of them is 'current' then we are at the start of the slide
                         // which we represent by fragment number zero(0):
                         if( allFragments.length > 0 ) {
-                            indexString += '.0';
+                            f = 0;
                         }
                     }
                 }
             }
 
-            dom.slideNumber.innerHTML = indexString;
+			dom.slideNumber.innerHTML = format.replace( /h/g, indexh )
+												.replace( /v/g, (indexv === false ? '-' : indexv ))
+												.replace( /f/g, (f === false ? '-' : f ))
+												.replace( /c/g, Math.round( getProgress() * totalSlides ) + 1 )
+												.replace( /t/g, totalSlides + 1 );
         }
 
     }
@@ -5145,7 +5182,7 @@ TBD end of old code, start of new code
 			// Ensure the named link is a valid HTML ID attribute
 			if( /^[a-zA-Z][\w:.-]*$/.test( name ) ) {
 				// Find the slide with the specified ID
-                element = document.querySelector( '#' + name );
+				element = document.getElementById( name );
             }
 
             if( element ) {
