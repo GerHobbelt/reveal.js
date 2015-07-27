@@ -1,0 +1,83 @@
+fs = require('fs');
+
+function abortus_provocatus() {
+    var ex = new Error();
+    ex.special_exit = 666;
+    throw ex;
+}
+
+try {
+    var args = process.argv;
+    //console.log(args);
+    if (args.length < 4) {
+        console.log('### Required arguments: <repo-name> <metafile-or-screengrab-file>');
+        throw true;
+    }
+
+    var default_repo_name = args[2];
+    var file = args[3];
+
+    fs.readFile(file, 'utf8', function (err, data) {
+      if (err) {
+        console.log('### Cannot read file: ', file);
+        abortus_provocatus();
+      }
+
+      // Check if the data is JSON: if it is, pass it through untouched:
+      try {
+        JSON.parse(data);
+        //console.log('ok');
+        console.log(data);
+      } catch (ex) {
+        //console.log(ex);
+        
+        // Exception mans the file format can be either github pullreq screengrab 
+        // or github members list format or both (when those screengrabs are pasted together
+        // into a single file).
+        // 
+        // See if we can find any lines of interest...
+        // 
+        //     #1234 opened on 12 Jan 2345 by username  bla-milestone-bla
+        //     @username User Name / repository
+        var re_pullreqs = /^\s*#\d+ opened on \d+ [a-zA-Z]+ \d+ by ([^\s]+)/;
+        var re_memberlist = /^\s*@([^\s]+) [^\/]+\/\s*([^\s]+)\s*$/;  
+
+        var lines = data.replace('\r', '\n').split('\n');
+        // Collect the lines matching either of our regexes:
+        var m = lines.map(function (l) {
+            var m1 = re_pullreqs.exec(l);
+            var m2 = re_memberlist.exec(l);
+            if (m1 && m2) {
+                console.error('### unexpected double match for line: ', l);
+                abortus_provocatus();
+            }
+            if (m1) {
+                m1[2] = default_repo_name;
+                return m1;
+            }
+            return m2;
+        }).filter(function (m) {
+            return !!m;
+        });
+        // Each entry in m[] is an array: [1] = username, [2] = reponame
+        // 
+        // Now fake a github 'meta' JSON file:
+        var metafile = {
+            users: m.map(function (d) {
+                return {
+                    name: d[1],
+                    repo: d[2]
+                };
+            })
+        };
+        console.log(JSON.stringify(metafile));
+      }
+    });
+} catch (ex) {
+    if (ex.special_exit !== 666) {
+        console.error('### Exception: ', ex);
+        console.error('###   Stack: ', ex.stack);
+        process.exit(3);
+    }
+    process.exit(1);
+}

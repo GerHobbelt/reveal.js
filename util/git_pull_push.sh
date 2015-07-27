@@ -51,6 +51,7 @@ f )
     git push --tags                                                       2>&1
     popd                                                                  2> /dev/null  > /dev/null
   done
+  echo processing MAIN REPO: $wd
   $@
   git fetch --tags                                                        2>&1
   git pull --all                                                          2>&1
@@ -76,6 +77,7 @@ F )
     git push --tags                                                       2>&1
     popd                                                                  2> /dev/null  > /dev/null
   done
+  echo processing MAIN REPO: $wd
   $@
   git fetch --tags                                                        2>&1
   git pull --all                                                          2>&1
@@ -139,6 +141,7 @@ p )
     git pull --all                                                        2>&1
     popd                                                                  2> /dev/null  > /dev/null
   done
+  echo processing MAIN REPO: $wd
   $@
   git fetch --tags                                                        2>&1
   git pull --all                                                          2>&1
@@ -160,6 +163,7 @@ P )
     git pull --all                                                        2>&1
     popd                                                                  2> /dev/null  > /dev/null
   done
+  echo processing MAIN REPO: $wd
   $@
   git fetch --tags                                                        2>&1
   git pull --all                                                          2>&1
@@ -183,6 +187,7 @@ R )
     git reset --hard                                                      2>&1
     popd                                                                  2> /dev/null  > /dev/null
   done
+  echo RESET-ing MAIN REPO: $wd
   $@
   git reset --hard                                                        2>&1
   ;;
@@ -230,6 +235,7 @@ c )
     git remote prune origin
     popd                                                                  2> /dev/null  > /dev/null
   done
+  echo processing MAIN REPO: $wd
   $@
   git gc
   git fsck --full --unreachable --strict
@@ -263,6 +269,7 @@ C )
     git remote prune origin
     popd                                                                  2> /dev/null  > /dev/null
   done
+  echo processing MAIN REPO: $wd
   $@
   git gc
   git fsck --full --unreachable --strict
@@ -289,6 +296,7 @@ s )
     git push -u origin --all
     popd                                                                  2> /dev/null  > /dev/null
   done
+  echo processing MAIN REPO: $wd
   $@
   git push -u origin --all
   ;;
@@ -307,7 +315,7 @@ pull & push all git repositories in the current path.
 -q       : pull/push all the git submodules ONLY (not the main project).
 -Q       : pull/push all the top level git submodules ONLY (not the main project).
 -p       : only PULL this git repository and the git submodules.
--p       : only PULL this git repository and the top level git submodules.
+-P       : only PULL this git repository and the top level git submodules.
 -c       : cleanup git repositories: run this when you get
            error 'does not point to valid object'
 -C       : cleanup top level git repositories: run this when you get
@@ -316,7 +324,6 @@ pull & push all git repositories in the current path.
            submodule and push the local repo. This one ensures a 'git push --all'
            will succeed for each local branch the next time you run that
            command directly or indirectly via, e.g. 'util/git_pull_push.sh -f'
-
 -R       : HARD RESET this git repository and the git submodules. This is useful
            to sync the working directories after you ran the VM_push/pull script
            in your VM.

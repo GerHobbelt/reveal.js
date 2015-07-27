@@ -63,7 +63,7 @@ When any fork names (github users) are listed, these are added as
 additional repository remotes.
 
 Instead of the <forks> you can specify a JSON file as obtained raw 
-from github by specifying its elative or absolute path: it is recognized
+from github by specifying its relative or absolute path: it is recognized
 as a path just as long as you make sure there's at least one slash '/'
 in it.
 

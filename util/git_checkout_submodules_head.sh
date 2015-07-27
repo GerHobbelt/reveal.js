@@ -1,5 +1,8 @@
 #! /bin/bash
 #
+# HELP/NOTE: get online help by calling with:   -h
+#
+# 
 # checkout all submodules to their desired 'HEAD' bleeding edge revision: MASTER for most.
 #
 
@@ -33,7 +36,8 @@ checkout git submodules to the preconfigured branch (master / other).
 -l       : list the submodules which will be checked out to a non-'master' branch
 
 EOT
-  exit
+  popd                                                                                                  2> /dev/null  > /dev/null
+  exit 2
   ;;
 
 "l" )
