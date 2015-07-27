@@ -1,0 +1,55 @@
+/**
+ * A simple theme for reveal.js presentations, similar
+ * to the default theme. The accent color is darkblue.
+ *
+ * This theme is Copyright (C) 2012 Owen Versteeg, https://github.com/StereotypicalApps. It is MIT licensed.
+ * reveal.js is Copyright (C) 2011-2012 Hakim El Hattab, http://hakim.se
+ */
+
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+
+
+// Include theme-specific fonts
+@import url(http://fonts.googleapis.com/css?family=Questrial|Gudea);
+
+
+// Override theme settings (see ../template/settings.scss)
+$mainFont: 'Gudea', sans-serif;
+$mainColor: #000;
+$headingFont: 'Questrial', Impact, sans-serif;
+$headingColor: #000;
+$headingTextShadow: none;
+$headingTextTransform: none;
+$backgroundColor: white;
+$linkColor: #48a29f;
+$linkColorHover: lighten( $linkColor, 20% );
+$selectionBackgroundColor: rgba(0, 0, 0, 0.99);
+
+div.reveal{
+    width: 100%;
+    height: 100%;
+    display: block;
+    position:relative;
+
+    &::after {
+        content: "";
+	    background: url("/img/caa.png") no-repeat;
+        background-size: 8%;
+        opacity: 0.5;
+        top: 5%;
+        left: 3%;
+        bottom: 0;
+        right: 0;
+        position: absolute;
+        z-index: -1;
+    }
+}
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------
