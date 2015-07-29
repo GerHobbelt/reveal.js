@@ -12,12 +12,6 @@
 @import "../template/settings";
 // ---------------------------------------------
 
-
-
-// Include theme-specific fonts
-@import url(http://fonts.googleapis.com/css?family=Questrial|Gudea);
-
-
 // Override theme settings (see ../template/settings.scss)
 $mainFont: 'Gudea', sans-serif;
 $mainColor: #000;
@@ -48,6 +42,45 @@ div.reveal{
         position: absolute;
         z-index: -1;
     }
+}
+
+/*
+
+This is what is served to Chrome when going to
+http://fonts.googleapis.com/css?family=Questrial|Gudea
+
+Storing these fonts locally and using this CSS is terrible, but if I try to do
+a presentation without a net connection, it can choke trying to download the
+*.woff2 files, which is also terrible.
+
+Ideally I'd have a way to switch between offline and online modes without
+changing the CSS or presentation HTML.
+
+*/
+
+/* latin-ext */
+@font-face {
+  font-family: 'Gudea';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Gudea'), url(/css/theme/font/Gudea-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Gudea';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Gudea'), url(/css/theme/font/Gudea-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: 'Questrial';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Questrial'), local('Questrial-Regular'), url(/css/theme/font/Questrial-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
 }
 
 // Theme template ------------------------------
