@@ -27,7 +27,7 @@
                 return factory( window, document, assert, verge );
             });
         } else {
-            // Browser globals
+            // Browser globals.
             window.Reveal = factory( window, document, assert, verge );
         }
     }
@@ -39,11 +39,11 @@
 
     // these *_SELECTOR defines are all `dom.wrapper` based, which explains why they won't have the `.reveal` root/wrapper DIV class in them:
 	var SLIDES_SELECTOR = '.slides > section, .slides > section > section',
-		HORIZONTAL_SLIDES_SELECTOR = '.slides > section',
-		VERTICAL_SLIDES_SELECTOR = '.slides > section.present > section',
-		HOME_SLIDE_SELECTOR = '.slides > section:first-of-type',
+		HORIZONTAL_SLIDES_SELECTOR = '.slides>section',
+		VERTICAL_SLIDES_SELECTOR = '.slides>section.present>section',
+		HOME_SLIDE_SELECTOR = '.slides>section:first-of-type',
         FRAGMENTS_SELECTOR = '.slides > section .fragment',
-        LINKS_SELECTOR = '.slides a',
+        LINKS_SELECTOR = '.slides a:not(.image)',
         ROLLING_LINKS_SELECTOR = '.slides a.roll';
     // this *_SELECTOR define is (horizontal) slide `section` selection based:
     var SCOPED_FROM_WRAPPER_HORIZONTAL_SLIDES_SELECTOR = ':scope > section',
@@ -60,7 +60,7 @@
         // Configurations defaults, can be overridden at initialization time
         config = {
 
-            // The 'normal' size of the presentation, aspect ratio will be preserved
+            // The "normal" size of the presentation, aspect ratio will be preserved
             // when the presentation is scaled to fit different resolutions
             width: '100%', //960,
             height: '100%', //700,
@@ -197,6 +197,10 @@
             // // Parallax background size [DEPRECATED]
             // parallaxBackgroundSize: '', // CSS syntax, e.g. '3000px 2000px'
 
+			// Amount of pixels to move the parallax background per slide step
+			parallaxBackgroundHorizontal: null,
+			parallaxBackgroundVertical: null,
+
             // Number of slides away from the current that are visible in overview mode
             viewDistance: 6,
 
@@ -222,6 +226,8 @@
         // Flags if reveal.js is loaded (has dispatched the 'ready' event)
         loaded = false,
 
+		// Flags if the overview mode is currently active
+		overview = false,
         // The horizontal and vertical index of the currently active slide
         indexh /* = undefined */,
         indexv /* = undefined */,
@@ -257,6 +263,10 @@
 		// The current z position of the presentation container
 		z = 0,
 
+		// CSS transform that is currently applied to the slides container,
+		// split into two groups
+		slidesTransform = { layout: '', overview: '' },
+
         // Cached references to DOM elements
         dom = {},
 
@@ -286,6 +296,9 @@
 
         // {setTimeout handler} A delay used during (de)activation of the overview mode
         activateOverviewTimeout = null,
+
+        // A delay used to deactivate the overview mode
+        deactivateOverviewTimeout = 0,
 
         // {setTimeout handler} A delay used to hide next/previous slides in the deck after the transition to the new current slide has completed.
         transitionMaxDurationTimeout = null,
@@ -613,6 +626,9 @@
         // Listen to messages posted to this window
         setupPostMessage();
 
+		// Prevent iframes from scrolling the slides out of view
+		setupIframeScrollPrevention();
+
         // Resets all vertical slides so that only the first is visible
         resetVerticalSlides();
 
@@ -675,7 +691,22 @@
             } );
         }, 1 );
 
+		// Special setup and config is required when printing to PDF
+		if( isPrintingPDF() ) {
+			removeEventListeners();
+
+			// The document needs to have loaded for the PDF layout
+			// measurements to be accurate
+			if( document.readyState === 'complete' ) {
+				setupPDF();
+			}
+			else {
+				window.addEventListener( 'load', setupPDF );
+			}
+		}
+
         return true;
+
     }
 
     /**
@@ -749,8 +780,11 @@
         // Cache references to key DOM elements
         dom.theme = document.querySelector( '#theme' );
         dom.wrapper = document.querySelector( '.reveal' );
-        dom.slides = document.querySelector( '.reveal .slides' );
+        //dom.slides = document.querySelector( '.reveal .slides' );
+
         if ( !dom.wrapper || !dom.slides ) return false;
+
+		dom.wrapper.setAttribute( 'role', 'application' );
 
         // Prevent transitions while we're loading
         dom.wrapper.classList.add( 'no-transition' );
@@ -805,7 +839,6 @@
 
         // Slide number
         dom.slideNumber = createSingletonNode( dom.wrapper, 'div', 'slide-number', null );
-
         // Overlay graphic which is displayed during the paused mode
         createSingletonNode( dom.wrapper, 'div', 'pause-overlay', null );
 
@@ -827,7 +860,7 @@
         return !!dom.statusDiv;
     }
 
-	/**
+    /**
 	 * Creates a hidden div with role aria-live to announce the
 	 * current slide content. Hide the div off-screen to make it
 	 * available only to Assistive Technologies.
@@ -978,13 +1011,33 @@ TBD end of old code, start of new code
     }
 
     /**
+	 * This is an unfortunate necessity. Iframes can trigger the
+	 * parent window to scroll, for example by focusing an input.
+	 * This scrolling can not be prevented by hiding overflow in
+	 * CSS so we have to resort to repeatedly checking if the
+	 * browser has decided to offset our slides :(
+	 */
+	function setupIframeScrollPrevention() {
+
+		if( dom.slides.querySelector( 'iframe' ) ) {
+			setInterval( function() {
+				if( dom.wrapper.scrollTop !== 0 || dom.wrapper.scrollLeft !== 0 ) {
+					dom.wrapper.scrollTop = 0;
+					dom.wrapper.scrollLeft = 0;
+				}
+			}, 500 );
+		}
+
+	}
+
+	/**
      * Creates an HTML element and returns a reference to it.
      * If the element already exists the existing instance will
      * be returned.
      */
     function createSingletonNode( container, tagname, classname, innerHTML ) {
 
-		// Find all nodes matching the description
+		// Find the one which is a direct child of the specified container
 		var testNode = container.querySelector( ':scope > ' + tagname + '.' + classname );
 
 		if( testNode ) {
@@ -1415,7 +1468,7 @@ TBD end of old code, start of new code
         }
 
         // When fragments are turned off they should be visible
-        if( !config.fragments ) {
+        if( !config.fragments && dom.slides ) {
             toArray( dom.slides.querySelectorAll( '.fragment' ) ).forEach( function( element ) {
                 element.classList.add( 'visible' );
                 element.classList.remove( 'current-fragment' );
@@ -2043,9 +2096,9 @@ TBD end of old code, start of new code
                 }
             }
 
-            var event = document.createEvent( 'HTMLEvents', 1, 2 );
+		var event = document.createEvent( 'HTMLEvents', 1, 2 );
             event.initEvent( type, true, true );
-            extend( event, args );
+		extend( event, args );
             dom.wrapper.dispatchEvent( event );
 
             // If we're in an iframe, post each reveal.js event to the
@@ -3436,9 +3489,6 @@ TBD end of old code, start of new code
     /**
      * Displays the overview of slides (quick nav) by
      * scaling down and arranging all slide elements.
-     *
-     * Experimental feature, might be dropped if perf
-     * can't be improved.
      */
     function activateOverview() {
 
@@ -4727,8 +4777,17 @@ TBD end of old code, start of new code
 				currentBackground.style.backgroundImage = backgroundImageURL;
 			}
 
-            // Don't transition between identical backgrounds. This
-            // prevents unwanted flicker.
+			var backgroundImageURL = currentBackground.style.backgroundImage || '';
+
+			// Restart GIFs (doesn't work in Firefox)
+			if( /\.gif/i.test( backgroundImageURL ) ) {
+				currentBackground.style.backgroundImage = '';
+				window.getComputedStyle( currentBackground ).opacity;
+				currentBackground.style.backgroundImage = backgroundImageURL;
+			}
+
+			// Don't transition between identical backgrounds. This
+			// prevents unwanted flicker.
             var previousBackgroundHash = previousBackground ? previousBackground.getAttribute( 'data-background-hash' ) : null;
             var currentBackgroundHash = currentBackground.getAttribute( 'data-background-hash' );
             if( currentBackgroundHash && currentBackgroundHash === previousBackgroundHash && currentBackground !== previousBackground ) {
@@ -4750,7 +4809,7 @@ TBD end of old code, start of new code
 					dom.wrapper.classList.remove( classToBubble );
 				}
 			} );
-		}
+        }
 
         // Allow the first background to apply without transition
         setTimeout( function() {
@@ -4887,7 +4946,7 @@ TBD end of old code, start of new code
 					background.appendChild( video );
 				}
 				// Iframes
-				else if ( backgroundIframe ) {
+				else if( backgroundIframe ) {
 					var iframe = document.createElement( 'iframe' );
 						iframe.setAttribute( 'src', backgroundIframe );
 						iframe.style.width  = '100%';
@@ -4918,11 +4977,11 @@ TBD end of old code, start of new code
 		if( background ) {
 			//background.style.display = 'none';
             background.classList.remove( 'visible' );
-		}
+        }
 
-	}
+    }
 
-	/**
+    /**
      * Determine what available routes there are for navigation.
      *
      * @return {Object} containing four booleans: left/right/up/down
@@ -5072,8 +5131,8 @@ TBD end of old code, start of new code
             toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
                     el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
-				}
-			} );
+                }
+			});
 
 			// Vimeo embeds
 			toArray( slide.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
@@ -5200,7 +5259,7 @@ TBD end of old code, start of new code
             var h = parseInt( bits[1], 10 ) || 0,
                 v = parseInt( bits[2], 10 ) || 0;
 
-            slide( h, v );
+				slide( h, v );
         }
 
     }
@@ -5602,7 +5661,14 @@ TBD end of old code, start of new code
 
                         if( i === index ) {
                             element.classList.add( 'current-fragment' );
+
+            				handleCSSFragments(element, false);
                         }
+                        else {
+                            element.classList.remove( 'current-fragment' );
+
+            				handleCSSFragments(element, true);
+					}
                     }
                     // Hidden fragments
                     else {
@@ -5611,6 +5677,7 @@ TBD end of old code, start of new code
                         }
                         element.classList.remove( 'visible' );
                         element.classList.remove( 'current-fragment' );
+        				handleCSSFragments(element, true);
                     }
 
                 } );
@@ -5642,7 +5709,7 @@ TBD end of old code, start of new code
                 var changed = ( fragmentsShown.length !== 0 || fragmentsHidden.length !== 0 );
 
                 if ( changed ) {
-                    updateControls();
+				updateControls();
                     updateProgress();
                     updateSlideNumber();
                 }
@@ -5654,6 +5721,38 @@ TBD end of old code, start of new code
         }
 
         return false;
+
+    }
+
+    /**
+	 * Handles addition or removal of CSS classes when using CSS fragments.
+	 *
+	 * @param {HTMLElement} The element with the "fragment" class that has been made
+	 * visible and is now checked for CSS fragments.
+	 * @param {boolean} If the CSS fragment operation should be applied in reverse order
+	 * (when the fragment is being removed instead of shown), this flag needs to be set to
+	 * true.
+	 *
+	 * @return {void}
+	 */
+	function handleCSSFragments(element, reverse) {
+
+		if( !element.classList.contains('css-fragment') ) {
+			return;
+		}
+
+		var addClass = element.getAttribute('data-add-class');
+		var removeClass = element.getAttribute('data-remove-class');
+		var target = element.getAttribute('data-target');
+
+		if( reverse ) {
+			var temp = addClass;
+			addClass = removeClass;
+			removeClass = temp;
+		}
+
+		document.querySelectorAll( target )[0].classList.add( addClass );
+		document.querySelectorAll( target )[0].classList.remove( removeClass );
 
     }
 
@@ -5742,7 +5841,7 @@ TBD end of old code, start of new code
 
         }
 
-    }
+            }
 
     /**
      * Cancels any ongoing request to auto-slide.
@@ -5757,13 +5856,13 @@ TBD end of old code, start of new code
     function pauseAutoSlide() {
 
         if( autoSlide && !autoSlidePaused ) {
-            autoSlidePaused = true;
+			autoSlidePaused = true;
             dispatchEvent( 'autoslidepaused' );
-            clearTimeout( autoSlideTimeout );
+			clearTimeout( autoSlideTimeout );
             autoSlideTimeout = -1;
 
-            if( autoSlidePlayer ) {
-                autoSlidePlayer.setPlaying( false );
+			if( autoSlidePlayer ) {
+				autoSlidePlayer.setPlaying( false );
             }
         }
 
@@ -5772,9 +5871,9 @@ TBD end of old code, start of new code
     function resumeAutoSlide() {
 
         if( autoSlide && autoSlidePaused ) {
-            autoSlidePaused = false;
+			autoSlidePaused = false;
             dispatchEvent( 'autoslideresumed' );
-            cueAutoSlide();
+			cueAutoSlide();
         }
 
     }
@@ -5975,6 +6074,7 @@ TBD end of old code, start of new code
             if (document.activeElement) {
                 document.activeElement.blur();
             }
+            activeElementIsCE = document.activeElement;
         }
 
         // Disregard the event if there's a focused element or a
@@ -6048,37 +6148,37 @@ TBD end of old code, start of new code
             triggered = true;
 
             switch( event.keyCode ) {
-            // p, page up
+				// p, page up
             case 80: 
             case 33: 
                 navigatePrev(); break;
-            // n, page down
+				// n, page down
             case 78: 
             case 34: 
                 navigateNext(); break;
-            // h, left
+				// h, left
             case 72: 
             case 37: 
                 navigateLeft(); break;
-            // l, right
+				// l, right
             case 76: 
             case 39: 
                 navigateRight(); break;
-            // k, up
+				// k, up
             case 75: 
             case 38: 
                 navigateUp(); break;
-            // j, down
+				// j, down
             case 74: 
             case 40: 
                 navigateDown(); break;
-            // home
+				// home
             case 36: 
                 slide( 0, 0, 0 ); break;
-            // end
+				// end
             case 35: 
                 slide( Infinity, Infinity, Infinity ); break;
-            // space
+				// space
             case 32:
                 if (isOverview()) {
                     deactivateOverview();
@@ -6090,7 +6190,7 @@ TBD end of old code, start of new code
                     navigateNext();
                 }
                 break;
-            // return
+				// return
             case 13:
                 if (isOverview()) {
                     deactivateOverview();
@@ -6107,7 +6207,7 @@ TBD end of old code, start of new code
             case 190: 
             case 191: 
                 togglePause(); break;
-            // f
+				// f
             case 70: 
                 enterFullscreen(); break;
             // a
@@ -6133,11 +6233,11 @@ TBD end of old code, start of new code
                 if (isOverview()) {
                     if ( config.__overviewViewDistance_backup == null ) {
                         config.__overviewViewDistance_backup = config.viewDistance;
-                    }
+			}
                     // set a distance equivalent to 'infinity'
                     config.viewDistance = Infinity;
                     activateOverview();
-                }
+		}
                 break;
 
             // 8: reset overview to be restricted to configured distance limits
@@ -6145,7 +6245,7 @@ TBD end of old code, start of new code
                 if (isOverview()) {
                     if ( config.__overviewViewDistance_backup == null ) {
                         config.__overviewViewDistance_backup = config.viewDistance;
-                    }
+		}
                     config.viewDistance = config.__overviewViewDistance_backup;
                     activateOverview();
                 }
@@ -6159,15 +6259,15 @@ TBD end of old code, start of new code
                 layout();
                 break;
 
-            // ESC or O key
+		// ESC or O key
             case 27:
             case 79:
                 if( dom.overlay ) {
                     closeOverlay();
-                }
-                else {
-                    toggleOverview();
-                }
+			}
+			else {
+				toggleOverview();
+			}
                 break;
 
             default:
@@ -6346,36 +6446,6 @@ TBD end of old code, start of new code
     function onPointerUp( event ) {
 
         if( event.pointerType === event.MSPOINTER_TYPE_TOUCH || event.pointerType === 'touch' )  {
-            event.touches = [{ clientX: event.clientX, clientY: event.clientY }];
-            onTouchEnd( event );
-        }
-
-    }
-
-    /**
-     * Handles mouse wheel scrolling, throttled to avoid skipping
-     * multiple slides.
-     */
-    function onDocumentMouseScroll( event ) {
-
-        if( Date.now() - lastMouseWheelStep > 600 ) {
-
-            lastMouseWheelStep = Date.now();
-
-            var delta = event.detail || -event.wheelDelta;
-            if( delta > 0 ) {
-                navigateNext();
-            }
-            else {
-                navigatePrev();
-            }
-
-        }
-
-    }
-
-    /**
-     * Clicking on the progress bar results in a navigation to the
      * closest approximate slide. As the progressbar represents the
      * actual slide position (mixed horizontal and vertical) hence
      * it makes sense to translate the click event to a (h, v) slide
@@ -6393,6 +6463,10 @@ TBD end of old code, start of new code
         var totalCount = getTotalSlides();
         // 'round' the click position back to slide index
         var slideIndex = Math.floor( 0.5 + ( event.clientX / window.innerWidth /* dom.wrapper.offsetWidth */ ) * (totalCount - 1) );
+		if( config.rtl ) {
+			slideIndex = totalCount - slideIndex;
+		}
+
         var pastCount = 0;
         var h, v;
 
@@ -6524,9 +6598,9 @@ TBD end of old code, start of new code
 
 		if( event.currentTarget && event.currentTarget.hasAttribute( 'href' ) ) {
 			var url = event.currentTarget.getAttribute( 'href' );
-		    if( url ) {
+        if( url ) {
 				showPreview( url );
-			    event.preventDefault();
+            event.preventDefault();
 			}
         }
 
@@ -6853,6 +6927,8 @@ TBD end of old code, start of new code
 
         // Returns true if we're currently on the first slide
         isFirstSlide: function() {
+            //var rv = document.querySelector( SLIDES_SELECTOR + '.past' );
+            //return !rv;
 			return ( indexh === 0 && indexv === 0 );
         },
 
@@ -6890,7 +6966,7 @@ TBD end of old code, start of new code
                 }
                 else {
                     dom.wrapper.addEventListener( type, listener, useCapture );
-                }
+			}
             }
         },
         removeEventListener: function( type, listener, useCapture ) {
@@ -6906,7 +6982,7 @@ TBD end of old code, start of new code
                 }
                 else {
                     dom.wrapper.removeEventListener( type, listener, useCapture );
-                }
+			}
             }
         },
         

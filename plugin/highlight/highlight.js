@@ -1,4 +1,4 @@
-// Custom reveal.js integration
+// START CUSTOM REVEAL.JS INTEGRATION
 
 (function ( window, factory ) {
 

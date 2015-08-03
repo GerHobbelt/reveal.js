@@ -60,8 +60,6 @@ body, p, td, li, div {
 .reveal h1, .reveal h2, .reveal h3,h4,h5,h6 {
     text-shadow: 0 0 0 #000 !important;
   font-size: 18pt;
-}
-
 .reveal pre code {
     overflow: hidden !important;
 	font-family: Courier, 'Courier New', monospace !important;

@@ -5,6 +5,7 @@
 Clone the project into a new repository gh-pages branch,
 rename `index-jolicode.html` into `index.html` and start working!
 
+
 ## What's different
 
 - `index-jolicode.html` demo with specific instructions
@@ -97,6 +98,7 @@ When used locally, this feature requires that reveal.js [runs from a local web s
 </section>
 ```
 
+
 #### Element Attributes
 
 Special syntax (in html comment) is available for adding attributes to Markdown elements. This is useful for fragments, amongst other things.
@@ -109,6 +111,7 @@ Special syntax (in html comment) is available for adding attributes to Markdown 
     </script>
 </section>
 ```
+
 
 #### Slide Attributes
 
@@ -209,6 +212,11 @@ Reveal.initialize({
 
     // Parallax background size
     parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
+
+	// Amount to move parallax background (horizontal and vertical) on slide change
+	// Number, e.g. 100
+	parallaxBackgroundHorizontal: '',
+	parallaxBackgroundVertical: '',
 
     // Transition style for full page backgrounds
     backgroundTransition: 'default', // default/linear/none
@@ -319,6 +327,7 @@ Reveal.configure({
   autoSlide: 5000
 });
 ```
+
 When this is turned on a control element will appear that enables users to pause and resume auto-sliding. Alternatively, sliding can be paused or resumed by pressing »a« on the keyboard. Sliding is paused automatically as soon as the user starts navigating. You can disable these controls by specifying ```autoSlideStoppable: false``` in your reveal.js config.
 
 You can also override the slide duration for individual slides and fragments by using the ```data-autoslide``` attribute:
@@ -347,6 +356,7 @@ Reveal.configure({
   }
 });
 ```
+
 
 ### Lazy Loading
 
@@ -436,6 +446,7 @@ Reveal.addEventListener( 'slidechanged', function( event ) {
 } );
 ```
 
+
 ### Presentation State
 
 The presentation's current state can be fetched by using the `getState` method. A state object contains all of the information required to put the presentation back as it was when `getState` was first called. Sort of like a snapshot. It's a simple object that can easily be stringified and persisted or sent over the wire.
@@ -452,6 +463,7 @@ Reveal.slide( 3 );
 Reveal.setState( state );
 // we're back on slide 1
 ```
+
 
 ### Slide States
 
@@ -480,8 +492,8 @@ Slides are contained within a limited portion of the screen by default to allow 
 <section data-background="http://example.com/image.png" data-background-size="100px" data-background-repeat="repeat">
     <h2>This background image will be sized to 100px and repeated.</h2>
 </section>
-<section data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm">
-	<h2>Video. Multiple sources can be defined using a comma separated list.</h2>
+<section data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm" data-background-video-loop>
+	<h2>Video. Multiple sources can be defined using a comma separated list. Video will loop when the data-background-video-loop attribute is provided.</h2>
 </section>
 <section data-background-iframe="https://slides.com">
 	<h2>Embeds a web page as a background. Note that the page won't be interactive.</h2>
@@ -493,7 +505,7 @@ Backgrounds transition using a fade animation by default. This can be changed to
 
 ### Parallax Background
 
-If you want to use a parallax scrolling background, set the two following config properties when initializing reveal.js (the third one is optional).
+If you want to use a parallax scrolling background, set the first two config properties below when initializing reveal.js (the other two are optional).
 
 ```javascript
 Reveal.initialize({
@@ -503,6 +515,12 @@ Reveal.initialize({
 
     // Parallax background size
     parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px" - currently only pixels are supported (don't use % or auto)
+
+	// Amount of pixels to move the parallax background per slide step,
+	// a value of 0 disables movement along the given axis
+	// These are optional, if they aren't specified they'll be calculated automatically
+	parallaxBackgroundHorizontal: 200,
+	parallaxBackgroundVertical: 50,
 
     // This slide transition gives best results:
     transition: 'slide'
@@ -692,22 +710,8 @@ Limitations:
 - Only one descendant per slide section can be stretched
 
 
-### Caveats
-
-- Make sure you have the outer container (generally that would be the `\<html>` tag) spans the entire viewport as Reveal performs some calculations based off the size of the container element. Hence code the start of your presentation like this:
-
-  ```
-  <!doctype html>
-  <html lang="en" style="height: 100%; width: 100%;">
-  ...
-  ```
-
-  On that same subject, also check out http://responsejs.com/labs/dimensions/ , http://verge.airve.com/ and http://www.quirksmode.org/mobile/viewports2.html for the low-down about viewport dimensions and ways to get at them.
-
-  **Note**: when you have loaded [verge](http://verge.airve.com/) or [response.js](http://responsejs.com/) then we use their proven methods to obtain the viewport dimensions and the above-mentioned &lt;html> width/height styles are not required any longer.
-
-
 ### postMessage API
+
 The framework has a built-in postMessage API that can be used when communicating with a presentation inside of another window. Here's an example showing how you'd make a reveal.js instance in the given window proceed to slide 2:
 
 ```javascript
@@ -740,6 +744,22 @@ Reveal.initialize({
 ```
 
 
+### Caveats
+
+- Make sure you have the outer container (generally that would be the `\<html>` tag) spans the entire viewport as Reveal performs some calculations based off the size of the container element. Hence code the start of your presentation like this:
+
+  ```
+  <!doctype html>
+  <html lang="en" style="height: 100%; width: 100%;">
+  ...
+  ```
+
+  On that same subject, also check out http://responsejs.com/labs/dimensions/ , http://verge.airve.com/ and http://www.quirksmode.org/mobile/viewports2.html for the low-down about viewport dimensions and ways to get at them.
+
+  **Note**: when you have loaded [verge](http://verge.airve.com/) or [response.js](http://responsejs.com/) then we use their proven methods to obtain the viewport dimensions and the above-mentioned &lt;html> width/height styles are not required any longer.
+
+
+
 ## PDF Export
 
 Presentations can be exported to PDF via a special print stylesheet. This feature requires that you use [Google Chrome](http://google.com/chrome).
@@ -769,11 +789,13 @@ The framework comes with a few different themes included:
 - simple: White background, black text, blue links
 - solarized: Cream-colored background, dark green text, blue links
 
-Each theme is available as a separate stylesheet. To change theme you will need to replace **black** below with your desired theme name in index.html:
+Each theme is available as a separate stylesheet. To change the theme you will need to replace **black** below with your desired theme name in index.html:
 
 ```html
 <link rel="stylesheet" href="css/theme/black.css" id="theme">
 ```
+
+For this to work, you will need an id of "theme" added to your stylesheet link as shown above.
 
 If you want to add a theme of your own see the instructions here: [/css/theme/README.md](https://github.com/hakimel/reveal.js/blob/master/css/theme/README.md).
 
@@ -800,6 +822,8 @@ If you're using the external Markdown plugin, you can add notes with the help of
 
 ```html
 <section data-markdown="example.md" data-separator="^\n\n\n" data-separator-vertical="^\n\n" data-separator-notes="^Note:"></section>
+
+
 
 # Title
 
@@ -872,6 +896,8 @@ Reveal.initialize({
         url: 'revealjs.jit.su:80' // Location of socket.io server
     },
 
+	// Don't forget to add the dependencies
+    //
     // Optional libraries used to extend on reveal.js
     dependencies: [
         //...
@@ -907,6 +933,8 @@ Reveal.initialize({
         url: 'revealjs.jit.su:80' // Location of socket.io server
     },
 
+	// Don't forget to add the dependencies
+    //
     // Optional libraries used to extend on reveal.js
     dependencies: [
         //...
@@ -951,7 +979,9 @@ Reveal.initialize({
         url: 'example.com:80' // Location of your socket.io server
     },
 
-    // Don't forget to add the dependencies
+	// Don't forget to add the dependencies
+    //
+    // Optional libraries used to extend on reveal.js
     dependencies: [
         //...
         // other deps
@@ -977,7 +1007,9 @@ Reveal.initialize({
         url: 'example.com:80' // Location of your socket.io server
     },
 
-    // Don't forget to add the dependencies
+	// Don't forget to add the dependencies
+    //
+    // Optional libraries used to extend on reveal.js
     dependencies: [
         //...
         // other deps
@@ -1035,6 +1067,7 @@ You can edit the following options:
 
 
 Example configuration:
+
 ```js
 Reveal.initialize({
 
@@ -1052,6 +1085,7 @@ Reveal.initialize({
 
 });
 ```
+
 
 ## MathJax
 
@@ -1143,3 +1177,4 @@ You can change the port by using `grunt serve --port 8001`.
 MIT licensed
 
 Copyright (C) 2015 Hakim El Hattab, http://hakim.se
+

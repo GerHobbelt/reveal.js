@@ -36,7 +36,7 @@
 
             <!-- Any section element inside of this container is displayed as a slide -->
             <div class="slides">
-                <section>
+                <section contenteditable="true">
                     <h1>Reveal.js</h1>
 					<h3>The HTML Presentation Framework</h3>
                     <p>
@@ -44,16 +44,46 @@
                     </p>
                 </section>
 
-                <section>
+                <section contenteditable="true">
 					<h2>Hello There</h2>
                     <p>
 						reveal.js enables you to create beautiful interactive slide decks using HTML. This presentation will show you examples of what it can do.
                     </p>
                 </section>
 
-                <!-- Example of nested vertical slides -->
+				<section>
+					<h2>Heads Up</h2>
+					<p>
+						reveal.js is a framework for easily creating beautiful presentations using HTML. You'll need a browser with 
+						support for CSS 3D transforms to see it in its full glory.
+					</p>
+					<p>
+						<i><small>- <a href="http://hakim.se">Hakim El Hattab</a> / <a href="http://twitter.com/hakimel">@hakimel</a></small></i>
+					</p>
+				<!-- Example of nested vertical slides -->
+					<aside class="notes">
+						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you run the speaker notes server.
+					</aside>
+                </section>
+
                 <section>
-                    <section>
+					<h2>CSS Fragments</h2>
+					<p id="someParagraph" class="animate">
+						You can also make text <span id="makeBigger" class="animate">bigger</span>
+						or <span id="makeSmaller" class="animate">smaller</span>...
+					</p>
+
+					<div class="offscreen fragment css-fragment" data-add-class="zoom" data-target="#makeBigger"></div>
+					<div class="fragment css-fragment" data-add-class="shrink" data-target="#makeSmaller">
+						using <span id="removeRed" class="red animate">CSS fragments</span>.
+					</div>
+
+					<div class="offscreen fragment css-fragment" data-remove-class="red" data-target="#removeRed"></div>
+				</section>
+
+                <!-- Example of nested vertical slides -->
+					<section>
+                    <section contenteditable="true">
                         <h2>Vertical Slides</h2>
 						<p>Slides can be nested inside of each other.</p>
 						<p>Use the <em>Space</em> key to navigate through all slides.</p>
@@ -62,12 +92,13 @@
                             <img width="178" height="238" data-src="assets/arrow.png" alt="Down arrow">
                         </a>
                     </section>
-                    <section>
+                    <section contenteditable="true">
                         <h2>Basement Level 1</h2>
 						<p>Nested slides are useful for adding additional detail underneath a high level horizontal slide.</p>
                     </section>
-                    <section>
+                    <section contenteditable="true">
                         <h2>Basement Level 2</h2>
+                    <section>
                         <p>That's it, time to go back up.</p>
 						<br>
                         <a href="#/2">
@@ -76,14 +107,14 @@
                     </section>
                 </section>
 
-                <section>
+                <section contenteditable="true">
                     <h2>Slides</h2>
                     <p>
 						Not a coder? Not a problem. There's a fully-featured visual editor for authoring these, try it out at <a href="http://slides.com" target="_blank">http://slides.com</a>.
                     </p>
                 </section>
 
-                <section>
+                <section contenteditable="true">
                     <h2>Point of View</h2>
                     <p>
                         Press <strong>ESC</strong> to enter the slide overview.
@@ -100,23 +131,23 @@
                     </p>
                 </section>
 
-				<section data-markdown>
-					<script type="text/template">
-						## Markdown support
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Markdown support
 
 						Write content using inline or external Markdown.
 						Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
 
-						```
-						<section data-markdown>
-						  ## Markdown support
+                        ```
+                        <section data-markdown>
+                          ## Markdown support
 
 						  Write content using inline or external Markdown.
 						  Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
-						</section>
-						```
-					</script>
-				</section>
+                        </section>
+                        ```
+                    </script>
+                </section>
 
                 <section>
                     <section id="fragments">
@@ -185,6 +216,12 @@
                         <a href="?theme=one-mozilla#/themes">One::Mozilla</a> -
                         <a href="?theme=openbossa#/themes">Openbossa</a> -
                         <a href="?theme=fourkitchens#/themes">4K: Four Kitchens</a>
+                        <a href="?theme=black#/themes">Black</a>
+                        <a href="?theme=white#/themes">White</a>
+                        <a href="?theme=league#/themes">League</a>
+                        <a href="?theme=derrabus#/themes">Derrabus</a>
+                        <a href="?theme=gaslight#/themes">Gaslight</a>
+                        <a href="?theme=sky#/themes">Sky</a>
                     </p>
                     <p>
                         <small>
@@ -193,16 +230,16 @@
                     </p>
                 </section>
 
-				<section>
+                <section>
                     <section data-background-color="#dddddd">
-						<h2>Slide Backgrounds</h2>
-						<p>
+                        <h2>Slide Backgrounds</h2>
+                        <p>
                             Set <code>data-background-color="#dddddd"</code> on a slide to change the full page background to the given color. All CSS color formats are supported.
-						</p>
+                        </p>
 						<a href="#" class="navigate-down">
                             <img width="178" height="238" data-src="assets/arrow.png" alt="Down arrow">
-						</a>
-					</section>
+                        </a>
+                    </section>
                     <section data-background-image="assets/arrow.png">
 						<h2>Image Backgrounds</h2>
                         <pre><code class="html">&lt;section data-background-image="image.png"&gt;</code></pre>
@@ -210,33 +247,36 @@
                     <section data-background-image="assets/arrow.png" data-background-repeat="repeat" data-background-size="100px">
 						<h2>Tiled Backgrounds</h2>
                         <pre><code class="html" style="word-wrap: break-word;">&lt;section data-background-image="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
-					</section>
+                    </section>
 					<section data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm" data-background-color="#000000">
 						<div style="background-color: rgba(0, 0, 0, 0.9); color: #fff; padding: 20px;">
 							<h2>Video Backgrounds</h2>
 							<pre><code style="word-wrap: break-word;">&lt;section data-background-video="video.mp4,video.webm"&gt;</code></pre>
 						</div>
 					</section>
-				</section>
+					<section data-background="http://i.giphy.com/90F8aUepslB84.gif">
+						<h2>... and GIFs!</h2>
+					</section>
+                </section>
 
                 <section data-transition="slide" data-background-color="#4d7e65" data-background-transition="zoom">
-					<h2>Background Transitions</h2>
-					<p>
+                    <h2>Background Transitions</h2>
+                    <p>
 						Different background transitions are available via the backgroundTransition option. This one's called "zoom".
-					</p>
+                    </p>
 					<pre><code>Reveal.configure({ backgroundTransition: 'zoom' })</code></pre>
-				</section>
+                </section>
 
 				<section data-transition="slide" data-background-color="#b5533c" data-background-transition="zoom">
 					<h2>Background Transitions</h2>
-					<p>
+                    <p>
 						You can override background transitions per-slide.
-					</p>
+                    </p>
 					<pre><code style="word-wrap: break-word;">&lt;section data-background-transition="zoom"&gt;</code></pre>
-				</section>
+                </section>
 
-				<section>
-					<h2>Pretty Code</h2>
+                <section>
+                    <h2>Pretty Code</h2>
                     <pre><code class="javascript" data-trim contenteditable>
 function linkify( selector ) {
   if( supports3DTransforms ) {
@@ -252,7 +292,7 @@ function linkify( selector ) {
     }
   }
 }
-					</code></pre>
+                    </code></pre>
 					<p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
 				</section>
 
@@ -337,12 +377,12 @@ require('reveal').slide(2, 3);
 					<p>There's a <a href="https://github.com/hakimel/reveal.js#speaker-notes">speaker view</a>. It includes a timer, preview of the upcoming slide as well as your speaker notes.</p>
 					<p>Press the <em>S</em> key to try it out.</p>
 
-					<aside class="notes">
+						<aside class="notes">
 						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
-					</aside>
-                </section>
+						</aside>
+				</section>
 
-                <section>
+				<section>
                     <h2>Export to PDF</h2>
                     <p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>, below is an example that's been uploaded to SlideShare.</p>
                     <!--
@@ -353,14 +393,14 @@ require('reveal').slide(2, 3);
                     -->
                 </section>
 
-				<section>
+                <section>
 					<h2>Global State</h2>
 					<p>
 						Set <code>data-state="something"</code> on a slide and <code>"something"</code>
 						will be added as a class to the document element when the slide is open. This lets you
 						apply broader style changes, like switching the page background.
 					</p>
-				</section>
+                </section>
 
 				<section data-state="customevent">
 					<h2>State Events</h2>
@@ -372,14 +412,14 @@ Reveal.addEventListener( 'customevent', function() {
 	console.log( '"customevent" has fired' );
 } );
 					</code></pre>
-				</section>
+                </section>
 
-				<section>
-					<h2>Take a Moment</h2>
-					<p>
+                <section>
+                    <h2>Take a Moment</h2>
+                    <p>
 						Press B or . on your keyboard to pause the presentation. This is helpful when you're on stage and want to take distracting slides off the screen.
-					</p>
-				</section>
+                    </p>
+                </section>
 
                 <section>
                     <h2>Examples and Test Pages</h2>
@@ -411,6 +451,11 @@ Reveal.addEventListener( 'customevent', function() {
                                     <li><a href="./plugin/markdown/example.html"> Plugin :: markdown/example</a></li>
                                     <li><a href="./plugin/notes/notes.html"> Plugin :: notes/notes</a></li>
                                     <li><a href="./plugin/notes-server/notes.html"> Plugin :: notes-server/notes</a></li>
+                        <li><a href="./plugin/postmessage/example.html"> Plugin :: postmessage/example</a></li>
+                        <li><a href="./test/examples/barebones.html"> Test :: Examples :: barebones</a></li>
+                        <li><a href="./test/examples/embedded-media.html"> Test :: Examples :: embedded-media</a></li>
+                        <li><a href="./test/examples/math.html"> Test :: Examples :: math</a></li>
+                        <li><a href="./test/examples/slide-backgrounds.html"> Test :: Examples :: slide-backgrounds</a></li>
                                     <li><a href="./test/test-markdown.html"> Test :: test-markdown</a></li>
                                     <li><a href="./test/test.html"> Test :: test</a></li>
                                 </ul>

@@ -79,31 +79,20 @@ module.exports = function(grunt) {
 
 		sass: {
 			core: {
-				files: {
-					'css/reveal.css': 'css/reveal.scss',
-				}
-			},
-			themes: {
                 files: {
-                    'css/theme/default.css': 'css/theme/source-sass/default.scss',
-					'css/theme/black.css': 'css/theme/source-sass/black.scss',
-					'css/theme/white.css': 'css/theme/source-sass/white.scss',
-					'css/theme/league.css': 'css/theme/source-sass/league.scss',
-                    'css/theme/beige.css': 'css/theme/source-sass/beige.scss',
-                    'css/theme/night.css': 'css/theme/source-sass/night.scss',
-                    'css/theme/serif.css': 'css/theme/source-sass/serif.scss',
-                    'css/theme/simple.css': 'css/theme/source-sass/simple.scss',
-                    'css/theme/sky.css': 'css/theme/source-sass/sky.scss',
-                    'css/theme/moon.css': 'css/theme/source-sass/moon.scss',
-                    'css/theme/solarized.css': 'css/theme/source-sass/solarized.scss',
-                    'css/theme/blood.css': 'css/theme/source-sass/blood.scss',
-                    'css/theme/jolicode.css': 'css/theme/source-sass/jolicode.scss',
-                    'css/theme/openbossa.css': 'css/theme/source-sass/openbossa.scss',
-                    'css/theme/aerogear.css': 'css/theme/source-sass/aerogear.scss',
-                    'css/theme/one-mozilla.css': 'css/theme/source-sass/one-mozilla.scss',
-                    'css/theme/parallax-demo.css': 'css/theme/source-sass/parallax-demo.scss',
-                    'css/theme/fourkitchens.css': 'css/theme/source-sass/fourkitchens.scss'
+					'css/reveal.css': 'css/reveal.scss',
                 }
+		},
+			themes: {
+				files: [
+					{
+						expand: true,
+						cwd: 'css/theme/source-sass',
+						src: ['*.scss'],
+						dest: 'css/theme',
+						ext: '.css'
+					}
+				]
             }
         },
 
@@ -150,8 +139,8 @@ module.exports = function(grunt) {
             files: {
               'dist/css/<%= pkg.name %>.min.css': 'dist/css/<%= pkg.name %>.css',
               'dist/css/<%= pkg.name %>-theme.min.css': 'dist/css/<%= pkg.name %>-theme.css'
-            }
-          }
+				}
+			}
         },
 
         jshint: {
@@ -184,8 +173,8 @@ module.exports = function(grunt) {
                 options: {
                     port: port,
                     base: '.',
-                    livereload: true,
-                    open: true
+					livereload: true,
+					open: true
                 }
             }
         },
@@ -202,9 +191,9 @@ module.exports = function(grunt) {
         },
 
         watch: {
-            options: {
-                livereload: true
-            },
+			options: {
+				livereload: true
+			},
 			js: {
 				files: [ 'Gruntfile.js', 'js/reveal.js' ],
 				tasks: 'js'
@@ -217,8 +206,8 @@ module.exports = function(grunt) {
 				files: [ 'css/reveal.scss' ],
 				tasks: 'css-core'
             },
-            html: {
-                files: [ 'index.html']
+			html: {
+				files: [ 'index.html']
             }
         },
 
@@ -245,7 +234,7 @@ module.exports = function(grunt) {
                     remote: 'origin',
                     branch: 'gh-pages'
                 }
-            }
+			}
         }
 
     });
