@@ -241,16 +241,16 @@
                     </section>
                     <section data-background-image="assets/arrow.png">
 						<h2>Image Backgrounds</h2>
-                        <pre><code class="html">&lt;section data-background-image="image.png"&gt;</code></pre>
+                        <pre><code class="hljs">&lt;section data-background-image="image.png"&gt;</code></pre>
 					</section>
                     <section data-background-image="assets/arrow.png" data-background-repeat="repeat" data-background-size="100px">
 						<h2>Tiled Backgrounds</h2>
-                        <pre><code class="html" style="word-wrap: break-word;">&lt;section data-background-image="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
+                        <pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background-image="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
                     </section>
 					<section data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm" data-background-color="#000000">
 						<div style="background-color: rgba(0, 0, 0, 0.9); color: #fff; padding: 20px;">
 							<h2>Video Backgrounds</h2>
-							<pre><code style="word-wrap: break-word;">&lt;section data-background-video="video.mp4,video.webm"&gt;</code></pre>
+							<pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background-video="video.mp4,video.webm"&gt;</code></pre>
 						</div>
 					</section>
 					<section data-background="http://i.giphy.com/90F8aUepslB84.gif">
@@ -263,7 +263,7 @@
                     <p>
 						Different background transitions are available via the backgroundTransition option. This one's called "zoom".
                     </p>
-					<pre><code>Reveal.configure({ backgroundTransition: 'zoom' })</code></pre>
+					<pre><code class="hljs">Reveal.configure({ backgroundTransition: 'zoom' })</code></pre>
                 </section>
 
 				<section data-transition="slide" data-background-color="#b5533c" data-background-transition="zoom">
@@ -271,12 +271,12 @@
                     <p>
 						You can override background transitions per-slide.
                     </p>
-					<pre><code style="word-wrap: break-word;">&lt;section data-background-transition="zoom"&gt;</code></pre>
+					<pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background-transition="zoom"&gt;</code></pre>
                 </section>
 
                 <section>
                     <h2>Pretty Code</h2>
-                    <pre><code class="javascript" data-trim contenteditable>
+                    <pre><code class="hljs" data-trim contenteditable>
 function linkify( selector ) {
   if( supports3DTransforms ) {
 
@@ -385,7 +385,7 @@ require('reveal').slide(2, 3);
                     <h2>Export to PDF</h2>
                     <p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>, below is an example that's been uploaded to SlideShare.</p>
                     <!--
-                    <iframe id="slideshare" src="http://www.slideshare.net/slideshow/embed_code/13872948" width="455" height="356" style="margin:0;overflow:hidden;border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe>
+					<iframe src="https://www.slideshare.net/slideshow/embed_code/42840540" width="445" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:3px solid #666; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
                     <script>
                         document.getElementById('slideshare').attributeName = 'allowfullscreen';
                     </script>

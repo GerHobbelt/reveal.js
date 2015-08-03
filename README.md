@@ -1045,7 +1045,7 @@ Reveal.initialize({
 ```
 
 
-## Leap Motion
+## Leap Motion (DEPRECATED PLUGIN)
 
 The Leap Motion plugin lets you utilize your [Leap Motion](https://www.leapmotion.com/) device to control basic navigation of your presentation. The gestures currently supported are:
 

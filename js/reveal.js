@@ -826,14 +826,14 @@
 
         // Arrow controls
         dom.arrow_controls = createSingletonNode( dom.wrapper, 'aside', 'controls',
-            '<div class="navigate-left"></div>' +
-            '<div class="navigate-right"></div>' +
-            '<div class="navigate-up"></div>' +
-            '<div class="navigate-down"></div>' );
+			'<button class="navigate-left" aria-label="previous slide"></button>' +
+			'<button class="navigate-right" aria-label="next slide"></button>' +
+			'<button class="navigate-up" aria-label="above slide"></button>' +
+			'<button class="navigate-down" aria-label="below slide"></button>' );
         if (dom.arrow_controls) {
             // inspired by http://www.quirksmode.org/dom/events/blurfocus.html when mixing reveal with contenteditable areas and 100% keyboard control:
             // this should make sure that TAB should end up at a node which we recognize as presentation control area and hence process the keys pressed.
-            var controls = toArray( dom.arrow_controls.querySelectorAll('div') );
+            var controls = toArray( dom.arrow_controls.querySelectorAll('button') );
             var tabindex = 9999 - controls.length;
             controls.forEach( function (control) {
                 control.setAttribute( 'tabindex', tabindex++ );
@@ -6149,13 +6149,15 @@ TBD end of old code, start of new code
             return 0;
         }
 
-		// While paused only allow 'unpausing' keyboard events ('b', 'w', .' or any key specifically mapped to togglePause)
-		var allowedKeys = [66, 87, 190, 191].concat(Object.keys(toArray(config.keyboard)).map( function (key) {
+		// While paused only allow 'resuming' keyboard events:
+        // 'b', 'w', '.' or any key specifically mapped to togglePause.
+		var resumeKeyCodes = [66, 87, 190, 191].concat(Object.keys(toArray(config.keyboard)).map( function (key) {
 			if( config.keyboard[key] === 'togglePause' ) {
-				return parseInt(key, 10);
+				return parseInt( key, 10 );
 			}
 		}));
-		if( isPaused() && allowedKeys.indexOf( event.keyCode ) === -1 ) {
+
+		if( isPaused() && resumeKeyCodes.indexOf( event.keyCode ) === -1 ) {
 			event.preventDefault && event.preventDefault();
 			event.stopPropagation && event.stopPropagation();
             return false;
