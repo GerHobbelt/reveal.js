@@ -3,7 +3,7 @@
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
  */
 
-$fa-font-path: "../../fonts" !default; // Overriding value from FontAwesome/scss/_variables.scss
+$fa-font-path: "../font" !default; // Overriding value from FontAwesome/scss/_variables.scss
 
 @import "../../../lib-src/FontAwesome/scss/variables";
 @import "../../../lib-src/FontAwesome/scss/mixins";
