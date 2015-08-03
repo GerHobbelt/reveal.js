@@ -32,7 +32,7 @@
 
     var isEnabled = true;
 
-    var rootElement = document.querySelector( '.reveal' );
+    var rootElement = document.querySelector( '.reveal .slides' );
 
     // Inform the zoom tool that the .reveal DIV is the element which should receive the transform.
     zoom.init(rootElement);

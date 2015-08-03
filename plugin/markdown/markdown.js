@@ -42,7 +42,7 @@
         });
     }
 
-    var DEFAULT_SLIDE_SEPARATOR = '^\n---\n$',
+	var DEFAULT_SLIDE_SEPARATOR = '^\r?\n---\r?\n$',
         DEFAULT_NOTES_SEPARATOR = 'note:',
         DEFAULT_ELEMENT_ATTRIBUTES_SEPARATOR = '\\\.element\\\s*?(.+?)$',
         DEFAULT_SLIDE_ATTRIBUTES_SEPARATOR = '\\\.slide:\\\s*?(\\\S.+?)$';
@@ -92,7 +92,7 @@
             if( /data\-(markdown|separator|vertical|notes)/gi.test( name ) ) continue;
 
             if( value ) {
-                result.push( name + '=' + value );
+				result.push( name + '="' + value + '"' );
             }
             else {
                 result.push( name );

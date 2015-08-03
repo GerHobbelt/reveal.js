@@ -1,6 +1,7 @@
 /* global module:false */
 module.exports = function(grunt) {
     var port = grunt.option('port') || 8000;
+	var base = grunt.option('base') || '.';
 
     // Load grunt tasks automatically, when needed
     require("jit-grunt")(grunt, {
@@ -172,7 +173,7 @@ module.exports = function(grunt) {
             server: {
                 options: {
                     port: port,
-                    base: '.',
+					base: base,
 					livereload: true,
 					open: true
                 }

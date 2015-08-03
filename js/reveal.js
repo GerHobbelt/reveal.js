@@ -57,7 +57,7 @@
 
     var Reveal = null,
 
-        // Configurations defaults, can be overridden at initialization time
+		// Configuration defaults, can be overridden at initialization time
         config = {
 
             // The "normal" size of the presentation, aspect ratio will be preserved
@@ -364,15 +364,18 @@
             }
         }
 
-		// Since JS won't be running any further, we need to load all
-		// images that were intended to lazy load now
-		var images = document.getElementsByTagName( 'img' );
-		for( var i = 0, len = images.length; i < len; i++ ) {
-			var image = images[i];
-			if( image.getAttribute( 'data-src' ) ) {
-				image.setAttribute( 'src', image.getAttribute( 'data-src' ) );
-				image.removeAttribute( 'data-src' );
-			}
+		// Since JS won't be running any further, we load all lazy
+		// loading elements upfront
+		var images = toArray( document.getElementsByTagName( 'img' ) ),
+			iframes = toArray( document.getElementsByTagName( 'iframe' ) );
+
+		var lazyLoadable = images.concat( iframes );
+
+		for( var i = 0, len = lazyLoadable.length; i < len; i++ ) {
+			var element = lazyLoadable[i];
+			if( element.getAttribute( 'data-src' ) ) {
+				element.setAttribute( 'src', element.getAttribute( 'data-src' ) );
+				element.removeAttribute( 'data-src' );
 		}
 
         // If the browser doesn't support core features we won't be
@@ -1851,7 +1854,7 @@ TBD end of old code, start of new code
 	}
 
 	/**
-	 * Measures the distance in pixels between point a and point b.
+	 * Converts various color input formats to an {r:0,g:0,b:0} object.
 	 *
 	 * @param {String} color The string representation of a color,
 	 * the following formats are supported:
@@ -4188,7 +4191,11 @@ TBD end of old code, start of new code
         updateSlideNumber();
 
 		formatEmbeddedContent();
+		startEmbeddedContent( currentSlide );
 
+		if( isOverview() ) {
+			layoutOverview();
+        }
     }
 
     /**
@@ -4604,8 +4611,8 @@ TBD end of old code, start of new code
 			dom.slideNumber.innerHTML = format.replace( /h/g, indexh )
 												.replace( /v/g, (indexv === false ? '-' : indexv ))
 												.replace( /f/g, (f === false ? '-' : f ))
-												.replace( /c/g, Math.round( getProgress() * totalSlides ) + 1 )
-												.replace( /t/g, totalSlides + 1 );
+												.replace( /c/g, getSlidePastCount() + 1 )
+												.replace( /t/g, getTotalSlides() );
         }
 
     }
@@ -4885,7 +4892,7 @@ TBD end of old code, start of new code
         slide.classList.add( 'visible' );
 
         // Media elements with data-src attributes
-        toArray( slide.querySelectorAll( 'img[data-src], video[data-src], audio[data-src], iframe[data-src]' ) ).forEach( function( element ) {
+		toArray( slide.querySelectorAll( 'img[data-src], video[data-src], audio[data-src]' ) ).forEach( function( element ) {
             element.setAttribute( 'src', element.getAttribute( 'data-src' ) );
             element.removeAttribute( 'data-src' );
         } );
@@ -5040,21 +5047,22 @@ TBD end of old code, start of new code
 	 */
 	function formatEmbeddedContent() {
 
-		// YouTube frames must include '?enablejsapi=1'
-		toArray( dom.slides.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
-			var src = el.getAttribute( 'src' );
-			if( !/enablejsapi\=1/gi.test( src ) ) {
-				el.setAttribute( 'src', src + ( !/\?/.test( src ) ? '?' : '&' ) + 'enablejsapi=1' );
-			}
-		});
+		var _appendParamToIframeSource = function( sourceAttribute, sourceURL, param ) {
+			toArray( dom.slides.querySelectorAll( 'iframe['+ sourceAttribute +'*="'+ sourceURL +'"]' ) ).forEach( function( el ) {
+				var src = el.getAttribute( sourceAttribute );
+				if( src && src.indexOf( param ) === -1 ) {
+					el.setAttribute( sourceAttribute, src + ( !/\?/.test( src ) ? '?' : '&' ) + param );
+				}
+			});
+		};
 
-		// Vimeo frames must include '?api=1'
-		toArray( dom.slides.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
-			var src = el.getAttribute( 'src' );
-			if( !/api\=1/gi.test( src ) ) {
-				el.setAttribute( 'src', src + ( !/\?/.test( src ) ? '?' : '&' ) + 'api=1' );
-			}
-		});
+		// YouTube frames must include "?enablejsapi=1"
+		_appendParamToIframeSource( 'src', 'youtube.com/embed/', 'enablejsapi=1' );
+		_appendParamToIframeSource( 'data-src', 'youtube.com/embed/', 'enablejsapi=1' );
+
+		// Vimeo frames must include "?api=1"
+		_appendParamToIframeSource( 'src', 'player.vimeo.com/', 'api=1' );
+		_appendParamToIframeSource( 'data-src', 'player.vimeo.com/', 'api=1' );
 
 	}
 
@@ -5074,28 +5082,23 @@ TBD end of old code, start of new code
 
             // HTML5 media elements
             toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
-                if( el.hasAttribute( 'data-autoplay' ) ) {
+				if( el.hasAttribute( 'data-autoplay' ) && typeof el.play === 'function' ) {
                     el.play();
                 }
             } );
 
-            // iframe embeds
-            toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
-                el.contentWindow.postMessage( 'slide:start', '*' );
-            } );
+			// Normal iframes
+			toArray( slide.querySelectorAll( 'iframe[src]' ) ).forEach( function( el ) {
+				startEmbeddedIframe( { target: el } );
+			});
 
-            // YouTube embeds
-            toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
-                if( el.hasAttribute( 'data-autoplay' ) ) {
-                    el.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
+			// Lazy loading iframes
+			toArray( slide.querySelectorAll( 'iframe[data-src]' ) ).forEach( function( el ) {
+				if( el.getAttribute( 'src' ) !== el.getAttribute( 'data-src' ) ) {
+					el.removeEventListener( 'load', startEmbeddedIframe ); // remove first to avoid dupes
+					el.addEventListener( 'load', startEmbeddedIframe );
+					el.setAttribute( 'src', el.getAttribute( 'data-src' ) );
                 }
-            } );
-
-			// Vimeo embeds
-			toArray( slide.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
-				if( el.hasAttribute( 'data-autoplay' ) ) {
-					el.contentWindow.postMessage( '{"method":"play"}', '*' );
-				}
 			});
 
 			// Asciinema embeds
@@ -5104,6 +5107,29 @@ TBD end of old code, start of new code
 					el.contentWindow.postMessage( '["asciicast:play"]', '*' );
 				}
 			});
+		}
+
+	}
+
+	/**
+	 * "Starts" the content of an embedded iframe using the
+	 * postmessage API.
+	 */
+	function startEmbeddedIframe( event ) {
+
+		var iframe = event.target;
+
+		// YouTube postMessage API
+		if( /youtube\.com\/embed\//.test( iframe.getAttribute( 'src' ) ) && iframe.hasAttribute( 'data-autoplay' ) ) {
+			iframe.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
+		}
+		// Vimeo postMessage API
+		else if( /player\.vimeo\.com\//.test( iframe.getAttribute( 'src' ) ) && iframe.hasAttribute( 'data-autoplay' ) ) {
+			iframe.contentWindow.postMessage( '{"method":"play"}', '*' );
+		}
+		// Generic postMessage API
+		else {
+			iframe.contentWindow.postMessage( 'slide:start', '*' );
         }
 
     }
@@ -5117,43 +5143,51 @@ TBD end of old code, start of new code
 		if( slide && slide.parentNode ) {
             // HTML5 media elements
             toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
-                if( !el.hasAttribute( 'data-ignore' ) ) {
+				if( !el.hasAttribute( 'data-ignore' ) && typeof el.pause === 'function' ) {
                     el.pause();
                 }
             } );
 
-            // iframe embeds
+			// Generic postMessage API for non-lazy loaded iframes
             toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
                 el.contentWindow.postMessage( 'slide:stop', '*' );
+				el.removeEventListener( 'load', startEmbeddedIframe );
             } );
 
-            // YouTube embeds
+			// YouTube postMessage API
             toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
                     el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
                 }
 			});
 
-			// Vimeo embeds
+			// Vimeo postMessage API
 			toArray( slide.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
 				if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
 					el.contentWindow.postMessage( '{"method":"pause"}', '*' );
                 }
             } );
+
+			// Lazy loading iframes
+			toArray( slide.querySelectorAll( 'iframe[data-src]' ) ).forEach( function( el ) {
+				// Only removing the src doesn't actually unload the frame
+				// in all browsers (Firefox) so we set it to blank first
+				el.setAttribute( 'src', 'about:blank' );
+				el.removeAttribute( 'src' );
+			} );
         }
 
     }
 
-    /**
-     * Returns a value ranging from 0-1 that represents
-     * how far into the presentation we have navigated.
-     */
-    function getProgress() {
+	/**
+	 * Returns the number of past slides. This can be used as a global
+	 * flattened index for slides.
+	 */
+	function getSlidePastCount() {
 
-		var horizontalSlides = toArray( dom.slides.querySelectorAll( SCOPED_FROM_WRAPPER_HORIZONTAL_SLIDES_SELECTOR ) );
+		var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
 
-        // The number of past and total slides
-		var totalCount = getTotalSlides();
+		// The number of past slides
         var pastCount = 0;
 
         // Step through all slides and count the past ones
@@ -5185,7 +5219,19 @@ TBD end of old code, start of new code
 
         }
 
-        var hasFragments = false;
+		return pastCount;
+
+	}
+
+	/**
+	 * Returns a value ranging from 0-1 that represents
+	 * how far into the presentation we have navigated.
+	 */
+	function getProgress() {
+
+		// The number of past and total slides
+		var totalCount = getTotalSlides();
+		var pastCount = getSlidePastCount();
 
         if( currentSlide ) {
 
@@ -5815,14 +5861,17 @@ TBD end of old code, start of new code
 
             // If there are media elements with data-autoplay,
             // automatically set the autoSlide duration to the
-            // length of that media
-            toArray( currentSlide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
-                if( el.hasAttribute( 'data-autoplay' ) ) {
-                    if( autoSlide && el.duration * 1000 > autoSlide ) {
-                        autoSlide = ( el.duration * 1000 ) + 1000;
-                    }
-                }
-            } );
+			// length of that media. Not applicable if the slide
+			// is divided up into fragments.
+			if( currentSlide.querySelectorAll( '.fragment' ).length === 0 ) {
+			toArray( currentSlide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
+				if( el.hasAttribute( 'data-autoplay' ) ) {
+					if( autoSlide && el.duration * 1000 > autoSlide ) {
+						autoSlide = ( el.duration * 1000 ) + 1000;
+					}
+				}
+			} );
+			}
 
             // Cue the next auto-slide if:
             // - There is an autoSlide value
@@ -6558,7 +6607,7 @@ TBD end of old code, start of new code
         // focus the document.body to ensure we can use keyboard shortcuts
         if( isHidden === false && document.activeElement !== document.body ) {
 			// Not all elements support .blur() - SVGs among them.
-			if (typeof document.activeElement.blur === 'function') {
+			if( typeof document.activeElement.blur === 'function' ) {
 				document.activeElement.blur();
 			}
             document.body.focus();
