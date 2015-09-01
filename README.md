@@ -1,4 +1,4 @@
-# JoliCode reveal.js fork
+# GerHobbelt reveal.js fork
 
 ## How to use
 

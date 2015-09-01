@@ -64,20 +64,6 @@ module.exports = function(grunt) {
             }
         },
 
-		autoprefixer: {
-			dist: {
-				src: 'css/reveal.css'
-			}
-		},
-
-        cssmin: {
-            compress: {
-                files: {
-                    'css/reveal.min.css': [ 'css/reveal.css' ]
-                }
-            }
-        },
-
 		sass: {
 			core: {
                 files: {
@@ -142,6 +128,20 @@ module.exports = function(grunt) {
               'dist/css/<%= pkg.name %>-theme.min.css': 'dist/css/<%= pkg.name %>-theme.css'
 				}
 			}
+        },
+
+		autoprefixer: {
+			dist: {
+				src: 'css/reveal.css'
+			}
+		},
+
+        cssmin: {
+            compress: {
+                files: {
+                    'css/reveal.min.css': [ 'css/reveal.css' ]
+                }
+            }
         },
 
         jshint: {
