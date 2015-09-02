@@ -91,8 +91,11 @@ module.exports = function(grunt) {
               outputSourceFiles: true
             },
             files: {
-              src: 'css/reveal.less',
-              dst: 'less/bootstrap.less'
+                expand: true,
+                cwd: 'css',
+                src: ['*.less'],
+                dest: './',
+                ext: '.css'
             }
           },
           themes: {
@@ -100,22 +103,11 @@ module.exports = function(grunt) {
               strictMath: true
             },
             files: {
-                'css/theme/default.css': 'css/theme/source-less/default.less',
-                'css/theme/black.css': 'css/theme/source-less/black.less',
-                'css/theme/beige.css': 'css/theme/source-less/beige.less',
-                'css/theme/night.css': 'css/theme/source-less/night.less',
-                'css/theme/serif.css': 'css/theme/source-less/serif.less',
-                'css/theme/simple.css': 'css/theme/source-less/simple.less',
-                'css/theme/sky.css': 'css/theme/source-less/sky.less',
-                'css/theme/moon.css': 'css/theme/source-less/moon.less',
-                'css/theme/solarized.css': 'css/theme/source-less/solarized.less',
-                'css/theme/blood.css': 'css/theme/source-less/blood.less',
-                'css/theme/jolicode.css': 'css/theme/source-less/jolicode.less',
-                'css/theme/openbossa.css': 'css/theme/source-less/openbossa.less',
-                'css/theme/aerogear.css': 'css/theme/source-less/aerogear.less',
-                'css/theme/one-mozilla.css': 'css/theme/source-less/one-mozilla.less',
-                'css/theme/parallax-demo.css': 'css/theme/source-less/parallax-demo.less',
-                'css/theme/fourkitchens.css': 'css/theme/source-less/fourkitchens.less'
+                expand: true,
+                cwd: 'css/theme',
+                src: ['source-less/*.less'],
+                dest: './',
+                ext: '.css'
             }
           },
           minify: {
