@@ -32,6 +32,8 @@
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
 
+		<link rel="stylesheet" href="css/custom.css">
+
 		<!--[if lt IE 9]>
 		<script src="lib/js/html5shiv.js"></script>
 		<![endif]-->
@@ -383,6 +385,14 @@ Reveal.addEventListener( 'customevent', function() {
 						<li><a href="https://github.com/hakimel/reveal.js#keyboard-bindings">Custom keyboard bindings</a></li>
 					</ul>
 				</section>
+				
+				<section
+					data-separator="^\n\n\n"  
+					data-separator-vertical="^\n\n"  
+					data-separator-notes="^Note:"  
+					data-charset="utf-8">
+				</section>
+
 
 				<section style="text-align: left;">
 					<h1>THE END</h1>
@@ -396,9 +406,7 @@ Reveal.addEventListener( 'customevent', function() {
 
 		</div>
 
-		<a href="http://www.e-sites.nl/" title="E-sites. Digitaal bureau met denkers, bouwers en vertellers" class="esites-logo" target="_blank">E-sites. Digitaal bureau met denkers, bouwers en vertellers</a>
-		<div class="ecademy-logo"><img src="img/e-cademy.svg" width="76" alt="E-cademy"></div>
-
+		<script src="js/load_external_markdown.js"></script>
 
 		<script src="lib/js/head.min.js"></script>
 		<script src="js/reveal.js"></script>
@@ -412,7 +420,8 @@ Reveal.addEventListener( 'customevent', function() {
 				history: true,
 				center: true,
 
-				transition: 'slide', // none/fade/slide/convex/concave/zoom
+				theme: Reveal.getQueryHash().theme || 'night', // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'slide', // none/fade/slide/convex/concave/zoom
 
 				// Optional reveal.js plugins
 				dependencies: [

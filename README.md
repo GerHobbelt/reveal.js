@@ -1,3 +1,48 @@
+### My additions to Reveal.js
+
+I wanted to be able to point a reveal.js presentation to an arbitrary markdown file on the internet, so I made this.
+
+All you need to do now is just add a get param, `md` and set it equal to a url to a markdown file, like so:
+
+```html
+http://jonl.org/reveal.js/?md=https://gist.githubusercontent.com/jonleung/0ab64712af63134be707/raw/67b8a3834da8a90b07d544515e5a66f4623ae7bc/gistfile1.txt#/md
+```
+
+My only code additions to the default `index.html` were
+
+```html
+<div class="reveal">
+
+	<!-- Any section element inside of this container is displayed as a slide -->
+	<div class="slides">
+		
+		<section id="md"
+			data-separator="^\n\n\n"  
+			data-separator-vertical="^\n\n"  
+			data-separator-notes="^Note:"  
+			data-charset="iso-8859-15">
+		</section>
+
+	</div>
+
+</div>
+
+<script src="js/load_external_markdown.js"></script>
+```
+
+And a couple lines of javascript in `js/load_external_markdown.js`
+
+```javascript
+function getURLParameter(name) {
+  return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
+}
+
+var url = getURLParameter("md");
+var md = document.getElementById("md");
+md.setAttribute("data-markdown", url);
+```
+
+
 # reveal.js [![Build Status](https://travis-ci.org/hakimel/reveal.js.svg?branch=master)](https://travis-ci.org/hakimel/reveal.js)
 
 A framework for easily creating beautiful presentations using HTML. [Check out the live demo](http://lab.hakim.se/reveal-js/).
@@ -817,6 +862,8 @@ If you want to use the speaker notes plugin with your master presentation then m
 You can then access your master presentation at ```http://localhost:1947```
 
 Example configuration:
+*(don't forget to add the dependencies)*
+
 ```javascript
 Reveal.initialize({
 	// other options...
@@ -845,6 +892,8 @@ Reveal.initialize({
 Served from a publicly accessible static file server. Examples include: GitHub Pages, Amazon S3, Dreamhost, Akamai, etc. The more reliable, the better. Your audience can then access the client presentation via ```http://example.com/path/to/presentation/client/index.html```, with the configuration below causing them to connect to the socket.io server as clients.
 
 Example configuration:
+*(don't forget to add the dependencies)*
+
 ```javascript
 Reveal.initialize({
 	// other options...
