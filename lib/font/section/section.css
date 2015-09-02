@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'sectionbold';
+    src: url('section-bold-webfont.eot');
+    src: url('section-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('section-bold-webfont.woff') format('woff'),
+         url('section-bold-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}

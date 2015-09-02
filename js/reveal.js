@@ -1530,10 +1530,10 @@
 				transformSlides( { layout: '' } );
 			}
 			else {
-				// Use zoom to scale up in desktop Chrome so that content
+				// Use zoom to scale up in desktop Chrome and Safari so that content
 				// remains crisp. We don't use zoom to scale down since that
 				// can lead to shifts in text layout/line breaks.
-				if( scale > 1 && !isMobileDevice && /chrome/i.test( navigator.userAgent ) && typeof dom.slides.style.zoom !== 'undefined' ) {
+				if( scale > 1 && !isMobileDevice && /chrome|safari/i.test( navigator.userAgent ) && typeof dom.slides.style.zoom !== 'undefined' ) {
 					dom.slides.style.zoom = scale;
 					dom.slides.style.left = '';
 					dom.slides.style.top = '';
