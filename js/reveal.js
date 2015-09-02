@@ -1793,6 +1793,31 @@ TBD end of old code, start of new code
             element.style.bottom = 0;
             element.style.right = 0;
 
+            /* TBD / TODO  hakim original */
+            if (0) {
+				// Use zoom to scale up in desktop Chrome so that content
+				// remains crisp. We don't use zoom to scale down since that
+				// can lead to shifts in text layout/line breaks.
+				if( scale > 1 && !isMobileDevice && /chrome/i.test( navigator.userAgent ) && typeof dom.slides.style.zoom !== 'undefined' ) {
+					dom.slides.style.zoom = scale;
+					dom.slides.style.left = '';
+					dom.slides.style.top = '';
+					dom.slides.style.bottom = '';
+					dom.slides.style.right = '';
+					transformSlides( { layout: '' } );
+				}
+				// Apply scale transform as a fallback
+				else {
+					dom.slides.style.zoom = '';
+					dom.slides.style.left = '50%';
+					dom.slides.style.top = '50%';
+					dom.slides.style.bottom = 'auto';
+					dom.slides.style.right = 'auto';
+					transformSlides( { layout: 'translate(-50%, -50%) scale('+ scale +')' } );
+				}
+            }
+            /* TBD / TODO  hakim original */
+            
             // if scale is within epsilon range of 1.0, then we don't apply the scale: the CSS default is scale=1 anyway.
             if ( is0( scale - 1.0 ) ) {
                 // nothing to do... means: RESET the scale.
@@ -6151,11 +6176,17 @@ TBD end of old code, start of new code
 
 		// While paused only allow 'resuming' keyboard events:
         // 'b', 'w', '.' or any key specifically mapped to togglePause.
-		var resumeKeyCodes = [66, 87, 190, 191].concat(Object.keys(toArray(config.keyboard)).map( function (key) {
-			if( config.keyboard[key] === 'togglePause' ) {
-				return parseInt( key, 10 );
+		var resumeKeyCodes = [66, 87, 190, 191];
+		var key;
+
+		// Custom key bindings for togglePause should be able to resume
+		if( typeof config.keyboard === 'object' ) {
+			for( key in config.keyboard ) {
+				if( config.keyboard[key] === 'togglePause' ) {
+					resumeKeyCodes.push( parseInt( key, 10 ) );
+				}
 			}
-		}));
+		}
 
 		if( isPaused() && resumeKeyCodes.indexOf( event.keyCode ) === -1 ) {
 			event.preventDefault && event.preventDefault();
@@ -6168,7 +6199,7 @@ TBD end of old code, start of new code
         // 1. User defined key bindings
         if( typeof config.keyboard === 'object' ) {
 
-            for( var key in config.keyboard ) {
+			for( key in config.keyboard ) {
 
                 // Check if this binding matches the pressed key
                 if( parseInt( key, 10 ) === event.keyCode ) {
