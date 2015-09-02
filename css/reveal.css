@@ -582,6 +582,9 @@ body
     /* z-index: 1;          -- removing this one ensures that the search plugin always shows up on top like it should. */
     text-align: center;
 
+  -webkit-transition: -webkit-perspective 0.4s ease;
+          transition: perspective 0.4s ease;
+
     -webkit-perspective: 600px;
        -moz-perspective: 600px;
         -ms-perspective: 600px;
@@ -604,8 +607,13 @@ body
 .reveal .slides-overview > section > section {
     display: none;
     position: absolute;
+  top: 0%;
+  left: 0%;
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
     width: 100%;
-    padding: 0px;
+  height: 100%;
+  padding: 0px 0px;
 
     z-index: 10;
 

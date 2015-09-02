@@ -16,10 +16,15 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
         <link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+		<link rel="stylesheet" href="css/theme/esites.css" id="theme">
+
+		<!-- FontAwesome include -->
+		<link rel="stylesheet" href="lib/css/font-awesome.css">
 
 		<!-- For syntax highlighting -->
         <link rel="stylesheet" href="lib/css/highlight/styles/zenburn.css">
+
+		<link rel="stylesheet" href="css/custom.css">
 
         <!--[if lt IE 9]>
         <script src="lib/js/html5shiv.js"></script>
@@ -50,6 +55,20 @@
                     <p>
 						reveal.js enables you to create beautiful interactive slide decks using HTML. This presentation will show you examples of what it can do.
                     </p>
+				</section>
+
+                <section style="text-align:left">
+                    <h3><a href="https://github.com/FortAwesome/Font-Awesome/">FontAwesome</a>
+                    <i class="fa fa-rocket fa-spin" style="color: #fff; text-shadow: 0px 0px 16px rgba(0, 0, 0, 0.52);margin-left:1.6ex;margin-right:1.6ex"></i> integrated:</h3>
+                    <ul class="fa-ul">
+                    <li><i class="fa fa-li fa-code"></i>Code for the spinning rocket:
+                        <pre><code><i class="fa fa-rocket fa-spin"></i></code></pre>
+                    </li>
+                    <li><i class="fa fa-li fa-plus-square"></i>Can be used as list bullets</li>
+                    <li><i class="fa fa-li fa-external-link-square"></i><a href="http://fortawesome.github.io/Font-Awesome/icons/">List of all icons</a></li>
+                    <li><i class="fa fa-li fa-external-link-square"></i><a href="http://fortawesome.github.io/Font-Awesome/examples/">FontAwesome examples</a></li>
+                    <li><i class="fa fa-li fa-github-square"></i>Included in a feature branch on <a href="https://github.com/burnpanck/reveal.js">github.com/burnpanck/reveal.js</a></li>
+                    </ul>
                 </section>
 
 				<section>
@@ -480,6 +499,14 @@ Reveal.addEventListener( 'customevent', function() {
 						<li><a href="https://github.com/hakimel/reveal.js#keyboard-bindings">Custom keyboard bindings</a></li>
                     </ul>
                 </section>
+				
+				<section
+					data-separator="^\n\n\n"  
+					data-separator-vertical="^\n\n"  
+					data-separator-notes="^Note:"  
+					data-charset="utf-8">
+				</section>
+
 
                 <section data-slide-data="url(assets/dynamic-slide-content.md)" data-overview-info="AJAX: Loading slide content dynamically">
                     <p>This paragraph will be replaced by the dynamically loaded content...</p>
@@ -1101,6 +1128,8 @@ html {
 			</p>
 
 		</footer>
+
+		<script src="js/load_external_markdown.js"></script>
 
         <script src="js/reveal-pagestart-driver.js"></script>
 

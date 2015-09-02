@@ -1,0 +1,100 @@
+/**
+ * E-sites theme for reveal.js
+ *
+ * Copyright (C) 2015 Hakim El Hattab, http://hakim.se
+ */
+
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+
+// Include theme-specific fonts
+//@import url(../../lib/font/source-sans-pro/source-sans-pro.css);
+@import url(../../lib/font/roboto/roboto.css);
+@import url(../../lib/font/section/section.css);
+
+
+// Override theme settings (see ../template/settings.scss)
+$backgroundColor: #1c1e20; //#222;
+
+$esitesRed: #FE284A;
+
+$mainColor: #fff;
+$headingColor: $esitesRed;
+
+$mainFontSize: 32px;
+$mainFont: 'robotlight', Helvetica, sans-serif;
+$headingFont: 'sectionbold', Helvetica, sans-serif;
+$headingTextShadow: none;
+$headingLetterSpacing: normal;
+$headingTextTransform: uppercase;
+$headingFontWeight: 600;
+$linkColor: $esitesRed;
+$linkColorHover: lighten( $linkColor, 15% );
+$selectionBackgroundColor: lighten( $linkColor, 25% );
+
+$heading1Size: 2.5em;
+$heading2Size: 1.8em;
+$heading3Size: 1.3em;
+$heading4Size: 1.0em;
+
+section:first-child {
+	h3 {
+		color: #fff;
+	}
+}
+
+section.has-light-background {
+	&, h1, h2, h3, h4, h5, h6 {
+		color: $backgroundColor;
+	}
+}
+
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------
+
+/*********************************************
+ * CUSTOM ELEMENTS
+ *********************************************/
+
+.esites-logo {
+	width: 124px;
+	height: 61px;
+	display: block;
+	position: absolute;
+	bottom: 1em;
+	left: 1em;
+	background: transparent url(../../img/e-sites.png) no-repeat 0 0;
+	background-size: 124px 61px;
+	border: 0;
+	overflow: hidden;
+	*text-indent: -9999px;
+
+	&:before {
+		content: '';
+		display: block;
+		width: 0;
+		height: 150%;
+	}
+}
+
+.ecademy-logo {
+	width: 76px;
+	height: 76px;
+	display: block;
+	position: absolute;
+	top: 1em;
+	left: 50%;
+	margin-left: -38px;
+	transition: opacity .3s ease-in;
+	-webkit-transition: opacity .3s ease-in;
+
+	&.opaque {
+		opacity: 0.2;
+	}
+}

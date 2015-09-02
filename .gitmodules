@@ -77,3 +77,6 @@
 [submodule "lib/js/MathJax"]
 	path = lib/js/MathJax
 	url = git@github.com:GerHobbelt/MathJax.git
+[submodule "lib/font/FontAwesome"]
+	path = lib/font/FontAwesome
+	url = https://github.com/FortAwesome/Font-Awesome.git
