@@ -3266,10 +3266,9 @@
 	/**
 	 * Retrieves the total number of slides in this presentation.
 	 */
-	function getTotalSlides() {
-
-		return dom.wrapper.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
-
+	function getTotalSlides(config) {
+		var selector = config.vertical ? SLIDES_SELECTOR : HORIZONTAL_SLIDES_SELECTOR;
+		return dom.wrapper.querySelectorAll( selector ).length;
 	}
 
 	/**
