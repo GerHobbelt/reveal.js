@@ -90,25 +90,25 @@ module.exports = function(grunt) {
               sourceMap: true,
               outputSourceFiles: true
             },
-            files: {
+            files: [{
                 expand: true,
                 cwd: 'css',
                 src: ['*.less'],
-                dest: './',
+                dest: 'css',
                 ext: '.css'
-            }
+            }]
           },
           themes: {
             options: {
               strictMath: true
             },
-            files: {
+            files: [{
                 expand: true,
-                cwd: 'css/theme',
-                src: ['source-less/*.less'],
-                dest: './',
+                cwd: 'css/theme/source-less',
+                src: ['*.less'],
+                dest: 'css/theme',
                 ext: '.css'
-            }
+            }]
           },
           minify: {
             options: {
@@ -252,13 +252,13 @@ module.exports = function(grunt) {
     grunt.registerTask( 'js', [ 'jshint', 'uglify', 'qunit' ] );
 
     // Theme CSS
-    grunt.registerTask( 'css-themes', [ 'sass:themes' ] );
+    grunt.registerTask( 'css-themes', [ 'less:themes' ] );
 
     // Core framework CSS
-    grunt.registerTask( 'css-core', [ 'sass:core', 'autoprefixer', 'cssmin' ] );
+    grunt.registerTask( 'css-core', [ 'less:reveal', 'autoprefixer', 'cssmin' ] );
 
     // All CSS
-    grunt.registerTask( 'css', [ 'sass', 'autoprefixer', 'cssmin' ] );
+    grunt.registerTask( 'css', [ 'less:reveal', 'less:themes', 'autoprefixer', 'cssmin' ] );
 
     // Package presentation to archive
     grunt.registerTask( 'package', [ 'default', 'zip' ] );
