@@ -12,13 +12,9 @@ var RevealMath = window.RevealMath || (function(){
 	options.extension_paths = options.extension_paths || {};
 
 	loadScript( options.mathjax + '?config=' + options.config, function() {
-
         var MJaxConfig = {
 			messageStyle: 'none',
-			tex2jax: {
-				inlineMath: [['$','$'],['\\(','\\)']] ,
-				skipTags: ['script','noscript','style','textarea','pre']
-			},
+			tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] },
 			skipStartupTypeset: true,
             'HTML-CSS': { scale: 88 }
 		};
@@ -42,8 +38,11 @@ var RevealMath = window.RevealMath || (function(){
                 MJaxConfig[key] = options[key];
             }
         }
+            
 
+        
 		MathJax.Hub.Config(MJaxConfig);
+
 
 		// Typeset followed by an immediate reveal.js layout since
 		// the typesetting process could affect slide height

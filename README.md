@@ -4,13 +4,24 @@ A framework for easily creating beautiful presentations using HTML. [Check out t
 
 reveal.js comes with a broad range of features including [nested slides](https://github.com/hakimel/reveal.js#markup), [Markdown contents](https://github.com/hakimel/reveal.js#markdown), [PDF export](https://github.com/hakimel/reveal.js#pdf-export), [speaker notes](https://github.com/hakimel/reveal.js#speaker-notes) and a [JavaScript API](https://github.com/hakimel/reveal.js#api). It's best viewed in a modern browser but [fallbacks](https://github.com/hakimel/reveal.js/wiki/Browser-Support) are available to make sure your presentation can still be viewed elsewhere.
 
-
 #### More reading:
 - [Installation](#installation): Step-by-step instructions for getting reveal.js running on your computer.
 - [Changelog](https://github.com/hakimel/reveal.js/releases): Up-to-date version history.
 - [Examples](https://github.com/hakimel/reveal.js/wiki/Example-Presentations): Presentations created with reveal.js, add your own!
 - [Browser Support](https://github.com/hakimel/reveal.js/wiki/Browser-Support): Explanation of browser support and fallbacks.
 - [Plugins](https://github.com/hakimel/reveal.js/wiki/Plugins,-Tools-and-Hardware): A list of plugins that can be used to extend reveal.js.
+
+## Branch `burnpanck`:
+This branch is a merge of all the feature branches that I need for my presentations.
+At this point, those include:
+- `simplify-slide-API`
+- `incorporate-FontAwesome`
+- `full-access-to-mathjax-options`
+- `merged-third-party`
+- `css-based-vertical-positioning`
+- `make-bower-package`
+- `githooks-for-depdendent-files`
+- `improve-fragments`: Note, this currently breaks unit-tests!
 
 ## Online Editor
 

@@ -35,6 +35,7 @@ module.exports = function(grunt) {
 			core: {
 				files: {
 					'css/reveal.css': 'css/reveal.scss',
+                    'lib/css/font-awesome.css': 'lib/css/source/font-awesome.scss'
 				}
 			},
 			themes: {
@@ -59,7 +60,8 @@ module.exports = function(grunt) {
 		cssmin: {
 			compress: {
 				files: {
-					'css/reveal.min.css': [ 'css/reveal.css' ]
+					'css/reveal.min.css': [ 'css/reveal.css' ],
+                    'lib/css/font-awesome.min.css': [ 'lib/css/font-awesome.css' ]
 				}
 			}
 		},
@@ -130,6 +132,19 @@ module.exports = function(grunt) {
 			html: {
 				files: [ 'index.html']
 			}
+		},
+
+		copy: {
+			dist: {
+				files: [
+					{src: ['js/reveal.min.js'], dest: 'dist/'},
+					{src: ['css/reveal.min.css'], dest:'dist/'},
+					{expand: true, src: ['css/print/*.css'], dest: 'dist/', filter: 'isFile'},
+					{expand: true, src: ['css/theme/*.css'], dest: 'dist/', filter: 'isFile'},
+					{expand: true, src: ['plugin/**'], dest: 'dist/'},
+					{expand: true, src: ['lib/**/*.{css,js}','lib/font/**'], dest: 'dist/'}
+				]
+			}
 		}
 
 	});
@@ -140,6 +155,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks( 'grunt-contrib-cssmin' );
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-contrib-watch' );
+	grunt.loadNpmTasks( 'grunt-contrib-copy' );
 	grunt.loadNpmTasks( 'grunt-sass' );
 	grunt.loadNpmTasks( 'grunt-contrib-connect' );
 	grunt.loadNpmTasks( 'grunt-autoprefixer' );
@@ -168,5 +184,7 @@ module.exports = function(grunt) {
 
 	// Run tests
 	grunt.registerTask( 'test', [ 'jshint', 'qunit' ] );
+
+	grunt.registerTask( 'bdist', [ 'css', 'js', 'copy' ] );
 
 };

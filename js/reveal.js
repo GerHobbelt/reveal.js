@@ -25,10 +25,11 @@
 
 	var Reveal;
 
-	var SLIDES_SELECTOR = '.slides section',
-		HORIZONTAL_SLIDES_SELECTOR = '.slides>section',
-		VERTICAL_SLIDES_SELECTOR = '.slides>section.present>section',
-		HOME_SLIDE_SELECTOR = '.slides>section:first-of-type',
+    var SLIDES_SELECTOR = '.reveal .slides section.slide',
+        STACK_SELECTOR = '.reveal .slides section.stack',
+		HORIZONTAL_SLIDES_SELECTOR = '.reveal .slides section.Hlayout',
+		VERTICAL_SLIDES_SELECTOR = '.reveal .slides>section.present>section',
+		HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-of-type',
 
 		// Configuration defaults, can be overridden at initialization time
 		config = {
@@ -483,7 +484,9 @@
 		dom.controlsNext = toArray( document.querySelectorAll( '.navigate-next' ) );
 
 		dom.statusDiv = createStatusDiv();
-	}
+
+        setupSlides();
+    }
 
 	/**
 	 * Creates a hidden div with role aria-live to announce the
@@ -628,6 +631,33 @@
 		return node;
 
 	}
+
+    /**
+	 * Walks all the slides and adapts the DOM for the presentation if needed.
+	 */
+    function setupSlides() {
+        toArray(dom.slides.querySelectorAll('.slides > section')).forEach(setupHLayoutDOM);
+    }
+    
+    function setupHLayoutDOM(hlayout){
+        hlayout.classList.add('Hlayout');
+        var vlayout = toArray(hlayout.querySelectorAll('.slides > section.Hlayout > section'));
+        if(vlayout.length){
+            // this is a stack
+            hlayout.classList.add('stack');
+            vlayout.forEach(setupVLayoutDOM);
+        } else {
+            // this is a slide
+            setupSlideDOM(hlayout);
+        }
+    }
+    function setupVLayoutDOM(vlayout){
+        vlayout.classList.add('Vlayout');
+        setupSlideDOM(vlayout);
+    }
+    function setupSlideDOM(slide){
+        slide.classList.add('slide');
+    }
 
 	/**
 	 * Creates the slide background elements and appends them
@@ -1552,33 +1582,6 @@
 				}
 			}
 
-			// Select all slides, vertical and horizontal
-			var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
-
-			for( var i = 0, len = slides.length; i < len; i++ ) {
-				var slide = slides[ i ];
-
-				// Don't bother updating invisible slides
-				if( slide.style.display === 'none' ) {
-					continue;
-				}
-
-				if( config.center || slide.classList.contains( 'center' ) ) {
-					// Vertical stacks are not centred since their section
-					// children will be
-					if( slide.classList.contains( 'stack' ) ) {
-						slide.style.top = 0;
-					}
-					else {
-						slide.style.top = Math.max( ( ( size.height - getAbsoluteHeight( slide ) ) / 2 ) - slidePadding, 0 ) + 'px';
-					}
-				}
-				else {
-					slide.style.top = '';
-				}
-
-			}
-
 			updateProgress();
 			updateParallax();
 
@@ -1590,11 +1593,42 @@
 	 * Applies layout logic to the contents of all slides in
 	 * the presentation.
 	 */
-	function layoutSlideContents( width, height, padding ) {
+    function layoutSlideContents( width, height, padding ) {
+        // Move slide content into appropriate layout containers
+        var bodyDivTpl = document.createElement('div');
+        bodyDivTpl.classList.add('slide-content');
+        bodyDivTpl.classList.add('slide-body');
+        
+		toArray( dom.slides.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
+            //TODO: more robust detection of vertical slides
+            if( slide.firstElementChild && /section/gi.test(slide.firstElementChild.nodeName) ){
+                // This is a vertical slide wrapper, thus no slide
+                return;
+            }
+            
+            var bodyDiv = slide.querySelector('.slide-body');
+            if(!bodyDiv){
+                bodyDiv = bodyDivTpl.cloneNode(false);
+                var inserted = false;
+                toArray(slide.childNodes).forEach(function(c){
+                    if(c.classList && '.slide-content' in c.classList){
+                        return;
+                    } else {
+                        if(!inserted){
+                            slide.insertBefore(bodyDiv,c);
+                            inserted = true;
+                        }
+                        bodyDiv.appendChild(c); // will automatically remove 'c' from the slide
+                    }
+                });
+                if(!inserted){
+                    slide.insertBefore(bodyDiv,slide.firstChild);
+                }
+            }
+        } );
 
 		// Handle sizing of elements with the 'stretch' class
-		toArray( dom.slides.querySelectorAll( 'section > .stretch' ) ).forEach( function( element ) {
-
+		toArray( dom.slides.querySelectorAll( '.slide-body > .stretch' ) ).forEach( function( element ) {
 			// Determine how much vertical space we can use
 			var remainingHeight = getRemainingHeight( element, height );
 
@@ -1607,15 +1641,11 @@
 
 				element.style.width = ( nw * es ) + 'px';
 				element.style.height = ( nh * es ) + 'px';
-
-			}
-			else {
+			} else {
 				element.style.width = width + 'px';
 				element.style.height = remainingHeight + 'px';
 			}
-
 		} );
-
 	}
 
 	/**
@@ -1835,7 +1865,10 @@
 			dom.wrapper.appendChild( dom.background );
 
 			// Clean up changes made to slides
-			toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) ).forEach( function( slide ) {
+			toArray( dom.wrapper.querySelectorAll(
+                HORIZONTAL_SLIDES_SELECTOR + ', ' + SLIDES_SELECTOR
+            ) ).forEach( function( slide ) {
+				// Resets all transforms to use the external styles
 				transformElement( slide, '' );
 
 				slide.removeEventListener( 'click', onOverviewSlideClicked, true );
@@ -2106,7 +2139,9 @@
 		// Show fragment, if specified
 		if( typeof f !== 'undefined' ) {
 			navigateFragment( f );
-		}
+		} else {
+            navigateFragment();
+        }
 
 		// Dispatch an event if the slide changed
 		var slideChanged = ( indexh !== indexhBefore || indexv !== indexvBefore );
@@ -2136,7 +2171,7 @@
 			if ( dom.wrapper.querySelector( HOME_SLIDE_SELECTOR ).classList.contains( 'present' ) ) {
 				// Launch async task
 				setTimeout( function () {
-					var slides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.stack') ), i;
+					var slides = toArray( dom.wrapper.querySelectorAll( STACK_SELECTOR ) ), i;
 					for( i in slides ) {
 						if( slides[i] ) {
 							// Reset stack
@@ -2180,6 +2215,9 @@
 		removeEventListeners();
 		addEventListeners();
 
+        // Ensure slides conform to our DOM requirements
+        setupSlides();
+        
 		// Force a layout to make sure the current config is accounted for
 		layout();
 
@@ -2243,18 +2281,9 @@
 	 */
 	function sortAllFragments() {
 
-		var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
-		horizontalSlides.forEach( function( horizontalSlide ) {
-
-			var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
-			verticalSlides.forEach( function( verticalSlide, y ) {
-
-				sortFragments( verticalSlide.querySelectorAll( '.fragment' ) );
-
-			} );
-
-			if( verticalSlides.length === 0 ) sortFragments( horizontalSlide.querySelectorAll( '.fragment' ) );
-
+		var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
+		slides.forEach( function( slide ) {
+            sortFragments( slide.querySelectorAll( '.fragment' ) );
 		} );
 
 	}
@@ -2348,6 +2377,7 @@
 							futureFragment.classList.remove( 'current-fragment' );
 						}
 					}
+                // TODO: this belongs into the DOM creation part
 				}
 			}
 
@@ -2859,12 +2889,12 @@
 	function availableFragments() {
 
 		if( currentSlide && config.fragments ) {
-			var fragments = currentSlide.querySelectorAll( '.fragment' );
-			var hiddenFragments = currentSlide.querySelectorAll( '.fragment:not(.visible)' );
+			var cur = currentFragmentIndex();
+			var last = lastFragmentIndex();
 
 			return {
-				prev: fragments.length - hiddenFragments.length > 0,
-				next: !!hiddenFragments.length
+				prev: cur > 0,
+				next: cur < last
 			};
 		}
 		else {
@@ -3011,7 +3041,8 @@
 
 		var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
 
-		// The number of past slides
+		// The number of past and total slides
+		var totalCount = dom.wrapper.querySelectorAll( SLIDES_SELECTOR ).length;
 		var pastCount = 0;
 
 		// Step through all slides and count the past ones
@@ -3351,7 +3382,7 @@
 
 		fragments = toArray( fragments );
 
-		var ordered = [],
+		var ordered = [[]],
 			unordered = [],
 			sorted = [];
 
@@ -3393,12 +3424,31 @@
 		return sorted;
 
 	}
+    
+    function currentFragmentIndex() {
+        var lastVisibleFragment = sortFragments( currentSlide.querySelectorAll( '.fragment.visible' ) ).pop();
 
+        if( lastVisibleFragment ) {
+            return parseInt( lastVisibleFragment.getAttribute( 'data-fragment-index' ) || 0, 10 );
+        }
+        return 0;
+    }
+
+    function lastFragmentIndex() {
+        var lastFragment = sortFragments( currentSlide.querySelectorAll( '.fragment' ) ).pop();
+
+        if( lastFragment ) {
+            return parseInt( lastFragment.getAttribute( 'data-fragment-index' ) || 0, 10 );
+        }
+        return 0;
+    }
+    
+    
 	/**
 	 * Navigate to the specified slide fragment.
 	 *
 	 * @param {Number} index The index of the fragment that
-	 * should be shown, -1 means all are invisible
+	 * should be shown, 0 means initial slide status
 	 * @param {Number} offset Integer offset to apply to the
 	 * fragment index
 	 *
@@ -3411,23 +3461,25 @@
 
 			var fragments = sortFragments( currentSlide.querySelectorAll( '.fragment' ) );
 			if( fragments.length ) {
-
+                var curIdx = currentFragmentIndex();
+                var lastIdx = lastFragmentIndex();
+                
 				// If no index is specified, find the current
 				if( typeof index !== 'number' ) {
-					var lastVisibleFragment = sortFragments( currentSlide.querySelectorAll( '.fragment.visible' ) ).pop();
-
-					if( lastVisibleFragment ) {
-						index = parseInt( lastVisibleFragment.getAttribute( 'data-fragment-index' ) || 0, 10 );
-					}
-					else {
-						index = -1;
-					}
+					index = curIdx;
 				}
 
 				// If an offset is specified, apply it to the index
 				if( typeof offset === 'number' ) {
 					index += offset;
 				}
+                
+                if(index < 0){
+                    index = 0;
+                }
+                if(index > lastIdx){
+                    index = lastIdx;
+                }
 
 				var fragmentsShown = [],
 					fragmentsHidden = [];
@@ -4062,6 +4114,8 @@
 	 * closest approximate horizontal slide using this equation:
 	 *
 	 * ( clickX / presentationWidth ) * numberOfSlides
+     *
+     * TODO: This formula does not match the actual progress display!
 	 */
 	function onProgressClicked( event ) {
 
