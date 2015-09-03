@@ -37,22 +37,48 @@
 
 //TBD
 
-var RevealMath = window.RevealMath || (function(){
+var RevealMath = window.RevealMath || (function () {
 
     var options = Reveal.getConfig().math || {};
 	options.mathjax = options.mathjax || 'https://cdn.mathjax.org/mathjax/latest/MathJax.js';
     options.config = options.config || 'TeX-AMS_HTML-full';
+	options.extension_paths = options.extension_paths || {};
 
-    loadScript( options.mathjax + '?config=' + options.config, function() {
+    loadScript( options.mathjax + '?config=' + options.config, function () {
 
-        MathJax.Hub.Config({
+        var MJaxConfig = {
             messageStyle: 'none',
 			tex2jax: {
-				inlineMath: [['$','$'],['\\(','\\)']] ,
-				skipTags: ['script','noscript','style','textarea','pre']
+				inlineMath: [['$', '$'], ['\\(', '\\)']] ,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
 			},
-            skipStartupTypeset: true
-        });
+			skipStartupTypeset: true,
+            'HTML-CSS': { scale: 88 }
+		};
+
+        //delete options.mathjax;
+        //delete options.config;
+
+        for (var key in options.extension_paths) {
+            MathJax.Ajax.config.path[key] = options.extension_paths[key];
+        }
+
+        //delete options.extension_paths;
+        
+        for (var key in options) {
+            if (key === 'mathjax' || key === 'config' || key === 'extension_paths') continue;
+            
+            if (MJaxConfig[key] !== undefined && options[key] instanceof Object) {
+                console.log('merging nested options for ', key, MJaxConfig[key], options[key]);
+                for (var skey in options[key]) {
+                    MJaxConfig[key][skey] = options[key][skey];
+                }
+            } else {
+                MJaxConfig[key] = options[key];
+            }
+        }
+
+		MathJax.Hub.Config(MJaxConfig);
 
         // Typeset followed by an immediate reveal.js layout since
         // the typesetting process could affect slide height
@@ -76,7 +102,7 @@ var RevealMath = window.RevealMath || (function(){
         script.src = url;
 
         // Wrapper for callback to make sure it only fires once
-        var finish = function() {
+        var finish = function () {
             if( typeof callback === 'function' ) {
                 callback.call();
                 callback = null;
@@ -86,7 +112,7 @@ var RevealMath = window.RevealMath || (function(){
         script.onload = finish;
 
         // IE
-        script.onreadystatechange = function() {
+        script.onreadystatechange = function () {
             if ( this.readyState === 'loaded' ) {
                 finish();
             }
@@ -96,7 +122,6 @@ var RevealMath = window.RevealMath || (function(){
         head.appendChild( script );
 
     }
-
 
     return RevealMath;
 })();
