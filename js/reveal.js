@@ -39,9 +39,9 @@
 
     // these *_SELECTOR defines are all `dom.wrapper` based, which explains why they won't have the `.reveal` root/wrapper DIV class in them:
     var SLIDES_SELECTOR = '.slides > section, .slides > section > section',
-        HORIZONTAL_SLIDES_SELECTOR = '.slides>section',
-        VERTICAL_SLIDES_SELECTOR = '.slides>section.present>section',
-        HOME_SLIDE_SELECTOR = '.slides>section:first-of-type',
+        HORIZONTAL_SLIDES_SELECTOR = '.slides > section',
+        VERTICAL_SLIDES_SELECTOR = '.slides > section.present > section',
+        HOME_SLIDE_SELECTOR = '.slides > section:first-of-type',
         FRAGMENTS_SELECTOR = '.slides > section .fragment',
         LINKS_SELECTOR = '.slides a:not(.image)',
         ROLLING_LINKS_SELECTOR = '.slides a.roll';
@@ -50,8 +50,6 @@
         SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR = ':scope > section',
         SCOPED_FROM_WRAPPER_ALL_SLIDES_SELECTOR = ':scope > section, :scope > section > section',
         SLIDE_NO_DISPLAY_DISTANCE = 1;
-
-    var DEBUG_SHOW_ALL = 1;
 
     var nil_function = function () {};
 
@@ -117,6 +115,9 @@
 
             // {boolean} Enable the slide overview mode
             overview: true,
+
+            // {boolean} Provide a simplified slide overview mode (when overview mode has been enabled)
+            simplifiedOverview: false,
 
             // {boolean} Vertical centering of slides
             center: true,
@@ -411,8 +412,7 @@
             // filter 1: only accept query parameters which do already exist in our `config` object.
             //
             // filter 2: only accept query parameters which do not contain executable JavaScript code.
-            return typeof config[fieldname] !== 'undefined'
-                && typeof config[fieldname] !== 'function';
+            return typeof config[fieldname] !== 'undefined' && typeof config[fieldname] !== 'function';
         } );
         // Copy options over to our config object
         extend( config, options );
@@ -806,13 +806,15 @@
         dom.slides_wrapper.style.width = '100%';
         dom.slides_wrapper.style.height = '100%';
 
-        dom.slides_overview_outer = createSingletonNode( dom.wrapper, 'div', 'slides-overview-wrapper', null );
+        if ( config.simplifiedOverview && config.overview ) {
+            dom.slides_overview_outer = createSingletonNode( dom.wrapper, 'div', 'slides-overview-wrapper', null );
 
-        // set width/height or zoom/scale won't work:
-        dom.slides_overview_outer.style.width = '100%';
-        dom.slides_overview_outer.style.height = '100%';
+            // set width/height or zoom/scale won't work:
+            dom.slides_overview_outer.style.width = '100%';
+            dom.slides_overview_outer.style.height = '100%';
 
-        dom.slides_overview_inner = createSingletonNode( dom.slides_overview_outer, 'div', 'slides-overview', null );
+            dom.slides_overview_inner = createSingletonNode( dom.slides_overview_outer, 'div', 'slides-overview', null );
+        }
 
         // Background element
         dom.background = createSingletonNode( dom.wrapper, 'div', 'backgrounds', null );
@@ -1008,7 +1010,7 @@ TBD end of old code, start of new code
         } );
 
         // Show all fragments
-        toArray( dom.slides.querySelectorAll( '.fragments' ) ).forEach( function( fragment ) {
+        toArray( dom.slides.querySelectorAll( '.fragment' ) ).forEach( function( fragment ) {
             fragment.classList.add( 'visible' );
         } );
 
@@ -1232,23 +1234,27 @@ TBD end of old code, start of new code
      */
     function createOverview() {
 
-        dom.slides_overview_inner.innerHTML = '';
+        if ( config.simplifiedOverview && config.overview ) {
 
-        // Iterate over all horizontal slides
-        toArray( dom.slides.querySelectorAll( SCOPED_FROM_WRAPPER_HORIZONTAL_SLIDES_SELECTOR ) ).forEach( function( slideh, x ) {
+            dom.slides_overview_inner.innerHTML = '';
 
-            var stackElement = createSlideOverviewRepresentative( slideh, dom.slides_overview_inner, x, false, slideh.classList.contains( 'stack' ) );
+            // Iterate over all horizontal slides
+            toArray( dom.slides.querySelectorAll( SCOPED_FROM_WRAPPER_HORIZONTAL_SLIDES_SELECTOR ) ).forEach( function( slideh, x ) {
 
-            // Iterate over all vertical slides
-            toArray( slideh.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).forEach( function( slidev, y ) {
+                var stackElement = createSlideOverviewRepresentative( slideh, dom.slides_overview_inner, x, false, slideh.classList.contains( 'stack' ) );
 
-                createSlideOverviewRepresentative( slidev, stackElement, x, y, false );
+                // Iterate over all vertical slides
+                toArray( slideh.querySelectorAll( SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR ) ).forEach( function( slidev, y ) {
 
-                stackElement.classList.add( 'stack' );
+                    createSlideOverviewRepresentative( slidev, stackElement, x, y, false );
+
+                    stackElement.classList.add( 'stack' );
+
+                } );
 
             } );
 
-        } );
+        }
 
     }
 
@@ -1755,24 +1761,61 @@ TBD end of old code, start of new code
     }
 
     /**
+     * Resets all CSS transforms on the target element.
+     */
+    function resetElementTransform( element ) {
+
+        // reset the scale and related attributes:
+        element.style.left = null;
+        element.style.top = null;
+        element.style.bottom = null;
+        element.style.right = null;
+        element.style.zoom = null;
+
+        element.style.WebkitTransform = null;
+        element.style.MozTransform = null;
+        element.style.msTransform = null;
+        element.style.OTransform = null;
+        element.style.transform = null;
+
+    }
+
+    /**
      * Applies a CSS transform to the target element.
      */
     function transformElement( element, transform ) {
 
-        if ( transform == null ) {
-            element.style.WebkitTransform = transform;
-            element.style.MozTransform = transform;
-            element.style.msTransform = transform;
-            element.style.OTransform = transform;
-            element.style.transform = transform;
-        }
-        else {
-            element.style.WebkitTransform += transform;
-            element.style.MozTransform += transform;
-            element.style.msTransform += transform;
-            element.style.OTransform += transform;
-            element.style.transform += transform;
-        }
+        assert( transform != null );
+
+        /*
+         * **WARNING**: when you code this update action like this: 
+         *
+         * ```
+         * element.style.WebkitTransform += transform;
+         * element.style.MozTransform += transform;
+         * element.style.msTransform += transform;
+         * element.style.OTransform += transform;
+         * element.style.transform += transform;
+         * ```
+         *
+         * you will end with all transforms showing up **twice** in the element
+         * as this code attempts to it for all browsers and some, such as latest Chrome,
+         * support *both* their own (`WebkitTransform`) and the standard entry (`transform`),
+         * resulting in that last line causing the duplication of the transform.
+         *
+         * So the way out is to first sample all transforms, then add the new transform 
+         * and only then write them all back.
+         */ 
+        var wk = element.style.WebkitTransform;
+        var ff = element.style.MozTransform;
+        var ms = element.style.msTransform;
+        var op = element.style.OTransform;
+        var w3 = element.style.transform;
+        element.style.WebkitTransform = wk + transform;
+        element.style.MozTransform = ff + transform;
+        element.style.msTransform = ms + transform;
+        element.style.OTransform = op + transform;
+        element.style.transform = w3 + transform;
 
     }
 
@@ -1780,68 +1823,61 @@ TBD end of old code, start of new code
      * Applies the given scale to the target element.
      */
     function scaleElement( element, scale, targetInfo ) {
-        if ( scale == null ) {
-            // reset the scale and related attributes:
-            element.style.left = null;
-            element.style.top = null;
-            element.style.bottom = null;
-            element.style.right = null;
-            element.style.zoom = null;
-            transformElement( element, null );
-        }
-        else {
-            element.style.left = 0;
-            element.style.top = 0;
-            element.style.bottom = 0;
-            element.style.right = 0;
 
-            /* TBD / TODO  hakim original */
-            if (0) {
-                // Use zoom to scale up in desktop Chrome so that content
-                // remains crisp. We don't use zoom to scale down since that
-                // can lead to shifts in text layout/line breaks.
-                if( scale > 1 && !isMobileDevice && /chrome/i.test( navigator.userAgent ) && typeof dom.slides.style.zoom !== 'undefined' ) {
-                    dom.slides.style.zoom = scale;
-                    dom.slides.style.left = '';
-                    dom.slides.style.top = '';
-                    dom.slides.style.bottom = '';
-                    dom.slides.style.right = '';
-                    transformSlides( { layout: '' } );
-                }
-                // Apply scale transform as a fallback
-                else {
-                    dom.slides.style.zoom = '';
-                    dom.slides.style.left = '50%';
-                    dom.slides.style.top = '50%';
-                    dom.slides.style.bottom = 'auto';
-                    dom.slides.style.right = 'auto';
-                    transformSlides( { layout: 'translate(-50%, -50%) scale('+ scale +')' } );
-                }
+        assert( scale != null );
+
+        element.style.left = 0;
+        element.style.top = 0;
+        element.style.bottom = 0;
+        element.style.right = 0;
+
+        /* TBD / TODO  hakim original */
+        if (0) {
+            // Use zoom to scale up in desktop Chrome so that content
+            // remains crisp. We don't use zoom to scale down since that
+            // can lead to shifts in text layout/line breaks.
+            if( scale > 1 && !isMobileDevice && /chrome/i.test( navigator.userAgent ) && typeof dom.slides.style.zoom !== 'undefined' ) {
+                dom.slides.style.zoom = scale;
+                dom.slides.style.left = '';
+                dom.slides.style.top = '';
+                dom.slides.style.bottom = '';
+                dom.slides.style.right = '';
+                transformSlides( { layout: '' } );
             }
-            /* TBD / TODO  hakim original */
-            
-            // if scale is within epsilon range of 1.0, then we don't apply the scale: the CSS default is scale=1 anyway.
-            if ( is0( scale - 1.0 ) ) {
-                // nothing to do... means: RESET the scale.
-                //
-                // This is an important optimization as *nesting* the scales in Chrome produces very blocky render results,
-                // i.e. applying a CSS transform:scale to both a parent and child node will cause the child to render
-                // very 'roughly'.
-                element.style.zoom = null;
-            }
-            else if ( useZoomFallback ) {
-                element.style.zoom = scale;
-            }
-            // Apply scale transform
+            // Apply scale transform as a fallback
             else {
-                var post_translation = '';
-                if ( targetInfo ) {
-                    // compensation: -0.5 * delta_of_origin / scale
-                    var scale_inv = 0.5 * ( 1 - 1 / scale );
-                    var delta_h = targetInfo.slideHeight * scale_inv;
-                    var delta_w = targetInfo.slideWidth * scale_inv;
-                    post_translation = translate( 'X', Math.round(delta_w), 'px' ) + translate( 'Y', Math.round(delta_h), 'px' );
-                }
+                dom.slides.style.zoom = '';
+                dom.slides.style.left = '50%';
+                dom.slides.style.top = '50%';
+                dom.slides.style.bottom = 'auto';
+                dom.slides.style.right = 'auto';
+                transformSlides( { layout: 'translate(-50%, -50%) scale('+ scale +')' } );
+            }
+        }
+        /* TBD / TODO  hakim original */
+        
+        // if scale is within epsilon range of 1.0, then we don't apply the scale: the CSS default is scale=1 anyway.
+        if ( is0( scale - 1.0 ) ) {
+            // nothing to do... means: RESET the scale.
+            //
+            // This is an important optimization as *nesting* the scales in Chrome produces very blocky render results,
+            // i.e. applying a CSS transform:scale to both a parent and child node will cause the child to render
+            // very 'roughly'.
+            element.style.zoom = null;
+        }
+        else if ( useZoomFallback ) {
+            element.style.zoom = scale;
+        }
+        // Apply scale transform
+        else {
+            var post_translation = '';
+            if ( targetInfo ) {
+                // compensation: -0.5 * delta_of_origin / scale
+                var scale_inv = 0.5 * ( 1 - 1 / scale );
+                var delta_h = targetInfo.slideHeight * scale_inv;
+                var delta_w = targetInfo.slideWidth * scale_inv;
+                post_translation = translate( 'X', Math.round(delta_w), 'px' ) + translate( 'Y', Math.round(delta_h), 'px' );
+            } else {
                 transformElement( element, post_translation + ' scale(' + scale + ') ' );
             }
         }
@@ -2361,7 +2397,9 @@ TBD end of old code, start of new code
         var targetInfo = getViewportDimensionsInfo();
 
         __layout( dom.slides_wrapper, dom.slides, targetInfo );
-        __layout( dom.slides_overview_outer, dom.slides_overview_inner, targetInfo );
+        if ( config.simplifiedOverview && config.overview ) {
+            __layout( dom.slides_overview_outer, dom.slides_overview_inner, targetInfo );
+        }
 
     }
 
@@ -2438,7 +2476,7 @@ TBD end of old code, start of new code
             // Only queue/exec action when we have the *final* scale set up for this particular slide!
             if ( !wantCommonScale || enforceCommonScale ) {
                 renderQueue.push(function () {
-                    scaleElement( slide, null );    // this also implies: transformElement( slide, null )
+                    resetElementTransform( slide );
                 });            
             }
         }
@@ -2453,6 +2491,7 @@ TBD end of old code, start of new code
         }
 
         function queueScale( slide, realScale ) {
+            assert( realScale != null );
             // Only queue/exec action when we have the *final* scale set up for this particular slide!
             if ( !wantCommonScale || enforceCommonScale ) {
                 renderQueue.push(function () {
@@ -2462,6 +2501,7 @@ TBD end of old code, start of new code
         }
 
         function queueTransform( slide, transform ) {
+            assert( transform != null );
             assert( transform.indexOf('NaN') === -1 );
             // Only queue/exec action when we have the *final* scale set up for this particular slide!
             if ( !wantCommonScale || enforceCommonScale ) {
@@ -2518,6 +2558,7 @@ TBD end of old code, start of new code
 
             if ( cache_entry ) {
                 realScale = cache_entry.scale;
+                assert( realScale != null );
                 slideDimensions = {
                     height: cache_entry.height,
                     width: cache_entry.width
@@ -2526,7 +2567,7 @@ TBD end of old code, start of new code
             }
             else {
                 // Resets all transforms before we measure the slide:
-                scaleElement( slide, null );
+                resetElementTransform( slide );
 
                 slide.classList.remove( 'past-1' );
                 slide.classList.remove( 'past' );
@@ -2536,7 +2577,7 @@ TBD end of old code, start of new code
                 slide.classList.remove( 'future-1' );
 
                 if ( parentSlide ) {
-                    scaleElement( parentSlide, null );
+                    resetElementTransform( parentSlide );
 
                     parentSlide.classList.remove( 'past-1' );
                     parentSlide.classList.remove( 'past' );
@@ -2544,6 +2585,11 @@ TBD end of old code, start of new code
                     parentSlide.classList.add( 'slide-measurement' );
                     parentSlide.classList.remove( 'future' );
                     parentSlide.classList.remove( 'future-1' );
+                }
+                
+                if (0 === 0) {
+                    dom_slides_outer.classList.add( 'slide-measurement' );
+                    dom_slides_inner.classList.add( 'slide-measurement' );
                 }
 
                 // Remove the previous height/size pinning.
@@ -2610,6 +2656,7 @@ TBD end of old code, start of new code
 
                 if ( enforceCommonScale ) {
                     realScale = commonScale;
+                    assert( realScale != null );
 
                     // Respect max/min scale settings, but not in overview mode, where we want the slide to fit the maximum available (yet very small) part of our viewport real estate
                     if ( !isOverview() ) {
@@ -2617,6 +2664,7 @@ TBD end of old code, start of new code
                         realScale = Math.min( realScale, config.maxSlideScale );
                     }
 
+                    assert( realScale );
                     targetSlideHeight = Math.round(targetInfo.slideHeight / realScale);
                     targetSlideWidth = Math.round(targetInfo.slideWidth / realScale);
 
@@ -2642,6 +2690,7 @@ TBD end of old code, start of new code
                         realScale = Math.max( realScale, config.minSlideScale );
                         realScale = Math.min( realScale, config.maxSlideScale );
                     }
+                    assert( realScale );
 
                     // We need to compensate for the scale factor, which is applied to the entire slide,
                     // hence for centering properly *and* covering the entire intended slide area, we need
@@ -2681,6 +2730,7 @@ TBD end of old code, start of new code
                         targetSlideHeight = eventData.scaledTargetSlideHeight;
                         targetSlideWidth = eventData.scaledTargetSlideWidth;
                         realScale = eventData.slideScale;
+                        assert( realScale );
 
                         slideDimensions = getComputedSlideSize( slide, false, realScale );
 
@@ -2693,11 +2743,13 @@ TBD end of old code, start of new code
                                 realScale = Math.min( realScale, config.maxSlideScale );
                             }
 
+                            assert( realScale );
                             targetSlideHeight = Math.round(targetInfo.slideHeight / realScale);
                             targetSlideWidth = Math.round(targetInfo.slideWidth / realScale);
                         }
                     }
                 } 
+                assert( realScale != null );
 
                 // Complication: when we use CSS:zoom to scale a slide, it won't be an 'exact' scaling: the dimensions of individual
                 // elements will change depending on choices made by the browser, so for best results we should re-calculate 
@@ -2725,9 +2777,10 @@ TBD end of old code, start of new code
                     // Keep track of which scales we tested so we don't go around in circles when there's not much options to layout a slide differently
                     var processed_scales = [];
 
+                    assert(config.maxLayoutIterations > 0);
                     for ( var iter_rounds = config.maxLayoutIterations; /* useZoomFallback */; iter_rounds-- ) {
                         // Reset scale, apply the new scale and recheck:
-                        scaleElement( slide, null );
+                        resetElementTransform( slide );
                         scaleElement( slide, realScale );
                         slide.style.left = null;
                         slide.style.top = null;
@@ -2738,6 +2791,15 @@ TBD end of old code, start of new code
                         // in order to gt precise numbers from the start.
                         slideDimensions = getComputedSlideSize( slide, false, realScale );
 
+                        // When the measurements fail utterly this slide is probably contained inside an invisible container and we don't care
+                        // what happens then: we'll go with the default scale of 1 then:
+                        if (slideDimensions.width === 0 && slideDimensions.height === 0) {
+                            console.warn("slide is not visible or at least has no width or height. slide: ", x, y);
+                            optimum = null;
+                            break;
+                        }
+                        assert(slideDimensions.width > 0 && slideDimensions.height > 0);
+
                         // Fixup scale of content to fit within available space in case we have a zoom goof due to CSS:zoom altering the BBox.
                         realScale = Math.min( realScale, targetInfo.slideWidth / slideDimensions.width, targetInfo.slideHeight / slideDimensions.height );
 
@@ -2747,6 +2809,7 @@ TBD end of old code, start of new code
                             realScale = Math.min( realScale, config.maxSlideScale );
                         }
 
+                        assert( realScale );
                         var newAttempt = {
                             scale: realScale,
                             width: slideDimensions.width,
@@ -2768,11 +2831,13 @@ TBD end of old code, start of new code
                         }
 
                         if ( iter_rounds <= 0 || enforceCommonScale ) {
+                            assert( optimum.scale );
                             break;
                         }
                         if ( processed_scales.indexOf( Math.round( newAttempt.scale * 1000 ) ) !== -1 ) {
                             console.log('ITER: exit @ ', iter_rounds, ' because scale has been tested before --> cycle!');
-                            //break;
+                            assert( optimum.scale );
+                            break;
                         }
                         processed_scales.push( Math.round( newAttempt.scale * 1000 ) );
 
@@ -2802,50 +2867,63 @@ TBD end of old code, start of new code
                             realScale = Math.max( realScale, config.minSlideScale );
                             realScale = Math.min( realScale, config.maxSlideScale );
                         }
+                        assert( realScale );
                     }
 
-                    if (0 /* this section is only useful when debugging */) {
-                        // Reset & apply the optimum layout (it may not have to be the last one we tried above!)
-                        scaleElement( slide, null );
-                        scaleElement( slide, optimum.scale );
-                        slide.style.width = optimum.width + 'px';
-                        slide.style.height = optimum.height + 'px';
-                    }
+                    if (optimum) {
+                        if (0 /* this section is only useful when debugging */) {
+                            // Reset & apply the optimum layout (it may not have to be the last one we tried above!)
+                            resetElementTransform( slide );
+                            scaleElement( slide, optimum.scale );
+                            slide.style.width = optimum.width + 'px';
+                            slide.style.height = optimum.height + 'px';
+                        }
 
-                    realScale = optimum.scale;
-                    
-                    // Because CSS:zoom will alter the layout when the width changes, we do NOT apply the scale-corrected target width / height 
-                    // after having obtained the slide dimensions one last time.
-                    slideDimensions.width = optimum.width;
-                    slideDimensions.height = optimum.height;
+                        realScale = optimum.scale;
+                        assert( realScale );
+                        
+                        // Because CSS:zoom will alter the layout when the width changes, we do NOT apply the scale-corrected target width / height 
+                        // after having obtained the slide dimensions one last time.
+                        slideDimensions.width = optimum.width;
+                        slideDimensions.height = optimum.height;
+                    }
+                    else {
+                        assert( realScale );
+                    }
                 }
                 else if ( slideDimensions && isScrollable /* && !isOverview() */ ) {
+                    assert( realScale );
                     slideDimensions.width = targetSlideWidth * realScale;
                     slideDimensions.height = targetSlideHeight * realScale;
                 }
+                assert( realScale );
 
-                // We should update the cache now that we have calculated the scale, etc. for the current slide & mode.
-                // However, we should only update the cache once we have the *final* data.
-                if ( !wantCommonScale || enforceCommonScale ) {
-        
-                    if ( !cache ) {
-                        cache = {};
+                // only write a cache entry when there's a decent chance it's gonna be a reasonable entry:
+                if (slideDimensions.width > 0 && slideDimensions.height > 0) {
+                    // We should update the cache now that we have calculated the scale, etc. for the current slide & mode.
+                    // However, we should only update the cache once we have the *final* data.
+                    if ( !wantCommonScale || enforceCommonScale ) {
+            
+                        if ( !cache ) {
+                            cache = {};
+                        }
+
+                        cache[mode] = {
+                            scale: realScale,
+                            height: slideDimensions.height,
+                            width: slideDimensions.width,
+                            scrolling: isScrollable
+                        };
+
+                        slide.setAttribute( 'data-reveal-dim-cache', JSON.stringify( cache ) );
                     }
-
-                    cache[mode] = {
-                        scale: realScale,
-                        height: slideDimensions.height,
-                        width: slideDimensions.width,
-                        scrolling: isScrollable
-                    };
-
-                    slide.setAttribute( 'data-reveal-dim-cache', JSON.stringify( cache ) );
                 }
             }
 
             // We need to compensate for the scale factor, which is applied to the entire slide,
             // hence for centering properly *and* covering the entire intended slide area, we need
             // to scale the target size accordingly and use this scaled up/down version: 
+            assert( realScale );
             targetSlideHeight = Math.round(targetInfo.slideHeight / realScale);
             targetSlideWidth = Math.round(targetInfo.slideWidth / realScale);
 
@@ -2930,6 +3008,8 @@ TBD end of old code, start of new code
             }
 
             commonScale = Math.min( commonScale, realScale );
+            assert( commonScale );
+            assert( commonScale > 0 );
 
             queueScale( slide, realScale );
 
@@ -2947,7 +3027,7 @@ TBD end of old code, start of new code
             slide.classList.remove( 'future-1' );
 
             if ( parentSlide ) {
-                scaleElement( parentSlide, null );
+                resetElementTransform( parentSlide );
 
                 parentSlide.classList.remove( 'past-1' );
                 parentSlide.classList.remove( 'past' );
@@ -2958,6 +3038,9 @@ TBD end of old code, start of new code
 
                 hideSlide( parentSlide );
             }
+
+            dom_slides_outer.classList.remove( 'slide-measurement' );
+            dom_slides_inner.classList.remove( 'slide-measurement' );
 
             hideSlide( slide );
 
@@ -3032,7 +3115,7 @@ TBD end of old code, start of new code
             // the previously patched in padding/top/etc. to get a correct measurement.
 
             // Reset wrapper scale for both single sheet view / overview modes:
-            scaleElement( dom_slides_inner, null );
+            resetElementTransform( dom_slides_inner );
             scaleElement( dom_slides_inner, fundamentalScale );
 
             dom_slides_inner.style.width = null;
@@ -3177,7 +3260,7 @@ TBD end of old code, start of new code
 
             // // Fixup jumping behaviour when transitioning *to* the overview mode:
             // if ( currentMode !== previousMode && isOverview() ) {
-            //     scaleElement( dom_slides_inner, null );
+            //     resetElementTransform( dom_slides_inner );
             //     scaleElement( dom_slides_inner, 1.0 );
             // }
             
@@ -3199,7 +3282,7 @@ TBD end of old code, start of new code
             // And register all the transforms, etc. which were produced by the layout process above.
             runQueue();
 
-            scaleElement( dom_slides_inner, null );
+            resetElementTransform( dom_slides_inner );
             scaleElement( dom_slides_inner, fundamentalScale * ( isOverview() ? 1 : 1.0 ) );
 
 
@@ -3500,6 +3583,7 @@ TBD end of old code, start of new code
      */
     function setPreviousVerticalIndex( stack, v ) {
 
+        assert( stack && stack.classList.contains( 'stack' ) );
         if( typeof stack === 'object' && typeof stack.setAttribute === 'function' ) {
             stack.setAttribute( 'data-previous-indexv', v || 0 );
         }
@@ -3667,7 +3751,7 @@ TBD end of old code, start of new code
 
             // TODO: Clean up changes made to backgrounds
             //toArray( dom.background.querySelectorAll( '.slide-background' ) ).forEach( function( background ) {
-            //  transformElement( background, '' );
+            //  resetElementTransform( background );
             //} );
 
             slide( indexh, indexv );
@@ -3833,7 +3917,7 @@ TBD end of old code, start of new code
                     // Is this a 'horizontal slide'?
                     dom.slides === parentElement || 
                     // Or is this is 'horizontal slide' overview clone?
-                    dom.slides_overview_inner === parentElement ||
+                    (config.simplifiedOverview && dom.slides_overview_inner === parentElement) ||
                     // Or is this some kind of 'vertical slide'?
                     (   granpaElement &&
                         parentElement.nodeName &&
@@ -3842,7 +3926,7 @@ TBD end of old code, start of new code
                             // Is this a 'vertical slide'?
                             dom.slides === granpaElement || 
                             // Or is this is 'vertical slide' overview clone?
-                            dom.slides_overview_inner === granpaElement
+                            (config.simplifiedOverview && dom.slides_overview_inner === granpaElement)
                         )
                     )
                 ) ) {
@@ -4107,7 +4191,6 @@ TBD end of old code, start of new code
         // If we were on a vertical stack, remember what vertical index
         // it was on so we can resume at the same position when returning.
         if ( currentVerticalSlides !== false ) {
-            assert( currentVerticalSlide.parentNode.classList.contains( 'stack' ) );
             setPreviousVerticalIndex( currentVerticalSlide.parentNode, indexv );
         }
 
@@ -4485,7 +4568,9 @@ TBD end of old code, start of new code
     function updateSlidesVisibility() {
 
         __updateSlidesVisibility( dom.slides );
-        __updateSlidesVisibility( dom.slides_overview_inner );
+        if ( config.simplifiedOverview && config.overview ) {
+            __updateSlidesVisibility( dom.slides_overview_inner );
+        }
 
     }
 
@@ -4539,14 +4624,11 @@ TBD end of old code, start of new code
                 //
                 // In regular display mode, we only ever want to see the previous slide and the current slide,
                 // for the sake of smooth transitions. 
-                if( distanceX <= viewDistance || DEBUG_SHOW_ALL ) {
-                    assert( !isOverview() ? distanceX <= 1 || DEBUG_SHOW_ALL : true );
+                if( distanceX <= viewDistance ) {
+                    assert( !isOverview() ? distanceX <= 1 : true );
                     showSlide( horizontalSlide );
-                    if ( distanceX !== 0 && !isOverview() && !DEBUG_SHOW_ALL ) {
+                    if ( distanceX !== 0 && !isOverview() ) {
                         slides_to_clear.push( horizontalSlide );
-                    }
-                    if ( DEBUG_SHOW_ALL ) {
-                        horizontalSlide.classList.add( 'present' );
                     }
                 }
                 else {
@@ -4562,14 +4644,11 @@ TBD end of old code, start of new code
 
                         distanceY = ( x === ( indexh || 0 ) ? Math.abs( ( indexv || 0 ) - y ) : Math.abs( y - oy ) );
 
-                        if( distanceX + distanceY <= viewDistance || DEBUG_SHOW_ALL ) {
-                            assert( !isOverview() ? distanceX + distanceY <= 1 || DEBUG_SHOW_ALL : true );
+                        if( distanceX + distanceY <= viewDistance ) {
+                            assert( !isOverview() ? distanceX + distanceY <= 1 : true );
                             showSlide( verticalSlide );
-                            if ( distanceX + distanceY !== 0 && !isOverview() && !DEBUG_SHOW_ALL ) {
+                            if ( distanceX + distanceY !== 0 && !isOverview() ) {
                                 slides_to_clear.push( verticalSlide );
-                            }
-                            if ( DEBUG_SHOW_ALL ) {
-                                verticalSlide.classList.add( 'present' );
                             }
                         }
                         else {
@@ -4717,8 +4796,7 @@ TBD end of old code, start of new code
         var currentBackground = null;
 
         // Reverse past/future classes when in RTL mode
-        var horizontalPast = config.rtl ? 'future' : 'past',
-            horizontalFuture = config.rtl ? 'past' : 'future';
+        var reverse = config.rtl;
 
         // Update the classes of all backgrounds to match the
         // states of their slides (past/present/future)
@@ -4731,15 +4809,15 @@ TBD end of old code, start of new code
             backgroundh.classList.remove( 'future-1' );
 
             if( h < indexh ) {
-                backgroundh.classList.add( horizontalPast );
+                backgroundh.classList.add( reverse ? 'future' : 'past' );
                 if ( h + 1 === indexh ) {
-                    backgroundh.classList.add( horizontalPast + '-1' );
+                    backgroundh.classList.add( reverse ? 'future-1' : 'past-1' );
                 }
             }
             else if ( h > indexh ) {
-                backgroundh.classList.add( horizontalFuture );
+                backgroundh.classList.add( reverse ? 'past' : 'future' );
                 if ( h - 1 === indexh ) {
-                    backgroundh.classList.add( horizontalFuture + '-1' );
+                    backgroundh.classList.add( reverse ? 'past-1' : 'future-1' );
                 }
             }
             else {
@@ -4758,15 +4836,15 @@ TBD end of old code, start of new code
                 backgroundv.classList.remove( 'future-1' );
 
                 if( h < indexh ) {
-                    backgroundv.classList.add( horizontalPast );
+                    backgroundv.classList.add( reverse ? 'future' : 'past' );
                     if ( h + 1 === indexh ) {
-                        backgroundv.classList.add( horizontalPast + '-1' );
+                        backgroundv.classList.add( reverse ? 'future-1' : 'past-1' );
                     }
                 }
                 else if ( h > indexh ) {
-                    backgroundv.classList.add( horizontalFuture );
+                    backgroundv.classList.add( reverse ? 'past' : 'future' );
                     if ( h - 1 === indexh ) {
-                        backgroundv.classList.add( horizontalFuture + '-1' );
+                        backgroundv.classList.add( reverse ? 'past-1' : 'future-1' );
                     }
                 }
                 else {
@@ -5307,17 +5385,34 @@ TBD end of old code, start of new code
 
         // Attempt to parse the hash as either an index or name
         var bits = hash.split( '/' ),
-            name = hash.replace( /#|\//gi, '' );
+            name = bits[1] || '';
 
-        // If the first bit is invalid and there is a name we can
-        // assume that this is a named link
-        if( isNaN( parseInt( bits[1], 10 ) ) && name.length ) {
+        // If the first bit is invalid and there is a name we can 
+        // assume that this is a named link.
+        //
+        // However: ensure the named link is a valid HTML ID attribute:
+        if( isNaN( parseInt( name, 10 ) ) && name.length && /^[a-zA-Z][\w:.-]*$/.test( name ) ) {
             var element;
 
-            // Ensure the named link is a valid HTML ID attribute
-            if( /^[a-zA-Z][\w:.-]*$/.test( name ) ) {
-                // Find the slide with the specified ID
-                element = document.getElementById( name );
+            // As the route (slide ID/name) has been converted to lowercase by `writeURL()` before,
+            // we must seek the matching slide, rather than simply locate it with a single 
+            // DOM query: `document.getElementById(name)` won't fly!
+            
+            // Find the slide with the specified ID
+            var a = toArray( dom.slides.querySelectorAll( SLIDES_SELECTOR ) ).filter( function( element ) {
+
+                // Process the ID, if any, exactly the same way as `writeURL()` did before we match it against the given route.
+                var id = element.getAttribute( 'id' ) || '';
+                assert(typeof id === 'string');
+				id = id.toLowerCase();
+				id = id.replace( /[^\w:.-]/g, '' );
+                
+                return id === name;
+            });
+            
+            if( a.length ) {
+                assert( a.length === 1 );    // This assertion will fire when you have a set of slides with duplicate IDs -- be reminded that we look at the *case-insensitive* IDs here!
+                element = a[0];
             }
 
             if( element ) {
@@ -5373,11 +5468,16 @@ TBD end of old code, start of new code
                 var url = '/';
 
                 // Attempt to create a named link based on the slide's ID
-                var id = currentSlide.getAttribute( 'id' );
-                // If the current slide has an ID, use that as a named link.
+                var id = currentSlide.getAttribute( 'id' ) || '';
+                assert(typeof id === 'string');
+				id = id.toLowerCase();
+				id = id.replace( /[^\w:.-]/g, '' );
+                
+                // If the current slide has a usable ID, use that as a named link.
+                //
                 // Ensure the named link is a valid HTML ID attribute -- this check mirrors the one in #readURL().
-                if( typeof id === 'string' && id.length && /^[a-zA-Z][\w:.-]*$/.test( id ) ) {
-                    url = '/' + id;
+                if( id.length && /^[a-zA-Z][\w:.-]*$/.test( id ) ) {
+                    url += id;
                 }
                 // Otherwise use the /h/v index
                 else {
@@ -5388,7 +5488,6 @@ TBD end of old code, start of new code
                 URIparameters().updateHash({ 
                     route: url
                 });                
-                //window.location.hash = url;
             }
         }
 
