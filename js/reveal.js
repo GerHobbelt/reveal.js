@@ -4886,7 +4886,7 @@ TBD end of old code, start of new code
             // Start video playback
             var currentVideo = currentBackground.querySelector( 'video' );
             if( currentVideo ) {
-                //currentVideo.currentTime = 0;
+				if( currentVideo.currentTime > 0 ) currentVideo.currentTime = 0;
                 currentVideo.play();
             }
 
@@ -5401,10 +5401,14 @@ TBD end of old code, start of new code
             // Find the slide with the specified ID
             var a = toArray( dom.slides.querySelectorAll( SLIDES_SELECTOR ) ).filter( function( element ) {
 
-                // Process the ID, if any, exactly the same way as `writeURL()` did before we match it against the given route.
+                // Process the ID, if any, exactly the same way as `writeURL()` did 
+                // before we match it against the given route.
+                // 
+                // Note: This is a non-reversible operation so both `readURL()` and `writeURL()` functions 
+                // have to perform the same filter operation here.
                 var id = element.getAttribute( 'id' ) || '';
                 assert(typeof id === 'string');
-				id = id.toLowerCase();
+				//id = id.toLowerCase();
 				id = id.replace( /[^\w:.-]/g, '' );
                 
                 return id === name;
@@ -5467,10 +5471,14 @@ TBD end of old code, start of new code
             else if( currentSlide ) {
                 var url = '/';
 
-                // Attempt to create a named link based on the slide's ID
+                // Attempt to create a named link based on the slide's ID.
+                // 
+                // Note: this action mirrors the one in #readURL(). 
+                // This is a non-reversible operation so both `readURL()` and `writeURL()` functions 
+                // have to perform the same filter operation here.
                 var id = currentSlide.getAttribute( 'id' ) || '';
                 assert(typeof id === 'string');
-				id = id.toLowerCase();
+				//id = id.toLowerCase();
 				id = id.replace( /[^\w:.-]/g, '' );
                 
                 // If the current slide has a usable ID, use that as a named link.

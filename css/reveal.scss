@@ -144,6 +144,7 @@ body {
 
 .reveal .slides section .fragment.strike {
 	opacity: 1;
+	visibility: visible;                // fix initial visibility of strike fragments #737
 
 	&.visible {
 		text-decoration: line-through;
