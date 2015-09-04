@@ -39,8 +39,16 @@ try {
         // 
         //     #1234 opened on 12 Jan 2345 by username  bla-milestone-bla
         //     @username User Name / repository
+        //     
+        // or:
+        // 
+        //     shogun70        git@github.com:shogun70/MathJax.git (fetch) 
+        // 
+        // (The latter is a `git remote -v` output; handy when we wish to copy remotes from one
+        // repo instance into another.)    
         var re_pullreqs = /^\s*#\d+ opened on \d+ [a-zA-Z]+ \d+ by ([^\s]+)/;
         var re_memberlist = /^\s*@([^\s]+) [^\/]+\/\s*([^\s]+)\s*$/;  
+        var re_gitremote = /^\s*([^\s]+)\s+([^\s]+\.git)\s*\s+\(fetch\)\s*$/;
 
         var lines = data.replace('\r', '\n').split('\n');
         // Collect the lines matching either of our regexes:
@@ -55,6 +63,9 @@ try {
                 m1[2] = default_repo_name;
                 return m1;
             }
+            if (!m2) {
+                m2 = re_gitremote.exec(l);
+            }
             return m2;
         }).filter(function (m) {
             return !!m;
@@ -66,7 +77,7 @@ try {
             users: m.map(function (d) {
                 return {
                     name: d[1],
-                    repo: d[2]
+                    repo: d[2].replace(/^git@github.com:/, "git://github.com/")
                 };
             })
         };

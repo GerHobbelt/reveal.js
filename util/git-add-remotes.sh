@@ -101,12 +101,24 @@ EOT
         else
             # network_meta file from github
             networkmeta=$( realpath "$1" )
-            echo "*** networkmeta JSON file:   $networkmeta ***"
-            # http://unix.stackexchange.com/questions/41232/loop-through-tab-delineated-file-in-bash-script
-            # This code requires `npm install json -g` (jsontools: http://trentm.com/json/ )
-            node $utildir/git-add-remotes-helper.js $repo $networkmeta | json users | json -a name repo | while read author clonename ; do
-                git remote add ${author} git://github.com/$author/$clonename.git
-            done
+            if test -d "$networkmeta" && test -e "$networkmeta/.git" ; then
+                echo "*** copying remotes from another git directory:   $networkmeta  ***"
+                dst=/tmp/g-a-r-tmp-$RANDOM.txt
+                pushd "$networkmeta"
+                git remote -v > $dst
+                popd
+                node $utildir/git-add-remotes-helper.js $repo $dst | json users | json -a name repo | while read author clonename ; do
+                    git remote add ${author} ${clonename}
+                done
+                rm $dst
+            else
+                echo "*** networkmeta JSON file:   $networkmeta  ***"
+                # http://unix.stackexchange.com/questions/41232/loop-through-tab-delineated-file-in-bash-script
+                # This code requires `npm install json -g` (jsontools: http://trentm.com/json/ )
+                node $utildir/git-add-remotes-helper.js $repo $networkmeta | json users | json -a name repo | while read author clonename ; do
+                    git remote add ${author} git://github.com/$author/$clonename.git
+                done
+            fi
         fi
         shift
     done

@@ -26,7 +26,7 @@ wd=$( util/print-git-repo-base-directory.sh "$wd" )
 echo "git repository base directory: $wd"
 cd "$wd"
 
-getopts ":h" opt
+getopts ":hc" opt
 #echo opt+arg = "$opt$OPTARG"
 case "$opt$OPTARG" in
 "?" )
@@ -48,11 +48,27 @@ case "$opt$OPTARG" in
   done
   ;;
 
+"c" )
+  echo --- remove all non-origin remotes from this repository ---
+  pushd .                                                                                             2> /dev/null  > /dev/null
+  echo processing current REPO
+  for g in $( git remote | grep -v -e "origin\|DEV|-svn" ) ; do
+    git remote rm $g
+  done
+  popd                                                                                                2> /dev/null  > /dev/null
+  ;;
+
 * )
   cat <<EOT
 $0 [args]
 
 remove all non-origin remotes from all git submodule repositories in the current path.
+
+Note / Special command option: 
+
+    Specify the '-c' argument to have all remotes removed for the current repository only!
+
+---
 
 When further commandline [args] are specified, those are treated as a command
 and executed for each directory containing a git submodule repository. E.g.:
