@@ -20,23 +20,22 @@
 
         <script>
 
-            (function (){
+            (function () {
 
                 var back = document.getElementById( 'back' ),
                     ahead = document.getElementById( 'ahead' ),
                     slideto = document.getElementById( 'slideto' ),
                     reveal =  window.frames[0];
 
-                    back.addEventListener( 'click', function () {
-
+                back.addEventListener( 'click', function () {
                     reveal.postMessage( JSON.stringify({method: 'prev', args: []}), '*' );
                 }, false );
 
-                ahead.addEventListener( 'click', function (){
+                ahead.addEventListener( 'click', function () {
                     reveal.postMessage( JSON.stringify({method: 'next', args: []}), '*' );
                 }, false );
 
-                slideto.addEventListener( 'click', function (){
+                slideto.addEventListener( 'click', function () {
                     reveal.postMessage( JSON.stringify({method: 'slide', args: [2,2]}), '*' );
                 }, false );
 
