@@ -77,3 +77,6 @@
 [submodule "lib/js/MathJax"]
 	path = lib/js/MathJax
 	url = git@github.com:GerHobbelt/MathJax.git
+[submodule "lib/js/zoom.js"]
+	path = lib/js/zoom.js
+	url = git@github.com:GerHobbelt/zoom.js.git
