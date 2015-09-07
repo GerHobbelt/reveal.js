@@ -105,7 +105,8 @@ function register_remote {
 
 
 
-register_remote lib/LocalConnection                                           jeremyharris-original                    git@github.com:jeremyharris/LocalConnection.js.git                               $# $@
+register_remote lib/js/LocalConnection                                        jeremyharris-original                    git@github.com:jeremyharris/LocalConnection.js.git                               $# $@
+register_remote lib/js/LocalConnection                                        peterdenev                               git@github.com:peterdenev/LocalConnection.js.git                                 $# $@
 register_remote lib/js/MathJax                                                Balamir                                  git@github.com:Balamir/MathJax.git                                               $# $@
 register_remote lib/js/MathJax                                                CalebKester                              git@github.com:CalebKester/MathJax.git                                           $# $@
 register_remote lib/js/MathJax                                                FranciscoP                               git@github.com:FranciscoP/MathJax.git                                            $# $@
@@ -687,16 +688,31 @@ register_remote lib/js/response.js                                            lo
 register_remote lib/js/response.js                                            pixeldust                                git@github.com:pixeldust/response.js.git                                         $# $@
 register_remote lib/js/response.js                                            ryanve-original                          git@github.com:ryanve/response.js.git                                            $# $@
 register_remote lib/js/scopedQuerySelectorShim                                lazd-original                            git@github.com:lazd/scopedQuerySelectorShim.git                                  $# $@
+register_remote lib/js/verge                                                  OpenSiteMobile2                          git@github.com:OpenSiteMobile2/verge.git                                         $# $@
+register_remote lib/js/verge                                                  boye                                     git@github.com:boye/verge.git                                                    $# $@
+register_remote lib/js/verge                                                  chris-alexander55                        git@github.com:chris-alexander55/verge.git                                       $# $@
 register_remote lib/js/verge                                                  local-original                           ../../../../verge-screendimensions/                                              $# $@
+register_remote lib/js/verge                                                  ryanve                                   git@github.com:ryanve/verge.git                                                  $# $@
+register_remote lib/js/zoom.js                                                GerHobbelt                               git@github.com:GerHobbelt/zoom.js.git                                            $# $@
+register_remote lib/js/zoom.js                                                LyuGGang                                 git@github.com:LyuGGang/zoom.js.git                                              $# $@
+register_remote lib/js/zoom.js                                                blmstr                                   git@github.com:blmstr/zoom.js.git                                                $# $@
+register_remote lib/js/zoom.js                                                carmandrew                               git@github.com:carmandrew/zoom.js.git                                            $# $@
+register_remote lib/js/zoom.js                                                hakimel                                  git@github.com:hakimel/zoom.js.git                                               $# $@
+register_remote lib/js/zoom.js                                                hakimel-original                         git@github.com:hakimel/zoom.js.git                                               $# $@
+register_remote lib/js/zoom.js                                                krikienoid                               git@github.com:krikienoid/zoom.js.git                                            $# $@
+register_remote lib/js/zoom.js                                                larscwallin                              git@github.com:larscwallin/zoom.js.git                                           $# $@
 register_remote lib/plugins/SyntaxHighlighter                                 local-original                           ../../../../SyntaxHighlighter/                                                   $# $@
 register_remote lib/plugins/highlight                                         local-lib                                ../../../../highlight/                                                           $# $@
 register_remote lib/plugins/highlight                                         local-original                           ../../../../highlight/                                                           $# $@
 register_remote lib/plugins/hilitor                                           GerHobbelt-original                      git@github.com:GerHobbelt/hilitor.git                                            $# $@
 register_remote lib/plugins/hilitor                                           local-original                           ../../../../hilitor/                                                             $# $@
 register_remote lib/plugins/marked                                            local-original                           ../../../../marked/                                                              $# $@
-register_remote lib/plugins/zoom                                              hakimel-original                         git@github.com:hakimel/zoom.js.git                                               $# $@
-register_remote lib/plugins/zoom                                              local-lib                                ../../../../zoom/                                                                $# $@
-register_remote lib/plugins/zoom                                              local-original                           ../../../../zoom/                                                                $# $@
+register_remote lib/js/SyntaxHighlighter                                 local-original                           ../../../../SyntaxHighlighter/                                                   $# $@
+register_remote lib/js/highlight                                         local-lib                                ../../../../highlight/                                                           $# $@
+register_remote lib/js/highlight                                         local-original                           ../../../../highlight/                                                           $# $@
+register_remote lib/js/hilitor                                           GerHobbelt-original                      git@github.com:GerHobbelt/hilitor.git                                            $# $@
+register_remote lib/js/hilitor                                           local-original                           ../../../../hilitor/                                                             $# $@
+register_remote lib/js/marked                                            local-original                           ../../../../marked/                                                              $# $@
 
 
 

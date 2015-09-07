@@ -19,15 +19,18 @@ var RevealConfiguration;        // object or function-returning-an-object
         baseUrl: libdir,
         paths: {
             reveal: d('../../js/reveal'),
+            
+            assert: d('../../js/reveal-assert'),             
 
             // libraries required by the plugins:
-            zoom: plugin('zoom/js/zoom'),
+            zoom: jslib('zoom.js/js/zoom'),
+            classList: jslib('classList/classList'),
+            verge: jslib('verge/verge'),
+            mathjax: jslib('MathJax/MathJax'),
+
             hilitor: plugin('hilitor/hilitor'),
             highlight: plugin('highlight/dist/highlight-umd'),
             marked: plugin('marked/lib/marked'),
-            classList: jslib('classList/classList'),
-            assert: d('../../js/reveal-assert'),             
-            verge: jslib('verge/verge')
         },
         onCompleteLoadOne: function (e) {
             console.log("RequireJS onCompleteLoadOne: ", e.defQueue, document.readyState, arguments);
