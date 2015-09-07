@@ -70,6 +70,10 @@
 	path = lib/plugins/hilitor
 	url = git@github.com:GerHobbelt/hilitor.git
 	ignore = dirty
+[submodule "lib/js/scopedQuerySelectorShim"]
+	path = lib/js/scopedQuerySelectorShim
+	url = git@github.com:GerHobbelt/scopedQuerySelectorShim.git
+	ignore = dirty
 [submodule "lib/js/MathJax"]
 	path = lib/js/MathJax
 	url = git@github.com:GerHobbelt/MathJax.git
