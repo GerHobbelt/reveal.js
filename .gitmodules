@@ -62,10 +62,6 @@
 	path = lib/js/nprogress
 	url = git@github.com:GerHobbelt/nprogress.git
 	ignore = dirty
-[submodule "lib/LocalConnection"]
-	path = lib/LocalConnection
-	url = git@github.com:GerHobbelt/LocalConnection.js.git
-	ignore = dirty
 [submodule "lib/plugins/hilitor"]
 	path = lib/plugins/hilitor
 	url = git@github.com:GerHobbelt/hilitor.git
@@ -80,3 +76,6 @@
 [submodule "lib/js/zoom.js"]
 	path = lib/js/zoom.js
 	url = git@github.com:GerHobbelt/zoom.js.git
+[submodule "lib/js/LocalConnection"]
+	path = lib/js/LocalConnection
+	url = git@github.com:GerHobbelt/LocalConnection.js.git
