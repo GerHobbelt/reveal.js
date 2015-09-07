@@ -111,6 +111,27 @@ git_repo_checkout_branch "../testing/test-automation" 37321d04046224bc7bb0e3be41
 git_repo_checkout_branch "../testing/test-data" 9f01a50b0ced4849ef7e1480155143a736c43cd6 master
 git_repo_checkout_branch "wsclean" 78e56497930f686e10659dd8a1adf3a9681bca72 master
 
+git_repo_checkout_branch "../lib/LocalConnection" 24db2ffd3364901954bb5c65de7425281db92fe2 master
+git_repo_checkout_branch "../lib/js/MathJax" d1763e6d1334d058c4643c2a5f58bd5a54ffeb56 master
+git_repo_checkout_branch "../lib/js/classList" 9cc24fe044356d1d5141e50cb0f59ecdb8ac8044 master
+git_repo_checkout_branch "../lib/js/head" 50981626624d610216d90ab69245775c523e9171 master
+git_repo_checkout_branch "../lib/js/nprogress" 4345b665ff8b59119e0172617d0dfa8bf2b2be1f master
+git_repo_checkout_branch "../lib/js/require-domReady" 1c2356c7bc8701085d0b40eff503680933560117 master
+git_repo_checkout_branch "../lib/js/require-less" 9073280a3cacacfba42d723a9c178c87149732e1 master
+git_repo_checkout_branch "../lib/js/require-plugins" bdc452ca04b8f800aee35c0baac42429ab6b5ed4 master
+git_repo_checkout_branch "../lib/js/require-text" 9fcaafe82a32e9f232eeaa33812b4a5d413fac7c master
+git_repo_checkout_branch "../lib/js/requireCSS" db33253e5998f3f080a8bf43d123433f8813e7e4 master
+git_repo_checkout_branch "../lib/js/requireJS" d7854ea26cc77aa58c4e7d5bca24da218ac90f81 master
+git_repo_checkout_branch "../lib/js/response.js" ae5b535d2c72e417875dd1555fd3f672a98ab26c master
+git_repo_checkout_branch "../lib/js/scopedQuerySelectorShim" 2da1c67a3b92f0b70e2ce751ad7dcf3c7d6e583b master
+git_repo_checkout_branch "../lib/js/verge" 9f948e2d6bda441677d5346627e3743ba0459f7c master
+git_repo_checkout_branch "../lib/plugins/SyntaxHighlighter" e94af6df019624d7e93c71a66da44ff00b8decd9 master
+git_repo_checkout_branch "../lib/plugins/highlight" 148c321f4b586be8cca17f300e45560ae5bb078f master
+git_repo_checkout_branch "../lib/plugins/hilitor" 6bd61f53be5b53e0bbc1627270932309f9d3d9d3 master
+git_repo_checkout_branch "../lib/plugins/marked" 55aaa00bbcb16fe1c0432f607619ff4d545e9269 master
+git_repo_checkout_branch "../lib/plugins/zoom" 3bbfbd4ebf5266fbc32ead95ceab83bc3f2e23f3 for-revealJS
+git_repo_checkout_branch "wsclean" 78e56497930f686e10659dd8a1adf3a9681bca72 master
+
 # --- all done ---
 
 popd                                                                           2> /dev/null  > /dev/null

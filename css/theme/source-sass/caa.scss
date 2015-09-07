@@ -1,0 +1,88 @@
+/**
+ * A simple theme for reveal.js presentations, similar
+ * to the default theme. The accent color is darkblue.
+ *
+ * This theme is Copyright (C) 2012 Owen Versteeg, https://github.com/StereotypicalApps. It is MIT licensed.
+ * reveal.js is Copyright (C) 2011-2012 Hakim El Hattab, http://hakim.se
+ */
+
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+// Override theme settings (see ../template/settings.scss)
+$mainFont: 'Gudea', sans-serif;
+$mainColor: #000;
+$headingFont: 'Questrial', Impact, sans-serif;
+$headingColor: #000;
+$headingTextShadow: none;
+$headingTextTransform: none;
+$backgroundColor: white;
+$linkColor: #48a29f;
+$linkColorHover: lighten( $linkColor, 20% );
+$selectionBackgroundColor: rgba(0, 0, 0, 0.99);
+
+div.reveal{
+    width: 100%;
+    height: 100%;
+    display: block;
+    position:relative;
+
+    &::after {
+        content: "";
+	    background: url("/img/caa.png") no-repeat;
+        background-size: 8%;
+        opacity: 0.5;
+        top: 5%;
+        left: 3%;
+        bottom: 0;
+        right: 0;
+        position: absolute;
+        z-index: -1;
+    }
+}
+
+/*
+
+This is what is served to Chrome when going to
+http://fonts.googleapis.com/css?family=Questrial|Gudea
+
+Storing these fonts locally and using this CSS is terrible, but if I try to do
+a presentation without a net connection, it can choke trying to download the
+*.woff2 files, which is also terrible.
+
+Ideally I'd have a way to switch between offline and online modes without
+changing the CSS or presentation HTML.
+
+*/
+
+/* latin-ext */
+@font-face {
+  font-family: 'Gudea';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Gudea'), url(/css/theme/font/Gudea-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Gudea';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Gudea'), url(/css/theme/font/Gudea-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: 'Questrial';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Questrial'), local('Questrial-Regular'), url(/css/theme/font/Questrial-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------

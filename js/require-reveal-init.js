@@ -57,7 +57,7 @@ var RevealConfiguration;        // object or function-returning-an-object
             slideNumber: true,
             timeRemaining: 15,
 
-            theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+            theme: Reveal.getQueryHash().theme || 'night', // available themes are in /css/theme
             transition: Reveal.getQueryHash().transition || 'zoom', // default/cube/page/concave/zoom/linear/fade/none
 
             // Parallax scrolling

@@ -1,5 +1,4 @@
 
-
 Reveal.addEventListener( 'ready', function() {
 
     QUnit.module( 'Markdown' );
@@ -7,7 +6,6 @@ Reveal.addEventListener( 'ready', function() {
     test( 'Vertical separator', function() {
         strictEqual( document.querySelectorAll( '.reveal .slides>section>section' ).length, 4, 'found four slides' );
     });
-
 
     test( 'Attributes on element header in vertical slides', function() {
         strictEqual( document.querySelectorAll( '.reveal .slides section>section h2.fragment.fade-out' ).length, 1, 'found one vertical slide with class fragment.fade-out on header' );
@@ -19,7 +17,7 @@ Reveal.addEventListener( 'ready', function() {
     });
 
     test( 'Attributes on element list items in vertical slides', function() {
-        strictEqual( document.querySelectorAll( '.reveal .slides section>section li.fragment.roll-in' ).length, 3, 'found a vertical slide with three list items with class fragment.roll-in' );
+		strictEqual( document.querySelectorAll( '.reveal .slides section>section li.fragment.grow' ).length, 3, 'found a vertical slide with three list items with class fragment.grow' );
     });
 
     test( 'Attributes on element paragraphs in horizontal slides', function() {

@@ -32,7 +32,7 @@
 
     var isEnabled = true;
 
-    var rootElement = document.querySelector( '.reveal' );
+    var rootElement = document.querySelector( '.reveal .slides' );
 
     // Inform the zoom tool that the .reveal DIV is the element which should receive the transform.
     zoom.init(rootElement);
@@ -40,9 +40,21 @@
     rootElement.addEventListener( 'mousedown', function( event ) {
         var modifier = ( Reveal.getConfig().zoomKey ? Reveal.getConfig().zoomKey : 'alt' ) + 'Key';
 
+		var zoomPadding = 20;
+		var revealScale = Reveal.getScale();
+
         if( event[ modifier ] && isEnabled ) {
             event.preventDefault();
-            zoom.to({ element: event.target, pan: false });
+
+			var bounds = event.target.getBoundingClientRect();
+
+			zoom.to({
+				x: ( bounds.left * revealScale ) - zoomPadding,
+				y: ( bounds.top * revealScale ) - zoomPadding,
+				width: ( bounds.width * revealScale ) + ( zoomPadding * 2 ),
+				height: ( bounds.height * revealScale ) + ( zoomPadding * 2 ),
+				pan: false
+			});
         }
     } );
 

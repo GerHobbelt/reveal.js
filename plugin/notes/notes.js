@@ -57,7 +57,7 @@
                 notesPopup.postMessage( JSON.stringify( {
                     namespace: 'reveal-notes',
                     type: 'connect',
-                    url: window.location.protocol + '//' + window.location.host + window.location.pathname,
+					url: window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search,
                     state: Reveal.getState()
                 } ), '*' );
             }, 500 );
@@ -73,6 +73,10 @@
 
         /**
          * Posts the current slide data to the notes window
+         *
+         * @param {String} eventType Expecting 'slidechanged', 'fragmentshown'
+         * or 'fragmenthidden' set in the events above to define the needed
+         * slideDate.
          */
         function post() {
 
@@ -127,22 +131,22 @@
 
 	if( !/receiver/i.test( window.location.search ) ) {
 
-		// If the there's a 'notes' query set, open directly
-		if( window.location.search.match( /(\?|\&)notes/gi ) !== null ) {
+	// If the there's a 'notes' query set, open directly
+	if( window.location.search.match( /(\?|\&)notes/gi ) !== null ) {
+		openNotes();
+	}
+
+	// Open the notes when the 's' key is hit
+	document.addEventListener( 'keydown', function( event ) {
+		// Disregard the event if the target is editable or a
+		// modifier is present
+		if ( document.querySelector( ':focus' ) !== null || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey ) return;
+
+		if( event.keyCode === 83 ) {
+			event.preventDefault();
 			openNotes();
 		}
-
-		// Open the notes when the 's' key is hit
-		document.addEventListener( 'keydown', function( event ) {
-			// Disregard the event if the target is editable or a
-			// modifier is present
-			if ( document.querySelector( ':focus' ) !== null || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey ) return;
-
-			if( event.keyCode === 83 ) {
-				event.preventDefault();
-				openNotes();
-			}
-		}, false );
+	}, false );
 
 	}
 

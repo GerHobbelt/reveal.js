@@ -7,13 +7,14 @@
  * https://github.com/isagalaev/highlight.js/
  *
  * For other themes, change @codeBackground accordingly.
- *
  */
 
- // Default mixins and settings -----------------
+
+// Default mixins and settings -----------------
 @import "../template-less/mixins";
 @import "../template-less/settings";
 // ---------------------------------------------
+
 
 // Include theme-specific fonts
 
@@ -46,9 +47,12 @@
 @selectionColor: #fff;
 
 // Background generator
-.bodyBackground() {
+.bodyBackground() 
+{
     .radial-gradient( @coal, lighten( @coal, 25% ) );
 }
+
+
 
 // Theme template ------------------------------
 @import "../template-less/theme";
@@ -56,7 +60,8 @@
 
 // some overrides after theme template import
 
-.reveal p {
+.reveal p 
+{
     font-weight: 300;
     text-shadow: 1px 1px @coal;
 }
@@ -66,26 +71,31 @@
 .reveal h3,
 .reveal h4,
 .reveal h5,
-.reveal h6 {
+.reveal h6 
+{
     font-weight: 700;
 }
 
 .reveal a,
-.reveal a:hover {
+.reveal a:hover 
+{
     text-shadow: 2px 2px 2px #000;
 }
 
 .reveal small a,
-.reveal small a:hover {
+.reveal small a:hover 
+{
     text-shadow: 1px 1px 1px #000;
 }
 
-.reveal p code {
+.reveal p code 
+{
     background-color: @codeBackground;
     display: inline-block;
     border-radius: 7px;
 }
 
-.reveal small code {
+.reveal small code 
+{
     vertical-align: baseline;
 }

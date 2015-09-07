@@ -44,7 +44,8 @@ html {
 .reveal .playback,
 .reveal.overview,
 .fork-reveal,
-.share-reveal {
+.share-reveal,
+.state-background {
     display: none !important;
 }
 
@@ -62,22 +63,13 @@ body, p, td, li, div {
   font-size: 18pt;
 }
 
-/* SECTION 5: Make hyperlinks more usable.
-   Ensure links are underlined, and consider appending
-   the URL to the end of the link for usability. */
-a:link,
-a:visited {
-    font-weight: normal;
-    text-decoration: underline;
-}
-
 .reveal pre code {
     overflow: hidden !important;
 	font-family: Courier, 'Courier New', monospace !important;
 }
 
 
-/* SECTION 6: more reveal.js specific additions by @skypanther */
+/* SECTION 5: more reveal.js specific additions by @skypanther */
 ul, ol, div, p {
     visibility: visible;
     position: static;
@@ -128,6 +120,7 @@ ul, ol, div, p {
     min-height: 229mm !important;
     */
     display: block !important;
+	position: relative !important;
 	overflow: hidden !important;
 
     margin: 0 !important;
@@ -175,7 +168,7 @@ ul, ol, div, p {
 /*
 .reveal section > * {
     position: relative;
-    z-index: 0;
+	z-index: 1;
 }
 */
 

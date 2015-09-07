@@ -8,7 +8,6 @@
 // 3 - Two fragments with same data-fragment-index
 // 4
 
-
 Reveal.addEventListener( 'ready', function() {
 
     // ---------------------------------------------------------------
@@ -17,7 +16,7 @@ Reveal.addEventListener( 'ready', function() {
     QUnit.module( 'DOM' );
 
     test( 'Initial slides classes', function() {
-        var horizontalSlides = document.querySelectorAll( '.reveal .slides>section' )
+        var horizontalSlides = document.querySelectorAll( '.reveal .slides>section' );
 
         strictEqual( document.querySelectorAll( '.reveal .slides section.past' ).length, 0, 'no .past slides' );
         strictEqual( document.querySelectorAll( '.reveal .slides section.present' ).length, 1, 'one .present slide' );
@@ -68,11 +67,11 @@ Reveal.addEventListener( 'ready', function() {
         strictEqual( Reveal.isFirstSlide(), true, 'true after Reveal.slide( 0, 0 )' );
     });
 
-	test( 'Reveal.isFirstSlide after vertical slide', function() {
-		Reveal.slide( 1, 1 );
-		Reveal.slide( 0, 0 );
-		strictEqual( Reveal.isFirstSlide(), true, 'true after Reveal.slide( 1, 1 ) and then Reveal.slide( 0, 0 )' );
-	});
+    test( 'Reveal.isFirstSlide after vertical slide', function() {
+        Reveal.slide( 1, 1 );
+        Reveal.slide( 0, 0 );
+        strictEqual( Reveal.isFirstSlide(), true, 'true after Reveal.slide( 1, 1 ) and then Reveal.slide( 0, 0 )' );
+    });
 
     test( 'Reveal.isLastSlide', function() {
         Reveal.slide( 0, 0 );
@@ -81,19 +80,19 @@ Reveal.addEventListener( 'ready', function() {
         var lastSlideIndex = document.querySelectorAll( '.reveal .slides>section' ).length - 1;
 
         Reveal.slide( lastSlideIndex, 0 );
-		strictEqual( Reveal.isLastSlide(), true, 'true after Reveal.slide( '+ lastSlideIndex +', 0 )' );
+        strictEqual( Reveal.isLastSlide(), true, 'true after Reveal.slide( '+ lastSlideIndex +', 0 )' );
 
         Reveal.slide( 0, 0 );
         strictEqual( Reveal.isLastSlide(), false, 'false after Reveal.slide( 0, 0 )' );
     });
 
-	test( 'Reveal.isLastSlide after vertical slide', function() {
-		var lastSlideIndex = document.querySelectorAll( '.reveal .slides>section' ).length - 1;
-		
-		Reveal.slide( 1, 1 );
-		Reveal.slide( lastSlideIndex );
-		strictEqual( Reveal.isLastSlide(), true, 'true after Reveal.slide( 1, 1 ) and then Reveal.slide( '+ lastSlideIndex +', 0 )' );
-	});
+    test( 'Reveal.isLastSlide after vertical slide', function() {
+        var lastSlideIndex = document.querySelectorAll( '.reveal .slides>section' ).length - 1;
+        
+        Reveal.slide( 1, 1 );
+        Reveal.slide( lastSlideIndex );
+        strictEqual( Reveal.isLastSlide(), true, 'true after Reveal.slide( 1, 1 ) and then Reveal.slide( '+ lastSlideIndex +', 0 )' );
+    });
 
     test( 'Reveal.getTotalSlides', function() {
         strictEqual( Reveal.getTotalSlides(), 8, 'eight slides in total' );
@@ -102,41 +101,41 @@ Reveal.addEventListener( 'ready', function() {
     test( 'Reveal.getIndices', function() {
         var indices = Reveal.getIndices();
 
-		ok( indices.hasOwnProperty( 'h' ), 'h exists' );
-		ok( indices.hasOwnProperty( 'v' ), 'v exists' );
-		ok( indices.hasOwnProperty( 'f' ), 'f exists' );
+        ok( indices.hasOwnProperty( 'h' ), 'h exists' );
+        ok( indices.hasOwnProperty( 'v' ), 'v exists' );
+        ok( indices.hasOwnProperty( 'f' ), 'f exists' );
 
         Reveal.slide( 1, 0 );
-		strictEqual( Reveal.getIndices().h, 1, 'h 1' );
-		strictEqual( Reveal.getIndices().v, 0, 'v 0' );
+        strictEqual( Reveal.getIndices().h, 1, 'h 1' );
+        strictEqual( Reveal.getIndices().v, 0, 'v 0' );
 
         Reveal.slide( 1, 2 );
-		strictEqual( Reveal.getIndices().h, 1, 'h 1' );
-		strictEqual( Reveal.getIndices().v, 2, 'v 2' );
+        strictEqual( Reveal.getIndices().h, 1, 'h 1' );
+        strictEqual( Reveal.getIndices().v, 2, 'v 2' );
 
         Reveal.slide( 0, 0 );
-		strictEqual( Reveal.getIndices().h, 0, 'h 0' );
-		strictEqual( Reveal.getIndices().v, 0, 'v 0' );
+        strictEqual( Reveal.getIndices().h, 0, 'h 0' );
+        strictEqual( Reveal.getIndices().v, 0, 'v 0' );
     });
 
     test( 'Reveal.getSlide', function() {
-		equal( Reveal.getSlide( 0 ), document.querySelector( '.reveal .slides>section:first-child' ), 'gets correct first slide' );
-		equal( Reveal.getSlide( 1 ), document.querySelector( '.reveal .slides>section:nth-child(2)' ), 'no v index returns stack' );
-		equal( Reveal.getSlide( 1, 0 ), document.querySelector( '.reveal .slides>section:nth-child(2)>section:nth-child(1)' ), 'v index 0 returns first vertical child' );
-		equal( Reveal.getSlide( 1, 1 ), document.querySelector( '.reveal .slides>section:nth-child(2)>section:nth-child(2)' ), 'v index 1 returns second vertical child' );
+        equal( Reveal.getSlide( 0 ), document.querySelector( '.reveal .slides>section:first-child' ), 'gets correct first slide' );
+        equal( Reveal.getSlide( 1 ), document.querySelector( '.reveal .slides>section:nth-child(2)' ), 'no v index returns stack' );
+        equal( Reveal.getSlide( 1, 0 ), document.querySelector( '.reveal .slides>section:nth-child(2)>section:nth-child(1)' ), 'v index 0 returns first vertical child' );
+        equal( Reveal.getSlide( 1, 1 ), document.querySelector( '.reveal .slides>section:nth-child(2)>section:nth-child(2)' ), 'v index 1 returns second vertical child' );
 
-		strictEqual( Reveal.getSlide( 100 ), undefined, 'undefined when out of horizontal bounds' );
-		strictEqual( Reveal.getSlide( 1, 100 ), undefined, 'undefined when out of vertical bounds' );
-	});
+        strictEqual( Reveal.getSlide( 100 ), undefined, 'undefined when out of horizontal bounds' );
+        strictEqual( Reveal.getSlide( 1, 100 ), undefined, 'undefined when out of vertical bounds' );
+    });
 
-	test( 'Reveal.getSlideBackground', function() {
-		equal( Reveal.getSlideBackground( 0 ), document.querySelector( '.reveal .backgrounds>.slide-background:first-child' ), 'gets correct first background' );
-		equal( Reveal.getSlideBackground( 1 ), document.querySelector( '.reveal .backgrounds>.slide-background:nth-child(2)' ), 'no v index returns stack' );
-		equal( Reveal.getSlideBackground( 1, 0 ), document.querySelector( '.reveal .backgrounds>.slide-background:nth-child(2) .slide-background:nth-child(1)' ), 'v index 0 returns first vertical child' );
-		equal( Reveal.getSlideBackground( 1, 1 ), document.querySelector( '.reveal .backgrounds>.slide-background:nth-child(2) .slide-background:nth-child(2)' ), 'v index 1 returns second vertical child' );
+    test( 'Reveal.getSlideBackground', function() {
+        equal( Reveal.getSlideBackground( 0 ), document.querySelector( '.reveal .backgrounds>.slide-background:first-child' ), 'gets correct first background' );
+        equal( Reveal.getSlideBackground( 1 ), document.querySelector( '.reveal .backgrounds>.slide-background:nth-child(2)' ), 'no v index returns stack' );
+        equal( Reveal.getSlideBackground( 1, 0 ), document.querySelector( '.reveal .backgrounds>.slide-background:nth-child(2) .slide-background:nth-child(1)' ), 'v index 0 returns first vertical child' );
+        equal( Reveal.getSlideBackground( 1, 1 ), document.querySelector( '.reveal .backgrounds>.slide-background:nth-child(2) .slide-background:nth-child(2)' ), 'v index 1 returns second vertical child' );
 
-		strictEqual( Reveal.getSlideBackground( 100 ), undefined, 'undefined when out of horizontal bounds' );
-		strictEqual( Reveal.getSlideBackground( 1, 100 ), undefined, 'undefined when out of vertical bounds' );
+        strictEqual( Reveal.getSlideBackground( 100 ), undefined, 'undefined when out of horizontal bounds' );
+        strictEqual( Reveal.getSlideBackground( 1, 100 ), undefined, 'undefined when out of vertical bounds' );
     });
 
     test( 'Reveal.getPreviousSlide/getCurrentSlide', function() {
@@ -263,7 +262,6 @@ Reveal.addEventListener( 'ready', function() {
         deepEqual( Reveal.getIndices(), { h: 3, v: 0, f: undefined } );
     });
 
-
     // ---------------------------------------------------------------
     // FRAGMENT TESTS
 
@@ -353,12 +351,12 @@ Reveal.addEventListener( 'ready', function() {
         Reveal.slide( 3, 0, 0 );
         equal( fragmentSlide.querySelectorAll( '.fragment.visible' ).length, 2, 'both fragments of same index are shown' );
 
-		// This slide has three fragments, first one is index 0, second and third have index 1
-		Reveal.slide( 2, 2, 0 );
-		equal( Reveal.getIndices().f, 0, 'returns correct index for first fragment' );
+        // This slide has three fragments, first one is index 0, second and third have index 1
+        Reveal.slide( 2, 2, 0 );
+        equal( Reveal.getIndices().f, 0, 'returns correct index for first fragment' );
 
-		Reveal.slide( 2, 2, 1 );
-		equal( Reveal.getIndices().f, 1, 'returns correct index for two fragments with same index' );
+        Reveal.slide( 2, 2, 1 );
+        equal( Reveal.getIndices().f, 1, 'returns correct index for two fragments with same index' );
     });
 
     test( 'Index generation', function() {
@@ -384,7 +382,7 @@ Reveal.addEventListener( 'ready', function() {
 
         var _onEvent = function( event ) {
             ok( true, 'event fired' );
-        }
+        };
 
         Reveal.addEventListener( 'fragmentshown', _onEvent );
 
@@ -405,7 +403,7 @@ Reveal.addEventListener( 'ready', function() {
 
         var _onEvent = function( event ) {
             ok( true, 'event fired' );
-        }
+        };
 
         Reveal.addEventListener( 'fragmenthidden', _onEvent );
 
@@ -419,7 +417,6 @@ Reveal.addEventListener( 'ready', function() {
 
         Reveal.removeEventListener( 'fragmenthidden', _onEvent );
     });
-
 
     // ---------------------------------------------------------------
     // AUTO-SLIDE TESTS
@@ -452,7 +449,7 @@ Reveal.addEventListener( 'ready', function() {
 
         var _onEvent = function( event ) {
             ok( true, 'event fired' );
-        }
+        };
 
         Reveal.addEventListener( 'autoslidepaused', _onEvent );
         Reveal.configure({ autoSlide: 10000 });
@@ -470,7 +467,7 @@ Reveal.addEventListener( 'ready', function() {
 
         var _onEvent = function( event ) {
             ok( true, 'event fired' );
-        }
+        };
 
         Reveal.addEventListener( 'autoslideresumed', _onEvent );
         Reveal.configure({ autoSlide: 10000 });
@@ -524,7 +521,6 @@ Reveal.addEventListener( 'ready', function() {
         Reveal.configure({ loop: false });
     });
 
-
     // ---------------------------------------------------------------
     // LAZY-LOADING TESTS
 
@@ -534,15 +530,31 @@ Reveal.addEventListener( 'ready', function() {
         strictEqual( document.querySelectorAll( '.reveal section img[src]' ).length, 1, 'Image source has been set' );
     });
 
-	test( 'background images', function() {
-		var imageSource1 = Reveal.getSlide( 0 ).getAttribute( 'data-background-image' );
-		var imageSource2 = Reveal.getSlide( 1, 0 ).getAttribute( 'data-background' );
+    test( 'video with data-src', function() {
+        strictEqual( document.querySelectorAll( '.reveal section video[src]' ).length, 1, 'Video source has been set' );
+    });
 
-		// check that the images are applied to the background elements
-		ok( Reveal.getSlideBackground( 0 ).style.backgroundImage.indexOf( imageSource1 ) !== -1, 'data-background-image worked' );
-		ok( Reveal.getSlideBackground( 1, 0 ).style.backgroundImage.indexOf( imageSource2 ) !== -1, 'data-background worked' );
-	});
+    test( 'audio with data-src', function() {
+        strictEqual( document.querySelectorAll( '.reveal section audio[src]' ).length, 1, 'Audio source has been set' );
+    });
 
+    test( 'iframe with data-src', function() {
+        Reveal.slide( 0, 0 );
+        strictEqual( document.querySelectorAll( '.reveal section iframe[src]' ).length, 0, 'Iframe source is not set' );
+        Reveal.slide( 2, 1 );
+        strictEqual( document.querySelectorAll( '.reveal section iframe[src]' ).length, 1, 'Iframe source is set' );
+        Reveal.slide( 2, 2 );
+        strictEqual( document.querySelectorAll( '.reveal section iframe[src]' ).length, 0, 'Iframe source is not set' );
+    });
+
+    test( 'background images', function() {
+        var imageSource1 = Reveal.getSlide( 0 ).getAttribute( 'data-background-image' );
+        var imageSource2 = Reveal.getSlide( 1, 0 ).getAttribute( 'data-background' );
+
+        // check that the images are applied to the background elements
+        ok( Reveal.getSlideBackground( 0 ).style.backgroundImage.indexOf( imageSource1 ) !== -1, 'data-background-image worked' );
+        ok( Reveal.getSlideBackground( 1, 0 ).style.backgroundImage.indexOf( imageSource2 ) !== -1, 'data-background worked' );
+    });
 
     // ---------------------------------------------------------------
     // EVENT TESTS
@@ -554,7 +566,7 @@ Reveal.addEventListener( 'ready', function() {
 
         var _onEvent = function( event ) {
             ok( true, 'event fired' );
-        }
+        };
 
         Reveal.addEventListener( 'slidechanged', _onEvent );
 
@@ -575,7 +587,7 @@ Reveal.addEventListener( 'ready', function() {
 
         var _onEvent = function( event ) {
             ok( true, 'event fired' );
-        }
+        };
 
         Reveal.addEventListener( 'paused', _onEvent );
 
@@ -592,7 +604,7 @@ Reveal.addEventListener( 'ready', function() {
 
         var _onEvent = function( event ) {
             ok( true, 'event fired' );
-        }
+        };
 
         Reveal.addEventListener( 'resumed', _onEvent );
 
@@ -603,7 +615,6 @@ Reveal.addEventListener( 'ready', function() {
 
         Reveal.removeEventListener( 'resumed', _onEvent );
     });
-
 
 } );
 

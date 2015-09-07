@@ -76,34 +76,34 @@
                     font-size: 0.66em;
                     color: #666;
                     margin: 0;
-                }
+				}
 
                 .speaker-controls-time {
                     border-bottom: 1px solid rgba( 200, 200, 200, 0.5 );
-                    margin-bottom: 10px;
+					margin-bottom: 10px;
                     padding: 10px 16px;
                     padding-bottom: 20px;
 					cursor: pointer;
-				}
+			}
 
 				.speaker-controls-time .reset-button {
 					opacity: 0;
 					float: right;
 					color: #666;
 					text-decoration: none;
-				}
+			}
 				.speaker-controls-time:hover .reset-button {
 					opacity: 1;
-                }
+				}
 
                 .speaker-controls-time .timer,
                 .speaker-controls-time .clock {
                     width: 50%;
                     font-size: 1.9em;
-                }
+				}
 
                 .speaker-controls-time .timer {
-                    float: left;
+					float: left;
                 }
 
                 .speaker-controls-time .clock {
@@ -113,7 +113,7 @@
 
                 .speaker-controls-time span.mute {
                     color: #bbb;
-                }
+				}
 
                 .speaker-controls-notes {
                     padding: 10px 16px;
@@ -132,13 +132,13 @@
             @media screen and (max-width: 1080px) {
                 #speaker-controls {
                     font-size: 16px;
-                }
+				}
             }
 
             @media screen and (max-width: 900px) {
                 #speaker-controls {
                     font-size: 14px;
-                }
+				}
             }
 
             @media screen and (max-width: 800px) {
@@ -159,10 +159,10 @@
 				<h4 class="label">Time <span class="reset-button">Click to Reset</span></h4>
                 <div class="clock">
                     <span class="clock-value">0:00 AM</span>
-                </div>
+				</div>
                 <div class="timer">
                     <span class="hours-value">00</span><span class="minutes-value">:00</span><span class="seconds-value">:00</span>
-                </div>
+				</div>
                 <div class="clear"></div>
             </div>
 
@@ -184,9 +184,9 @@
                     upcomingSlide,
                     connected = false;
 
-                    window.addEventListener( 'message', function( event ) {
+				window.addEventListener( 'message', function( event ) {
 
-                    var data = JSON.parse( event.data );
+					var data = JSON.parse( event.data );
 
                     // Messages sent by the notes plugin inside of the main window
                     if( data && data.namespace === 'reveal-notes' ) {
@@ -242,21 +242,21 @@
                     // applying the same state
                     currentState = JSON.stringify( data.state );
 
-                    // No need for updating the notes in case of fragment changes
+					// No need for updating the notes in case of fragment changes
                     if ( data.notes ) {
                         notes.classList.remove( 'hidden' );
-                        if( data.markdown ) {
+						if( data.markdown ) {
                             notesValue.innerHTML = marked( data.notes );
-                        }
-                        else {
+						}
+						else {
                             notesValue.innerHTML = data.notes;
-                        }
-                    }
+						}
+					}
                     else {
                         notes.classList.add( 'hidden' );
                     }
 
-                    // Update the note slides
+					// Update the note slides
                     currentSlide.contentWindow.postMessage( JSON.stringify({
                         method: 'setState',
                         args: [ data.state ]
@@ -376,14 +376,14 @@
 						return false;
 					} );
 
-                }
+				}
 
                 function zeroPadInteger( num ) {
 
                     var str = '00' + parseInt( num );
                     return str.substring( str.length - 2 );
 
-                }
+					}
 
                 /**
                  * Limits the frequency at which a function can be called.
@@ -404,17 +404,17 @@
                         if( timeSinceLastCall > ms ) {
                             fn.apply( context, args );
                             lastTime = Date.now();
-                        }
-                        else {
+						}
+						else {
                             timeout = setTimeout( function() {
                                 fn.apply( context, args );
                                 lastTime = Date.now();
                             }, ms - timeSinceLastCall );
-                        }
+						}
 
                     }
 
-                }
+				}
 
             })();
 
