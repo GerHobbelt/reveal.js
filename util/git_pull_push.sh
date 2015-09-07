@@ -171,7 +171,6 @@ s )
     cd $f
     #echo $@
     $@
-    # https://github.com/Visyond/visyond/wiki/Using-GIT-~-handy-commands-and-general-policies
     git push -u origin --all
     popd                                                                  2> /dev/null  > /dev/null
   done

@@ -4,11 +4,11 @@
 #
 # [submodule "php/lib/ultimatemysql"]
 #    path = php/lib/ultimatemysql
-#    url = git@github.com:Visyond/ultimatemysql.git
+#    url = git@github.com:GerHobbelt/ultimatemysql.git
 #
 # -->
 #
-# git submodule add  git@github.com:Visyond/ultimatemysql.git  php/lib/ultimatemysql
+# git submodule add  git@github.com:GerHobbelt/ultimatemysql.git  php/lib/ultimatemysql
 #
 
 
@@ -22,7 +22,7 @@ BEGIN {
     printf("\n");
     printf("mode=\"R\"\n");
     printf("\n");
-    printf("Win7DEV_BASEDIR=/media/sf_D_DRIVE/h/prj/1original/visyond/visyond\n");
+    printf("Win7DEV_BASEDIR=/media/sf_D_DRIVE/h/prj/1original/company/project\n");
     printf("\n");
     printf("function git_submod_add {\n");
     printf("    git submodule  add $1 $2\n");

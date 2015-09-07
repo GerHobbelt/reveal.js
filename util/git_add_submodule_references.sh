@@ -7,7 +7,7 @@ cd ..
 
 mode="R"
 
-Win7DEV_BASEDIR=/media/sf_D_DRIVE/h/prj/1original/visyond/visyond
+Win7DEV_BASEDIR=/media/sf_D_DRIVE/h/prj/1original/company/project
 
 function git_submod_add {
     git submodule  add $1 $2
