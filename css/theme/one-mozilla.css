@@ -6,35 +6,6 @@
  * Based on Sky theme for reveal.js.
  * Copyright (C) 2011-2012 Hakim El Hattab, http://hakim.se
  */
-.blue .reveal .state-background {
-  background: #0054a0;
-  background: -moz-radial-gradient(center, circle cover, #0093d8 0%, #0054a0 100%);
-  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, #0093d8), color-stop(100%, #0054a0));
-  background: -webkit-radial-gradient(center, circle cover, #0093d8 0%, #0054a0 100%);
-  background: -o-radial-gradient(center, circle cover, #0093d8 0%, #0054a0 100%);
-  background: -ms-radial-gradient(center, circle cover, #0093d8 0%, #0054a0 100%);
-  background: radial-gradient(center, circle cover, #0093d8 0%, #0054a0 100%);
-}
-
-.red .reveal .state-background {
-  background: #c13831;
-  background: -moz-radial-gradient(center, circle cover, #e93a28 0%, #c13831 100%);
-  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, #e93a28), color-stop(100%, #c13831));
-  background: -webkit-radial-gradient(center, circle cover, #e93a28 0%, #c13831 100%);
-  background: -o-radial-gradient(center, circle cover, #e93a28 0%, #c13831 100%);
-  background: -ms-radial-gradient(center, circle cover, #e93a28 0%, #c13831 100%);
-  background: radial-gradient(center, circle cover, #e93a28 0%, #c13831 100%);
-}
-
-.darkGrey .reveal .state-background {
-  background: #424f5a;
-  background: -moz-radial-gradient(center, circle cover, #697a85 0%, #424f5a 100%);
-  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, #697a85), color-stop(100%, #424f5a));
-  background: -webkit-radial-gradient(center, circle cover, #697a85 0%, #424f5a 100%);
-  background: -o-radial-gradient(center, circle cover, #697a85 0%, #424f5a 100%);
-  background: -ms-radial-gradient(center, circle cover, #697a85 0%, #424f5a 100%);
-  background: radial-gradient(center, circle cover, #697a85 0%, #424f5a 100%);
-}
 
 .blue .reveal *, .red .reveal *, .darkGrey .reveal * {
   color: white !important;
@@ -211,6 +182,13 @@
 {
     font-size:16px;
 }
+
+.reveal pre code
+{
+    text-align: left;
+    display: inline-block;
+}
+
 
 /*********************************************
  * list

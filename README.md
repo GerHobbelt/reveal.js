@@ -168,6 +168,10 @@ Reveal.initialize({
     // i.e. contained within a limited portion of the screen
     embedded: false,
 
+	// Flags if we should show a help overlay when the questionmark
+	// key is pressed
+	help: true,
+
     // Number of milliseconds between automatically proceeding to the
     // next slide, disabled when set to 0, this value can be overwritten
     // by using a data-autoslide attribute on your slides
@@ -245,13 +249,13 @@ Reveal.initialize({
         { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
 
         // Zoom in and out with Alt+click
-        { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+		{ src: 'plugin/zoom-js/zoom.js', async: true },
 
         // Speaker notes
-        { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+		{ src: 'plugin/notes/notes.js', async: true },
 
         // Remote control your reveal.js presentation using a touch device
-        { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } },
+		{ src: 'plugin/remotes/remotes.js', async: true },
 
         // MathJax
         { src: 'plugin/math/math.js', async: true }
@@ -424,7 +428,7 @@ Reveal.addEventListener( 'somestate', function() {
 
 ### Slide Backgrounds
 
-Slides are contained within a limited portion of the screen by default to allow them to fit any display and scale uniformly. You can apply full page background colors or images by applying a ```data-background``` attribute to your ```<section>``` elements. Below are a few examples.
+Slides are contained within a limited portion of the screen by default to allow them to fit any display and scale uniformly. You can apply full page backgrounds outside of the slide area by adding a ```data-background``` attribute to your ```<section>``` elements. Four different types of backgrounds are supported: color, image, video and iframe. Below are a few examples.
 
 ```html
 <section data-background="#ff0000">
@@ -435,6 +439,12 @@ Slides are contained within a limited portion of the screen by default to allow 
 </section>
 <section data-background="http://example.com/image.png" data-background-size="100px" data-background-repeat="repeat">
     <h2>This background image will be sized to 100px and repeated.</h2>
+</section>
+<section data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm">
+	<h2>Video. Multiple sources can be defined using a comma separated list.</h2>
+</section>
+<section data-background-iframe="https://slides.com">
+	<h2>Embeds a web page as a background. Note that the page won't be interactive.</h2>
 </section>
 ```
 
@@ -650,7 +660,7 @@ Limitations:
 Presentations can be exported to PDF via a special print stylesheet. This feature requires that you use [Google Chrome](http://google.com/chrome).
 Here's an example of an exported presentation that's been uploaded to SlideShare: http://www.slideshare.net/hakimel/revealjs-13872948.
 
-1. Open your presentation with [css/print/pdf.css](https://github.com/hakimel/reveal.js/blob/master/css/print/pdf.css) included on the page. The default index HTML lets you add *print-pdf* anywhere in the query to include the stylesheet, for example: [lab.hakim.se/reveal-js?print-pdf](http://lab.hakim.se/reveal-js?print-pdf).
+1. Open your presentation with `print-pdf` included anywhere in the query string. This triggers the default index HTML to load the PDF print stylesheet ([css/print/pdf.css](https://github.com/hakimel/reveal.js/blob/master/css/print/pdf.css)). You can test this with [lab.hakim.se/reveal-js?print-pdf](http://lab.hakim.se/reveal-js?print-pdf).
 2. Open the in-browser print dialog (CMD+P).
 3. Change the **Destination** setting to **Save as PDF**.
 4. Change the **Layout** to **Landscape**.

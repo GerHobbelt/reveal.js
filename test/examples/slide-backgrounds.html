@@ -1,6 +1,5 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" style="height: 100%;">
-
     <head>
         <meta charset="utf-8">
 
@@ -10,9 +9,25 @@
 
         <link rel="stylesheet" href="../../css/reveal.css">
         <link rel="stylesheet" href="../../css/theme/serif.css" id="theme">
+
+        <link rel='stylesheet' href='../../lib/js/nprogress/nprogress.css'>
+        <script src='../../lib/js/nprogress/nprogress.js'></script>
+
+        <script src="../../js/reveal-global-utilities.js"></script>
+		
+		<style type="text/css" media="screen">
+			.slides section.has-dark-background,
+			.slides section.has-dark-background h2 {
+				color: #fff;
+			}
+			.slides section.has-light-background,
+			.slides section.has-light-background h2 {
+				color: #222;
+			}
+		</style>
     </head>
 
-    <body>
+    <body class="reveal-viewport">
 
         <div class="reveal">
 
@@ -24,6 +39,10 @@
 
                 <section data-background="#bb00bb">
                     <h2>data-background: #bb00bb</h2>
+				</section>
+
+				<section data-background-color="lightblue">
+					<h2>data-background: lightblue</h2>
                 </section>
 
                 <section>
@@ -45,25 +64,25 @@
                     <section>
                         <h2>Background applied to stack</h2>
                     </section>
-                    <section data-background="rgba(100, 0, 0, 0.2)">
+					<section data-background="rgb(66, 66, 66)">
                         <h2>Background applied to slide inside of stack</h2>
                     </section>
                 </section>
 
-                <section data-background-transition="slide" data-background="assets/image1.png" style="background: rgba(255,255,255,0.9)">
+				<section data-background-transition="slide" data-background="assets/image1.png">
                     <h2>Background image</h2>
                 </section>
 
                 <section>
-                    <section data-background-transition="slide" data-background="assets/image1.png" style="background: rgba(255,255,255,0.9)">
+					<section data-background-transition="slide" data-background="assets/image1.png">
                         <h2>Background image</h2>
                     </section>
-                    <section data-background-transition="slide" data-background="assets/image1.png" style="background: rgba(255,255,255,0.9)">
+					<section data-background-transition="slide" data-background="assets/image1.png">
                         <h2>Background image</h2>
                     </section>
                 </section>
 
-                <section data-background="assets/image2.png" data-background-size="100px" data-background-repeat="repeat" data-background-color="#111" style="background: rgba(255,255,255,0.9)">
+				<section data-background="assets/image2.png" data-background-size="100px" data-background-repeat="repeat" data-background-color="#111">
                     <h2>Background image</h2>
                     <pre>data-background-size="100px" data-background-repeat="repeat" data-background-color="#111"</pre>
                 </section>
@@ -73,6 +92,14 @@
                 </section>
                 <section data-background="#888888">
                     <h2>Same background twice (2/2)</h2>
+				</section>
+
+				<section data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm">
+					<h2>Video background</h2>
+				</section>
+
+				<section data-background-iframe="https://slides.com">
+					<h2>Iframe background</h2>
                 </section>
 
                 <section>
@@ -105,16 +132,21 @@
 
             // Full list of configuration options available here:
             // https://github.com/hakimel/reveal.js#configuration
-            var RevealConfiguration = {
-                center: true,
-                // rtl: true,
+            var RevealConfiguration = function (cfg) {
+                // We don't extend the set specified in the loader and passed on to us via `cfg` but rather overrule those here.
+                return {
+	                center: true,
+	                // rtl: true,
 
-                transition: 'linear',
-                // transitionSpeed: 'slow',
-                // backgroundTransition: 'slide'
+	                transition: 'linear',
+	                // transitionSpeed: 'slow',
+	                // backgroundTransition: 'slide'
+	            };
             };
 
         </script>
+
+        <script src="../../js/reveal-pagestart-driver.js"></script>
 
         <!-- data-main attribute tells require.js to load
              scripts/main.js after require.js loads. -->

@@ -61,12 +61,15 @@
 [submodule "lib/js/nprogress"]
 	path = lib/js/nprogress
 	url = git@github.com:GerHobbelt/nprogress.git
-[submodule "lib/scopedQuerySelectorShim"]
-	path = lib/scopedQuerySelectorShim
-	url = git@github.com:GerHobbelt/scopedQuerySelectorShim.git
+	ignore = dirty
 [submodule "lib/LocalConnection"]
 	path = lib/LocalConnection
 	url = git@github.com:GerHobbelt/LocalConnection.js.git
+	ignore = dirty
 [submodule "lib/plugins/hilitor"]
 	path = lib/plugins/hilitor
 	url = git@github.com:GerHobbelt/hilitor.git
+	ignore = dirty
+[submodule "lib/js/MathJax"]
+	path = lib/js/MathJax
+	url = git@github.com:GerHobbelt/MathJax.git

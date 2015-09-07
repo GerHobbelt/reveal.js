@@ -18,6 +18,8 @@
   font-weight: normal;
   font-style: normal; }
 
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+
 footer.joli {
   display: block;
   position: absolute;
@@ -26,9 +28,6 @@ footer.joli {
   z-index: 20;
   font-family: "Lato", sans-serif;
   color: #25b2f7; }
-
-.jolistate .reveal .state-background {
-  background: rgba(0, 0, 0, 0.6); }
 
 .big-shadow, .reveal section.present[data-background] h1, .reveal section.present[data-background] h2, .reveal section.present[data-background] h3, .reveal section.present[data-background] h4, .reveal section.present[data-background] h5, .reveal section.present[data-background] h6 {
   text-shadow: -5px 5px 25px #000, 5px  -5px 25px #000, 5px 5px 25px #000, -5px -5px 25px #000; }

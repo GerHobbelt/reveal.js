@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" style="height: 100%;">
 
     <head>
@@ -20,29 +20,14 @@
         <!-- For syntax highlighting -->
         <link rel="stylesheet" href="../../lib/css/highlight/zenburn.css">
 
-        <!-- If the query includes 'print-pdf', include the PDF print sheet -->
-        <script>
-            // local scope for code:
-            (function () {
-                // media="print"; alternative is 'css/print/paper.css'
-                var link = document.createElement( 'link' );
-                link.rel = 'stylesheet';
-                link.type = 'text/css';
-                if( window.location.search.match( /print-pdf/gi ) ) {
-                    link.href = '../../css/print/pdf.css';
-    				// no media type specified for this one: it applies to both screen and print...
-                }
-    			else {
-                    link.href = '../../css/print/paper.css';
-    				link.media = 'print';
-    			}
-                document.getElementsByTagName( 'head' )[0].appendChild( link );
-            })();
-        </script>
-
         <!--[if lt IE 9]>
         <script src="../../lib/js/html5shiv.js"></script>
         <![endif]-->
+
+        <link rel='stylesheet' href='../../lib/js/nprogress/nprogress.css'>
+        <script src='../../lib/js/nprogress/nprogress.js'></script>
+
+        <script src="../../js/reveal-global-utilities.js"></script>
     </head>
 
     <body class="reveal-viewport">
@@ -436,8 +421,6 @@ function linkify( selector ) {
 
             </div>
 
-            <!-- Presentation progress bar -->
-            <div class="progress"><span></span></div>
         </div>
 
         <script>
@@ -445,18 +428,22 @@ function linkify( selector ) {
 
             // Full list of configuration options available here:
             // https://github.com/hakimel/reveal.js#configuration
-            var RevealConfiguration = {
-                // width: 960,
-                // height: 700,
-                controls: true,
-                progress: true,
-                history: true,
-                center: true,
+            var RevealConfiguration = function (cfg) {
+                // We don't extend the set specified in the loader and passed on to us via `cfg` but rather overrule those here.
+                return {
+	                // width: 960,
+	                // height: 700,
+	                controls: true,
+	                progress: true,
+	                history: true,
+	                center: true,
 
-                slideNumber: true
+	                slideNumber: true
+	            };
             };
-
         </script>
+
+        <script src="../../js/reveal-pagestart-driver.js"></script>
 
         <!-- data-main attribute tells require.js to load
              scripts/main.js after require.js loads. -->

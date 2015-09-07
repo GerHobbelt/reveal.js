@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" style="height: 100%;">
 
     <head>
@@ -12,43 +12,26 @@
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
         <link rel="stylesheet" href="../../css/reveal.css">
         <link rel="stylesheet" href="../../css/theme/default.css" id="theme">
 
         <!-- For syntax highlighting -->
-        <link rel="stylesheet" href="../../lib/css/highlight/zenburn.css">
+        <link rel="stylesheet" href="../../lib/css/highlight/styles/zenburn.css">
 
-        <!-- If the query includes 'print-pdf', include the PDF print sheet -->
-        <script>
-            // local scope for code:
-            (function () {
-                // media="print"; alternative is 'css/print/paper.css'
-                var link = document.createElement( 'link' );
-                link.rel = 'stylesheet';
-                link.type = 'text/css';
-                if( window.location.search.match( /print-pdf/gi ) ) {
-                    link.href = '../../css/print/pdf.css';
-    				// no media type specified for this one: it applies to both screen and print...
-                }
-    			else {
-                    link.href = '../../css/print/paper.css';
-    				link.media = 'print';
-    			}
-                document.getElementsByTagName( 'head' )[0].appendChild( link );
-            })();
-        </script>
+        <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,700,400italic'>
 
         <!--[if lt IE 9]>
         <script src="../../lib/js/html5shiv.js"></script>
         <![endif]-->
 
         <link rel='stylesheet' href='../../lib/js/nprogress/nprogress.css'>
-
-        <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,700,400italic'>
-
         <script src='../../lib/js/nprogress/nprogress.js'></script>
+
+        <script src="../../js/reveal-global-utilities.js"></script>
     </head>
 
     <body class="reveal-viewport">
@@ -112,7 +95,7 @@
                 <section contenteditable="true">
                     <h2>Slides</h2>
                     <p>
-                        Not a coder? No problem. There's a fully-featured visual editor for authoring these, try it out at <a href="http://slid.es" target="_blank">http://slid.es</a>.
+						Not a coder? No problem. There's a fully-featured visual editor for authoring these, try it out at <a href="http://slides.com" target="_blank">http://slides.com</a>.
                     </p>
                 </section>
 
@@ -229,6 +212,7 @@
                         <a href="?theme=moon#/themes">Moon</a> -
                         <a href="?theme=solarized#/themes">Solarized</a> -
                         <a href="?theme=aerogear#/themes">Aerogear</a> -
+                        <a href="?theme=parallax-demo#/themes">Parallax Background Demo</a> -
                         <a href="?theme=blood#/themes">Blood</a> -
                         <a href="?theme=jolicode#/themes">Jolicode</a> -
                         <a href="?theme=one-mozilla#/themes">One::Mozilla</a> -
@@ -264,33 +248,33 @@ Reveal.addEventListener( 'customevent', function() {
                 </section>
 
                 <section>
-                    <section data-background="#007777">
+                    <section data-background-color="#007777">
                         <h2>Slide Backgrounds</h2>
                         <p>
-                            Set <code>data-background="#007777"</code> on a slide to change the full page background to the given color. All CSS color formats are supported.
+                            Set <code>data-background-color="#007777"</code> on a slide to change the full page background to the given color. All CSS color formats are supported.
                         </p>
                         <a href="#" class="navigate-down">
                             <img width="178" height="238" data-src="../../assets/arrow.png" alt="Down arrow">
                         </a>
                     </section>
-                    <section data-background="../../assets/arrow.png">
+                    <section data-background-image="../../assets/arrow.png">
                         <h2>Image Backgrounds</h2>
-                        <pre><code>&lt;section data-background="image.png"&gt;</code></pre>
+                        <pre><code class="html">&lt;section data-background-image="image.png"&gt;</code></pre>
                     </section>
-                    <section data-background="../../assets/arrow.png" data-background-repeat="repeat" data-background-size="100px">
+                    <section data-background-image="../../assets/arrow.png" data-background-repeat="repeat" data-background-size="100px">
                         <h2>Repeated Image Backgrounds</h2>
-                        <pre><code style="word-wrap: break-word;">&lt;section data-background="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
+                        <pre><code class="html" style="word-wrap: break-word;">&lt;section data-background-image="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
                     </section>
                 </section>
 
-                <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+                <section data-transition="slide" data-background-color="#4d7e65" data-background-transition="slide">
                     <h2>Background Transitions</h2>
                     <p>
                         Pass reveal.js the <code>backgroundTransition: 'slide'</code> config argument to make backgrounds slide rather than fade.
                     </p>
                 </section>
 
-                <section data-transition="slide" data-background="#8c4738" data-background-transition="slide">
+                <section data-transition="slide" data-background-color="#8c4738" data-background-transition="slide">
                     <h2>Background Transition Override</h2>
                     <p>
                         You can override background transitions per slide by using <code>data-background-transition="slide"</code>.
@@ -311,7 +295,7 @@ Reveal.addEventListener( 'customevent', function() {
 
                 <section>
                     <h2>Pretty Code</h2>
-                    <pre><code data-trim contenteditable>
+                    <pre><code class="javascript" data-trim contenteditable>
 function linkify( selector ) {
   if( supports3DTransforms ) {
 
@@ -417,6 +401,10 @@ function linkify( selector ) {
                         <li><a href="../../test/test-markdown.html"> Test :: test-markdown</a></li>
                         <li><a href="../../test/test.html"> Test :: test</a></li>
                     </ul>
+                    <ul class="longlist">
+                        <li><a href="../../howto_reveal_js.html"> Demo :: HowTo work with RevealJS</a></li>
+                        <li><a href="../../index-jolicode.html"> Demo :: The Jolicode Template</a></li>
+                    </ul>
                 </section>
                 <section>
                     <h2>Stellar Links</h2>
@@ -434,46 +422,18 @@ function linkify( selector ) {
 
             </div>
 
-            <!-- Presentation progress bar -->
-            <div class="progress"><span></span></div>
         </div>
 
         <script>
-            var body = document.getElementsByTagName('body')[0];
-            body.style.display = 'block'; // $('body').show();
-            var version_el = body.getElementsByClassName('version');
-            for (var i = version_el.length; i-- > 0; ) {
-              version_el[i].innerHTML = NProgress.version; // $('.version').text(NProgress.version);
-            }
-            NProgress.start("Loading the presentation...");
+            var RequireBaseURL = '../../lib/_/';
 
-            NProgress.settings.onDoneBegin = slow_fade_all_ends_all;
-
-            function tick() {
-              // NProgress.inc() will never arrive at 'done' all by itself as it won't push the .status beyond the 0.994 mark:
-              if (NProgress.status > 0.99) {
-                NProgress.done(false, "Done. Ready when you are!");
-
-                // slow_fade_all_ends_all(); <-- executed via NProgress.settings.onDoneBegin instead
-              } else {
-                NProgress.inc();
-                setTimeout(tick, 200);
-              }
-            }
-            tick();
-
-            function slow_fade_all_ends_all() {
-              function slow_fade_one(el, i) {
-                setTimeout(function() {
-                  NProgress.Internals.removeClass(el, 'out');
-                }, i * 500);
-              }
-              var fade_el = body.getElementsByClassName('fade');
-              for (var i = fade_el.length; i-- > 0; ) {
-                slow_fade_one(fade_el[i], i);
-              }
-            }
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            var RevealConfiguration = {
+            };
         </script>
+
+        <script src="../../js/reveal-pagestart-driver.js"></script>
 
         <!-- data-main attribute tells require.js to load
              scripts/main.js after require.js loads. -->

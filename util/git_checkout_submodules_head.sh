@@ -114,7 +114,7 @@ R )
     fi
 }
 
-checkout_branch lib/plugins/zoom                            for-revealJS origin/for-revealJS                                        $@
+checkout_branch lib/plugins/zoom                            for-revealJS                                         $@
 
 
 popd                                                                                                    2> /dev/null  > /dev/null

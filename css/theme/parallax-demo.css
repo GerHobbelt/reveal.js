@@ -11,6 +11,9 @@
  *
  * @author dalexandre@jolicode.com
  */
+
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+
 @font-face {
   font-family: 'convergenceregular';
   src: url("../../lib/font/convergence-regular-webfont.eot");
@@ -26,9 +29,6 @@ footer.joli {
   z-index: 20;
   font-family: "Lato", sans-serif;
   color: #8d8d8d; }
-
-.jolistate .reveal .state-background {
-  background: rgba(0, 0, 0, 0.6); }
 
 .reveal section a img {
   background: none;

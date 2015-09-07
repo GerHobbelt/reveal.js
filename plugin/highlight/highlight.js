@@ -1,19 +1,6 @@
-// START CUSTOM REVEAL.JS INTEGRATION
+// Custom reveal.js integration
 
 (function ( window, factory ) {
-
-  // provide fallback if Highlight.js was not loaded...
-  if (typeof hljs === 'undefined') {
-    hljs = {
-      initHighlightingOnLoad: function() {
-        console.log("Dummy HighLight.js initializing...");
-      },
-
-      highlightBlock: function(a) {
-        console.log("Dummy HighLight.js highlightBlock() API invoked.", arguments);
-      }
-    };
-  }
 
   if ( typeof module === "object" && typeof module.exports === "object" ) {
     // Expose a factory as module.exports in loaders that implement the Node
@@ -25,13 +12,14 @@
       if ( !w.document ) {
         throw new Error("Reveal plugin requires a window with a document");
       }
+      var hljs = require("highlight");
       return factory( w, w.document, Reveal, hljs );
     };
   } else {
     if ( typeof define === "function" && define.amd ) {
       // AMD. Register as a named module.
-      define( "reveal.highlight", [ "reveal", "highlight" ], function(Reveal, highlight) {
-        return factory(window, document, Reveal, highlight);
+      define( [ "reveal", "highlight" ], function(Reveal, hljs) {
+        return factory(window, document, Reveal, hljs);
       });
     } else {
         // Browser globals
@@ -42,9 +30,44 @@
 // Pass this, window may not be defined yet
 }(this, function ( window, document, Reveal, highlight, undefined ) {
 
-    function highlightMe( event ) {
-        highlight.highlightBlock( event.currentTarget );
+    if (!Reveal.AddOn) {
+        Reveal.AddOn = {};
     }
+
+    Reveal.AddOn.Highlight = {
+        tabReplace: "  ",
+        lineNodes: true,
+
+        exec: function() {
+            var hljs_nodes = document.querySelectorAll( 'pre code' );
+
+            for( var i = 0, len = hljs_nodes.length; i < len; i++ ) {
+                var element = hljs_nodes[i];
+
+                Reveal.AddOn.Highlight.highlightMe( element );
+            }
+        },
+        
+        highlightMe: function( element ) {
+            // trim whitespace if data-trim attribute is present
+            if( element.hasAttribute( 'data-trim' ) && typeof element.innerText.trim === 'function' ) {
+                element.innerText = element.innerText.trim();
+            }
+
+            // Now escape html unless prevented by author
+            if( ! element.hasAttribute( 'data-noescape' )) {
+                element.innerHTML = element.innerText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+
+            highlight.highlightBlock( element, Reveal.AddOn.Highlight.tabReplace, false, Reveal.AddOn.Highlight.lineNodes );
+        }
+    };
+
+    function redoHightlightForBlock( event ) {
+        Reveal.AddOn.Highlight.highlightMe( event.currentTarget );        
+    }
+
+    Reveal.AddOn.Highlight.exec();
 
     if( typeof window.addEventListener === 'function' ) {
         var hljs_nodes = document.querySelectorAll( 'pre code' );
@@ -52,18 +75,8 @@
         for( var i = 0, len = hljs_nodes.length; i < len; i++ ) {
             var element = hljs_nodes[i];
 
-            // trim whitespace if data-trim attribute is present
-            if( element.hasAttribute( 'data-trim' ) && typeof element.innerHTML.trim === 'function' ) {
-                element.innerHTML = element.innerHTML.trim();
-            }
-
-            // Now escape html unless prevented by author
-            if( ! element.hasAttribute( 'data-noescape' )) {
-                element.innerHTML = element.innerHTML.replace(/</g,"&lt;").replace(/>/g,"&gt;");
-            }
-
             // re-highlight when focus is lost (for edited code)
-            element.addEventListener( 'focusout', highlightMe, false );
+            element.addEventListener( 'focusout', redoHightlightForBlock, false );
         }
     }
 
@@ -72,8 +85,3 @@
 // END CUSTOM REVEAL.JS INTEGRATION
 
 // Requires highlight.js
-
-// Init with this code:
-//
-//    hljs.initHighlightingOnLoad();
-//

@@ -87,7 +87,7 @@ git_submod_add   git@github.com:GerHobbelt/requireJS-domReady.git               
 git_submod_add   git@github.com:GerHobbelt/requirejs-plugins.git                         lib/js/require-plugins
 git_submod_add   git@github.com:GerHobbelt/requirejs.git                                 lib/js/requireJS
 git_submod_add   git@github.com:GerHobbelt/response.js.git                               lib/js/response.js
-git_submod_add   git@github.com:GerHobbelt/scopedQuerySelectorShim.git                   lib/scopedQuerySelectorShim
+git_submod_add   git@github.com:GerHobbelt/scopedQuerySelectorShim.git                   lib/js/scopedQuerySelectorShim
 git_submod_add   git@github.com:GerHobbelt/text.git                                      lib/js/require-text
 git_submod_add   git@github.com:GerHobbelt/verge.git                                     lib/js/verge
 git_submod_add   git@github.com:GerHobbelt/whitespace-cleaner.git                        util/wsclean

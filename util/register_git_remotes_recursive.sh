@@ -116,15 +116,18 @@ register_remote lib/js/require-plugins                                        lo
 register_remote lib/js/requireCSS                                             local_original                           ../../../../requireCSS                                                           $# $@
 register_remote lib/js/requireJS                                              local_original                           ../../../../requireJS                                                            $# $@
 register_remote lib/js/response.js                                            local-original                           ../../../../response.js/                                                         $# $@
+register_remote lib/js/scopedQuerySelectorShim                                lazd-original                            git@github.com:lazd/scopedQuerySelectorShim.git                                  $# $@
 register_remote lib/js/verge                                                  local-2-original                         ../../../../jquery-verge/                                                        $# $@
 register_remote lib/js/verge                                                  local-original                           ../../../../verge-screendimensions/                                              $# $@
 register_remote lib/plugins/SyntaxHighlighter                                 local-original                           ../../../../SyntaxHighlighter/                                                   $# $@
 register_remote lib/plugins/highlight                                         local-lib                                ../../../../highlight/                                                           $# $@
 register_remote lib/plugins/highlight                                         local-original                           ../../../../highlight/                                                           $# $@
+register_remote lib/plugins/hilitor                                           GerHobbelt-original                      git@github.com:GerHobbelt/hilitor.git                                            $# $@
+register_remote lib/plugins/hilitor                                           local-original                           ../../../../hilitor/                                                             $# $@
 register_remote lib/plugins/marked                                            local-original                           ../../../../marked/                                                              $# $@
+register_remote lib/plugins/zoom                                              hakimel-original                         git@github.com:hakimel/zoom.js.git                                               $# $@
 register_remote lib/plugins/zoom                                              local-lib                                ../../../../zoom/                                                                $# $@
 register_remote lib/plugins/zoom                                              local-original                           ../../../../zoom/                                                                $# $@
-register_remote lib/scopedQuerySelectorShim                                   lazd-original                            git@github.com:lazd/scopedQuerySelectorShim.git                                  $# $@
 
 
 

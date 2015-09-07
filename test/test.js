@@ -68,6 +68,12 @@ Reveal.addEventListener( 'ready', function() {
         strictEqual( Reveal.isFirstSlide(), true, 'true after Reveal.slide( 0, 0 )' );
     });
 
+	test( 'Reveal.isFirstSlide after vertical slide', function() {
+		Reveal.slide( 1, 1 );
+		Reveal.slide( 0, 0 );
+		strictEqual( Reveal.isFirstSlide(), true, 'true after Reveal.slide( 1, 1 ) and then Reveal.slide( 0, 0 )' );
+	});
+
     test( 'Reveal.isLastSlide', function() {
         Reveal.slide( 0, 0 );
         strictEqual( Reveal.isLastSlide(), false, 'false after Reveal.slide( 0, 0 )' );
@@ -75,11 +81,19 @@ Reveal.addEventListener( 'ready', function() {
         var lastSlideIndex = document.querySelectorAll( '.reveal .slides>section' ).length - 1;
 
         Reveal.slide( lastSlideIndex, 0 );
-        strictEqual( Reveal.isLastSlide(), true, 'true after Reveal.slide( ', 0+ lastSlideIndex +' )' );
+		strictEqual( Reveal.isLastSlide(), true, 'true after Reveal.slide( '+ lastSlideIndex +', 0 )' );
 
         Reveal.slide( 0, 0 );
         strictEqual( Reveal.isLastSlide(), false, 'false after Reveal.slide( 0, 0 )' );
     });
+
+	test( 'Reveal.isLastSlide after vertical slide', function() {
+		var lastSlideIndex = document.querySelectorAll( '.reveal .slides>section' ).length - 1;
+		
+		Reveal.slide( 1, 1 );
+		Reveal.slide( lastSlideIndex );
+		strictEqual( Reveal.isLastSlide(), true, 'true after Reveal.slide( 1, 1 ) and then Reveal.slide( '+ lastSlideIndex +', 0 )' );
+	});
 
     test( 'Reveal.getTotalSlides', function() {
         strictEqual( Reveal.getTotalSlides(), 8, 'eight slides in total' );
@@ -88,25 +102,41 @@ Reveal.addEventListener( 'ready', function() {
     test( 'Reveal.getIndices', function() {
         var indices = Reveal.getIndices();
 
-        ok( typeof indices.hasOwnProperty( 'h' ), 'h exists' );
-        ok( typeof indices.hasOwnProperty( 'v' ), 'v exists' );
-        ok( typeof indices.hasOwnProperty( 'f' ), 'f exists' );
+		ok( indices.hasOwnProperty( 'h' ), 'h exists' );
+		ok( indices.hasOwnProperty( 'v' ), 'v exists' );
+		ok( indices.hasOwnProperty( 'f' ), 'f exists' );
 
         Reveal.slide( 1, 0 );
-        ok( Reveal.getIndices().h === 1 && Reveal.getIndices().v === 0, 'h 1, v 0' );
+		strictEqual( Reveal.getIndices().h, 1, 'h 1' );
+		strictEqual( Reveal.getIndices().v, 0, 'v 0' );
 
         Reveal.slide( 1, 2 );
-        ok( Reveal.getIndices().h === 1 && Reveal.getIndices().v === 2, 'h 1, v 2' );
+		strictEqual( Reveal.getIndices().h, 1, 'h 1' );
+		strictEqual( Reveal.getIndices().v, 2, 'v 2' );
 
         Reveal.slide( 0, 0 );
+		strictEqual( Reveal.getIndices().h, 0, 'h 0' );
+		strictEqual( Reveal.getIndices().v, 0, 'v 0' );
     });
 
     test( 'Reveal.getSlide', function() {
-        var firstSlide = document.querySelector( '.reveal .slides>section:first-child' );
+		equal( Reveal.getSlide( 0 ), document.querySelector( '.reveal .slides>section:first-child' ), 'gets correct first slide' );
+		equal( Reveal.getSlide( 1 ), document.querySelector( '.reveal .slides>section:nth-child(2)' ), 'no v index returns stack' );
+		equal( Reveal.getSlide( 1, 0 ), document.querySelector( '.reveal .slides>section:nth-child(2)>section:nth-child(1)' ), 'v index 0 returns first vertical child' );
+		equal( Reveal.getSlide( 1, 1 ), document.querySelector( '.reveal .slides>section:nth-child(2)>section:nth-child(2)' ), 'v index 1 returns second vertical child' );
 
-        equal( Reveal.getSlide( 0 ), firstSlide, 'gets correct first slide' );
+		strictEqual( Reveal.getSlide( 100 ), undefined, 'undefined when out of horizontal bounds' );
+		strictEqual( Reveal.getSlide( 1, 100 ), undefined, 'undefined when out of vertical bounds' );
+	});
 
-        strictEqual( Reveal.getSlide( 100 ), undefined, 'returns undefined when slide can\'t be found' );
+	test( 'Reveal.getSlideBackground', function() {
+		equal( Reveal.getSlideBackground( 0 ), document.querySelector( '.reveal .backgrounds>.slide-background:first-child' ), 'gets correct first background' );
+		equal( Reveal.getSlideBackground( 1 ), document.querySelector( '.reveal .backgrounds>.slide-background:nth-child(2)' ), 'no v index returns stack' );
+		equal( Reveal.getSlideBackground( 1, 0 ), document.querySelector( '.reveal .backgrounds>.slide-background:nth-child(2) .slide-background:nth-child(1)' ), 'v index 0 returns first vertical child' );
+		equal( Reveal.getSlideBackground( 1, 1 ), document.querySelector( '.reveal .backgrounds>.slide-background:nth-child(2) .slide-background:nth-child(2)' ), 'v index 1 returns second vertical child' );
+
+		strictEqual( Reveal.getSlideBackground( 100 ), undefined, 'undefined when out of horizontal bounds' );
+		strictEqual( Reveal.getSlideBackground( 1, 100 ), undefined, 'undefined when out of vertical bounds' );
     });
 
     test( 'Reveal.getPreviousSlide/getCurrentSlide', function() {
@@ -322,6 +352,13 @@ Reveal.addEventListener( 'ready', function() {
 
         Reveal.slide( 3, 0, 0 );
         equal( fragmentSlide.querySelectorAll( '.fragment.visible' ).length, 2, 'both fragments of same index are shown' );
+
+		// This slide has three fragments, first one is index 0, second and third have index 1
+		Reveal.slide( 2, 2, 0 );
+		equal( Reveal.getIndices().f, 0, 'returns correct index for first fragment' );
+
+		Reveal.slide( 2, 2, 1 );
+		equal( Reveal.getIndices().f, 1, 'returns correct index for two fragments with same index' );
     });
 
     test( 'Index generation', function() {
@@ -496,6 +533,15 @@ Reveal.addEventListener( 'ready', function() {
     test( 'img with data-src', function() {
         strictEqual( document.querySelectorAll( '.reveal section img[src]' ).length, 1, 'Image source has been set' );
     });
+
+	test( 'background images', function() {
+		var imageSource1 = Reveal.getSlide( 0 ).getAttribute( 'data-background-image' );
+		var imageSource2 = Reveal.getSlide( 1, 0 ).getAttribute( 'data-background' );
+
+		// check that the images are applied to the background elements
+		ok( Reveal.getSlideBackground( 0 ).style.backgroundImage.indexOf( imageSource1 ) !== -1, 'data-background-image worked' );
+		ok( Reveal.getSlideBackground( 1, 0 ).style.backgroundImage.indexOf( imageSource2 ) !== -1, 'data-background worked' );
+	});
 
 
     // ---------------------------------------------------------------

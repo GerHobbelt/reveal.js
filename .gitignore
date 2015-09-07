@@ -20,5 +20,12 @@ reveal-js-presentation.zip
 css/reveal.min.css
 js/reveal.min.js
 
+
+# analyze_github script cache:
+__forks.info__/
+__forks__.bulk_dump
+
+# misc
 *sublime-*
 .sass-cache
+
