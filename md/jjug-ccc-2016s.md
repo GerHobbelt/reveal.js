@@ -85,7 +85,8 @@ VimでJavaは一応プラグインとかである程度は対応はできるけ�
 
 こういうの
 
-<img src="https://i.ytimg.com/vi/AcD6qHlhXaM/maxresdefault.jpg" width=70%/>
+<img src="https://i.ytimg.com/vi/AcD6qHlhXaM/maxresdefault.jpg" height=350/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Micromouse_Green_Giant_V1.3.jpg" height=350/>
 
 
 --
