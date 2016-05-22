@@ -18,7 +18,7 @@ Twitter @iwata_n
 
 組込系企業で組込以外のソフトを書いてる
 
-Like:Node.js / React.js / Python / C / IoT / Vi
+Like:Node.js / React.js / Python / C / IoT / Vi / Beer
 
 
 ---
@@ -55,9 +55,9 @@ Like:Node.js / React.js / Python / C / IoT / Vi
 
 VimでJavaは一応プラグインとかである程度は対応はできるけど…
 
-- <p class="fragment">import文多いし覚えきれない</p>
-- <p class="fragment">プラグインで環境を汚したくない</p>
 - <p class="fragment">Java用に色々探してセットアップめんどくさい</p>
+- <p class="fragment">プラグインで環境を汚したくない</p>
+- <p class="fragment">import文多いし覚えきれない</p>
 
 --
 
@@ -208,13 +208,17 @@ board.on("ready", () => {
 
 ![MaterialDesign](http://www.responsivemiracle.com/wp-content/uploads/con-html5-responsive-theme-desktop-full.jpg)
 
+--
+
+## キラキラした世界作りたいですよね
+
 ---
 
 # まとめ
 
-- <p class="fragment">Viからいい加減IntelliJとかAtomに移行しようかな</p>
-- <p class="fragment">30億のデバイスで動くのもいいけど、目の前の基板でサクッと動いてほしい</p>
-- <p class="fragment">GUIかっこ良いフレームワーク教えて下さい</p>
+- <p class="fragment">Javaを書くならViからIntelliJに移行したいな</p>
+- <p class="fragment">30億のデバイスよりも、目の前の基板でサクッと動いてほしいな</p>
+- <p class="fragment">GUIかっこ良いフレームワークほしいな</p>
 
 ---
 
