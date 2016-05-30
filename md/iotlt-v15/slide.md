@@ -64,7 +64,7 @@ http://wired.jp/2014/03/04/twitch-plays-pokemon-victory/
 
 <iframe src="demo.html" height=600 width=100%></iframe>
 
-url
+http://goo.gl/NGrgxl
 
 --
 
