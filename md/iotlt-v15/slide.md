@@ -5,6 +5,8 @@ IoT縛りの勉強会! IoTLT vol.15 @ 日本IBM
 
 [イベントページ](http://iotlt.connpass.com/event/31396/)
 
+スライド：http://goo.gl/uSS6Od
+
 ---
 
 # 自己紹介
