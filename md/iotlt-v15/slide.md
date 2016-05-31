@@ -56,15 +56,21 @@ http://wired.jp/2014/03/04/twitch-plays-pokemon-victory/
 
 ![構成図]()
 
+
 --
 
-# デモ
+# デモと解説
 
 --
 
 <iframe src="demo.html" height=600 width=100%></iframe>
 
 http://goo.gl/NGrgxl
+
+- リモコンのスイッチを改造
+- 通信部分はMilkcocoaを使用
+- カメラ映像はWebRTC
+ - 共有は今回は諦めた…　
 
 --
 
