@@ -18,7 +18,7 @@ Twitter @iwata_n
 
 組込系企業で組込以外のソフトを書いてる
 
-Like:Node.js / React.js / Python / C / IoT / Vi
+Like:Node.js / React.js / Python / C / IoT / Vi / Beer
 
 
 ---
@@ -55,9 +55,9 @@ Like:Node.js / React.js / Python / C / IoT / Vi
 
 VimでJavaは一応プラグインとかである程度は対応はできるけど…
 
-- <p class="fragment">import文多いし覚えきれない</p>
-- <p class="fragment">プラグインで環境を汚したくない</p>
 - <p class="fragment">Java用に色々探してセットアップめんどくさい</p>
+- <p class="fragment">プラグインで環境を汚したくない</p>
+- <p class="fragment">import文多いし覚えきれない</p>
 
 --
 
@@ -65,11 +65,11 @@ VimでJavaは一応プラグインとかである程度は対応はできるけ�
 
 --
 
-でも、いろんなIDEのViモードは微妙
+でも、IDEのViモードは微妙
 
+- <p class="fragment">IntelliJ自体は最高だけど・・・</p>
 - <p class="fragment">ノーマルモードに戻った時にIME OFFにできない</p>
-- <p class="fragment">挙動にviとちょっと違う時がある(ヴィジュアルモードとか)</p>
-- <p class="fragment">IntelliJ自体は最高</p>
+- <p class="fragment">挙動にviとちょっと違う時がある(tabnewとか)</p>
 
 ---
 
@@ -85,8 +85,8 @@ VimでJavaは一応プラグインとかである程度は対応はできるけ�
 
 こういうの
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/7/71/Arduino-uno-perspective-transparent.png"
-     width=50%/>
+<img src="https://i.ytimg.com/vi/AcD6qHlhXaM/maxresdefault.jpg" height=350/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Micromouse_Green_Giant_V1.3.jpg" height=350/>
 
 
 --
@@ -151,8 +151,9 @@ public class ControlGpioExample {
 
 --
 
-- 長い
-- コンパイルしてどうのこうのってめんどくさい
+- コード長い
+- ササッと作るにはコンパイルしてどうのこうはめんどう
+- 大きなシステム製品にはいいかも
 
 --
 
@@ -177,11 +178,11 @@ board.on("ready", () => {
 
 - 現場はマイコンにCで書けばいいんじゃね？派が多い
  - レジスタとか扱いやすいし
+ - Javaはリアルタイム処理難しそう
 - GUI側にJavaを使ってるシステムはある
  - でも最近はC#の方が多い気がする
 - モダンな環境だとMatlab/SimulinkでCコードを生成してる
 - 多分Java対応よりもC++対応のほうが喜ばれる世界
-- というかそういう用途にArduinoとかラズパイは向かないのでは・・・
 
 ---
 
@@ -207,17 +208,17 @@ board.on("ready", () => {
 
 ![MaterialDesign](http://www.responsivemiracle.com/wp-content/uploads/con-html5-responsive-theme-desktop-full.jpg)
 
+--
+
+## キラキラした世界作りたいですよね
+
 ---
 
 # まとめ
 
---
-
-## ３つのまとめ
-
-- <p class="fragment">Viからいい加減IntelliJとかAtomに移行しようかな</p>
-- <p class="fragment">30億のデバイスで動くのもいいけど、目の前の基板でサクッと動いてほしい</p>
-- <p class="fragment">GUIかっこ良いフレームワーク教えて下さい</p>
+- <p class="fragment">Javaを書くならViからIntelliJに移行したいな</p>
+- <p class="fragment">30億のデバイスよりも、目の前の基板でサクッと動いてほしいな</p>
+- <p class="fragment">GUIかっこ良いフレームワークほしいな</p>
 
 ---
 

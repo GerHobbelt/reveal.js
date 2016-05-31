@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+
+		<title>IoT縛りの勉強会! IoTLT vol.15 @ 日本IBM</title>
+
+		<link rel="stylesheet" href="../../css/reveal.css">
+		<link rel="stylesheet" href="../../css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="../../lib/css/zenburn.css">
+
+	</head>
+	<body>
+    <center>
+      <video id="myVideo"  height="600" autoplay="1" ></video>
+    </center>
+    <div style='margin: 5px; position:absolute; top:10px'>
+      <button type="button" id='forward'>前進</button>
+      <button type="button" id='back'>後退</button>
+      <button type="button" id='right'>右旋回</button>
+      <button type="button" id='left'>左旋回</button>
+      <div id='timeline' class='reveal'></div>
+    </div>
+    <script src='https://cdn.mlkcca.com/v2.0.0/milkcocoa.js'></script>
+    <script src="demo.js"></script>
+
+    <script type="text/javascript">
+      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || window.navigator.mozGetUserMedia;
+      window.URL = window.URL || window.webkitURL;
+
+      var video = document.getElementById('myVideo');
+      var localStream = null;
+      navigator.getUserMedia({video: true, audio: false},
+       function(stream) { // for success case
+        console.log(stream);
+        video.src = window.URL.createObjectURL(stream);
+       },
+       function(err) { // for error case
+        console.log(err);
+       }
+      );
+    </script>
+	</body>
+</html>
