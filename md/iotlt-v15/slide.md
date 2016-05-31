@@ -26,7 +26,8 @@ Like:Node.js / React.js / Python / C / IoT / Vi / Beer
 
 今日はBeams Hackの話をしようと思ってましたが、
 
-ネタ被りがあったので別の話します
+<s>LTにネタ被りがあった</s><br>
+端にも棒にも引っかからなかったので別の話します
 
 ---
 
@@ -54,25 +55,65 @@ http://wired.jp/2014/03/04/twitch-plays-pokemon-victory/
 
 --
 
-![構成図]()
-
-
---
-
 # デモと解説
 
 --
 
-<iframe src="demo.html" height=600 width=100%></iframe>
+<iframe src="demo.html" height=450 width=100%></iframe>
 
 http://goo.gl/NGrgxl
+--
 
-- リモコンのスイッチを改造
-- 通信部分はMilkcocoaを使用
-- カメラ映像はWebRTC
- - 共有は今回は諦めた…　
+# 構成図
+
+<img src='iotlt.png' height=500/>
 
 --
 
-詳しい作り方は後日某所ブログにて公開予定！
-乞うご期待
+- リモコンのスイッチを改造
+ - 電波出す部分を改造すると色々あぶない
+- 通信部分はMilkcocoaを使用
+- カメラ映像はWebRTC
+ - 共有は今回は諦めた
+
+--
+
+# 回路
+
+<img src='kairo.png' height=400/>
+
+--
+
+#  めっちゃ簡単！
+
+--
+
+# Milkcocoa
+
+- WebSocketとかデータベースをサクッと使える
+ - 詳しくはのびすけさんか会場にいるMilkcocoaの中の人へ
+- 正直今回はじめて使ったけども一晩で今回のインフラ部分相当はできる
+ - プロダクトに使えるか？と言われるとのびすけさんに聞いてみよう！
+
+--
+
+# Johnny-five
+
+- JavaScriptでArduinoやRaspberry Piなどを操作できるライブラリ
+ - 簡単な制御であったら一晩で今回のリモコン操作程度ができる
+ - ☓ミリ秒オーダーでしか制御出来ないので細かい制御に向かない
+ - GR-SAKURAで動かそうとして失敗したという[話](http://sssslide.com/speakerdeck.com/shanonim/trying-iot-on-gr-sakura)があったみたい
+
+--
+
+![](johnny-five.png)
+
+---
+
+詳しい作り方は後日某ブログにて公開予定です
+
+@iwata_n
+
+<img src="https://pbs.twimg.com/profile_images/647965902051241984/ljVIO0fB.png"
+     height=10%
+     width=10%/>
