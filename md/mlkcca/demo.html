@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MoT</title>
+  </head>
+  <body>
+    <input type="button" id="send" value="send" />
+    <div id="content" style="color: #fff; font-size: 32px"></div>
+    <script src='https://cdn.mlkcca.com/v2.0.0/milkcocoa.js'></script>
+    <script type="text/javascript">
+    window.onload = () => {
+      // Milkcocoa
+      const milkcocoa = new MilkCocoa('flagiqah22fs.mlkcca.com');
+      const ds = milkcocoa.dataStore('message');
+
+      const content = document.getElementById('content');
+
+      // Milkcocoaからデータが送られてきた時のコールバック
+      ds.on('send', (data) => {
+        console.log(data.value);
+
+        const child = document.createElement('div');
+        const pos = {
+          x: data.value['POS']['X'],
+          y: data.value['POS']['Y'],
+          z: data.value['POS']['Z']
+        };
+        child.innerHTML = '(' + pos.x + ',' + pos.y + ',' + pos.z + ')' + ':' + data.value['message'];
+        content.insertBefore(child, content.firstChild);
+      });
+
+      const btn_send = document.getElementById('send');
+      btn_send.addEventListener('click', () => {
+        console.log('onClick');
+        ds.send({message: 'send'});
+      });
+    }
+    </script>
+  </body>
+</html>
