@@ -215,6 +215,10 @@
             parallaxBackgroundHorizontal: null,
             parallaxBackgroundVertical: null,
 
+			// The maximum number of pages a single slide can expand onto when printing
+			// to PDF, unlimited by default
+			pdfMaxPagesPerSlide: Number.POSITIVE_INFINITY,
+
             // Number of slides away from the current that are visible in overview mode
             viewDistance: 6,
 
@@ -1022,10 +1026,21 @@
                 var contentSize = getComputedSlideSize( slide );
                 var numberOfPages = Math.max( Math.ceil( contentSize.height / pageHeight ), 1 );
 
+				// Adhere to configured pages per slide limit
+				numberOfPages = Math.min( numberOfPages, config.pdfMaxPagesPerSlide );
+
                 // Center slides vertically
                 if( numberOfPages === 1 && config.center || slide.classList.contains( 'center' ) ) {
                     top = Math.max( ( pageHeight - contentSize.height ) / 2, 0 );
                 }
+
+				// Wrap the slide in a page element and hide its overflow
+				// so that no page ever flows onto another
+				var page = document.createElement( 'div' );
+				page.className = 'pdf-page';
+				page.style.height = ( pageHeight * numberOfPages ) + 'px';
+				slide.parentNode.insertBefore( page, slide );
+				page.appendChild( slide );
 
                 // Position the slide inside of the page
                 slide.style.left = left + 'px';
@@ -1080,7 +1095,7 @@ TBD end of old code, start of new code
 					numberElement.classList.add( 'slide-number' );
 					numberElement.classList.add( 'slide-number-pdf' );
 					numberElement.innerHTML = formatSlideNumber( slideNumberH, '.', slideNumberV );
-					background.appendChild( numberElement );
+					page.appendChild( numberElement );
 				}
             }
 
@@ -1280,6 +1295,8 @@ TBD end of old code, start of new code
         slide.classList.remove( 'has-dark-background' );
         slide.classList.remove( 'has-light-background' );
         
+		slide.slideBackgroundElement = element;
+
         // If this slide has a background color, add a class that
         // signals if it is light or dark. If the slide has no background
         // color, no class will be set
@@ -5884,10 +5901,16 @@ TBD end of old code, start of new code
         // inside of the slides
         if( isPrintingPDF() ) {
             if( slide ) {
+				return slide.slideBackgroundElement;
+
+// old code:
+if (0) {
                 var background = slide.querySelector( ':scope > .slide-background' );
                 if( background && background.parentNode === slide ) {
                     return background;
                 }
+}
+
             }
 
             return undefined;
