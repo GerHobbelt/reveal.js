@@ -1,51 +1,31 @@
 (function() {
-    // Don't emit events from inside of notes windows
-    if ( window.location.search.match( /receiver/gi ) ) { return; }
 
-    var multiplex = Reveal.getConfig().multiplex;
+	// Don't emit events from inside of notes windows
+	if ( window.location.search.match( /receiver/gi ) ) { return; }
 
-    var socket = io.connect(multiplex.url);
+	var multiplex = Reveal.getConfig().multiplex;
 
-    var notify = function( slideElement, indexh, indexv, origin ) {
-        if( typeof origin === 'undefined' && origin !== 'remote' ) {
-            var nextindexh;
-            var nextindexv;
+	var socket = io.connect( multiplex.url );
 
-            var fragmentindex = Reveal.getIndices().f;
-            if (typeof fragmentindex === 'undefined') {
-                fragmentindex = 0;
-            }
+	function post() {
 
-            if ( slideElement.nextElementSibling && slideElement.parentNode.nodeName.match( /^section$/i ) ) {
-                nextindexh = indexh;
-                nextindexv = indexv + 1;
-            } else {
-                nextindexh = indexh + 1;
-                nextindexv = 0;
-            }
+		var messageData = {
+			state: Reveal.getState(),
+			secret: multiplex.secret,
+			socketId: multiplex.id
+		};
 
-            var slideData = {
-                indexh : indexh,
-                indexv : indexv,
-                indexf : fragmentindex,
-                nextindexh : nextindexh,
-                nextindexv : nextindexv,
-                secret: multiplex.secret,
-                socketId : multiplex.id
-            };
+		socket.emit( 'multiplex-statechanged', messageData );
 
-            socket.emit('slidechanged', slideData);
-        }
-    }
+	};
 
-    Reveal.addEventListener( 'slidechanged', function( event ) {
-        notify( event.currentSlide, event.indexh, event.indexv, event.origin );
-    } );
+	// Monitor events that trigger a change in state
+	Reveal.addEventListener( 'slidechanged', post );
+	Reveal.addEventListener( 'fragmentshown', post );
+	Reveal.addEventListener( 'fragmenthidden', post );
+	Reveal.addEventListener( 'overviewhidden', post );
+	Reveal.addEventListener( 'overviewshown', post );
+	Reveal.addEventListener( 'paused', post );
+	Reveal.addEventListener( 'resumed', post );
 
-    var fragmentNotify = function( event ) {
-        notify( Reveal.getCurrentSlide(), Reveal.getIndices().h, Reveal.getIndices().v, event.origin );
-    };
-
-    Reveal.addEventListener( 'fragmentshown', fragmentNotify );
-    Reveal.addEventListener( 'fragmenthidden', fragmentNotify );
 }());

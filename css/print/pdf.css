@@ -1,3 +1,11 @@
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+
 /* Default Print Stylesheet Template
    by Rob Glazebrook of CSSnewbie.com
    Last Updated: June 4, 2008
@@ -10,6 +18,7 @@
    background. This prevents elements from extending
    beyond the edge of the printed page, and prevents
    unnecessary background images from printing */
+
 
 * {
     -webkit-print-color-adjust: exact;
@@ -40,7 +49,6 @@ html {
 .nestedarrow,
 .reveal .controls,
 .reveal .progress,
-.reveal .slide-number,
 .reveal .playback,
 .reveal.overview,
 .fork-reveal,
@@ -52,15 +60,15 @@ html {
 /* SECTION 3: Set body font face, size, and color.
    Consider using a serif font for readability. */
 body, p, td, li, div {
-	font-size: 16pt !important;
+	/* font-size: 16pt !important; */
 }
 
 /* SECTION 4: Set heading font face, sizes, and color.
    Differentiate your headings from your body text.
    Perhaps use a large sans-serif for distinction. */
-.reveal h1, .reveal h2, .reveal h3,h4,h5,h6 {
+h1, h2, h3, h4, h5, h6 {
     text-shadow: 0 0 0 #000 !important;
-  font-size: 18pt;
+    /* font-size: 18pt; */
 }
 
 .reveal pre code {
@@ -86,8 +94,9 @@ ul, ol, div, p {
 }
 .reveal .slides {
     position: static;
-    width: 100%;
-    height: auto;
+	width: 100% !important;
+	height: auto !important;
+	zoom: 1 !important;
 
     left: auto;
     top: auto;
@@ -107,11 +116,17 @@ ul, ol, div, p {
         -ms-perspective-origin: 50% 50%;
             perspective-origin: 50% 50%;
 }
+
+.reveal .slides .pdf-page {
+	position: relative;
+	overflow: hidden;
+	z-index: 1;
+}
+
 .reveal .slides section {
     page-break-after: always !important;
 
     visibility: visible !important;
-    position: relative !important;
     /*
     A4 page:
 
@@ -140,6 +155,7 @@ ul, ol, div, p {
         -ms-transform: none !important;
             transform: none !important;
 }
+
 .reveal section.stack {
     margin: 0 !important;
     padding: 0 !important;
@@ -147,9 +163,11 @@ ul, ol, div, p {
     height: auto !important;
     min-height: auto !important;
 }
+
 .reveal img {
     box-shadow: none;
 }
+
 .reveal .roll {
     overflow: visible;
     line-height: 1em;
@@ -162,8 +180,10 @@ ul, ol, div, p {
     top: 0;
     left: 0;
     width: 100%;
+    height: 100%;
     z-index: -1;
 }
+
 /* All elements should be above the slide-background */
 /*
 .reveal section > * {
@@ -196,3 +216,30 @@ ul, ol, div, p {
   content:"" !important;
 }
 
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	top: auto;
+	right: auto;
+	bottom: auto;
+	left: auto;
+	z-index: 100;
+}
+
+/* Layout option which makes notes appear on a separate page */
+.reveal .speaker-notes-pdf[data-layout="separate-page"] {
+	position: relative;
+	color: inherit;
+	background-color: transparent;
+	padding: 20px;
+	page-break-after: always;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}

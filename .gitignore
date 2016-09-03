@@ -6,6 +6,11 @@
 ~*
 
 # misc
+.idea/
+*.iml
+*.iws
+*.eml
+out/
 .DS_Store
 .svn
 log/*.log

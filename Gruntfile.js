@@ -26,7 +26,7 @@ module.exports = function(grunt) {
                 ' * http://lab.hakim.se/reveal-js\n' +
                 ' * MIT licensed\n' +
                 ' *\n' +
-                ' * Copyright (C) 2015 Hakim El Hattab, http://hakim.se\n' +
+				' * Copyright (C) 2016 Hakim El Hattab, http://hakim.se\n' +
                 ' */'
         },
 
@@ -47,7 +47,17 @@ module.exports = function(grunt) {
                         dest: 'lib/css/highlight/'
                     }
                 ]
-            }
+            },
+			dist: {
+				files: [
+					{src: ['js/reveal.min.js'], dest: 'dist/'},
+					{src: ['css/reveal.min.css'], dest:'dist/'},
+					{expand: true, src: ['css/print/*.css'], dest: 'dist/', filter: 'isFile'},
+					{expand: true, src: ['css/theme/*.css'], dest: 'dist/', filter: 'isFile'},
+					{expand: true, src: ['plugin/**'], dest: 'dist/'},
+					{expand: true, src: ['lib/**/*.{css,js}','lib/font/**'], dest: 'dist/'}
+				]
+			}
         },
 
         qunit: {
@@ -68,6 +78,7 @@ module.exports = function(grunt) {
             core: {
                 files: {
                     'css/reveal.css': 'css/reveal.scss',
+                    'lib/css/font-awesome.css': 'lib/css/source/font-awesome.scss'
                 }
             },
             themes: {
@@ -131,7 +142,8 @@ module.exports = function(grunt) {
         cssmin: {
             compress: {
                 files: {
-                    'css/reveal.min.css': [ 'css/reveal.css' ]
+					'css/reveal.min.css': [ 'css/reveal.css' ],
+                    'lib/css/font-awesome.min.css': [ 'lib/css/font-awesome.css' ]
                 }
             }
         },
@@ -179,14 +191,12 @@ module.exports = function(grunt) {
                 'js/**',
                 'lib/**',
                 'images/**',
-                'plugin/**'
+				'plugin/**',
+				'**.md'
             ]
         },
 
         watch: {
-            options: {
-                livereload: true
-            },
             js: {
                 files: [ 'Gruntfile.js', 'js/reveal.js' ],
                 tasks: 'js'
@@ -200,8 +210,14 @@ module.exports = function(grunt) {
                 tasks: 'css-core'
             },
             html: {
-                files: [ 'index.html']
-            }
+                files: [ '*.html']
+            },
+			markdown: {
+				files: [ './*.md' ]
+			},
+            options: {
+                livereload: true
+            },
         },
 
         clean: {
@@ -212,6 +228,12 @@ module.exports = function(grunt) {
                 '!<%= config.buildDir %>/Procfile',
                 '!<%= config.buildDir %>/CNAME'
             ]
+        },
+
+		retire: {
+			js: ['js/reveal.js', 'lib/js/*.js', 'plugin/**/*.js'],
+			node: ['.'],
+			options: {}
         },
 
         buildcontrol: {
@@ -244,6 +266,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks( 'grunt-contrib-connect' );
     grunt.loadNpmTasks( 'grunt-autoprefixer' );
     grunt.loadNpmTasks( 'grunt-zip' );
+	grunt.loadNpmTasks( 'grunt-retire' );
 
     // Default task
     grunt.registerTask( 'default', [ 'copy:highlight', 'css', 'js' ] );

@@ -40,10 +40,15 @@
 // Pass this, window may not be defined yet
 }(this, function ( window, document, Reveal, undefined ) {
 
-    function openNotes() {
-        var jsFileLocation = document.querySelector('script[src$="notes.js"]').src;  // this js file path
-        jsFileLocation = jsFileLocation.replace(/notes\.js(\?.*)?$/, '');   // the js folder path
-        var notesPopup = window.open( jsFileLocation + 'notes.html', 'reveal.js - Notes', 'width=1100,height=700' );
+	function openNotes( notesFilePath ) {
+
+		if( !notesFilePath ) {
+			var jsFileLocation = document.querySelector('script[src$="notes.js"]').src;  // this js file path
+			jsFileLocation = jsFileLocation.replace(/notes\.js(\?.*)?$/, '');   // the js folder path
+			notesFilePath = jsFileLocation + 'notes.html';
+		}
+
+		var notesPopup = window.open( notesFilePath, 'reveal.js - Notes', 'width=1100,height=700' );
 
         /**
          * Connect to the notes window through a postmessage handshake.
@@ -78,7 +83,7 @@
          * or 'fragmenthidden' set in the events above to define the needed
          * slideDate.
          */
-        function post() {
+		function post(event) {
 
             var slideElement = Reveal.getCurrentSlide(),
                 notesElement = slideElement.querySelector( 'aside.notes' );
@@ -88,12 +93,23 @@
                 type: 'state',
                 notes: '',
                 markdown: false,
+				whitespace: 'normal',
                 state: Reveal.getState()
             };
+
+			// Look for notes defined in a fragment, if it is a fragmentshown event
+			if (event && event.hasOwnProperty('fragment')) {
+				var innerNotes = event.fragment.querySelector( 'aside.notes' );
+
+				if ( innerNotes) {
+					notesElement = innerNotes;
+				}
+			}
 
             // Look for notes defined in a slide attribute
             if( slideElement.hasAttribute( 'data-notes' ) ) {
                 messageData.notes = slideElement.getAttribute( 'data-notes' );
+				messageData.whitespace = 'pre-wrap';
             }
 
             // Look for notes defined in an aside element
@@ -127,6 +143,7 @@
         }
 
         connect();
+
     }
 
 	if( !/receiver/i.test( window.location.search ) ) {
@@ -142,11 +159,17 @@
 		// modifier is present
 		if ( document.querySelector( ':focus' ) !== null || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey ) return;
 
+			// Disregard the event if keyboard is disabled
+			if ( Reveal.getConfig().keyboard === false ) return;
+
 		if( event.keyCode === 83 ) {
 			event.preventDefault();
 			openNotes();
 		}
 	}, false );
+
+		// Show our keyboard shortcut in the reveal.js help overlay
+		if( window.Reveal ) Reveal.registerKeyboardShortcut( 'S', 'Speaker notes view' );
 
 	}
 

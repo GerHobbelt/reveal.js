@@ -3,7 +3,7 @@
  * http://lab.hakim.se/reveal-js
  * MIT licensed
  *
- * Copyright (C) 2015 Hakim El Hattab, http://hakim.se
+ * Copyright (C) 2016 Hakim El Hattab, http://hakim.se
  */
 
 
@@ -23,7 +23,7 @@
 .reveal article, .reveal aside, .reveal canvas, .reveal details, .reveal embed,
 .reveal figure, .reveal figcaption, .reveal footer, .reveal header, .reveal hgroup,
 .reveal menu, .reveal nav, .reveal output, .reveal ruby, .reveal section, .reveal summary,
-.reveal time, .reveal mark, .reveal audio, video {
+.reveal time, .reveal mark, .reveal audio, .reveal video {
     margin: 0;
     padding: 0;
     border: 0;
@@ -67,6 +67,7 @@ body
     background-color: #fff;
     color: #000;
 }
+
 
 ::-moz-selection {
     background: #FF5E99;
@@ -179,6 +180,38 @@ body
     &.visible {
         text-decoration: line-through;
     }
+}
+
+.reveal .slides section .fragment.fade-up {
+	transform: translate(0, 20%);
+
+	&.visible {
+		transform: translate(0, 0);
+	}
+}
+
+.reveal .slides section .fragment.fade-down {
+	transform: translate(0, -20%);
+
+	&.visible {
+		transform: translate(0, 0);
+	}
+}
+
+.reveal .slides section .fragment.fade-right {
+	transform: translate(-20%, 0);
+
+	&.visible {
+		transform: translate(0, 0);
+	}
+}
+
+.reveal .slides section .fragment.fade-left {
+	transform: translate(20%, 0);
+
+	&.visible {
+		transform: translate(0, 0);
+	}
 }
 
 .reveal .slides section .fragment.current-visible {
@@ -525,11 +558,19 @@ body
 .reveal .slide-number {
     position: fixed;
     display: block;
-    right: 15px;
-    bottom: 15px;
-    opacity: 0.5;
+	right: 8px;
+	bottom: 8px;
     z-index: 31;
+	font-family: Helvetica, sans-serif;
     font-size: 12px;
+	line-height: 1;
+	color: #fff;
+	background-color: rgba( 0, 0, 0, 0.4 );
+	padding: 5px;
+}
+
+.reveal .slide-number-delimiter {
+	margin: 0 3px;
 }
 
 /*********************************************
@@ -587,11 +628,11 @@ body
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    padding: 20px 0px;
+    padding: 0px 0px;
 
     z-index: 10;
 
-    transform-style: preserve-3d;
+	transform-style: flat;
 
     transition: transform-origin 2s cubic-bezier(0.260, 0.860, 0.440, 0.985),
                 transform 2s cubic-bezier(0.260, 0.860, 0.440, 0.985),
@@ -701,11 +742,6 @@ body
     transition-duration: 3s;
 }
 
-.reveal .slides > section.stack {
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
 .reveal .slides > section.present,
 .reveal .slides > section > section.present {
     // z-index: 11;  -- this Z-index > 10 *nukes* the perspective-mode overview
@@ -715,12 +751,6 @@ body
     //   border: 4px solid red;
 
     display: block;
-}
-
-.reveal.center,
-.reveal.center .slides,
-.reveal.center .slides section {
-    min-height: 0 !important;
 }
 
 /* Don't allow interaction with invisible slides */
@@ -853,6 +883,10 @@ body
  *********************************************/
 
 @each $stylename in default, convex {
+	@include transition-global(#{$stylename}) {
+		transform-style: preserve-3d;
+	}
+
     @include transition-horizontal-past(#{$stylename}) {
         transform: translate3d(-100%, 0, 0) rotateY(-90deg) translate3d(-100%, 0, 0);
     }
@@ -870,6 +904,10 @@ body
 /*********************************************
  * CONCAVE TRANSITION
  *********************************************/
+
+@include transition-global(concave) {
+	transform-style: preserve-3d;
+}
 
 @include transition-horizontal-past(concave) {
     transform: translate3d(-100%, 0, 0) rotateY(90deg) translate3d(-100%, 0, 0);
@@ -921,6 +959,7 @@ body
     min-height: 700px;
     backface-visibility: hidden;
     box-sizing: border-box;
+	transform-style: preserve-3d;
 }
 .reveal.center.cube .slides section {
     min-height: 0;
@@ -992,6 +1031,7 @@ body
         padding: 30px;
         min-height: 700px;
         box-sizing: border-box;
+	transform-style: preserve-3d;
 
         &.past {
             z-index: 12;
@@ -1087,8 +1127,81 @@ body
 }
 
 
+/*********************************************
+ * APPEARING TRANSITION
+ *********************************************/
 
 
+@include transition-horizontal-past(appear) {
+	transform: translate(0, -30%);
+	opacity: 0;
+}
+@include transition-horizontal-future(appear) {
+	transform: translate(0, 30%);	
+	opacity: 0;
+}
+@include transition-vertical-past(appear) {
+	transform: translate(0, -150%);
+	opacity: 0;
+}
+@include transition-vertical-future(appear) {
+	transform: translate(0, 150%);
+	opacity: 0;
+}
+.reveal .slides section[data-transition=appear],
+.reveal.appear .slides section:not([data-transition]),
+.reveal.appear .slides>section>section:not([data-transition]) {
+
+	transition: transform-origin 800ms ease,
+				transform 800ms ease,
+				visibility 800ms ease,
+				opacity 400ms cubic-bezier(0,.63,.55,1);
+}
+
+.reveal .slides>section.present[data-transition=appear],
+.reveal.appear .slides>section.present:not([data-transition]),
+.reveal.appear .slides>section>section.present:not([data-transition]) {
+	transition-timing-function: ease;
+	transition-duration: 800ms;
+}
+
+.reveal .slides>section[data-transition=appear][data-transition-speed="fast"],
+.reveal.appear .slides>section[data-transition-speed="fast"]:not([data-transition]),
+.reveal.appear .slides>section>section[data-transition-speed="fast"]:not([data-transition]),
+
+.reveal[data-transition-speed="fast"] .slides>section[data-transition=appear],
+.reveal.appear[data-transition-speed="fast"] .slides>section:not([data-transition]),
+.reveal.appear[data-transition-speed="fast"] .slides>section>section:not([data-transition]) {
+	transition-duration: 400ms, 400ms, 400ms, 200ms;
+}
+.reveal .slides>section.present[data-transition=appear][data-transition-speed="fast"],
+.reveal.appear .slides>section.present[data-transition-speed="fast"]:not([data-transition]),
+.reveal.appear .slides>section>section.present[data-transition-speed="fast"]:not([data-transition]),
+
+.reveal[data-transition-speed="fast"] .slides>section.present[data-transition=appear],
+.reveal.appear[data-transition-speed="fast"] .slides>section.present:not([data-transition]),
+.reveal.appear[data-transition-speed="fast"] .slides>section>section.present:not([data-transition]) {
+	transition-duration: 400ms;
+}
+
+.reveal .slides>section[data-transition=appear][data-transition-speed="slow"],
+.reveal.appear .slides>section[data-transition-speed="slow"]:not([data-transition]),
+.reveal.appear .slides>section>section[data-transition-speed="slow"]:not([data-transition]),
+
+.reveal[data-transition-speed="slow"] .slides>section[data-transition=appear],
+.reveal.appear[data-transition-speed="slow"] .slides>section:not([data-transition]),
+.reveal.appear[data-transition-speed="slow"] .slides>section>section:not([data-transition]) {
+	transition-duration: 1200ms, 1200ms, 1200ms, 600ms;
+}
+.reveal .slides>section.present[data-transition=appear][data-transition-speed="slow"],
+.reveal.appear .slides>section.present[data-transition-speed="slow"]:not([data-transition]),
+.reveal.appear .slides>section>section.present[data-transition-speed="slow"]:not([data-transition]),
+
+.reveal[data-transition-speed="slow"] .slides>section.present[data-transition=appear],
+.reveal.appear[data-transition-speed="slow"] .slides>section.present:not([data-transition]),
+.reveal.appear[data-transition-speed="slow"] .slides>section>section.present:not([data-transition]) {
+	transition-duration: 1200ms;
+}
 /*********************************************
  * PAUSED MODE
  *********************************************/
@@ -1385,6 +1498,9 @@ body
     .slides section {
         // height: 700px;
 
+		height: 100%;
+		top: 0 !important;
+
         overflow: hidden; // <-- removing this one made slide 20 in the demo page show consistently
                           //     in the ESC overview;
                           //     with this style, it would disappear when you moved past it.   :-S
@@ -1599,6 +1715,7 @@ body
 
     .reveal .overlay .viewport {
         position: absolute;
+		display: flex;
         top: 40px;
         right: 0;
         bottom: 0;
@@ -1637,8 +1754,8 @@ body
 
     .reveal .overlay.overlay-help .viewport .viewport-inner {
         width: 600px;
-        margin: 0 auto;
-        padding: 60px;
+		margin: auto;
+		padding: 20px 20px 80px 20px;
         text-align: center;
         letter-spacing: normal;
     }
@@ -1650,13 +1767,13 @@ body
     .reveal .overlay.overlay-help .viewport .viewport-inner table {
         border: 1px solid #fff;
         border-collapse: collapse;
-        font-size: 14px;
+		font-size: 16px;
     }
 
     .reveal .overlay.overlay-help .viewport .viewport-inner table th,
     .reveal .overlay.overlay-help .viewport .viewport-inner table td {
         width: 200px;
-        padding: 10px;
+		padding: 14px;
         border: 1px solid #fff;
         vertical-align: middle;
     }
@@ -1675,7 +1792,7 @@ body
 .reveal .playback {
     position: fixed;
     left: 15px;
-    bottom: 15px;
+	bottom: 20px;
     z-index: 30;
     cursor: pointer;
 
@@ -1748,8 +1865,48 @@ body
  * SPEAKER NOTES
  *********************************************/
 
+// Hide on-page notes
 .reveal aside.notes {
     display: none;
+}
+
+// An interface element that can optionally be used to show the
+// speaker notes to all viewers, on top of the presentation
+.reveal .speaker-notes {
+	display: none;
+	position: absolute;
+	width: 70%;
+	max-height: 15%;
+	left: 15%;
+	bottom: 26px;
+	padding: 10px;
+	z-index: 1;
+	font-size: 18px;
+	line-height: 1.4;
+	color: #fff;
+	background-color: rgba(0,0,0,0.5);
+	overflow: auto;
+	box-sizing: border-box;
+	text-align: left;
+	font-family: Helvetica, sans-serif;
+	-webkit-overflow-scrolling: touch;
+}
+
+.reveal .speaker-notes.visible:not(:empty) {
+	display: block;
+}
+
+@media screen and (max-width: 1024px) {
+	.reveal .speaker-notes {
+		font-size: 14px;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.reveal .speaker-notes {
+		width: 90%;
+		left: 5%;
+	}
 }
 
 

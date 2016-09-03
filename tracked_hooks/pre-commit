@@ -1,0 +1,22 @@
+#!/bin/sh
+echo
+grunt bdist
+changes=0
+if ! git diff-files --quiet --ignore-submodules -- dist
+then
+    echo Unstaged changes in dist folder
+    changes=1
+fi
+if ! git ls-files --other --directory --exclude-standard dist/ | sed q1 >/dev/null
+then
+    echo Untracked files in dist folder
+    changes=1
+fi
+if [ $changes = 1 ]
+then
+    echo Will need to amend commit
+    touch .commit-dist
+else
+    echo No change detected.
+fi
+exit

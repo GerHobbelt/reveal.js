@@ -33,7 +33,7 @@
         marked.setOptions({
             highlight: function( code, lang ) {
                 if ( lang ) {
-                    return hljs.highlight( lang, code ).value;
+				return hljs.highlightAuto( code, [lang] ).value;
                 }
                 else {
                     return hljs.highlightAuto( code ).value;
@@ -133,7 +133,7 @@
         var notesMatch = content.split( new RegExp( options.notesSeparator, 'mgi' ) );
 
         if( notesMatch.length === 2 ) {
-            content = notesMatch[0] + '<aside class="notes" data-markdown>' + notesMatch[1].trim() + '</aside>';
+			content = notesMatch[0] + '<aside class="notes">' + marked(notesMatch[1].trim()) + '</aside>';
         }
 
 		// prevent script end tags in the content from interfering
