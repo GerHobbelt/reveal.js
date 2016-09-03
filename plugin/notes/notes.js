@@ -83,7 +83,7 @@
          * or 'fragmenthidden' set in the events above to define the needed
          * slideDate.
          */
-        function post() {
+		function post(event) {
 
             var slideElement = Reveal.getCurrentSlide(),
                 notesElement = slideElement.querySelector( 'aside.notes' );
@@ -96,6 +96,15 @@
 				whitespace: 'normal',
                 state: Reveal.getState()
             };
+
+			// Look for notes defined in a fragment, if it is a fragmentshown event
+			if (event && event.hasOwnProperty('fragment')) {
+				var innerNotes = event.fragment.querySelector( 'aside.notes' );
+
+				if ( innerNotes) {
+					notesElement = innerNotes;
+				}
+			}
 
             // Look for notes defined in a slide attribute
             if( slideElement.hasAttribute( 'data-notes' ) ) {
