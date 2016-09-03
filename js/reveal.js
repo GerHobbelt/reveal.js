@@ -298,9 +298,6 @@
 		// Client is a desktop Chrome, see #checkCapabilities()
 		isChrome,
 
-        // Use Zoom fallback, see #checkCapabilities()
-        useZoomFallback,
-
         // queue for event registrations which arrive while Reveal has not yet completely initialized:
         queuedEventListenerRegistrations = [],
 
@@ -495,8 +492,12 @@
 
         isMobileDevice = UA.match( /(iphone|ipod|ipad|android)/gi );
 
+		// Transitions in the overview are disabled in desktop and
+		// Safari due to lag
+		features.overviewTransitions = !/Version\/[\d\.]+.*Safari/.test( UA );
+
         if ( config.useCSSZoom != null && ( config.useCSSZoom ? typeof document.createElement( 'div' ).style.zoom !== 'undefined' : true ) ) {
-            useZoomFallback = config.useCSSZoom;
+            features.zoom = config.useCSSZoom;
         }
         else {
             // Prefer zooming in desktop Chrome (and other browsers) so that content remains crisp
@@ -509,7 +510,13 @@
             //
             // However, using CSS zoom produces a changed layout compared to a layout which is transform:scale()d, hence
             // we should enhance the layout() code further below to account for this artifact.
-            useZoomFallback = !isMobileDevice && isChrome && typeof document.createElement( 'div' ).style.zoom !== 'undefined';
+
+
+		// Flags if we should use zoom instead of transform to scale
+		// up slides. Zoom produces crisper results but has a lot of
+		// xbrowser quirks so we only use it in whitelsited browsers.
+		features.zoom = typeof testElement.style.zoom !== 'undefined' && !isMobileDevice &&
+						( isChrome || /Version\/[\d\.]+.*Safari/.test( UA ) );
         }
     }
 
@@ -1904,6 +1911,27 @@ TBD end of old code, start of new code
 
     }
 
+	/**
+	 * Applies CSS transforms to the slides container. The container
+	 * is transformed from two separate sources: layout and the overview
+	 * mode.
+	 */
+	function transformSlides( transforms ) {
+
+		// Pick up new transforms from arguments
+		if( typeof transforms.layout === 'string' ) slidesTransform.layout = transforms.layout;
+		if( typeof transforms.overview === 'string' ) slidesTransform.overview = transforms.overview;
+
+		// Apply the transforms to the slides container
+		if( slidesTransform.layout ) {
+			transformElement( dom.slides, slidesTransform.layout + ' ' + slidesTransform.overview );
+		}
+		else {
+			transformElement( dom.slides, slidesTransform.overview );
+		}
+
+	}
+
     /**
      * Applies the given scale to the target element.
      */
@@ -1950,7 +1978,7 @@ TBD end of old code, start of new code
             // very 'roughly'.
             element.style.zoom = null;
         }
-        else if ( useZoomFallback ) {
+        else if ( !features.zoom ) {
             element.style.zoom = scale;
         }
         // Apply scale transform
@@ -2102,7 +2130,7 @@ TBD end of old code, start of new code
                 var h = bbox.bottom - bbox.top;
                 var w = bbox.right - bbox.left;
                 
-                if ( !useZoomFallback ) {
+                if ( features.zoom ) {
                     // transform:scale()d sizes produce the *scaled* size; this contrasts with classic style:zoom based
                     // scaling, so we adjust the width/height by the specified scale factor to match both modes up:
                     w /= compensate_for_scale;
@@ -2142,7 +2170,7 @@ TBD end of old code, start of new code
             } );
 
             // Compensate for some minimal clipping occurring at large zoom scale factors when using CSS:zoom:
-            if ( useZoomFallback ) {
+            if ( !features.zoom ) {
                 if ( compensate_for_scale > 1 ) {
                     height += 1;
                 }
@@ -2863,7 +2891,7 @@ TBD end of old code, start of new code
                     var processed_scales = [];
 
                     assert(config.maxLayoutIterations > 0);
-                    for ( var iter_rounds = config.maxLayoutIterations; /* useZoomFallback */; iter_rounds-- ) {
+                    for ( var iter_rounds = config.maxLayoutIterations; /* !features.zoom */; iter_rounds-- ) {
                         // Reset scale, apply the new scale and recheck:
                         resetElementTransform( slide );
                         scaleElement( slide, realScale );
@@ -3738,6 +3766,12 @@ TBD end of old code, start of new code
             dom.wrapper.classList.add( 'overview' );
             dom.wrapper.classList.remove( 'overview-deactivating' );
 
+			if( features.overviewTransitions ) {
+				setTimeout( function() {
+					dom.wrapper.classList.add( 'overview-animated' );
+				}, 1 );
+			}
+
             // TODO: Move the backgrounds element into the slide container to
             // that the same scaling is applied
             //dom.slides.appendChild( dom.background );
@@ -3809,6 +3843,7 @@ TBD end of old code, start of new code
             } );
 
             dom.wrapper.classList.remove( 'overview' );
+			dom.wrapper.classList.remove( 'overview-animated' );
             dom.wrapper.classList.remove( 'overview-activating' );
 
             // TODO: Move the background element back out
@@ -5132,11 +5167,31 @@ TBD end of old code, start of new code
 
                 var slideWidth = dom.background.offsetWidth;
                 var horizontalSlideCount = horizontalSlides.length;
-                var horizontalOffset = horizontalSlideCount > 1 ? -( backgroundWidth - slideWidth ) / ( horizontalSlideCount - 1 ) * indexh : 0;
+                var horizontalOffsetMultiplier;
+		var horizontalOffset;
+
+			if( typeof config.parallaxBackgroundHorizontal === 'number' ) {
+				horizontalOffsetMultiplier = config.parallaxBackgroundHorizontal;
+			}
+			else {
+				horizontalOffsetMultiplier = horizontalSlideCount > 1 ? ( backgroundWidth - slideWidth ) / ( horizontalSlideCount - 1 ) : 0;
+			}
+
+			horizontalOffset = horizontalSlideCount > 1 ? horizontalOffsetMultiplier * indexh * -1 : 0;
 
                 var slideHeight = dom.background.offsetHeight;
                 var verticalSlideCount = verticalSlides.length;
-                var verticalOffset = verticalSlideCount > 1 ? -( backgroundHeight - slideHeight ) / ( verticalSlideCount - 1 ) * indexv : 0;
+                var verticalOffsetMultiplier;
+				var verticalOffset;
+
+			if( typeof config.parallaxBackgroundVertical === 'number' ) {
+				verticalOffsetMultiplier = config.parallaxBackgroundVertical;
+			}
+			else {
+				verticalOffsetMultiplier = verticalSlideCount > 1 ? ( backgroundHeight - slideHeight ) / ( verticalSlideCount - 1 ) : 0;
+			}
+
+			verticalOffset = verticalSlideCount > 0 ? verticalOffsetMultiplier * indexv * -1 : 0;
 
                 dom.background.style.backgroundPosition = horizontalOffset + 'px ' + verticalOffset + 'px';
 
