@@ -885,6 +885,7 @@
 		// Element containing notes that are visible to the audience
 		dom.speakerNotes = createSingletonNode( dom.wrapper, 'div', 'speaker-notes', null );
 		dom.speakerNotes.setAttribute( 'data-prevent-swipe', '' );
+		dom.speakerNotes.setAttribute( 'tabindex', '0' );
 
         // Overlay graphic which is displayed during the paused mode
         createSingletonNode( dom.wrapper, 'div', 'pause-overlay', null );
@@ -4960,34 +4961,37 @@ TBD end of old code, start of new code
                             .concat( dom.controlsNext ).forEach( function( node ) {
                 node.classList.remove( 'enabled' );
                 node.classList.remove( 'fragmented' );
+
+			// Set 'disabled' attribute on all directions
+			node.setAttribute( 'disabled', 'disabled' );
             } );
 
-            // Add the 'enabled' class to the available routes
-            if( routes.left ) dom.controlsLeft.forEach( function( el ) { el.classList.add( 'enabled' ); } );
-            if( routes.right ) dom.controlsRight.forEach( function( el ) { el.classList.add( 'enabled' ); } );
-            if( routes.up ) dom.controlsUp.forEach( function( el ) { el.classList.add( 'enabled' ); } );
-            if( routes.down ) dom.controlsDown.forEach( function( el ) { el.classList.add( 'enabled' ); } );
+		// Add the 'enabled' class to the available routes; remove 'disabled' attribute to enable buttons
+		if( routes.left ) dom.controlsLeft.forEach( function( el ) { el.classList.add( 'enabled' ); el.removeAttribute( 'disabled' ); } );
+		if( routes.right ) dom.controlsRight.forEach( function( el ) { el.classList.add( 'enabled' ); el.removeAttribute( 'disabled' ); } );
+		if( routes.up ) dom.controlsUp.forEach( function( el ) { el.classList.add( 'enabled' ); el.removeAttribute( 'disabled' ); } );
+		if( routes.down ) dom.controlsDown.forEach( function( el ) { el.classList.add( 'enabled' ); el.removeAttribute( 'disabled' ); } );
 
             // Prev/next buttons
-            if( routes.left || routes.up ) dom.controlsPrev.forEach( function( el ) { el.classList.add( 'enabled' ); } );
-            if( routes.right || routes.down ) dom.controlsNext.forEach( function( el ) { el.classList.add( 'enabled' ); } );
+		if( routes.left || routes.up ) dom.controlsPrev.forEach( function( el ) { el.classList.add( 'enabled' ); el.removeAttribute( 'disabled' ); } );
+		if( routes.right || routes.down ) dom.controlsNext.forEach( function( el ) { el.classList.add( 'enabled' ); el.removeAttribute( 'disabled' ); } );
 
             // Highlight fragment directions
             if( currentSlide ) {
 
                 // Always apply fragment decorator to prev/next buttons
-                if( fragments.prev ) dom.controlsPrev.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); } );
-                if( fragments.next ) dom.controlsNext.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); } );
+			if( fragments.prev ) dom.controlsPrev.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); el.removeAttribute( 'disabled' ); } );
+			if( fragments.next ) dom.controlsNext.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); el.removeAttribute( 'disabled' ); } );
 
                 // Apply fragment decorators to directional buttons based on
                 // what slide axis they are in
                 if( isVerticalSlide( currentSlide ) ) {
-                    if( fragments.prev ) dom.controlsUp.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); } );
-                    if( fragments.next ) dom.controlsDown.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); } );
+				if( fragments.prev ) dom.controlsUp.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); el.removeAttribute( 'disabled' ); } );
+				if( fragments.next ) dom.controlsDown.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); el.removeAttribute( 'disabled' ); } );
                 }
                 else {
-                    if( fragments.prev ) dom.controlsLeft.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); } );
-                    if( fragments.next ) dom.controlsRight.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); } );
+				if( fragments.prev ) dom.controlsLeft.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); el.removeAttribute( 'disabled' ); } );
+				if( fragments.next ) dom.controlsRight.forEach( function( el ) { el.classList.add( 'fragmented', 'enabled' ); el.removeAttribute( 'disabled' ); } );
                 }
 
             }
@@ -6540,6 +6544,7 @@ if (0) {
         // the keyboard
         var activeElementIsCE = document.activeElement && document.activeElement.contentEditable !== 'inherit';
         var activeElementIsInput = document.activeElement && document.activeElement.tagName && /input|textarea/i.test( document.activeElement.tagName );
+		var activeElementIsNotes = document.activeElement && document.activeElement.className && /speaker-notes/i.test( document.activeElement.className);
         var hasFocus = !!( document.activeElement && ( document.activeElement.type || document.activeElement.href || document.activeElement.contentEditable !== 'inherit' ) );
 
         // Disregard the event if the focused element is located in a hidden slide (a 'past' or 'future' slide)
@@ -6578,7 +6583,7 @@ if (0) {
             key_meta: event.metaKey, 
             paused: isPaused()
         });
-        if( activeElementIsCE || activeElementIsInput || (event.shiftKey && event.keyCode !== 32) || event.altKey || event.ctrlKey || event.metaKey ) {
+		if( activeElementIsCE || activeElementIsInput || activeElementIsNotes || (event.shiftKey && event.keyCode !== 32) || event.altKey || event.ctrlKey || event.metaKey ) {
             return 0;
         }
 
