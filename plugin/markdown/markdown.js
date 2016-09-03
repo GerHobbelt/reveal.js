@@ -33,7 +33,7 @@
         marked.setOptions({
             highlight: function( code, lang ) {
                 if ( lang ) {
-                    return hljs.highlight( lang, code ).value;
+				return hljs.highlightAuto( code, [lang] ).value;
                 }
                 else {
                     return hljs.highlightAuto( code ).value;
