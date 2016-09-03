@@ -736,6 +736,8 @@
 
             loaded = true;
 
+			dom.wrapper.classList.add( 'ready' );
+
             dispatchEvent( 'ready', {
                 indexh: indexh,
                 indexv: indexv,
@@ -1328,15 +1330,15 @@ TBD end of old code, start of new code
         // If this slide has a background color, add a class that
         // signals if it is light or dark. If the slide has no background
         // color, no class will be set
-        var computedBackgroundColor = window.getComputedStyle( element ).backgroundColor;
-        if( computedBackgroundColor ) {
-            var rgb = colorToRgb( computedBackgroundColor );
+		var computedBackgroundStyle = window.getComputedStyle( element );
+		if( computedBackgroundStyle && computedBackgroundStyle.backgroundColor ) {
+			var rgb = colorToRgb( computedBackgroundStyle.backgroundColor );
 
             // Ignore fully transparent backgrounds. Some browsers return
             // rgba(0,0,0,0) when reading the computed background color of
             // an element with no background
             if( rgb && rgb.a !== 0 ) {
-                if( colorBrightness( computedBackgroundColor ) < 128 ) {
+				if( colorBrightness( computedBackgroundStyle.backgroundColor ) < 128 ) {
                     slide.classList.add( 'has-dark-background' );
                 }
                 else {
@@ -5503,17 +5505,21 @@ TBD end of old code, start of new code
 
         var iframe = event.target;
 
-        // YouTube postMessage API
-        if( /youtube\.com\/embed\//.test( iframe.getAttribute( 'src' ) ) && iframe.hasAttribute( 'data-autoplay' ) ) {
-            iframe.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
-        }
-        // Vimeo postMessage API
-        else if( /player\.vimeo\.com\//.test( iframe.getAttribute( 'src' ) ) && iframe.hasAttribute( 'data-autoplay' ) ) {
-            iframe.contentWindow.postMessage( '{"method":"play"}', '*' );
-        }
-        // Generic postMessage API
-        else {
-            iframe.contentWindow.postMessage( 'slide:start', '*' );
+		if( iframe && iframe.contentWindow ) {
+
+			// YouTube postMessage API
+			if( /youtube\.com\/embed\//.test( iframe.getAttribute( 'src' ) ) && iframe.hasAttribute( 'data-autoplay' ) ) {
+				iframe.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
+			}
+			// Vimeo postMessage API
+			else if( /player\.vimeo\.com\//.test( iframe.getAttribute( 'src' ) ) && iframe.hasAttribute( 'data-autoplay' ) ) {
+				iframe.contentWindow.postMessage( '{"method":"play"}', '*' );
+			}
+			// Generic postMessage API
+			else {
+				iframe.contentWindow.postMessage( 'slide:start', '*' );
+			}
+
         }
 
     }
