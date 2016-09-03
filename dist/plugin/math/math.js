@@ -14,7 +14,10 @@ var RevealMath = window.RevealMath || (function(){
 	loadScript( options.mathjax + '?config=' + options.config, function() {
         var MJaxConfig = {
 			messageStyle: 'none',
-			tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] },
+			tex2jax: {
+				inlineMath: [['$','$'],['\\(','\\)']],
+				skipTags: ['script','noscript','style','textarea','pre']
+			},
 			skipStartupTypeset: true,
             'HTML-CSS': { scale: 88 }
 		};
