@@ -304,6 +304,34 @@ Reveal.configure({ autoSlide: 5000 });
 ```
 
 
+### Presentation Size
+
+All presentations have a normal size, that is the resolution at which they are authored. The framework will automatically scale presentations uniformly based on this size to ensure that everything fits on any given display or viewport.
+
+See below for a list of configuration options related to sizing, including default values:
+
+```javascript
+Reveal.initialize({
+
+    ...
+
+    // The "normal" size of the presentation, aspect ratio will be preserved
+    // when the presentation is scaled to fit different resolutions. Can be
+    // specified using percentage units.
+    width: 960,
+    height: 700,
+
+    // Factor of the display size that should remain empty around the content
+    margin: 0.1,
+
+    // Bounds for smallest/largest possible scale to apply to content
+    minScale: 0.2,
+	maxScale: 1.5
+
+});
+```
+
+
 ### Dependencies
 
 Reveal.js doesn't _rely_ on any third party scripts to work but a few optional libraries are included by default. These libraries are loaded as dependencies in the order they appear, for example:
@@ -351,34 +379,6 @@ A 'ready' event is fired when reveal.js has loaded all non-async dependencies an
 Reveal.addEventListener( 'ready', function( event ) {
 	// event.currentSlide, event.indexh, event.indexv
 } );
-```
-
-
-### Presentation Size
-
-All presentations have a normal size, that is the resolution at which they are authored. The framework will automatically scale presentations uniformly based on this size to ensure that everything fits on any given display or viewport.
-
-See below for a list of configuration options related to sizing, including default values:
-
-```javascript
-Reveal.initialize({
-
-    ...
-
-    // The "normal" size of the presentation, aspect ratio will be preserved
-    // when the presentation is scaled to fit different resolutions. Can be
-    // specified using percentage units.
-    width: 960,
-    height: 700,
-
-    // Factor of the display size that should remain empty around the content
-    margin: 0.1,
-
-    // Bounds for smallest/largest possible scale to apply to content
-    minScale: 0.2,
-	maxScale: 1.5
-
-});
 ```
 
 
@@ -642,9 +642,6 @@ You can also use different in and out transitions for the same slide:
 ```
 
 
-Note that this does not work with the page and cube transitions.
-
-
 ### Internal links
 
 It's easy to link between slides. The first example below targets the index of another slide whereas the second targets a slide with an ID attribute (```<section id="some-slide">```):
@@ -748,11 +745,11 @@ If you would like to display the page number of the current slide you can do so 
 Reveal.configure({ slideNumber: true });
 
 // Slide number formatting can be configured using these variables:
-//  h: current slide's horizontal index
-//  v: current slide's vertical index
-//  c: current slide index (flattened)
-//  t: total number of slides (flattened)
-Reveal.configure({ slideNumber: 'c / t' });
+//  "h.v": 	horizontal . vertical slide number (default)
+//  "h/v": 	horizontal / vertical slide number
+//    "c": 	flattened slide number
+//  "c/t": 	flattened slide number / total slides
+Reveal.configure({ slideNumber: 'c/t' });
 
 ```
 
@@ -818,7 +815,7 @@ When reveal.js runs inside of an iframe it can optionally bubble all of its even
 ```javascript
 window.addEventListener( 'message', function( event ) {
 	var data = JSON.parse( event.data );
-	if( data.namespace === 'reveal' && data.eventName ='slidechanged' ) {
+	if( data.namespace === 'reveal' && data.eventName ==='slidechanged' ) {
 		// Slide changed, see data.state for slide number
 	}
 } );

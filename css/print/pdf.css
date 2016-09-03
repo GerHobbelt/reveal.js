@@ -1,3 +1,11 @@
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+
 /* Default Print Stylesheet Template
    by Rob Glazebrook of CSSnewbie.com
    Last Updated: June 4, 2008
@@ -10,6 +18,7 @@
    background. This prevents elements from extending
    beyond the edge of the printed page, and prevents
    unnecessary background images from printing */
+
 
 * {
     -webkit-print-color-adjust: exact;
@@ -40,7 +49,6 @@ html {
 .nestedarrow,
 .reveal .controls,
 .reveal .progress,
-.reveal .slide-number,
 .reveal .playback,
 .reveal.overview,
 .fork-reveal,
@@ -52,15 +60,15 @@ html {
 /* SECTION 3: Set body font face, size, and color.
    Consider using a serif font for readability. */
 body, p, td, li, div {
-	font-size: 16pt !important;
+	/* font-size: 16pt !important; */
 }
 
 /* SECTION 4: Set heading font face, sizes, and color.
    Differentiate your headings from your body text.
    Perhaps use a large sans-serif for distinction. */
-.reveal h1, .reveal h2, .reveal h3,h4,h5,h6 {
+h1, h2, h3, h4, h5, h6 {
     text-shadow: 0 0 0 #000 !important;
-  font-size: 18pt;
+    /* font-size: 18pt; */
 }
 
 .reveal pre code {
@@ -107,6 +115,7 @@ ul, ol, div, p {
         -ms-perspective-origin: 50% 50%;
             perspective-origin: 50% 50%;
 }
+
 .reveal .slides section {
     page-break-after: always !important;
 
@@ -140,6 +149,7 @@ ul, ol, div, p {
         -ms-transform: none !important;
             transform: none !important;
 }
+
 .reveal section.stack {
     margin: 0 !important;
     padding: 0 !important;
@@ -147,9 +157,11 @@ ul, ol, div, p {
     height: auto !important;
     min-height: auto !important;
 }
+
 .reveal img {
     box-shadow: none;
 }
+
 .reveal .roll {
     overflow: visible;
     line-height: 1em;
@@ -205,5 +217,15 @@ ul, ol, div, p {
 	left: auto;
 	top: auto;
 	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number {
+	display: none;
+}
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
 }
 

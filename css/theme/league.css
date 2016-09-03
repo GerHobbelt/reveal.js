@@ -383,9 +383,3 @@ body.print-pdf .titlebar {
   -ms-transition: width 3s cubic-bezier(0.26, 0.86, 0.44, 0.985);
   -o-transition: width 3s cubic-bezier(0.26, 0.86, 0.44, 0.985);
   transition: width 3s cubic-bezier(0.26, 0.86, 0.44, 0.985); }
-
-/*********************************************
- * SLIDE NUMBER
- *********************************************/
-.reveal .slide-number {
-  color: #13DAEC; }
