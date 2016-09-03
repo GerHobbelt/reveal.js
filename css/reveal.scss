@@ -392,10 +392,10 @@ body {
     top: 0%;
     left: 0%;
     
-	box-sizing: border-box;
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
-    padding: 20px 0px;
+    padding: 0px 0px;
 
 	z-index: 10;
 	transform-style: preserve-3d;
@@ -421,22 +421,11 @@ body {
 	transition-duration: 1200ms;
 }
 
-.reveal .slides > section.stack {
-	padding-top: 0;
-	padding-bottom: 0;
-}
-
 .reveal .slides>section.present,
 .reveal .slides>section>section.present {
 	display: block;
 	z-index: 11;
 	opacity: 1;
-}
-
-.reveal.center,
-.reveal.center .slides,
-.reveal.center .slides section {
-	min-height: 0 !important;
 }
 
 /* Don't allow interaction with invisible slides */

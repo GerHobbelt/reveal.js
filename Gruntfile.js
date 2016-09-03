@@ -47,7 +47,17 @@ module.exports = function(grunt) {
                         dest: 'lib/css/highlight/'
                     }
                 ]
-            }
+            },
+			dist: {
+				files: [
+					{src: ['js/reveal.min.js'], dest: 'dist/'},
+					{src: ['css/reveal.min.css'], dest:'dist/'},
+					{expand: true, src: ['css/print/*.css'], dest: 'dist/', filter: 'isFile'},
+					{expand: true, src: ['css/theme/*.css'], dest: 'dist/', filter: 'isFile'},
+					{expand: true, src: ['plugin/**'], dest: 'dist/'},
+					{expand: true, src: ['lib/**/*.{css,js}','lib/font/**'], dest: 'dist/'}
+				]
+			}
         },
 
         qunit: {
@@ -68,6 +78,7 @@ module.exports = function(grunt) {
             core: {
                 files: {
                     'css/reveal.css': 'css/reveal.scss',
+                    'lib/css/font-awesome.css': 'lib/css/source/font-awesome.scss'
                 }
             },
             themes: {
@@ -131,7 +142,8 @@ module.exports = function(grunt) {
         cssmin: {
             compress: {
                 files: {
-                    'css/reveal.min.css': [ 'css/reveal.css' ]
+					'css/reveal.min.css': [ 'css/reveal.css' ],
+                    'lib/css/font-awesome.min.css': [ 'lib/css/font-awesome.css' ]
                 }
             }
         },

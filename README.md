@@ -42,6 +42,68 @@ reveal.js comes with a broad range of features including [nested slides](https:/
 - [Browser Support](https://github.com/hakimel/reveal.js/wiki/Browser-Support): Explanation of browser support and fallbacks.
 - [Plugins](https://github.com/hakimel/reveal.js/wiki/Plugins,-Tools-and-Hardware): A list of plugins that can be used to extend reveal.js.
 
+
+## Branch `burnpanck`:
+
+This branch is a merge of all the feature branches that I need for my presentations.
+
+At this point, those include:
+
+- `simplify-slide-API`
+- `incorporate-FontAwesome`
+- `full-access-to-mathjax-options`
+- `merged-third-party`
+- `css-based-vertical-positioning`
+- `make-bower-package`
+- `githooks-for-depdendent-files`
+- `improve-fragments`: Note, this currently breaks unit-tests!
+
+
+### Additions to Reveal.js
+
+Be able to point a reveal.js presentation to an arbitrary markdown file on the internet.
+
+All you need to do now is just add a get param, `md` and set it equal to a url to a markdown file, like so:
+
+```html
+http://jonl.org/reveal.js/?md=https://gist.githubusercontent.com/jonleung/0ab64712af63134be707/raw/67b8a3834da8a90b07d544515e5a66f4623ae7bc/gistfile1.txt#/md
+```
+
+My only code additions to the default `index.html` were
+
+```html
+<div class="reveal">
+
+	<!-- Any section element inside of this container is displayed as a slide -->
+	<div class="slides">
+		
+		<section id="md"
+			data-separator="^\n\n\n"  
+			data-separator-vertical="^\n\n"  
+			data-separator-notes="^Note:"  
+			data-charset="iso-8859-15">
+		</section>
+
+	</div>
+
+</div>
+
+<script src="js/load_external_markdown.js"></script>
+```
+
+And a couple lines of javascript in `js/load_external_markdown.js`
+
+```javascript
+function getURLParameter(name) {
+  return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
+}
+
+var url = getURLParameter("md");
+var md = document.getElementById("md");
+md.setAttribute("data-markdown", url);
+```
+
+
 ## Online Editor
 
 Presentations are written using HTML or Markdown but there's also an online editor for those of you who prefer a graphical interface. Give it a try at [http://slides.com](http://slides.com).
