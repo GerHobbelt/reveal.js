@@ -4087,7 +4087,7 @@ TBD end of old code, start of new code
      */
     function enterFullscreen() {
 
-        var element = dom.viewport;
+		var element = document.documentElement;
 
         // Check which implementation is available
         var requestMethod = element.requestFullScreen ||
