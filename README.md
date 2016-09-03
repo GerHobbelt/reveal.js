@@ -722,15 +722,18 @@ Reveal.addEventListener( 'fragmenthidden', function( event ) {
 
 ### Code syntax highlighting
 
+<<<<<<< HEAD
 By default, Reveal is configured with [highlight.js](https://highlightjs.org/) for code syntax highlighting. Below is an example with clojure code that will be syntax highlighted. When the `data-trim` attribute is present surrounding whitespace is automatically removed.
+=======
+By default, Reveal is configured with [highlight.js](https://highlightjs.org/) for code syntax highlighting. Below is an example with clojure code that will be syntax highlighted. When the `data-trim` attribute is present, surrounding whitespace is automatically removed.  HTML will be escaped by default. To avoid this, for example if you are using `<mark>` to call out a line of code, add the `data-noescape` attribute to the `<code>` element.
 
 ```html
 <section>
-    <pre><code data-trim>
+	<pre><code data-trim data-noescape>
 (def lazy-fib
   (concat
    [0 1]
-   ((fn rfib [a b]
+   <mark>((fn rfib [a b]</mark>
         (lazy-cons (+ a b) (rfib b (+ a b)))) 0 1)))
     </code></pre>
 </section>
@@ -863,9 +866,10 @@ Here's an example of an exported presentation that's been uploaded to SlideShare
 3. Change the **Destination** setting to **Save as PDF**.
 4. Change the **Layout** to **Landscape**.
 5. Change the **Margins** to **None**.
-6. Click **Save**.
+6. Enable the **Background graphics** option.
+7. Click **Save**.
 
-![Chrome Print Settings](https://s3.amazonaws.com/hakim-static/reveal-js/pdf-print-settings.png)
+![Chrome Print Settings](https://s3.amazonaws.com/hakim-static/reveal-js/pdf-print-settings-2.png)
 
 Alternatively you can use the [decktape](https://github.com/astefanutti/decktape) project.
 
@@ -1274,5 +1278,5 @@ You can change the port by using `grunt serve --port 8001`.
 
 MIT licensed
 
-Copyright (C) 2015 Hakim El Hattab, http://hakim.se
+Copyright (C) 2016 Hakim El Hattab, http://hakim.se
 
