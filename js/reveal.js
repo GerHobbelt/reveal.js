@@ -4315,7 +4315,7 @@ TBD end of old code, start of new code
         }
 
         // Announce the current slide contents, for screen readers
-        dom.statusDiv.textContent = ( currentSlide ? currentSlide.textContent : '' );
+        dom.statusDiv.textContent = ( currentSlide ? currentSlide.textContent.trim() : '' );
 
         updateControls();
         updateProgress();
@@ -5980,7 +5980,7 @@ TBD end of old code, start of new code
                         element.classList.remove( 'current-fragment' );
 
                         // Announce the fragments one by one to the Screen Reader
-                        dom.statusDiv.textContent = element.textContent;
+						dom.statusDiv.textContent = element.textContent.trim();
 
                         if( i === index ) {
                             element.classList.add( 'current-fragment' );
