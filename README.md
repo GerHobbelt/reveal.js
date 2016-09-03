@@ -33,10 +33,56 @@ A framework for easily creating beautiful presentations using HTML. [Check out t
 
 reveal.js comes with a broad range of features including [nested slides](https://github.com/hakimel/reveal.js#markup), [Markdown contents](https://github.com/hakimel/reveal.js#markdown), [PDF export](https://github.com/hakimel/reveal.js#pdf-export), [speaker notes](https://github.com/hakimel/reveal.js#speaker-notes) and a [JavaScript API](https://github.com/hakimel/reveal.js#api). It's best viewed in a modern browser but [fallbacks](https://github.com/hakimel/reveal.js/wiki/Browser-Support) are available to make sure your presentation can still be viewed elsewhere.
 
+## Table of contents
+- [Online Editor](#online-editor)
+- [Instructions](#instructions)
+  - [Markup](#markup)
+  - [Markdown](#markdown)
+  - [Element Attributes](#element-attributes)
+  - [Slide Attributes](#slide-attributes)
+- [Configuration](#configuration)
+- [Presentation Size](#presentation-size)
+- [Dependencies](#dependencies)
+- [Ready Event](#ready-event)
+- [Auto-sliding](#auto-sliding)
+- [Keyboard Bindings](#keyboard-bindings)
+- [Touch Navigation](#touch-navigation)
+- [Lazy Loading](#lazy-loading)
+- [API](#api)
+  - [Slide Changed Event](#slide-changed-event)
+  - [Presentation State](#presentation-state)
+  - [Slide States](#slide-states)
+  - [Slide Backgrounds](#slide-backgrounds)
+  - [Parallax Background](#parallax-background)
+  - [Slide Transitions](#slide-transitions)
+  - [Internal links](#internal-links)
+  - [Fragments](#fragments)
+  - [Fragment events](#fragment-events)
+  - [Code syntax highlighting](#code-syntax-highlighting)
+  - [Slide number](#slide-number)
+  - [Overview mode](#overview-mode)
+  - [Fullscreen mode](#fullscreen-mode)
+  - [Embedded media](#embedded-media)
+  - [Stretching elements](#stretching-elements)
+  - [postMessage API](#postmessage-api)
+- [PDF Export](#pdf-export)
+- [Theming](#theming)
+- [Speaker Notes](#speaker-notes)
+  - [Share and Print Speaker Notes](#share-and-print-speaker-notes)
+  - [Server Side Speaker Notes](#server-side-speaker-notes)
+- [Multiplexing](#multiplexing)
+  - [Master presentation](#master-presentation)
+  - [Client presentation](#client-presentation)
+  - [Socket.io server](#socketio-server)
+- [MathJax](#mathjax)
+- [Installation](#installation)
+  - [Basic setup](#basic-setup)
+  - [Full setup](#full-setup)
+  - [Folder Structure](#folder-structure)
+- [License](#license)
 
-#### More reading:
+#### More reading
 
-- [Installation](#installation): Step-by-step instructions for getting reveal.js running on your computer.
 - [Changelog](https://github.com/hakimel/reveal.js/releases): Up-to-date version history.
 - [Examples](https://github.com/hakimel/reveal.js/wiki/Example-Presentations): Presentations created with reveal.js, add your own!
 - [Browser Support](https://github.com/hakimel/reveal.js/wiki/Browser-Support): Explanation of browser support and fallbacks.
@@ -984,7 +1030,7 @@ Then:
 
 ## Multiplexing
 
-The multiplex plugin allows your audience to view the slides of the presentation you are controlling on their own phone, tablet or laptop. As the master presentation navigates the slides, all client presentations will update in real time. See a demo at [http://revealjs-51546.onmodulus.net/](http://revealjs-51546.onmodulus.net/).
+The multiplex plugin allows your audience to view the slides of the presentation you are controlling on their own phone, tablet or laptop. As the master presentation navigates the slides, all client presentations will update in real time. See a demo at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/).
 
 The multiplex plugin needs the following 3 things to operate:
 
@@ -1017,7 +1063,7 @@ Reveal.initialize({
         // Example values. To generate your own, see the socket.io server instructions.
         secret: '13652805320794272084', // Obtained from the socket.io server (revealjs.jit.su/token). Gives this (the master) control of the presentation
         id: '1ea875674b17ca76', // Obtained from socket.io server (revealjs.jit.su/token)
-		url: 'revealjs-51546.onmodulus.net:80' // Location of socket.io server
+		url: 'https://reveal-js-multiplex-ccjbegmaii.now.sh' // Location of socket.io server
     },
 
 	// Don't forget to add the dependencies
@@ -1054,7 +1100,7 @@ Reveal.initialize({
         // Example values. To generate your own, see the socket.io server instructions.
         secret: null, // null so the clients do not have control of the master presentation
         id: '1ea875674b17ca76', // id, obtained from socket.io server (revealjs.jit.su/token)
-		url: 'revealjs-51546.onmodulus.net:80' // Location of socket.io server
+		url: 'https://reveal-js-multiplex-ccjbegmaii.now.sh' // Location of socket.io server
     },
 
 	// Don't forget to add the dependencies
@@ -1080,16 +1126,16 @@ Server that receives the slideChanged events from the master presentation and br
 1. ```npm install```
 2. ```node plugin/multiplex```
 
-Or you use the socket.io server at [http://revealjs-51546.onmodulus.net/](http://revealjs-51546.onmodulus.net/).
+Or you use the socket.io server at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/).
 
-You'll need to generate a unique secret and token pair for your master and client presentations. To do so, visit ```http://example.com/token```, where ```http://example.com``` is the location of your socket.io server. Or if you're going to use the socket.io server at [http://revealjs-51546.onmodulus.net/](http://revealjs-51546.onmodulus.net/), visit [http://revealjs-51546.onmodulus.net/token](http://revealjs-51546.onmodulus.net/token).
+You'll need to generate a unique secret and token pair for your master and client presentations. To do so, visit ```http://example.com/token```, where ```http://example.com``` is the location of your socket.io server. Or if you're going to use the socket.io server at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/), visit [https://reveal-js-multiplex-ccjbegmaii.now.sh/token](https://reveal-js-multiplex-ccjbegmaii.now.sh/token).
 
-You are very welcome to point your presentations at the Socket.io server running at [http://revealjs-51546.onmodulus.net/](http://revealjs-51546.onmodulus.net/), but availability and stability are not guaranteed. For anything mission critical I recommend you run your own server. It is simple to deploy to nodejitsu, heroku, your own environment, etc.
+You are very welcome to point your presentations at the Socket.io server running at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/), but availability and stability are not guaranteed. For anything mission critical I recommend you run your own server. It is simple to deploy to nodejitsu, heroku, your own environment, etc.
 
 
 ##### socket.io server as file static server
 
-The socket.io server can play the role of static file server for your client presentation, as in the example at [http://revealjs-51546.onmodulus.net/](http://revealjs-51546.onmodulus.net/). (Open [http://revealjs-51546.onmodulus.net/](http://revealjs-51546.onmodulus.net/) in two browsers. Navigate through the slides on one, and the other will update to match.)
+The socket.io server can play the role of static file server for your client presentation, as in the example at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/). (Open [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/) in two browsers. Navigate through the slides on one, and the other will update to match.)
 
 Example configuration:
 ```javascript
@@ -1117,7 +1163,7 @@ Reveal.initialize({
     ]
 ```
 
-It can also play the role of static file server for your master presentation and client presentations at the same time (as long as you don't want to use speaker notes). (Open [http://revealjs-51546.onmodulus.net/](http://revealjs-51546.onmodulus.net/) in two browsers. Navigate through the slides on one, and the other will update to match. Navigate through the slides on the second, and the first will update to match.) This is probably not desirable, because you don't want your audience to mess with your slides while you're presenting. ;)
+It can also play the role of static file server for your master presentation and client presentations at the same time (as long as you don't want to use speaker notes). (Open [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/) in two browsers. Navigate through the slides on one, and the other will update to match. Navigate through the slides on the second, and the first will update to match.) This is probably not desirable, because you don't want your audience to mess with your slides while you're presenting. ;)
 
 Example configuration:
 ```javascript
