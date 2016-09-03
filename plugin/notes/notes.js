@@ -88,12 +88,14 @@
                 type: 'state',
                 notes: '',
                 markdown: false,
+				whitespace: 'normal',
                 state: Reveal.getState()
             };
 
             // Look for notes defined in a slide attribute
             if( slideElement.hasAttribute( 'data-notes' ) ) {
                 messageData.notes = slideElement.getAttribute( 'data-notes' );
+				messageData.whitespace = 'pre-wrap';
             }
 
             // Look for notes defined in an aside element
