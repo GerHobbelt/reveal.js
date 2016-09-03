@@ -38,6 +38,9 @@
     'use strict';
 
     // these *_SELECTOR defines are all `dom.wrapper` based, which explains why they won't have the `.reveal` root/wrapper DIV class in them:
+	// The reveal.js version
+	var VERSION = '3.3.0';
+
     var SLIDES_SELECTOR = '.slides > section, .slides > section > section',
         HORIZONTAL_SLIDES_SELECTOR = '.slides > section',
         VERTICAL_SLIDES_SELECTOR = '.slides > section.present > section',
@@ -49,6 +52,7 @@
     var SCOPED_FROM_WRAPPER_HORIZONTAL_SLIDES_SELECTOR = ':scope > section',
         SCOPED_FROM_HSLIDE_VERTICAL_SLIDES_SELECTOR = ':scope > section',
         SCOPED_FROM_WRAPPER_ALL_SLIDES_SELECTOR = ':scope > section, :scope > section > section',
+		UA = navigator.userAgent,
         SLIDE_NO_DISPLAY_DISTANCE = 1;
 
     var nil_function = function () {};
@@ -131,6 +135,9 @@
             // {boolean} Change the presentation direction to be RTL
             rtl: false,
 
+			// Randomizes the order of slides each time the presentation loads
+			shuffle: false,
+
             // {boolean} Turns fragments on and off globally
             fragments: true,
 
@@ -155,6 +162,9 @@
 
             // {boolean} Stop auto-sliding after user input
             autoSlideStoppable: true,
+
+			// Use this method for navigation when auto-sliding (defaults to navigateNext)
+			autoSlideMethod: null,
 
             // {boolean} Enable slide navigation via mouse wheel
             mouseWheel: false,
@@ -232,6 +242,11 @@
 
         // Flags if the overview mode is currently active
         overview = false,
+
+		// Holds the dimensions of our overview slides, including margins
+		overviewSlideWidth = null,
+		overviewSlideHeight = null,
+
         // The horizontal and vertical index of the currently active slide
         indexh /* = undefined */,
         indexv /* = undefined */,
@@ -279,6 +294,9 @@
 
         // Client is a mobile device, see #checkCapabilities()
         isMobileDevice,
+
+		// Client is a desktop Chrome, see #checkCapabilities()
+		isChrome,
 
         // Use Zoom fallback, see #checkCapabilities()
         useZoomFallback,
@@ -434,17 +452,22 @@
      */
     function checkCapabilities() {
 
-        features.transforms3d = 'WebkitPerspective' in document.body.style ||
-                                'MozPerspective' in document.body.style ||
-                                'msPerspective' in document.body.style ||
-                                'OPerspective' in document.body.style ||
-                                'perspective' in document.body.style;
+		isMobileDevice = /(iphone|ipod|ipad|android)/gi.test( UA );
+		isChrome = /chrome/i.test( UA ) && !/edge/i.test( UA );
 
-        features.transforms2d = 'WebkitTransform' in document.body.style ||
-                                'MozTransform' in document.body.style ||
-                                'msTransform' in document.body.style ||
-                                'OTransform' in document.body.style ||
-                                'transform' in document.body.style;
+		var testElement = document.body;     // testElement = document.createElement( 'div' );
+
+		features.transforms3d = 'WebkitPerspective' in testElement.style ||
+								'MozPerspective' in testElement.style ||
+								'msPerspective' in testElement.style ||
+								'OPerspective' in testElement.style ||
+								'perspective' in testElement.style;
+
+		features.transforms2d = 'WebkitTransform' in testElement.style ||
+								'MozTransform' in testElement.style ||
+								'msTransform' in testElement.style ||
+								'OTransform' in testElement.style ||
+								'transform' in testElement.style;
 
         features.requestAnimationFrameMethod = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame;
         features.requestAnimationFrame = typeof features.requestAnimationFrameMethod === 'function';
@@ -470,7 +493,7 @@
           };
         })();
 
-        isMobileDevice = navigator.userAgent.match( /(iphone|ipod|ipad|android)/gi );
+        isMobileDevice = UA.match( /(iphone|ipod|ipad|android)/gi );
 
         if ( config.useCSSZoom != null && ( config.useCSSZoom ? typeof document.createElement( 'div' ).style.zoom !== 'undefined' : true ) ) {
             useZoomFallback = config.useCSSZoom;
@@ -486,8 +509,7 @@
             //
             // However, using CSS zoom produces a changed layout compared to a layout which is transform:scale()d, hence
             // we should enhance the layout() code further below to account for this artifact.
-            var isChromeBrowser = /chrome/gi.test( navigator.userAgent );  
-            useZoomFallback = !isMobileDevice && isChromeBrowser && typeof document.createElement( 'div' ).style.zoom !== 'undefined';
+            useZoomFallback = !isMobileDevice && isChrome && typeof document.createElement( 'div' ).style.zoom !== 'undefined';
         }
     }
 
@@ -633,8 +655,8 @@
         // Listen to messages posted to this window
         setupPostMessage();
 
-        // Prevent iframes from scrolling the slides out of view
-        setupIframeScrollPrevention();
+		// Prevent the slides from being scrolled out of view
+		setupScrollPrevention();
 
         // Resets all vertical slides so that only the first is visible
         resetVerticalSlides();
@@ -1066,22 +1088,22 @@ TBD end of old code, start of new code
     }
 
     /**
-     * This is an unfortunate necessity. Iframes can trigger the
-     * parent window to scroll, for example by focusing an input.
-     * This scrolling can not be prevented by hiding overflow in
-     * CSS so we have to resort to repeatedly checking if the
-     * browser has decided to offset our slides :(
+	 * This is an unfortunate necessity. Some actions – such as
+	 * an input field being focused in an iframe or using the
+	 * keyboard to expand text selection beyond the bounds of
+	 * a slide – can trigger our content to be pushed out of view.
+	 * This scrolling can not be prevented by hiding overflow in
+	 * CSS (we already do) so we have to resort to repeatedly
+	 * checking if the slides have been offset :(
      */
-    function setupIframeScrollPrevention() {
+	function setupScrollPrevention() {
 
-        if( dom.slides.querySelector( 'iframe' ) ) {
-            setInterval( function() {
-                if( dom.wrapper.scrollTop !== 0 || dom.wrapper.scrollLeft !== 0 ) {
-                    dom.wrapper.scrollTop = 0;
-                    dom.wrapper.scrollLeft = 0;
-                }
-            }, 500 );
-        }
+		setInterval( function() {
+			if( dom.wrapper.scrollTop !== 0 || dom.wrapper.scrollLeft !== 0 ) {
+				dom.wrapper.scrollTop = 0;
+				dom.wrapper.scrollLeft = 0;
+			}
+		}, 1000 );
 
     }
 
@@ -1469,6 +1491,10 @@ TBD end of old code, start of new code
             dom.timeRemaining.style.display = config.timeRemaining ? 'block' : 'none';
         }
 
+		if( config.shuffle ) {
+			shuffle();
+		}
+
         if( config.rtl ) {
             dom.wrapper.classList.add( 'rtl' );
         }
@@ -1638,7 +1664,7 @@ TBD end of old code, start of new code
 
             // Only support touch for Android, fixes double navigations in
             // stock browser
-            if( navigator.userAgent.match( /android/gi ) ) {
+            if( UA.match( /android/gi ) ) {
                 pointerEvents = [ 'touchstart' ];
             }
 
@@ -1895,7 +1921,7 @@ TBD end of old code, start of new code
             // Use zoom to scale up in desktop Chrome so that content
             // remains crisp. We don't use zoom to scale down since that
             // can lead to shifts in text layout/line breaks.
-            if( scale > 1 && !isMobileDevice && /chrome/i.test( navigator.userAgent ) && typeof dom.slides.style.zoom !== 'undefined' ) {
+            if( scale > 1 && !isMobileDevice && isChrome && typeof dom.slides.style.zoom !== 'undefined' ) {
                 dom.slides.style.zoom = scale;
                 dom.slides.style.left = '';
                 dom.slides.style.top = '';
@@ -4448,6 +4474,23 @@ TBD end of old code, start of new code
     }
 
     /**
+	 * Randomly shuffles all slides in the deck.
+	 */
+	function shuffle() {
+
+		var slides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+
+		slides.forEach( function( slide ) {
+
+			// Insert this slide next to another random slide. This may
+			// cause the slide to insert before itself but that's fine.
+			dom.slides.insertBefore( slide, slides[ Math.floor( Math.random() * slides.length ) ] );
+
+		} );
+
+	}
+
+	/**
      * Updates one dimension of slides by showing the slide
      * with the specified index.
      *
@@ -5000,8 +5043,20 @@ TBD end of old code, start of new code
             // Start video playback
             var currentVideo = currentBackground.querySelector( 'video' );
             if( currentVideo ) {
-				if( currentVideo.currentTime > 0 ) currentVideo.currentTime = 0;
-                currentVideo.play();
+
+				var startVideo = function() {
+					currentVideo.currentTime = 0;
+					currentVideo.play();
+					currentVideo.removeEventListener( 'loadeddata', startVideo );
+				};
+
+				if( currentVideo.readyState > 1 ) {
+					startVideo();
+				}
+				else {
+					currentVideo.addEventListener( 'loadeddata', startVideo );
+				}
+
             }
 
             var backgroundImageURL = currentBackground.style.backgroundImage || '';
@@ -5149,6 +5204,7 @@ TBD end of old code, start of new code
                 var backgroundImage = slide.getAttribute( 'data-background-image' ),
                     backgroundVideo = slide.getAttribute( 'data-background-video' ),
                     backgroundVideoLoop = slide.hasAttribute( 'data-background-video-loop' ),
+					backgroundVideoMuted = slide.hasAttribute( 'data-background-video-muted' ),
                     backgroundIframe = slide.getAttribute( 'data-background-iframe' );
 
                 // Images
@@ -5164,6 +5220,10 @@ TBD end of old code, start of new code
                         if( backgroundVideoLoop ) {
                             video.setAttribute( 'loop', '' );
                         }
+
+					if( backgroundVideoMuted ) {
+						video.muted = true;
+					}
                     }
                     // Support comma separated lists of video sources
                     backgroundVideo.split( ',' ).forEach( function( source ) {
@@ -6157,7 +6217,10 @@ TBD end of old code, start of new code
             // - The overview isn't active
             // - The presentation isn't over
             if( autoSlide && !autoSlidePaused && !isPaused() && !isOverview() && ( !Reveal.isLastSlide() || availableFragments().next || config.loop ) ) {
-                autoSlideTimeout = setTimeout( navigateNext, autoSlide );
+				autoSlideTimeout = setTimeout( function() {
+					typeof config.autoSlideMethod === 'function' ? config.autoSlideMethod() : navigateNext();
+					cueAutoSlide();
+				}, autoSlide );
                 autoSlideStartTime = Date.now();
             }
 
@@ -6754,7 +6817,7 @@ TBD end of old code, start of new code
         }
         // There's a bug with swiping on some Android devices unless
         // the default action is always prevented
-        else if( navigator.userAgent.match( /android/gi ) ) {
+		else if( UA.match( /android/gi ) ) {
             event.preventDefault();
         }
 
@@ -7053,8 +7116,9 @@ TBD end of old code, start of new code
     function Playback( container, progressCheck ) {
 
         // Cosmetics
-        this.diameter = 50;
-        this.thickness = 3;
+		this.diameter = 100;
+		this.diameter2 = this.diameter / 2;
+		this.thickness = 6;
 
         // Flags if we are currently playing
         this.playing = false;
@@ -7072,6 +7136,8 @@ TBD end of old code, start of new code
         this.canvas.className = 'playback';
         this.canvas.width = this.diameter;
         this.canvas.height = this.diameter;
+		this.canvas.style.width = this.diameter2 + 'px';
+		this.canvas.style.height = this.diameter2 + 'px';
         this.context = this.canvas.getContext( '2d' );
 
         this.container.appendChild( this.canvas );
@@ -7122,10 +7188,10 @@ TBD end of old code, start of new code
     Playback.prototype.render = function() {
 
         var progress = this.playing ? this.progress : 0,
-            radius = ( this.diameter / 2 ) - this.thickness,
-            x = this.diameter / 2,
-            y = this.diameter / 2,
-            iconSize = 14;
+			radius = ( this.diameter2 ) - this.thickness,
+			x = this.diameter2,
+			y = this.diameter2,
+			iconSize = 28;
 
         // Ease towards 1
         this.progressOffset += ( 1 - this.progressOffset ) * 0.1;
@@ -7138,7 +7204,7 @@ TBD end of old code, start of new code
 
         // Solid background color
         this.context.beginPath();
-        this.context.arc( x, y, radius + 2, 0, Math.PI * 2, false );
+		this.context.arc( x, y, radius + 4, 0, Math.PI * 2, false );
         this.context.fillStyle = 'rgba( 0, 0, 0, 0.4 )';
         this.context.fill();
 
@@ -7163,14 +7229,14 @@ TBD end of old code, start of new code
         // Draw play/pause icons
         if( this.playing ) {
             this.context.fillStyle = '#fff';
-            this.context.fillRect( 0, 0, iconSize / 2 - 2, iconSize );
-            this.context.fillRect( iconSize / 2 + 2, 0, iconSize / 2 - 2, iconSize );
+			this.context.fillRect( 0, 0, iconSize / 2 - 4, iconSize );
+			this.context.fillRect( iconSize / 2 + 4, 0, iconSize / 2 - 4, iconSize );
         }
         else {
             this.context.beginPath();
-            this.context.translate( 2, 0 );
+			this.context.translate( 4, 0 );
             this.context.moveTo( 0, 0 );
-            this.context.lineTo( iconSize - 2, iconSize / 2 );
+			this.context.lineTo( iconSize - 4, iconSize / 2 );
             this.context.lineTo( 0, iconSize );
             this.context.fillStyle = '#fff';
             this.context.fill();
@@ -7205,6 +7271,8 @@ TBD end of old code, start of new code
 
 
     Reveal = {
+		VERSION: VERSION,
+
         initialize: initialize,
         configure: configure,
         sync: sync,
@@ -7237,6 +7305,9 @@ TBD end of old code, start of new code
 
         // Forces an update in slide layout
         layout: layout,
+
+		// Randomizes the order of slides
+		shuffle: shuffle,
 
         // Destroys the layout cache, i.e. causes the slide to layout when it's layout next
         nukeSlideLayoutCache: nukeSlideLayoutCache,
@@ -7425,6 +7496,11 @@ TBD end of old code, start of new code
             return keyCode;
 
         },
+
+		// Registers a new shortcut to include in the help overlay
+		registerKeyboardShortcut: function( key, value ) {
+			keyboardShortcuts[key] = value;
+		},
 
         // helper function: extend destination object with the properties of the source object.
         // When there's a collision, the source property wins.

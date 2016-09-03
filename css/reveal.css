@@ -25,7 +25,7 @@
 .reveal article, .reveal aside, .reveal canvas, .reveal details, .reveal embed,
 .reveal figure, .reveal figcaption, .reveal footer, .reveal header, .reveal hgroup,
 .reveal menu, .reveal nav, .reveal output, .reveal ruby, .reveal section, .reveal summary,
-.reveal time, .reveal mark, .reveal audio, video {
+.reveal time, .reveal mark, .reveal audio, .reveal video {
     margin: 0;
     padding: 0;
     border: 0;
@@ -220,6 +220,33 @@ body
     .reveal .slides section .fragment.strike.visible {
         text-decoration: line-through;
     }
+.reveal .slides section .fragment.fade-up {
+  -webkit-transform: translate(0, 20%);
+          transform: translate(0, 20%); }
+  .reveal .slides section .fragment.fade-up.visible {
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0); }
+
+.reveal .slides section .fragment.fade-down {
+  -webkit-transform: translate(0, -20%);
+          transform: translate(0, -20%); }
+  .reveal .slides section .fragment.fade-down.visible {
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0); }
+
+.reveal .slides section .fragment.fade-right {
+  -webkit-transform: translate(-20%, 0);
+          transform: translate(-20%, 0); }
+  .reveal .slides section .fragment.fade-right.visible {
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0); }
+
+.reveal .slides section .fragment.fade-left {
+  -webkit-transform: translate(20%, 0);
+          transform: translate(20%, 0); }
+  .reveal .slides section .fragment.fade-left.visible {
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0); }
 
 .reveal .slides section .fragment.current-visible {
     opacity: 0;
@@ -819,28 +846,24 @@ body
 .reveal .slides > section[data-transition~=slide-out].past,
 .reveal.slide .slides > section:not([data-transition]).past {
   -webkit-transform: translate(-150%, 0);
-      -ms-transform: translate(-150%, 0);
           transform: translate(-150%, 0); }
 
 .reveal .slides > section[data-transition=slide].future,
 .reveal .slides > section[data-transition~=slide-in].future,
 .reveal.slide .slides > section:not([data-transition]).future {
   -webkit-transform: translate(150%, 0);
-      -ms-transform: translate(150%, 0);
           transform: translate(150%, 0); }
 
 .reveal .slides > section > section[data-transition=slide].past,
 .reveal .slides > section > section[data-transition~=slide-out].past,
 .reveal.slide .slides > section > section:not([data-transition]).past {
   -webkit-transform: translate(0, -150%);
-      -ms-transform: translate(0, -150%);
           transform: translate(0, -150%); }
 
 .reveal .slides > section > section[data-transition=slide].future,
 .reveal .slides > section > section[data-transition~=slide-in].future,
 .reveal.slide .slides > section > section:not([data-transition]).future {
   -webkit-transform: translate(0, 150%);
-      -ms-transform: translate(0, 150%);
           transform: translate(0, 150%); }
 
 .reveal.linear section {
@@ -851,28 +874,24 @@ body
 .reveal .slides > section[data-transition~=linear-out].past,
 .reveal.linear .slides > section:not([data-transition]).past {
   -webkit-transform: translate(-150%, 0);
-      -ms-transform: translate(-150%, 0);
           transform: translate(-150%, 0); }
 
 .reveal .slides > section[data-transition=linear].future,
 .reveal .slides > section[data-transition~=linear-in].future,
 .reveal.linear .slides > section:not([data-transition]).future {
   -webkit-transform: translate(150%, 0);
-      -ms-transform: translate(150%, 0);
           transform: translate(150%, 0); }
 
 .reveal .slides > section > section[data-transition=linear].past,
 .reveal .slides > section > section[data-transition~=linear-out].past,
 .reveal.linear .slides > section > section:not([data-transition]).past {
   -webkit-transform: translate(0, -150%);
-      -ms-transform: translate(0, -150%);
           transform: translate(0, -150%); }
 
 .reveal .slides > section > section[data-transition=linear].future,
 .reveal .slides > section > section[data-transition~=linear-in].future,
 .reveal.linear .slides > section > section:not([data-transition]).future {
   -webkit-transform: translate(0, 150%);
-      -ms-transform: translate(0, 150%);
           transform: translate(0, 150%); }
 
 /*********************************************
@@ -967,7 +986,6 @@ body
 .reveal.zoom .slides > section:not([data-transition]).past {
   visibility: hidden;
   -webkit-transform: scale(16);
-      -ms-transform: scale(16);
           transform: scale(16); }
 
 .reveal .slides > section[data-transition=zoom].future,
@@ -975,21 +993,18 @@ body
 .reveal.zoom .slides > section:not([data-transition]).future {
   visibility: hidden;
   -webkit-transform: scale(0.2);
-      -ms-transform: scale(0.2);
           transform: scale(0.2); }
 
 .reveal .slides > section > section[data-transition=zoom].past,
 .reveal .slides > section > section[data-transition~=zoom-out].past,
 .reveal.zoom .slides > section > section:not([data-transition]).past {
   -webkit-transform: translate(0, -150%);
-      -ms-transform: translate(0, -150%);
           transform: translate(0, -150%); }
 
 .reveal .slides > section > section[data-transition=zoom].future,
 .reveal .slides > section > section[data-transition~=zoom-in].future,
 .reveal.zoom .slides > section > section:not([data-transition]).future {
   -webkit-transform: translate(0, 150%);
-      -ms-transform: translate(0, 150%);
           transform: translate(0, 150%); }
 
 /*********************************************
@@ -1043,28 +1058,24 @@ body
 
 .reveal.cube .slides > section.past {
   -webkit-transform-origin: 100% 0%;
-      -ms-transform-origin: 100% 0%;
           transform-origin: 100% 0%;
   -webkit-transform: translate3d(-100%, 0, 0) rotateY(-90deg);
           transform: translate3d(-100%, 0, 0) rotateY(-90deg); }
 
 .reveal.cube .slides > section.future {
   -webkit-transform-origin: 0% 0%;
-      -ms-transform-origin: 0% 0%;
           transform-origin: 0% 0%;
   -webkit-transform: translate3d(100%, 0, 0) rotateY(90deg);
           transform: translate3d(100%, 0, 0) rotateY(90deg); }
 
 .reveal.cube .slides > section > section.past {
   -webkit-transform-origin: 0% 100%;
-      -ms-transform-origin: 0% 100%;
           transform-origin: 0% 100%;
   -webkit-transform: translate3d(0, -100%, 0) rotateX(90deg);
           transform: translate3d(0, -100%, 0) rotateX(90deg); }
 
 .reveal.cube .slides > section > section.future {
   -webkit-transform-origin: 0% 0%;
-      -ms-transform-origin: 0% 0%;
           transform-origin: 0% 0%;
   -webkit-transform: translate3d(0, 100%, 0) rotateX(-90deg);
           transform: translate3d(0, 100%, 0) rotateX(-90deg); }
@@ -1118,28 +1129,24 @@ body
 
 .reveal.page .slides > section.past {
   -webkit-transform-origin: 0% 0%;
-      -ms-transform-origin: 0% 0%;
           transform-origin: 0% 0%;
   -webkit-transform: translate3d(-40%, 0, 0) rotateY(-80deg);
           transform: translate3d(-40%, 0, 0) rotateY(-80deg); }
 
 .reveal.page .slides > section.future {
   -webkit-transform-origin: 100% 0%;
-      -ms-transform-origin: 100% 0%;
           transform-origin: 100% 0%;
   -webkit-transform: translate3d(0, 0, 0);
           transform: translate3d(0, 0, 0); }
 
 .reveal.page .slides > section > section.past {
   -webkit-transform-origin: 0% 0%;
-      -ms-transform-origin: 0% 0%;
           transform-origin: 0% 0%;
   -webkit-transform: translate3d(0, -40%, 0) rotateX(80deg);
           transform: translate3d(0, -40%, 0) rotateX(80deg); }
 
 .reveal.page .slides > section > section.future {
   -webkit-transform-origin: 0% 100%;
-      -ms-transform-origin: 0% 100%;
           transform-origin: 0% 100%;
   -webkit-transform: translate3d(0, 0, 0);
           transform: translate3d(0, 0, 0); }
@@ -1151,7 +1158,6 @@ body
 .reveal.fade .slides section:not([data-transition]),
 .reveal.fade .slides > section > section:not([data-transition]) {
   -webkit-transform: none;
-      -ms-transform: none;
           transform: none;
   -webkit-transition: opacity 0.5s;
           transition: opacity 0.5s; }
@@ -1167,7 +1173,6 @@ body
 .reveal .slides section[data-transition=none],
 .reveal.none .slides section:not([data-transition]) {
   -webkit-transform: none;
-      -ms-transform: none;
           transform: none;
   -webkit-transition: none;
           transition: none; }
@@ -1237,11 +1242,11 @@ body
     left: -50%;
     margin: 70px 0;
 
-    -webkit-transform: none !important;
-       -moz-transform: none !important;
-        -ms-transform: none !important;
-         -o-transform: none !important;
-            transform: none !important;
+    -webkit-transform: none;
+       -moz-transform: none;
+        -ms-transform: none;
+         -o-transform: none;
+            transform: none;
 }
 
 .no-transforms .reveal .slides section section {
@@ -1369,25 +1374,21 @@ body
 .reveal[data-background-transition=slide] > .backgrounds .slide-background.past,
 .reveal > .backgrounds .slide-background.past[data-background-transition=slide] {
   -webkit-transform: translate(-100%, 0);
-      -ms-transform: translate(-100%, 0);
           transform: translate(-100%, 0); }
 
 .reveal[data-background-transition=slide] > .backgrounds .slide-background.future,
 .reveal > .backgrounds .slide-background.future[data-background-transition=slide] {
   -webkit-transform: translate(100%, 0);
-      -ms-transform: translate(100%, 0);
           transform: translate(100%, 0); }
 
 .reveal[data-background-transition=slide] > .backgrounds .slide-background > .slide-background.past,
 .reveal > .backgrounds .slide-background > .slide-background.past[data-background-transition=slide] {
   -webkit-transform: translate(0, -100%);
-      -ms-transform: translate(0, -100%);
           transform: translate(0, -100%); }
 
 .reveal[data-background-transition=slide] > .backgrounds .slide-background > .slide-background.future,
 .reveal > .backgrounds .slide-background > .slide-background.future[data-background-transition=slide] {
   -webkit-transform: translate(0, 100%);
-      -ms-transform: translate(0, 100%);
           transform: translate(0, 100%); }
 
 /* Convex */
@@ -1451,7 +1452,6 @@ body
   opacity: 0;
   visibility: hidden;
   -webkit-transform: scale(16);
-      -ms-transform: scale(16);
           transform: scale(16); }
 
 .reveal[data-background-transition=zoom] > .backgrounds .slide-background.future,
@@ -1459,7 +1459,6 @@ body
   opacity: 0;
   visibility: hidden;
   -webkit-transform: scale(0.2);
-      -ms-transform: scale(0.2);
           transform: scale(0.2); }
 
 .reveal[data-background-transition=zoom] > .backgrounds .slide-background > .slide-background.past,
@@ -1467,7 +1466,6 @@ body
   opacity: 0;
   visibility: hidden;
   -webkit-transform: scale(16);
-      -ms-transform: scale(16);
           transform: scale(16); }
 
 .reveal[data-background-transition=zoom] > .backgrounds .slide-background > .slide-background.future,
@@ -1475,7 +1473,6 @@ body
   opacity: 0;
   visibility: hidden;
   -webkit-transform: scale(0.2);
-      -ms-transform: scale(0.2);
           transform: scale(0.2); }
 
 
@@ -1515,6 +1512,8 @@ body
 .reveal.overview .slides section,
 .reveal.overview .slides-overview section {
     /* height: 700px; */
+    height: 100%;
+    top: 0 !important;
 
     overflow: hidden; /* <-- removing this one made slide 20 in the demo page show consistently 
                              in the ESC overview; 
@@ -1752,6 +1751,10 @@ body
 
 	.reveal .overlay .viewport {
  		position: absolute;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
  		top: 40px;
  		right: 0;
  		bottom: 0;
@@ -1795,8 +1798,8 @@ body
 
 	.reveal .overlay.overlay-help .viewport .viewport-inner {
 		width: 600px;
-		margin: 0 auto;
-		padding: 60px;
+  margin: auto;
+  padding: 20px 20px 80px 20px;
 		text-align: center;
 		letter-spacing: normal;
 	}
@@ -1808,13 +1811,13 @@ body
 	.reveal .overlay.overlay-help .viewport .viewport-inner table {
 		border: 1px solid #fff;
 		border-collapse: collapse;
-		font-size: 14px;
+  font-size: 16px;
 	}
 
 	.reveal .overlay.overlay-help .viewport .viewport-inner table th,
 	.reveal .overlay.overlay-help .viewport .viewport-inner table td {
 		width: 200px;
-		padding: 10px;
+  padding: 14px;
 		border: 1px solid #fff;
 		vertical-align: middle;
 	}

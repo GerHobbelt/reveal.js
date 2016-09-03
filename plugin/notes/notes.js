@@ -40,10 +40,15 @@
 // Pass this, window may not be defined yet
 }(this, function ( window, document, Reveal, undefined ) {
 
-    function openNotes() {
-        var jsFileLocation = document.querySelector('script[src$="notes.js"]').src;  // this js file path
-        jsFileLocation = jsFileLocation.replace(/notes\.js(\?.*)?$/, '');   // the js folder path
-        var notesPopup = window.open( jsFileLocation + 'notes.html', 'reveal.js - Notes', 'width=1100,height=700' );
+	function openNotes( notesFilePath ) {
+
+		if( !notesFilePath ) {
+			var jsFileLocation = document.querySelector('script[src$="notes.js"]').src;  // this js file path
+			jsFileLocation = jsFileLocation.replace(/notes\.js(\?.*)?$/, '');   // the js folder path
+			notesFilePath = jsFileLocation + 'notes.html';
+		}
+
+		var notesPopup = window.open( notesFilePath, 'reveal.js - Notes', 'width=1100,height=700' );
 
         /**
          * Connect to the notes window through a postmessage handshake.
@@ -129,6 +134,7 @@
         }
 
         connect();
+
     }
 
 	if( !/receiver/i.test( window.location.search ) ) {
@@ -152,6 +158,9 @@
 			openNotes();
 		}
 	}, false );
+
+		// Show our keyboard shortcut in the reveal.js help overlay
+		if( window.Reveal ) Reveal.registerKeyboardShortcut( 'S', 'Speaker notes view' );
 
 	}
 
