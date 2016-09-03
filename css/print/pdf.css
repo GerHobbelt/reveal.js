@@ -94,8 +94,9 @@ ul, ol, div, p {
 }
 .reveal .slides {
     position: static;
-    width: 100%;
-    height: auto;
+	width: 100% !important;
+	height: auto !important;
+	zoom: 1 !important;
 
     left: auto;
     top: auto;
@@ -220,9 +221,20 @@ ul, ol, div, p {
 	display: block;
 	width: 100%;
 	max-height: none;
-	left: auto;
 	top: auto;
+	right: auto;
+	bottom: auto;
+	left: auto;
 	z-index: 100;
+}
+
+/* Layout option which makes notes appear on a separate page */
+.reveal .speaker-notes-pdf[data-layout="separate-page"] {
+	position: relative;
+	color: inherit;
+	background-color: transparent;
+	padding: 20px;
+	page-break-after: always;
 }
 
 /* Display slide numbers when 'slideNumber' is enabled */
@@ -231,4 +243,3 @@ ul, ol, div, p {
 	position: absolute;
 	font-size: 14px;
 }
-

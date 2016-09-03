@@ -72,7 +72,7 @@
             printHeight: 2159,
 
             // Factor of the display size that should remain empty around the content
-            margin: 0.05,
+            margin: 0.04,
 
             // Factor of the display size that should remain empty around the content.
             // Reveal uses 5% spacing between slides in the overview display.
@@ -86,7 +86,7 @@
 
             // Bounds for smallest/largest possible scale to apply to content (fundamentalScale)
             minScale: 0.05,
-            maxScale: 1.5,
+            maxScale: 2.0,
 
             // Bounds for smallest/largest possible scale to apply to content (per-slide scale correction)
             minSlideScale: 0.05,
@@ -241,6 +241,9 @@
 
         },
 
+		// Flags if Reveal.initialize() has been called
+		initialized = false,
+
         // Flags if reveal.js is loaded (has dispatched the 'ready' event)
         loaded = false,
 
@@ -371,6 +374,11 @@
      */
     function initialize( options ) {
 
+		// Make sure we only initialize once
+		if( initialized ) {
+			return true;
+		}
+
         if ( !document.body ) {
             return false;
         }
@@ -409,6 +417,8 @@
             if (!dom.viewport.classList.contains('no-transforms')) {
                 dom.viewport.classList.add('no-transforms');
             }
+	    initialized = true;
+	    
             return true;
         }
     
@@ -443,8 +453,12 @@
         hideAddressBar();
 
         // Loads the dependencies and continues to #start() once done
-        return load();
+        var rv = load();
 
+	if (rv) {
+		initialized = true;
+	}	    
+	return rv;
     }
 
     /**
@@ -1073,18 +1087,31 @@ TBD end of old code, start of new code
 
 				// Inject notes if `showNotes` is enabled
 				if( config.showNotes ) {
+
+					// Are there notes for this slide?
 					var notes = getSlideNotes( slide );
 					if( notes ) {
+
 						var notesSpacing = 8;
+						var notesLayout = typeof config.showNotes === 'string' ? config.showNotes : 'inline';
 						var notesElement = document.createElement( 'div' );
 						notesElement.classList.add( 'speaker-notes' );
 						notesElement.classList.add( 'speaker-notes-pdf' );
+						notesElement.setAttribute( 'data-layout', notesLayout );
 						notesElement.innerHTML = notes;
-						notesElement.style.left = ( notesSpacing - left ) + 'px';
-						notesElement.style.bottom = ( notesSpacing - top ) + 'px';
-						notesElement.style.width = ( pageWidth - notesSpacing*2 ) + 'px';
-						slide.appendChild( notesElement );
+
+						if( notesLayout === 'separate-page' ) {
+							page.parentNode.insertBefore( notesElement, page.nextSibling );
+						}
+						else {
+							notesElement.style.left = notesSpacing + 'px';
+							notesElement.style.bottom = notesSpacing + 'px';
+							notesElement.style.width = ( pageWidth - notesSpacing*2 ) + 'px';
+							page.appendChild( notesElement );
+						}
+
 					}
+
 				}
 
 				// Inject slide numbers if `slideNumbers` are enabled
@@ -1541,6 +1568,7 @@ TBD end of old code, start of new code
 
 		if( config.showNotes ) {
 			dom.speakerNotes.classList.add( 'visible' );
+			dom.speakerNotes.setAttribute( 'data-layout', typeof config.showNotes === 'string' ? config.showNotes : 'inline' );
 		}
 		else {
 			dom.speakerNotes.classList.remove( 'visible' );
@@ -7385,6 +7413,9 @@ if (0) {
         navigateDown: navigateDown,
         navigatePrev: navigatePrev,
         navigateNext: navigateNext,
+
+		// Shows a help overlay with keyboard shortcuts
+		showHelp: showHelp,
 
         // Forces an update in slide layout
         layout: layout,
