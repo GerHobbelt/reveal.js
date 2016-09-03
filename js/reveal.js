@@ -5077,7 +5077,7 @@ TBD end of old code, start of new code
 
                 var slideWidth = dom.background.offsetWidth;
                 var horizontalSlideCount = horizontalSlides.length;
-                var horizontalOffset = -( backgroundWidth - slideWidth ) / ( horizontalSlideCount - 1 ) * indexh;
+                var horizontalOffset = horizontalSlideCount > 1 ? -( backgroundWidth - slideWidth ) / ( horizontalSlideCount - 1 ) * indexh : 0;
 
                 var slideHeight = dom.background.offsetHeight;
                 var verticalSlideCount = verticalSlides.length;
