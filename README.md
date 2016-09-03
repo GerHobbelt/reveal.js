@@ -1003,7 +1003,7 @@ Reveal.initialize({
         //...
         // other deps
         //...
-        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', async: true },
+		{ src: '//cdn.socket.io/socket.io-1.3.5.js', async: true },
         { src: 'plugin/multiplex/master.js', async: true },
 
         // and if you want speaker notes
@@ -1040,7 +1040,7 @@ Reveal.initialize({
         //...
         // other deps
         //...
-        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', async: true },
+		{ src: '//cdn.socket.io/socket.io-1.3.5.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
 
         // other dependencies...
@@ -1086,7 +1086,7 @@ Reveal.initialize({
         //...
         // other deps
         //...
-        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', async: true },
+		{ src: '//cdn.socket.io/socket.io-1.3.5.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
 
         // other dependencies...
@@ -1114,7 +1114,7 @@ Reveal.initialize({
         //...
         // other deps
         //...
-        { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', async: true },
+		{ src: '//cdn.socket.io/socket.io-1.3.5.js', async: true },
         { src: 'plugin/multiplex/master.js', async: true },
         { src: 'plugin/multiplex/client.js', async: true }
 
