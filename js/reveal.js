@@ -951,6 +951,38 @@
     }
 
     /**
+     * Converts the given HTML element into a string of text
+     * that can be announced to a screen reader. Hidden
+     * elements are excluded.
+     */
+    function getStatusText( node ) {
+
+        var text = '';
+
+        // Text node
+        if( node.nodeType === 3 ) {
+            text += node.textContent;
+        }
+        // Element node
+        else if( node.nodeType === 1 ) {
+
+            var isAriaHidden = node.getAttribute( 'aria-hidden' );
+            var isDisplayHidden = window.getComputedStyle( node )['display'] === 'none';
+            if( isAriaHidden !== 'true' && !isDisplayHidden ) {
+
+                toArray( node.childNodes ).forEach( function( child ) {
+                    text += getStatusText( child );
+                } );
+
+            }
+
+        }
+
+        return text.trim();
+
+    }
+
+    /**
      * Obtain the currently active CSS style (not just the value available in the DOMnode.style property!)
      *
      * See also http://www.quirksmode.org/dom/getstyles.html
@@ -4521,7 +4553,7 @@ TBD end of old code, start of new code
         }
 
         // Announce the current slide contents, for screen readers
-        dom.statusDiv.textContent = ( currentSlide ? currentSlide.textContent.trim() : '' );
+        dom.statusDiv.textContent = getStatusText( currentSlide );
 
         updateControls();
         updateProgress();
@@ -6303,7 +6335,7 @@ if (0) {
                         element.classList.remove( 'current-fragment' );
 
                         // Announce the fragments one by one to the Screen Reader
-                        dom.statusDiv.textContent = element.textContent.trim();
+                        dom.statusDiv.textContent = getStatusText( element );
 
                         if( i === index ) {
                             element.classList.add( 'current-fragment' );
@@ -6469,11 +6501,13 @@ if (0) {
             // automatically set the autoSlide duration to the
             // length of that media. Not applicable if the slide
             // is divided up into fragments.
+        //
+            // playbackRate is accounted for in the duration.
             if( currentSlide.querySelectorAll( '.fragment' ).length === 0 ) {
                 toArray( currentSlide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
                     if( el.hasAttribute( 'data-autoplay' ) ) {
-                        if( autoSlide && el.duration * 1000 > autoSlide ) {
-                            autoSlide = ( el.duration * 1000 ) + 1000;
+                        if( autoSlide && ( el.duration * 1000 / el.playbackRate ) > autoSlide ) {
+                            autoSlide = ( el.duration * 1000 / el.playbackRate ) + 1000;
                         }
                     }
                 } );
@@ -7171,7 +7205,7 @@ if (0) {
             if( delta > 0 ) {
                 navigateNext();
             }
-            else {
+            else if( delta < 0 ) {
                 navigatePrev();
             }
 
