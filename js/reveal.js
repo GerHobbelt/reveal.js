@@ -3,7 +3,7 @@
  * http://lab.hakim.se/reveal-js
  * MIT licensed
  *
- * Copyright (C) 2016 Hakim El Hattab, http://hakim.se
+ * Copyright (C) 2017 Hakim El Hattab, http://hakim.se
  */
 (function( root, factory ) {
 	if( typeof define === 'function' && define.amd ) {
@@ -160,6 +160,9 @@
 
 			// Number of slides away from the current that are visible
 			viewDistance: 3,
+
+			// The display mode that will be used to show slides
+			display: 'block',
 
 			// Script dependencies to load
 			dependencies: []
@@ -889,7 +892,7 @@
 
 		if( data.background ) {
 			// Auto-wrap image urls in url(...)
-			if( /^(http|file|\/\/)/gi.test( data.background ) || /\.(svg|png|jpg|jpeg|gif|bmp)$/gi.test( data.background ) ) {
+			if( /^(http|file|\/\/)/gi.test( data.background ) || /\.(svg|png|jpg|jpeg|gif|bmp)([?#]|$)/gi.test( data.background ) ) {
 				slide.setAttribute( 'data-background-image', data.background );
 			}
 			else {
@@ -914,6 +917,7 @@
 
 		// Additional and optional background properties
 		if( data.backgroundSize ) element.style.backgroundSize = data.backgroundSize;
+		if( data.backgroundSize ) element.setAttribute( 'data-background-size', data.backgroundSize );
 		if( data.backgroundColor ) element.style.backgroundColor = data.backgroundColor;
 		if( data.backgroundRepeat ) element.style.backgroundRepeat = data.backgroundRepeat;
 		if( data.backgroundPosition ) element.style.backgroundPosition = data.backgroundPosition;
@@ -1060,10 +1064,11 @@
 		// Iframe link previews
 		if( config.previewLinks ) {
 			enablePreviewLinks();
+			disablePreviewLinks( '[data-preview-link=false]' );
 		}
 		else {
 			disablePreviewLinks();
-			enablePreviewLinks( '[data-preview-link]' );
+			enablePreviewLinks( '[data-preview-link]:not([data-preview-link=false])' );
 		}
 
 		// Remove existing auto-slide controls
@@ -1255,7 +1260,7 @@
 			if( value === 'null' ) return null;
 			else if( value === 'true' ) return true;
 			else if( value === 'false' ) return false;
-			else if( value.match( /^\d+$/ ) ) return parseFloat( value );
+			else if( value.match( /^[\d\.]+$/ ) ) return parseFloat( value );
 		}
 
 		return value;
@@ -1599,9 +1604,9 @@
 	/**
 	 * Unbind preview frame links.
 	 */
-	function disablePreviewLinks() {
+	function disablePreviewLinks( selector ) {
 
-		var anchors = toArray( document.querySelectorAll( 'a' ) );
+		var anchors = toArray( document.querySelectorAll( selector ? selector : 'a' ) );
 
 		anchors.forEach( function( element ) {
 			if( /^(http|www)/gi.test( element.getAttribute( 'href' ) ) ) {
@@ -1656,6 +1661,28 @@
 			dom.overlay.classList.add( 'visible' );
 		}, 1 );
 
+	}
+
+	/**
+	 * Open or close help overlay window.
+	 *
+	 * @param {Boolean} [override] Flag which overrides the
+	 * toggle logic and forcibly sets the desired state. True means
+	 * help is open, false means it's closed.
+	 */
+	function toggleHelp( override ){
+
+		if( typeof override === 'boolean' ) {
+			override ? showHelp() : closeOverlay();
+		}
+		else {
+			if( dom.overlay ) {
+				closeOverlay();
+			}
+			else {
+				showHelp();
+			}
+		}
 	}
 
 	/**
@@ -2433,9 +2460,9 @@
 
 		updateControls();
 		updateProgress();
-		updateBackground( true );
 		updateSlideNumber();
 		updateSlidesVisibility();
+		updateBackground( true );
 		updateNotes();
 
 		formatEmbeddedContent();
@@ -2903,34 +2930,17 @@
 
 		} );
 
-		// Stop any currently playing video background
+		// Stop content inside of previous backgrounds
 		if( previousBackground ) {
 
-			var previousVideo = previousBackground.querySelector( 'video' );
-			if( previousVideo ) previousVideo.pause();
+			stopEmbeddedContent( previousBackground );
 
 		}
 
+		// Start content in the current background
 		if( currentBackground ) {
 
-			// Start video playback
-			var currentVideo = currentBackground.querySelector( 'video' );
-			if( currentVideo ) {
-
-				var startVideo = function() {
-					currentVideo.currentTime = 0;
-					currentVideo.play();
-					currentVideo.removeEventListener( 'loadeddata', startVideo );
-				};
-
-				if( currentVideo.readyState > 1 ) {
-					startVideo();
-				}
-				else {
-					currentVideo.addEventListener( 'loadeddata', startVideo );
-				}
-
-			}
+			startEmbeddedContent( currentBackground );
 
 			var backgroundImageURL = currentBackground.style.backgroundImage || '';
 
@@ -3039,7 +3049,7 @@
 	function showSlide( slide ) {
 
 		// Show the slide element
-		slide.style.display = 'block';
+		slide.style.display = config.display;
 
 		// Media elements with data-src attributes
 		toArray( slide.querySelectorAll( 'img[data-src], video[data-src], audio[data-src]' ) ).forEach( function( element ) {
@@ -3107,11 +3117,20 @@
 				// Iframes
 				else if( backgroundIframe ) {
 					var iframe = document.createElement( 'iframe' );
+
+					// Only load autoplaying content when the slide is shown to
+					// avoid having it play in the background
+					if( /autoplay=(1|true|yes)/gi.test( backgroundIframe ) ) {
+						iframe.setAttribute( 'data-src', backgroundIframe );
+					}
+					else {
 						iframe.setAttribute( 'src', backgroundIframe );
-						iframe.style.width  = '100%';
-						iframe.style.height = '100%';
-						iframe.style.maxHeight = '100%';
-						iframe.style.maxWidth = '100%';
+					}
+
+					iframe.style.width  = '100%';
+					iframe.style.height = '100%';
+					iframe.style.maxHeight = '100%';
+					iframe.style.maxWidth = '100%';
 
 					background.appendChild( iframe );
 				}
@@ -3219,11 +3238,12 @@
 	 * Start playback of any embedded content inside of
 	 * the given element.
 	 *
-	 * @param {HTMLElement} slide
+	 * @param {HTMLElement} element
 	 */
 	function startEmbeddedContent( element ) {
 
 		if( element && !isSpeakerNotes() ) {
+
 			// Restart GIFs
 			toArray( element.querySelectorAll( 'img[src$=".gif"]' ) ).forEach( function( el ) {
 				// Setting the same unchanged source like this was confirmed
@@ -3237,8 +3257,22 @@
 					return;
 				}
 
-				if( el.hasAttribute( 'data-autoplay' ) && typeof el.play === 'function' ) {
-					el.play();
+				// Autoplay is always on for slide backgrounds
+				var autoplay = el.hasAttribute( 'data-autoplay' ) || !!closestParent( el, '.slide-background' );
+
+				if( autoplay && typeof el.play === 'function' ) {
+
+					if( el.readyState > 1 ) {
+						startEmbeddedMedia( { target: el } );
+					}
+					else {
+						el.removeEventListener( 'loadeddata', startEmbeddedMedia ); // remove first to avoid dupes
+						el.addEventListener( 'loadeddata', startEmbeddedMedia );
+
+						// `loadeddata` never fires unless we start playing on iPad
+						if( /ipad/gi.test( UA ) ) el.play();
+					}
+
 				}
 			} );
 
@@ -3263,7 +3297,28 @@
 					el.setAttribute( 'src', el.getAttribute( 'data-src' ) );
 				}
 			} );
+
 		}
+
+	}
+
+	/**
+	 * Starts playing an embedded video/audio element after
+	 * it has finished loading.
+	 *
+	 * @param {object} event
+	 */
+	function startEmbeddedMedia( event ) {
+
+		var isAttachedToDOM = !!closestParent( event.target, 'html' ),
+			isVisible  		= !!closestParent( event.target, '.present' );
+
+		if( isAttachedToDOM && isVisible ) {
+			event.target.currentTime = 0;
+			event.target.play();
+		}
+
+		event.target.removeEventListener( 'loadeddata', startEmbeddedMedia );
 
 	}
 
@@ -3271,7 +3326,7 @@
 	 * "Starts" the content of an embedded iframe using the
 	 * postMessage API.
 	 *
-	 * @param {object} event - postMessage API event
+	 * @param {object} event
 	 */
 	function startEmbeddedIframe( event ) {
 
@@ -3279,17 +3334,26 @@
 
 		if( iframe && iframe.contentWindow ) {
 
-			// YouTube postMessage API
-			if( /youtube\.com\/embed\//.test( iframe.getAttribute( 'src' ) ) && iframe.hasAttribute( 'data-autoplay' ) ) {
-				iframe.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
-			}
-			// Vimeo postMessage API
-			else if( /player\.vimeo\.com\//.test( iframe.getAttribute( 'src' ) ) && iframe.hasAttribute( 'data-autoplay' ) ) {
-				iframe.contentWindow.postMessage( '{"method":"play"}', '*' );
-			}
-			// Generic postMessage API
-			else {
-				iframe.contentWindow.postMessage( 'slide:start', '*' );
+			var isAttachedToDOM = !!closestParent( event.target, 'html' ),
+				isVisible  		= !!closestParent( event.target, '.present' );
+
+			if( isAttachedToDOM && isVisible ) {
+
+				var autoplay = iframe.hasAttribute( 'data-autoplay' ) || !!closestParent( iframe, '.slide-background' );
+
+				// YouTube postMessage API
+				if( /youtube\.com\/embed\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
+					iframe.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
+				}
+				// Vimeo postMessage API
+				else if( /player\.vimeo\.com\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
+					iframe.contentWindow.postMessage( '{"method":"play"}', '*' );
+				}
+				// Generic postMessage API
+				else {
+					iframe.contentWindow.postMessage( 'slide:start', '*' );
+				}
+
 			}
 
 		}
@@ -3300,40 +3364,42 @@
 	 * Stop playback of any embedded content inside of
 	 * the targeted slide.
 	 *
-	 * @param {HTMLElement} slide
+	 * @param {HTMLElement} element
+	 * @param {boolean} autoplay Optionally override the
+	 * autoplay setting of media elements
 	 */
-	function stopEmbeddedContent( slide ) {
+	function stopEmbeddedContent( element, autoplay ) {
 
-		if( slide && slide.parentNode ) {
+		if( element && element.parentNode ) {
 			// HTML5 media elements
-			toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
+			toArray( element.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
 				if( !el.hasAttribute( 'data-ignore' ) && typeof el.pause === 'function' ) {
 					el.pause();
 				}
 			} );
 
 			// Generic postMessage API for non-lazy loaded iframes
-			toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
+			toArray( element.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
 				el.contentWindow.postMessage( 'slide:stop', '*' );
 				el.removeEventListener( 'load', startEmbeddedIframe );
 			});
 
 			// YouTube postMessage API
-			toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
+			toArray( element.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
 				if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
 					el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
 				}
 			});
 
 			// Vimeo postMessage API
-			toArray( slide.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
+			toArray( element.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
 				if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
 					el.contentWindow.postMessage( '{"method":"pause"}', '*' );
 				}
 			});
 
 			// Lazy loading iframes
-			toArray( slide.querySelectorAll( 'iframe[data-src]' ) ).forEach( function( el ) {
+			toArray( element.querySelectorAll( 'iframe[data-src]' ) ).forEach( function( el ) {
 				// Only removing the src doesn't actually unload the frame
 				// in all browsers (Firefox) so we set it to blank first
 				el.setAttribute( 'src', 'about:blank' );
@@ -3952,7 +4018,7 @@
 			// If there are media elements with data-autoplay,
 			// automatically set the autoSlide duration to the
 			// length of that media. Not applicable if the slide
-			// is divided up into fragments. 
+			// is divided up into fragments.
 			// playbackRate is accounted for in the duration.
 			if( currentSlide.querySelectorAll( '.fragment' ).length === 0 ) {
 				toArray( currentSlide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
@@ -4165,12 +4231,7 @@
 
 		// Check if the pressed key is question mark
 		if( event.shiftKey && event.charCode === 63 ) {
-			if( dom.overlay ) {
-				closeOverlay();
-			}
-			else {
-				showHelp( true );
-			}
+			toggleHelp();
 		}
 
 	}
@@ -4873,9 +4934,6 @@
 		navigatePrev: navigatePrev,
 		navigateNext: navigateNext,
 
-		// Shows a help overlay with keyboard shortcuts
-		showHelp: showHelp,
-
 		// Forces an update in slide layout
 		layout: layout,
 
@@ -4887,6 +4945,9 @@
 
 		// Returns an object with the available fragments as booleans (prev/next)
 		availableFragments: availableFragments,
+
+		// Toggles a help overlay with keyboard shortcuts
+		toggleHelp: toggleHelp,
 
 		// Toggles the overview mode on/off
 		toggleOverview: toggleOverview,

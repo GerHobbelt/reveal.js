@@ -105,17 +105,17 @@ The presentation markup hierarchy needs to be `.reveal > .slides > section` wher
 
 ### Markdown
 
-It's possible to write your slides using Markdown. To enable Markdown, add the `data-markdown` attribute to your `<section>` elements and wrap the contents in a `<script type="text/template">` like the example below.
+It's possible to write your slides using Markdown. To enable Markdown, add the `data-markdown` attribute to your `<section>` elements and wrap the contents in a `<textarea data-template>` like the example below.
 
 This is based on [data-markdown](https://gist.github.com/1343518) from [Paul Irish](https://github.com/paulirish) modified to use [marked](https://github.com/chjj/marked) to support [GitHub Flavored Markdown](https://help.github.com/articles/github-flavored-markdown). Sensitive to indentation (avoid mixing tabs and spaces) and line breaks (avoid consecutive breaks).
 
 ```html
 <section data-markdown>
-	<script type="text/template">
+	<textarea data-template>
 		## Page title
 
 		A paragraph with some text and a [link](http://hakim.se).
-	</script>
+	</textarea>
 </section>
 ```
 
@@ -270,7 +270,10 @@ Reveal.initialize({
 	// - Calculated automatically unless specified
 	// - Set to 0 to disable movement along an axis
 	parallaxBackgroundHorizontal: null,
-	parallaxBackgroundVertical: null
+	parallaxBackgroundVertical: null,
+
+	// The display mode that will be used to show slides
+	display: 'block'
 
 });
 ```
@@ -463,13 +466,14 @@ Reveal.nextFragment();
 // Randomize the order of slides
 Reveal.shuffle();
 
-// Shows a help overlay with keyboard shortcuts
-Reveal.showHelp();
-
 // Toggle presentation states, optionally pass true/false to force on/off
 Reveal.toggleOverview();
 Reveal.togglePause();
 Reveal.toggleAutoSlide();
+
+// Shows a help overlay with keyboard shortcuts, optionally pass true/false
+// to force on/off
+Reveal.toggleHelp();
 
 // Change a config value at runtime
 Reveal.configure({ controls: true });
@@ -578,6 +582,7 @@ Automatically plays a full size video behind the slide.
 | data-background-video        |         | A single video source, or a comma separated list of video sources. |
 | data-background-video-loop   | false   | Flags if the video should play repeatedly. |
 | data-background-video-muted  | false   | Flags if the audio should be muted. |
+| data-background-size         | cover   | Use `cover` for full screen and some cropping or `contain` for letterboxing. |
 
 ```html
 <section data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm" data-background-video-loop data-background-video-muted>
@@ -849,13 +854,14 @@ Here's an example of an exported presentation that's been uploaded to SlideShare
 
 Export dimensions are inferred from the configured [presentation size](#presentation-size). Slides that are too tall to fit within a single page will expand onto multiple pages. You can limit how many pages a slide may expand onto using the `pdfMaxPagesPerSlide` config option, for example `Reveal.configure({ pdfMaxPagesPerSlide: 1 })` ensures that no slide ever grows to more than one printed page.
 
-1. Open your presentation with `print-pdf` included in the query string i.e. http://localhost:8000/?print-pdf#/. This triggers the default index HTML to load the PDF print stylesheet ([css/print/pdf.css](https://github.com/hakimel/reveal.js/blob/master/css/print/pdf.css)). You can test this with [lab.hakim.se/reveal-js?print-pdf](http://lab.hakim.se/reveal-js?print-pdf).
-2. Open the in-browser print dialog (CTRL/CMD+P).
-3. Change the **Destination** setting to **Save as PDF**.
-4. Change the **Layout** to **Landscape**.
-5. Change the **Margins** to **None**.
-6. Enable the **Background graphics** option.
-7. Click **Save**.
+1. Open your presentation with `print-pdf` included in the query string i.e. http://localhost:8000/?print-pdf. This triggers the default index HTML to load the PDF print stylesheet ([css/print/pdf.css](https://github.com/hakimel/reveal.js/blob/master/css/print/pdf.css)). You can test this with [lab.hakim.se/reveal-js?print-pdf](http://lab.hakim.se/reveal-js?print-pdf).
+  * If you want to include [speaker notes](#speaker-notes) in your export, you can append `showNotes=true` to the query string: http://localhost:8000/?print-pdf&showNotes=true
+1. Open the in-browser print dialog (CTRL/CMD+P).
+1. Change the **Destination** setting to **Save as PDF**.
+1. Change the **Layout** to **Landscape**.
+1. Change the **Margins** to **None**.
+1. Enable the **Background graphics** option.
+1. Click **Save**.
 
 ![Chrome Print Settings](https://s3.amazonaws.com/hakim-static/reveal-js/pdf-print-settings-2.png)
 
@@ -924,7 +930,7 @@ This will only display in the notes window.
 
 Notes are only visible to the speaker inside of the speaker view. If you wish to share your notes with others you can initialize reveal.js with the `showNotes` config value set to `true`. Notes will appear along the bottom of the presentations.
 
-When `showNotes` is enabled notes are also included when you [export to PDF](https://github.com/hakimel/reveal.js#pdf-export). By default, notes are printed in a semi-transparent box on top of slide. If you'd rather print them on a separate page after the slide, set `showNotes: "separate-page"`.
+When `showNotes` is enabled notes are also included when you [export to PDF](https://github.com/hakimel/reveal.js#pdf-export). By default, notes are printed in a semi-transparent box on top of the slide. If you'd rather print them on a separate page after the slide, set `showNotes: "separate-page"`.
 
 ## Server Side Speaker Notes
 
@@ -1153,7 +1159,7 @@ Some reveal.js features, like external Markdown and speaker notes, require that 
 
 1. Open <http://localhost:8000> to view your presentation
 
-   You can change the port by using `npm start -- --port 8001`.
+   You can change the port by using `npm start -- --port=8001`.
 
 
 ### Folder Structure
@@ -1167,4 +1173,4 @@ Some reveal.js features, like external Markdown and speaker notes, require that 
 
 MIT licensed
 
-Copyright (C) 2016 Hakim El Hattab, http://hakim.se
+Copyright (C) 2017 Hakim El Hattab, http://hakim.se

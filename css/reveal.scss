@@ -3,7 +3,7 @@
  * http://lab.hakim.se/reveal-js
  * MIT licensed
  *
- * Copyright (C) 2016 Hakim El Hattab, http://hakim.se
+ * Copyright (C) 2017 Hakim El Hattab, http://hakim.se
  */
 
 
@@ -387,6 +387,7 @@ body {
 	bottom: 0;
 	left: 0;
 	margin: auto;
+	pointer-events: none;
 
 	overflow: visible;
 	z-index: 1;
@@ -412,6 +413,7 @@ body {
     width: 100%;
     height: 100%;
     padding: 0px 0px;
+	pointer-events: auto;
 
 	z-index: 10;
 	transform-style: flat;
@@ -443,6 +445,17 @@ body {
 	z-index: 11;
 	opacity: 1;
 }
+
+.reveal .slides>section:empty,
+.reveal .slides>section>section:empty {
+	pointer-events: none;
+}
+
+//.reveal.center,
+//.reveal.center .slides,
+//.reveal.center .slides section {
+//	min-height: 0 !important;
+//}
 
 /* Don't allow interaction with invisible slides */
 .reveal .slides>section.future,
@@ -636,6 +649,10 @@ body {
 
 /*********************************************
  * CUBE TRANSITION
+ *
+ * WARNING:
+ * this is deprecated and will be removed in a
+ * future version.
  *********************************************/
 
 .reveal.cube .slides {
@@ -708,6 +725,10 @@ body {
 
 /*********************************************
  * PAGE TRANSITION
+ *
+ * WARNING:
+ * this is deprecated and will be removed in a
+ * future version.
  *********************************************/
 
 .reveal.page .slides {
@@ -892,6 +913,7 @@ body {
 		height: 100%;
 		opacity: 0;
 		visibility: hidden;
+		overflow: hidden;
 
 		background-color: rgba( 0, 0, 0, 0 );
 		background-position: 50% 50%;
@@ -907,6 +929,7 @@ body {
 	.reveal .slide-background.present {
 		opacity: 1;
 		visibility: visible;
+		z-index: 2;
 	}
 
 	.print-pdf .reveal .slide-background {
@@ -923,7 +946,11 @@ body {
 	max-height: none;
 	top: 0;
 	left: 0;
+	object-fit: cover;
 }
+	.reveal .slide-background[data-background-size="contain"] video {
+		object-fit: contain;
+	}
 
 /* Immediate transition style */
 .reveal[data-background-transition=none]>.backgrounds .slide-background,

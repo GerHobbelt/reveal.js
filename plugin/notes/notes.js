@@ -50,10 +50,11 @@ var RevealNotes = (function() {
 		/**
 		 * Posts the current slide data to the notes window
 		 */
-		function post() {
+		function post( event ) {
 
 			var slideElement = Reveal.getCurrentSlide(),
-				notesElement = slideElement.querySelector( 'aside.notes' );
+				notesElement = slideElement.querySelector( 'aside.notes' ),
+				fragmentElement = slideElement.querySelector( '.current-fragment' );
 
 			var messageData = {
 				namespace: 'reveal-notes',
@@ -68,6 +69,21 @@ var RevealNotes = (function() {
 			if( slideElement.hasAttribute( 'data-notes' ) ) {
 				messageData.notes = slideElement.getAttribute( 'data-notes' );
 				messageData.whitespace = 'pre-wrap';
+			}
+
+			// Look for notes defined in a fragment
+			if( fragmentElement ) {
+				var fragmentNotes = fragmentElement.querySelector( 'aside.notes' );
+				if( fragmentNotes ) {
+					notesElement = fragmentNotes;
+				}
+				else if( fragmentElement.hasAttribute( 'data-notes' ) ) {
+					messageData.notes = fragmentElement.getAttribute( 'data-notes' );
+					messageData.whitespace = 'pre-wrap';
+
+					// In case there are slide notes
+					notesElement = null;
+				}
 			}
 
 			// Look for notes defined in an aside element
