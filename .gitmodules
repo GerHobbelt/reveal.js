@@ -78,3 +78,6 @@
 [submodule "lib/font/FontAwesome"]
 	path = lib/font/FontAwesome
 	url = https://github.com/FortAwesome/Font-Awesome.git
+[submodule "lib/js/assert"]
+	path = lib/js/assert
+	url = git@github.com:GerHobbelt/commonjs-assert.git
