@@ -845,7 +845,9 @@
         // Prevent transitions while we're loading
         dom.wrapper.classList.add( 'no-transition' );
 
-        dom.wrapper.setAttribute( 'role', 'application' );
+        if (isSpeakerNotes() && dom.wrapper.classList) {
+            dom.wrapper.classList.add( 'speaker-notes' );
+        }
 
         dom.slides_wrapper = createSingletonNode( dom.wrapper, 'div', 'slides-wrapper', null );
         // now place wrapper at the 'slides' position in the DOM and wrap it around the slides when we didn't already:
@@ -1349,6 +1351,7 @@
 
         // Additional and optional background properties
         if( data.backgroundSize ) element.style.backgroundSize = data.backgroundSize;
+        if( data.backgroundSize ) element.setAttribute( 'data-background-size', data.backgroundSize );
         if( data.backgroundColor ) element.style.backgroundColor = data.backgroundColor;
         if( data.backgroundRepeat ) element.style.backgroundRepeat = data.backgroundRepeat;
         if( data.backgroundPosition ) element.style.backgroundPosition = data.backgroundPosition;
@@ -4605,8 +4608,9 @@
 
         updateControls();
         updateProgress();
-        updateBackground();
         updateSlideNumber();
+        updateSlidesVisibility();   //??????
+        updateBackground();
         updateNotes();
 
         formatEmbeddedContent();
@@ -5250,34 +5254,17 @@
 
         } );
 
-        // Stop any currently playing video background
+        // Stop content inside of previous backgrounds
         if( previousBackground ) {
 
-            var previousVideo = previousBackground.querySelector( 'video' );
-            if( previousVideo ) previousVideo.pause();
+            stopEmbeddedContent( previousBackground );
 
         }
 
+        // Start content in the current background
         if( currentBackground ) {
 
-            // Start video playback
-            var currentVideo = currentBackground.querySelector( 'video' );
-            if( currentVideo ) {
-
-                var startVideo = function() {
-                    currentVideo.currentTime = 0;
-                    currentVideo.play();
-                    currentVideo.removeEventListener( 'loadeddata', startVideo );
-                };
-
-                if( currentVideo.readyState > 1 ) {
-                    startVideo();
-                }
-                else {
-                    currentVideo.addEventListener( 'loadeddata', startVideo );
-                }
-
-            }
+            startEmbeddedContent( currentBackground );
 
             var backgroundImageURL = currentBackground.style.backgroundImage || '';
 
@@ -5477,11 +5464,20 @@
                 // Iframes
                 else if ( backgroundIframe ) {
                     var iframe = document.createElement( 'iframe' );
-                        iframe.setAttribute( 'src', backgroundIframe );
-                        iframe.style.width  = '100%';
-                        iframe.style.height = '100%';
-                        iframe.style.maxHeight = '100%';
-                        iframe.style.maxWidth = '100%';
+
+					// Only load autoplaying content when the slide is shown to
+					// avoid having it play in the background
+					if( /autoplay=(1|true|yes)/gi.test( backgroundIframe ) ) {
+						iframe.setAttribute( 'data-src', backgroundIframe );
+					}
+					else {
+						iframe.setAttribute( 'src', backgroundIframe );
+					}
+
+					iframe.style.width = '100%';
+					iframe.style.height = '100%';
+					iframe.style.maxHeight = '100%';
+					iframe.style.maxWidth = '100%';
 
                     background.appendChild( iframe );
                 }
@@ -5594,11 +5590,12 @@
      * Start playback of any embedded content inside of
      * the given element.
      *
-     * @param {HTMLElement} slide
+     * @param {HTMLElement} element
      */
     function startEmbeddedContent( element ) {
 
         if( element && !isSpeakerNotes() ) {
+
             // Restart GIFs
             toArray( element.querySelectorAll( 'img[src$=".gif"]' ) ).forEach( function( el ) {
                 // Setting the same unchanged source like this was confirmed
@@ -5612,8 +5609,19 @@
                     return;
                 }
 
-                if( el.hasAttribute( 'data-autoplay' ) && typeof el.play === 'function' ) {
-                    el.play();
+				// Autoplay is always on for slide backgrounds
+				var autoplay = el.hasAttribute( 'data-autoplay' ) || !!closestParent( el, '.slide-background' );
+
+				if( autoplay && typeof el.play === 'function' ) {
+
+					if( el.readyState > 1 ) {
+						startEmbeddedMedia( { target: el } );
+					}
+					else {
+						el.removeEventListener( 'loadeddata', startEmbeddedMedia ); // remove first to avoid dupes
+						el.addEventListener( 'loadeddata', startEmbeddedMedia );
+					}
+
                 }
             } );
 
@@ -5645,15 +5653,36 @@
                     el.contentWindow.postMessage( '["asciicast:play"]', '*' );
                 }
             });
+
         }
 
     }
+
+	/**
+	 * Starts playing an embedded video/audio element after
+	 * it has finished loading.
+	 *
+	 * @param {object} event
+	 */
+	function startEmbeddedMedia( event ) {
+
+		var isAttachedToDOM = !!closestParent( event.target, 'html' ),
+			isVisible  		= !!closestParent( event.target, '.present' );
+
+		if( isAttachedToDOM && isVisible ) {
+			event.target.currentTime = 0;
+			event.target.play();
+		}
+
+		event.target.removeEventListener( 'loadeddata', startEmbeddedMedia );
+
+	}
 
     /**
      * "Starts" the content of an embedded iframe using the
      * postMessage API.
      *
-     * @param {object} event - postMessage API event
+     * @param {object} event
      */
     function startEmbeddedIframe( event ) {
 
@@ -5661,61 +5690,72 @@
 
         if( iframe && iframe.contentWindow ) {
 
-            // YouTube postMessage API
-            if( /youtube\.com\/embed\//.test( iframe.getAttribute( 'src' ) ) && iframe.hasAttribute( 'data-autoplay' ) ) {
-                iframe.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
-            }
-            // Vimeo postMessage API
-            else if( /player\.vimeo\.com\//.test( iframe.getAttribute( 'src' ) ) && iframe.hasAttribute( 'data-autoplay' ) ) {
-                iframe.contentWindow.postMessage( '{"method":"play"}', '*' );
-            }
-            // Generic postMessage API
-            else {
-                iframe.contentWindow.postMessage( 'slide:start', '*' );
-            }
+			var isAttachedToDOM = !!closestParent( event.target, 'html' ),
+				isVisible  		= !!closestParent( event.target, '.present' );
 
-        }
+			if( isAttachedToDOM && isVisible ) {
 
-    }
+				var autoplay = iframe.hasAttribute( 'data-autoplay' ) || !!closestParent( iframe, '.slide-background' );
+
+				// YouTube postMessage API
+				if( /youtube\.com\/embed\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
+					iframe.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
+				}
+				// Vimeo postMessage API
+				else if( /player\.vimeo\.com\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
+					iframe.contentWindow.postMessage( '{"method":"play"}', '*' );
+				}
+				// Generic postMessage API
+				else {
+					iframe.contentWindow.postMessage( 'slide:start', '*' );
+				}
+
+			}
+
+		}
+
+	}
 
     /**
      * Stop playback of any embedded content inside of
      * the targeted slide.
      *
-     * @param {HTMLElement} slide
+     * @param {HTMLElement} element
+     * @param {boolean} autoplay Optionally override the
+     * autoplay setting of media elements
      */
-    function stopEmbeddedContent( slide ) {
+    function stopEmbeddedContent( element, autoplay ) {
 
-        if( slide && slide.parentNode ) {
+        if( element && element.parentNode ) {
             // HTML5 media elements
-            toArray( slide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
+            toArray( element.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.pause === 'function' ) {
                     el.pause();
                 }
             } );
 
             // Generic postMessage API for non-lazy loaded iframes
-            toArray( slide.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
+            toArray( element.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
                 el.contentWindow.postMessage( 'slide:stop', '*' );
                 el.removeEventListener( 'load', startEmbeddedIframe );
             } );
 
             // YouTube postMessage API
-            toArray( slide.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
+            toArray( element.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
                     el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
                 }
             });
 
             // Vimeo postMessage API
-            toArray( slide.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
+            toArray( element.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
                     el.contentWindow.postMessage( '{"method":"pause"}', '*' );
                 }
             } );
 
             // Lazy loading iframes
-            toArray( slide.querySelectorAll( 'iframe[data-src]' ) ).forEach( function( el ) {
+            toArray( element.querySelectorAll( 'iframe[data-src]' ) ).forEach( function( el ) {
                 // Only removing the src doesn't actually unload the frame
                 // in all browsers (Firefox) so we set it to blank first
                 el.setAttribute( 'src', 'about:blank' );
@@ -6501,7 +6541,7 @@ if (0) {
             // automatically set the autoSlide duration to the
             // length of that media. Not applicable if the slide
             // is divided up into fragments.
-        //
+            //
             // playbackRate is accounted for in the duration.
             if( currentSlide.querySelectorAll( '.fragment' ).length === 0 ) {
                 toArray( currentSlide.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
