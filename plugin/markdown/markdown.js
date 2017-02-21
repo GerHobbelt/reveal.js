@@ -25,23 +25,6 @@
     }
 }(this, function (marked, hljs) {
 
-    if( typeof marked === 'undefined' ) {
-        throw 'The reveal.js Markdown plugin requires marked to be loaded';
-    }
-
-    if( typeof hljs !== 'undefined' ) {
-        marked.setOptions({
-            highlight: function( code, lang ) {
-                if ( lang ) {
-                    return hljs.highlight( lang, code ).value;
-                }
-                else {
-                    return hljs.highlightAuto( code ).value;
-                }
-            }
-        });
-    }
-
 	var DEFAULT_SLIDE_SEPARATOR = '^\r?\n---\r?\n$',
         DEFAULT_NOTES_SEPARATOR = 'note:',
         DEFAULT_ELEMENT_ATTRIBUTES_SEPARATOR = '\\\.element\\\s*?(.+?)$',
@@ -133,7 +116,7 @@
         var notesMatch = content.split( new RegExp( options.notesSeparator, 'mgi' ) );
 
         if( notesMatch.length === 2 ) {
-            content = notesMatch[0] + '<aside class="notes" data-markdown>' + notesMatch[1].trim() + '</aside>';
+			content = notesMatch[0] + '<aside class="notes">' + marked(notesMatch[1].trim()) + '</aside>';
         }
 
 		// prevent script end tags in the content from interfering
@@ -202,7 +185,7 @@
                 markdownSections += '<section '+ options.attributes +'>';
 
                 sectionStack[i].forEach( function( child ) {
-                    markdownSections += '<section data-markdown>' +  createMarkdownSlide( child, options ) + '</section>';
+                    markdownSections += '<section data-markdown>' + createMarkdownSlide( child, options ) + '</section>';
                 } );
 
                 markdownSections += '</section>';
@@ -407,6 +390,29 @@
     return {
 
         initialize: function() {
+	    if( typeof marked === 'undefined' ) {
+	        throw 'The reveal.js Markdown plugin requires marked to be loaded';
+	    }
+
+	    if( typeof hljs !== 'undefined' ) {
+	        marked.setOptions({
+	            highlight: function( code, lang ) {
+	                if ( lang ) {
+					return hljs.highlightAuto( code, [lang] ).value;
+	                }
+	                else {
+	                    return hljs.highlightAuto( code ).value;
+	                }
+	            }
+	        });
+	    }
+
+			var options = Reveal.getConfig().markdown;
+
+			if ( options ) {
+				marked.setOptions( options );
+			}
+
             processSlides();
             convertSlides();
         },

@@ -1,7 +1,6 @@
-[submodule "lib/plugins/zoom"]
-	path = lib/plugins/zoom
+[submodule "lib/js/zoom.js"]
+	path = lib/js/zoom.js
 	url = git@github.com:GerHobbelt/zoom.js.git
-	ignore = dirty
 [submodule "lib/plugins/highlight"]
 	path = lib/plugins/highlight
 	url = git@github.com:GerHobbelt/highlight.js.git
@@ -62,13 +61,16 @@
 	path = lib/js/nprogress
 	url = git@github.com:GerHobbelt/nprogress.git
 	ignore = dirty
-[submodule "lib/LocalConnection"]
-	path = lib/LocalConnection
+[submodule "lib/js/LocalConnection"]
+	path = lib/js/LocalConnection
 	url = git@github.com:GerHobbelt/LocalConnection.js.git
-	ignore = dirty
 [submodule "lib/plugins/hilitor"]
 	path = lib/plugins/hilitor
 	url = git@github.com:GerHobbelt/hilitor.git
+	ignore = dirty
+[submodule "lib/js/scopedQuerySelectorShim"]
+	path = lib/js/scopedQuerySelectorShim
+	url = git@github.com:GerHobbelt/scopedQuerySelectorShim.git
 	ignore = dirty
 [submodule "lib/js/MathJax"]
 	path = lib/js/MathJax
@@ -76,3 +78,6 @@
 [submodule "lib/font/FontAwesome"]
 	path = lib/font/FontAwesome
 	url = https://github.com/FortAwesome/Font-Awesome.git
+[submodule "lib/js/assert"]
+	path = lib/js/assert
+	url = git@github.com:GerHobbelt/commonjs-assert.git

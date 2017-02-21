@@ -1,7 +1,9 @@
 /* global module:false */
 module.exports = function(grunt) {
     var port = grunt.option('port') || 8000;
-    var base = grunt.option('base') || '.';
+    var root = grunt.option('root') || '.';
+
+    if (!Array.isArray(root)) root = [root];
 
     // Load grunt tasks automatically, when needed
     require("jit-grunt")(grunt, {
@@ -26,7 +28,7 @@ module.exports = function(grunt) {
                 ' * http://lab.hakim.se/reveal-js\n' +
                 ' * MIT licensed\n' +
                 ' *\n' +
-                ' * Copyright (C) 2015 Hakim El Hattab, http://hakim.se\n' +
+                ' * Copyright (C) 2016 Hakim El Hattab, http://hakim.se\n' +
                 ' */'
         },
 
@@ -35,29 +37,29 @@ module.exports = function(grunt) {
             highlight: {
                 files: [
                     {
-                        expand: true, 
-                        cwd: 'lib/plugins/highlight/src/', 
-                        src: ['styles/**'], 
+                        expand: true,
+                        cwd: 'lib/plugins/highlight/src/',
+                        src: ['styles/**'],
                         dest: 'lib/css/highlight/'
                     },
                     {
-                        expand: true, 
-                        cwd: 'lib/plugins/highlight/src/', 
-                        src: ['languages/**'], 
+                        expand: true,
+                        cwd: 'lib/plugins/highlight/src/',
+                        src: ['languages/**'],
                         dest: 'lib/css/highlight/'
                     }
                 ]
             },
-			dist: {
-				files: [
-					{src: ['js/reveal.min.js'], dest: 'dist/'},
-					{src: ['css/reveal.min.css'], dest:'dist/'},
-					{expand: true, src: ['css/print/*.css'], dest: 'dist/', filter: 'isFile'},
-					{expand: true, src: ['css/theme/*.css'], dest: 'dist/', filter: 'isFile'},
-					{expand: true, src: ['plugin/**'], dest: 'dist/'},
-					{expand: true, src: ['lib/**/*.{css,js}','lib/font/**'], dest: 'dist/'}
-				]
-			}
+            dist: {
+                files: [
+                    {src: ['js/reveal.min.js'], dest: 'dist/'},
+                    {src: ['css/reveal.min.css'], dest:'dist/'},
+                    {expand: true, src: ['css/print/*.css'], dest: 'dist/', filter: 'isFile'},
+                    {expand: true, src: ['css/theme/*.css'], dest: 'dist/', filter: 'isFile'},
+                    {expand: true, src: ['plugin/**'], dest: 'dist/'},
+                    {expand: true, src: ['lib/**/*.{css,js}','lib/font/**'], dest: 'dist/'}
+                ]
+            }
         },
 
         qunit: {
@@ -129,8 +131,8 @@ module.exports = function(grunt) {
             files: {
               'dist/css/<%= pkg.name %>.min.css': 'dist/css/<%= pkg.name %>.css',
               'dist/css/<%= pkg.name %>-theme.min.css': 'dist/css/<%= pkg.name %>-theme.css'
-                }
             }
+          }
         },
 
         autoprefixer: {
@@ -142,7 +144,7 @@ module.exports = function(grunt) {
         cssmin: {
             compress: {
                 files: {
-					'css/reveal.min.css': [ 'css/reveal.css' ],
+                    'css/reveal.min.css': [ 'css/reveal.css' ],
                     'lib/css/font-awesome.min.css': [ 'lib/css/font-awesome.css' ]
                 }
             }
@@ -153,6 +155,7 @@ module.exports = function(grunt) {
                 curly: false,
                 eqeqeq: true,
                 immed: true,
+                esnext: true,
                 latedef: true,
                 newcap: true,
                 noarg: true,
@@ -177,11 +180,12 @@ module.exports = function(grunt) {
             server: {
                 options: {
                     port: port,
-                    base: base,
+                    base: root,
                     livereload: true,
                     open: true
                 }
-            }
+            },
+
         },
 
         zip: {
@@ -191,14 +195,12 @@ module.exports = function(grunt) {
                 'js/**',
                 'lib/**',
                 'images/**',
-                'plugin/**'
+                'plugin/**',
+                '**.md'
             ]
         },
 
         watch: {
-            options: {
-                livereload: true
-            },
             js: {
                 files: [ 'Gruntfile.js', 'js/reveal.js' ],
                 tasks: 'js'
@@ -212,8 +214,14 @@ module.exports = function(grunt) {
                 tasks: 'css-core'
             },
             html: {
-                files: [ 'index.html']
-            }
+                files: root.map(path => path + '/*.html')
+            },
+            markdown: {
+                files: root.map(path => path + '/*.md')
+            },
+            options: {
+                livereload: true
+            },
         },
 
         clean: {
@@ -224,6 +232,12 @@ module.exports = function(grunt) {
                 '!<%= config.buildDir %>/Procfile',
                 '!<%= config.buildDir %>/CNAME'
             ]
+        },
+
+        retire: {
+            js: ['js/reveal.js', 'lib/js/*.js', 'plugin/**/*.js'],
+            node: ['.'],
+            options: {}
         },
 
         buildcontrol: {
@@ -250,12 +264,13 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks( 'grunt-contrib-cssmin' );
     grunt.loadNpmTasks( 'grunt-contrib-uglify' );
     grunt.loadNpmTasks( 'grunt-contrib-watch' );
-    grunt.loadNpmTasks( 'grunt-sass' );
+    //grunt.loadNpmTasks( 'grunt-sass' );
     grunt.loadNpmTasks( 'grunt-contrib-less' );
     grunt.loadNpmTasks( 'grunt-contrib-copy' );
     grunt.loadNpmTasks( 'grunt-contrib-connect' );
     grunt.loadNpmTasks( 'grunt-autoprefixer' );
     grunt.loadNpmTasks( 'grunt-zip' );
+    grunt.loadNpmTasks( 'grunt-retire' );
 
     // Default task
     grunt.registerTask( 'default', [ 'copy:highlight', 'css', 'js' ] );
@@ -290,7 +305,7 @@ module.exports = function(grunt) {
         grunt.log.warn('You must provide a target for deploy task.');
         return;
       }
-      
+
       grunt.task.run(['build', 'buildcontrol:' + target]);
     });
 };
