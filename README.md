@@ -256,6 +256,19 @@ Special syntax (in html comment) is available for adding attributes to the slide
 </section>
 ```
 
+#### Configuring *marked*
+
+We use [marked](https://github.com/chjj/marked) to parse Markdown. To customise marked's rendering, you can pass in options when [configuring Reveal](#configuration):
+
+```javascript
+Reveal.initialize({
+	// Options which are passed into marked
+	// See https://github.com/chjj/marked#options-1
+	markdown: {
+		smartypants: true
+	}
+});
+```
 
 ### Configuration
 
@@ -335,13 +348,13 @@ Reveal.initialize({
     previewLinks: false,
 
     // Transition style
-    transition: 'default', // default/cube/page/slide/concave/convex/zoom/linear/fade/none
+    transition: 'slide', // none/fade/cube/page/slide/concave/convex/zoom/linear
 
     // Transition speed
     transitionSpeed: 'default', // default/fast/slow
 
     // Transition style for full page slide backgrounds
-    backgroundTransition: 'default', // default/none/fade/slide/concave/convex/zoom
+    backgroundTransition: 'fade', // none/fade/slide/concave/convex/zoom
 
     // Number of slides away from the current that are visible
     viewDistance: 3,
@@ -406,6 +419,20 @@ Reveal.initialize({
 });
 ```
 
+If you wish to disable this behavior and do your own scaling (e.g. using media queries), try these settings:
+
+```javascript
+Reveal.initialize({
+
+	...
+
+	width: "100%",
+	height: "100%",
+	margin: 0,
+	minScale: 1,
+	maxScale: 1
+});
+```
 
 ### Dependencies
 
@@ -445,6 +472,7 @@ You can add your own extensions using the same syntax. The following properties 
 - **callback**: [optional] Function to execute when the script has loaded
 - **condition**: [optional] Function which must return true for the script to be loaded
 
+To load these dependencies, reveal.js requires [head.js](http://headjs.com/) *(a script loading library)* to be loaded before reveal.js.
 
 ### Ready Event
 
@@ -1075,7 +1103,7 @@ Reveal.initialize({
 
 Then:
 
-1. Install [Node.js](http://nodejs.org/) (1.0.0 or later)
+1. Install [Node.js](http://nodejs.org/) (4.0.0 or later)
 2. Run ```npm install```
 3. Run ```node plugin/notes-server```
 
@@ -1357,7 +1385,7 @@ The core of reveal.js is very easy to install. You'll simply need to download a 
 
 Some reveal.js features, like external Markdown and speaker notes, require that presentations run from a local web server. The following instructions will set up such a server as well as all of the development tasks needed to make edits to the reveal.js source code.
 
-1. Install [Node.js](http://nodejs.org/) (1.0.0 or later)
+1. Install [Node.js](http://nodejs.org/) (4.0.0 or later)
 
 1. Clone the reveal.js repository
 ```sh
@@ -1381,7 +1409,7 @@ $ npm install
 
 1. Open <http://localhost:8000> to view your presentation
 
-   You can change the port by using `npm start -- --port 8001`.
+   You can change the port by using `npm start -- --port=8001`.
 
 
 ### Folder Structure

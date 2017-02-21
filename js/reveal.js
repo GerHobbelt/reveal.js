@@ -39,7 +39,7 @@
 
     // these *_SELECTOR defines are all `dom.wrapper` based, which explains why they won't have the `.reveal` root/wrapper DIV class in them:
     // The reveal.js version
-    var VERSION = '3.3.0';
+	var VERSION = '3.4.1';
 
     var SLIDES_SELECTOR = '.slides > section, .slides > section > section',
         HORIZONTAL_SLIDES_SELECTOR = '.slides > section',
@@ -1030,14 +1030,14 @@
 
         // Dimensions of the PDF pages
         var pageWidth = Math.floor( slideSize.width * ( 1 + config.margin ) ),
-            pageHeight = Math.floor( slideSize.height * ( 1 + config.margin  ) );
+            pageHeight = Math.floor( slideSize.height * ( 1 + config.margin ) );
 
         // Dimensions of slides within the pages
         var slideWidth = slideSize.width,
             slideHeight = slideSize.height;
 
         // Let the browser know what page size we want to print
-        injectStyleSheet( '@page{size:'+ pageWidth +'px '+ pageHeight +'px; margin: 0;}' );
+        injectStyleSheet( '@page{size:'+ pageWidth +'px '+ pageHeight +'px; margin: 0 0 -1px 0;}' );
 
         // Limit the size of certain elements to the dimensions of the slide
         injectStyleSheet( '.reveal section > img, .reveal section > video, .reveal section > iframe{max-width: ' + slideWidth + 'px; max-height:' + slideHeight + 'px}' );
@@ -1099,18 +1099,6 @@
                 slide.style.width = targetInfo.slideWidth + 'px';
                 slide.style.height = targetInfo.slideHeight + 'px';
 
-/*
-TBD this is the old code; next marker starts the new code. To be checked and re-evaluated. [GerHobbelt]
-*/
-
-                if( slide.scrollHeight > targetInfo.slideHeight ) {
-                    slide.style.overflow = 'hidden';
-                }
-
-/*
-TBD end of old code, start of new code
-*/
-
                 // TODO Backgrounds need to be multiplied when the slide
                 // stretches over multiple pages
                 var background = slide.querySelector( ':scope > .slide-background' );
@@ -1120,6 +1108,12 @@ TBD end of old code, start of new code
                     background.style.top = -top + 'px';
                     background.style.left = -left + 'px';
                 }
+
+// TBD: new code for backgrounds is this little blob:
+				if( slide.slideBackgroundElement ) {
+					page.insertBefore( slide.slideBackgroundElement, slide );
+				}
+// TBD: end of code blob
 
                 // Inject notes if `showNotes` is enabled
                 if( config.showNotes ) {
@@ -1169,6 +1163,9 @@ TBD end of old code, start of new code
         toArray( dom.slides.querySelectorAll( '.fragment' ) ).forEach( function( fragment ) {
             fragment.classList.add( 'visible' );
         } );
+
+		// Notify subscribers that the PDF layout is good to go
+		dispatchEvent( 'pdf-ready' );
 
         return true;
     }
@@ -2553,6 +2550,9 @@ TBD end of old code, start of new code
                 '<div class="spinner"></div>',
                 '<div class="viewport">',
                     '<iframe src="'+ url +'"></iframe>',
+				'<small class="viewport-inner">',
+					'<span class="x-frame-error">Unable to load iframe. This is likely due to the site\'s policy (x-frame-options).</span>',
+				'</small>',
                 '</div>'
             ].join('');
 

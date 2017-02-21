@@ -1,6 +1,6 @@
 {
   "name": "reveal.js",
-  "version": "3.3.0",
+  "version": "3.4.1",
   "description": "The HTML Presentation Framework",
   "homepage": "http://lab.hakim.se/reveal-js",
   "subdomain": "revealjs",
@@ -19,7 +19,7 @@
     "url": "git://github.com/hakimel/reveal.js.git"
   },
   "engines": {
-    "node": "~4.1.1"
+    "node": ">=4.0.0"
   },
   "dependencies": {
   },
@@ -43,7 +43,7 @@
     "grunt-autoprefixer": "~3.0.3",
     "grunt-zip": ">=0.17.1",
     "grunt": ">=1.0.1",
-    "node-sass": "~3.7.0",
+    "node-sass": "~3.13.0",
     "jit-grunt": "^0.9.1",
     "time-grunt": "^1.2.1"
   },
