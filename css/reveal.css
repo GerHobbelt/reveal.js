@@ -5,7 +5,7 @@
  * http://lab.hakim.se/reveal-js
  * MIT licensed
  *
- * Copyright (C) 2016 Hakim El Hattab, http://hakim.se
+ * Copyright (C) 2017 Hakim El Hattab, http://hakim.se
  */
 
 
@@ -136,12 +136,12 @@ body
 }
     .reveal .slides section .fragment.visible {
         opacity: 1;
-        visibility: visible;
+        visibility: inherit;
     }
 
 .reveal .slides section .fragment.grow {
     opacity: 1;
-    visibility: visible;
+    visibility: inherit;
 }
     .reveal .slides section .fragment.grow.visible {
         -webkit-transform: scale( 1.3 );
@@ -153,7 +153,7 @@ body
 
 .reveal .slides section .fragment.shrink {
     opacity: 1;
-    visibility: visible;
+    visibility: inherit;
 }
     .reveal .slides section .fragment.shrink.visible {
         -webkit-transform: scale( 0.7 );
@@ -202,7 +202,7 @@ body
 
 .reveal .slides section .fragment.fade-out {
     opacity: 1;
-    visibility: visible;
+    visibility: inherit;
 }
     .reveal .slides section .fragment.fade-out.visible {
         opacity: 0;
@@ -211,16 +211,16 @@ body
 
 .reveal .slides section .fragment.semi-fade-out {
     opacity: 1;
-    visibility: visible;
+    visibility: inherit;
 }
     .reveal .slides section .fragment.semi-fade-out.visible {
         opacity: 0.5;
-        visibility: visible;
+        visibility: inherit;
     }
 
 .reveal .slides section .fragment.strike {
     opacity: 1;
-    visibility: visible;
+    visibility: inherit;
 }
     .reveal .slides section .fragment.strike.visible {
         text-decoration: line-through;
@@ -259,7 +259,7 @@ body
 }
     .reveal .slides section .fragment.current-visible.current-fragment {
         opacity: 1;
-        visibility: visible;
+        visibility: inherit;
     }
 
 .reveal .slides section .fragment.highlight-red,
@@ -269,7 +269,7 @@ body
 .reveal .slides section .fragment.highlight-blue,
 .reveal .slides section .fragment.highlight-current-blue {
     opacity: 1;
-    visibility: visible;
+    visibility: inherit;
 }
     .reveal .slides section .fragment.highlight-red.visible {
         color: #ff2c2d
@@ -632,7 +632,7 @@ body
     bottom: 0;
     left: 0;
     margin: auto;
-
+    pointer-events: none;
     overflow: visible;
     /* z-index: 1;          -- removing this one ensures that the search plugin always shows up on top like it should. */
 
@@ -673,7 +673,7 @@ body
     width: 100%;
     height: 100%;
     padding: 0px 0px;
-
+    pointer-events: auto;
     z-index: 10;
 
   -webkit-transform-style: flat;
@@ -816,6 +816,11 @@ body
     */
 
     display: block;
+}
+
+.reveal .slides > section:empty,
+.reveal .slides > section > section:empty {
+  pointer-events: none; 
 }
 
 .reveal.center,
@@ -1078,6 +1083,10 @@ body
 
 /*********************************************
  * CUBE TRANSITION
+ *
+ * WARNING:
+ * this is deprecated and will be removed in a
+ * future version.
  *********************************************/
 
 .reveal.cube .slides {
@@ -1155,6 +1164,10 @@ body
 
 /*********************************************
  * PAGE TRANSITION
+ *
+ * WARNING:
+ * this is deprecated and will be removed in a
+ * future version.
  *********************************************/
 
 .reveal.page .slides {
@@ -1459,7 +1472,7 @@ body
         left: 0;
         opacity: 0;
         visibility: hidden;
-
+        overflow: hidden;
         background-color: rgba( 0, 0, 0, 0 );
         background-position: 50% 50%;
         background-repeat: no-repeat;
@@ -1480,6 +1493,7 @@ body
         display: block;
         opacity: 1;
         visibility: visible;
+        z-index: 2; 
     }
 
     /* override the display:none for `.reveal .slide-background` above, so we can have visible background transitions */
@@ -1508,11 +1522,14 @@ body
     max-height: none;
     top: 0;
     left: 0;
+  -o-object-fit: cover;
+     object-fit: cover; 
 }
 
-
-
-
+.reveal .slide-background[data-background-size="contain"] video {
+  -o-object-fit: contain;
+     object-fit: contain; 
+}
 
 /* Immediate transition style */
 .reveal[data-background-transition=none] > .backgrounds .slide-background,
@@ -1886,6 +1903,7 @@ body
             display: inline-block;
             width: 40px;
             height: 40px;
+            line-height: 36px;
             padding: 0 10px;
             float: right;
             opacity: 0.6;
@@ -1942,6 +1960,26 @@ body
         opacity: 1;
         visibility: visible;
     }
+
+.reveal .overlay.overlay-preview.loaded .viewport-inner {
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  top: 45%;
+  width: 100%;
+  text-align: center;
+  letter-spacing: normal; 
+}
+
+.reveal .overlay.overlay-preview .x-frame-error {
+  opacity: 0;
+  -webkit-transition: opacity 0.3s ease 0.3s;
+          transition: opacity 0.3s ease 0.3s; 
+}
+
+.reveal .overlay.overlay-preview.loaded .x-frame-error {
+  opacity: 1; 
+}
 
     .reveal .overlay.overlay-preview.loaded .spinner {
         opacity: 0;

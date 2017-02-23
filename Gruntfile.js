@@ -28,7 +28,7 @@ module.exports = function(grunt) {
                 ' * http://lab.hakim.se/reveal-js\n' +
                 ' * MIT licensed\n' +
                 ' *\n' +
-                ' * Copyright (C) 2016 Hakim El Hattab, http://hakim.se\n' +
+                ' * Copyright (C) 2017 Hakim El Hattab, http://hakim.se\n' +
                 ' */'
         },
 
@@ -88,7 +88,7 @@ module.exports = function(grunt) {
                     {
                         expand: true,
                         cwd: 'css/theme/source-sass',
-                        src: ['*.scss'],
+                        src: ['*.sass', '*.scss'],
                         dest: 'css/theme',
                         ext: '.css'
                     }
@@ -206,7 +206,12 @@ module.exports = function(grunt) {
                 tasks: 'js'
             },
             theme: {
-                files: [ 'css/theme/source-sass/*.scss', 'css/theme/template-sass/*.scss' ],
+                files: [ 
+                    'css/theme/source-sass/*.sass', 
+                    'css/theme/source-sass/*.scss', 
+                    'css/theme/template-sass/*.sass', 
+                    'css/theme/template-sass/*.scss' 
+                ],
                 tasks: 'css-themes'
             },
             css: {
