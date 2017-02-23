@@ -386,6 +386,210 @@ body
 
 
 /*********************************************
+ * ALTERNATIVE CONTROLS
+ *********************************************/
+
+.reveal .controls-alt {
+	$size: 52px;
+	$length: floor($size * 0.6);
+	$spacing: 8px;
+	$thickness: 6px;
+	$angle: 44deg;
+	$angleHover: 40deg;
+	$angleActive: 36deg;
+
+	@mixin arrowTransform( $angle ) {
+		&:before {
+			transform: translateX(($size - $length)/2) translateY(($size - $thickness)/2) rotate( $angle );
+		}
+
+		&:after {
+			transform: translateX(($size - $length)/2) translateY(($size - $thickness)/2) rotate( -$angle );
+		}
+	}
+
+	display: none;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1;
+	color: #fff;
+	pointer-events: none;
+
+	button {
+		position: absolute;
+		padding: 0;
+		width: $size;
+		height: $size;
+		background-color: transparent;
+		border: 0;
+		outline: 0;
+		cursor: pointer;
+		color: currentColor;
+		transform: scale(.9999);
+		transition: all 0.2s ease;
+		z-index: 2; // above slides
+		pointer-events: auto;
+
+		visibility: hidden;
+		opacity: 0;
+
+		-webkit-appearance: none;
+		-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+	}
+
+	button:before,
+	button:after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: $length;
+		height: $thickness;
+		border-radius: $thickness/2;
+		background-color: currentColor;
+
+		transition: all 0.15s ease, background-color 0.8s ease;
+		transform-origin: $thickness/2 50%;
+		will-change: transform;
+	}
+
+	button {
+		@include arrowTransform( $angle );
+
+		&:hover {
+			@include arrowTransform( $angleHover );
+		}
+
+		&:active {
+			@include arrowTransform( $angleActive );
+		}
+	}
+
+	.navigate-left {
+		top: 50%;
+		left: $spacing;
+		transform: translateY(-50%);
+	}
+
+	.navigate-right {
+		top: 50%;
+		right: $spacing;
+		transform: translateY(-50%) rotate( 180deg );
+	}
+
+	.navigate-up {
+		top: $spacing;
+		left: 50%;
+		transform: translateX(-50%) rotate( 90deg );
+	}
+
+	.navigate-down {
+		bottom: $spacing;
+		left: 50%;
+		transform: translateX(-50%) rotate( -90deg );
+	}
+
+	// Back arrow style: "faded":
+	// Strongly deemphasizes backwards navigation in favor of drawing
+	// attention to forwards navigation
+	&[data-controls-back-arrows="faded"] .navigate-left.enabled,
+	&[data-controls-back-arrows="faded"] .navigate-up.enabled {
+		opacity: 0.3;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+
+	// Back arrow style: "hidden":
+	// Never shows any arrows for backwards navigation
+	&[data-controls-back-arrows="hidden"] .navigate-left.enabled,
+	&[data-controls-back-arrows="hidden"] .navigate-up.enabled {
+		opacity: 0;
+		visibility: hidden;
+	}
+
+	// Any control button that can be clicked is "enabled"
+	.enabled {
+		visibility: visible;
+		opacity: 0.7;
+		cursor: pointer;
+	}
+
+	// Any control button that leads to showing or hiding
+	// a fragment
+	.enabled.fragmented {
+		opacity: 0.3;
+	}
+
+	.enabled:hover,
+	.enabled.fragmented:hover {
+		opacity: 1;
+	}
+
+	@mixin bottom-right-controls() {
+		$spacing: 12px;
+		$innerSpacing: 20px;
+
+		& {
+			top: auto;
+			bottom: $spacing;
+			right: $spacing;
+			left: auto;
+			transform: scale(0.85);
+			transform-origin: 100% 100%;
+		}
+
+		.navigate-left,
+		.navigate-right,
+		.navigate-up,
+		.navigate-down {
+			top: auto;
+			left: auto;
+		}
+
+		.navigate-left {
+			right: $size + $innerSpacing*2;
+			bottom: $innerSpacing;
+		}
+		.navigate-right {
+			right: 0;
+			bottom: $innerSpacing;
+		}
+		.navigate-up {
+			right: $innerSpacing;
+			bottom: $size + $innerSpacing*2;
+		}
+		.navigate-down {
+			right: $innerSpacing;
+			bottom: 0;
+		}
+	}
+
+	&[data-controls-layout="bottom-right"] {
+		@include bottom-right-controls()
+	}
+
+	@media screen and (max-width: 500px) {
+		@include bottom-right-controls()
+	}
+}
+
+.reveal.has-dark-background .controls-alt button:after,
+.reveal.has-dark-background .controls-alt button:before {
+	background-color: #fff;
+}
+
+.reveal.has-light-background .controls-alt button:after,
+.reveal.has-light-background .controls-alt button:before {
+	background-color: #000;
+}
+
+
+/*********************************************
  * PROGRESS BAR
  *********************************************/
 
@@ -405,11 +609,12 @@ body
         font-size: 16px;
         display: block;
         position: absolute;
-        height: 20px;
+        height: 10px;
         // width: 100%; -- this would cover the lower 20px of the screen and catch all mouse activity there without showing anything
-        top: -20px;
+        top: -10px;
     }
-    .reveal .progress span {
+    
+    span {
         display: block;
         height: 100%;
         width: 0px;
@@ -418,6 +623,7 @@ body
 
         transition: width 2s cubic-bezier(0.260, 0.860, 0.440, 0.985);
     }
+}
 
 
 
@@ -530,7 +736,7 @@ body
         display: block;
         position: absolute;
         height: 20px;
-        /* width: 100%; -- this would cover the lower 20px of the screen and catch all mouse activity there without showing anything */
+        // width: 100%; -- this would cover the lower 20px of the screen and catch all mouse activity there without showing anything
         top: -20px;
     }
 
@@ -1223,6 +1429,8 @@ body
 .reveal.appear[data-transition-speed="slow"] .slides>section>section.present:not([data-transition]) {
     transition-duration: 1200ms;
 }
+
+
 /*********************************************
  * PAUSED MODE
  *********************************************/
@@ -1933,11 +2141,11 @@ body
 .reveal .speaker-notes {
     display: none;
     position: absolute;
-    width: 70%;
-    max-height: 15%;
-    left: 15%;
-    bottom: 26px;
-    padding: 10px;
+	width: 20vw;
+	height: 100%;
+	top: 0;
+	left: 100%;
+	padding: 14px;
     z-index: 1;
     font-size: 18px;
     line-height: 1.4;
@@ -1948,10 +2156,22 @@ body
     text-align: left;
     font-family: Helvetica, sans-serif;
     -webkit-overflow-scrolling: touch;
+
+	&:before {
+		content: 'Speaker notes';
+		display: block;
+		margin-bottom: 10px;
+		opacity: 0.5;
+	}
 }
 
-.reveal .speaker-notes.visible:not(:empty) {
-    display: block;
+.reveal.show-notes {
+	max-width: 80vw;
+	overflow: visible;
+
+	.speaker-notes.visible:not(:empty) {
+	    display: block;
+	}
 }
 
 @media screen and (max-width: 1024px) {

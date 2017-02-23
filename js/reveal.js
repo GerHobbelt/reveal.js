@@ -99,6 +99,13 @@
             // {boolean} Display controls in the bottom right corner
             controls: true,
 
+            // Determines where controls appear, "edges" or "bottom-right"
+            controlsLayout: 'bottom-right',
+
+            // Specifies the display rules for backwards navigation arrows;
+            // "faded", "hidden" or "visible"
+            controlsBackArrows: 'faded',
+
             // {boolean} Display a presentation progress bar
             progress: true,
 
@@ -1593,6 +1600,11 @@
             dom.timeRemaining.style.display = config.timeRemaining ? 'block' : 'none';
         }
 
+        if( dom.controls ) {
+            dom.controls.setAttribute( 'data-controls-layout', config.controlsLayout );
+            dom.controls.setAttribute( 'data-controls-back-arrows', config.controlsBackArrows );
+        }
+
         if( config.shuffle ) {
             shuffle();
         }
@@ -1617,11 +1629,11 @@
         }
 
         if( config.showNotes ) {
-            dom.speakerNotes.classList.add( 'visible' );
+            dom.wrapper.classList.add( 'show-notes' );
             dom.speakerNotes.setAttribute( 'data-layout', typeof config.showNotes === 'string' ? config.showNotes : 'inline' );
         }
         else {
-            dom.speakerNotes.classList.remove( 'visible' );
+            dom.wrapper.classList.remove( 'show-notes' );
         }
 
         if( config.mouseWheel ) {
