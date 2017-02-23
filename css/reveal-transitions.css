@@ -4,7 +4,7 @@
  * http://lab.hakim.se/reveal-js
  * MIT licensed
  *
- * Copyright (C) 2016 Hakim El Hattab, http://hakim.se
+ * Copyright (C) 2017 Hakim El Hattab, http://hakim.se
  */
 /*********************************************
  * RESET STYLES
@@ -1813,4 +1813,4 @@ body {
 .zoomed .reveal .roll span:after {
   visibility: hidden;
 }
-/*# sourceMappingURL=css/reveal-transitions.css.map */
+/*# sourceMappingURL=reveal-transitions.css.map */
