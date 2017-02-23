@@ -878,11 +878,11 @@ body
 .reveal.show-canvas .slides {
     background: rgba(150,255,0,0.3);
 }
-.reveal.show-canvas .slides>section,
-.reveal.show-canvas .slides>section>section {
+.reveal.show-canvas .slides > section,
+.reveal.show-canvas .slides > section>section {
     background: rgba(255,155,0,0.3);
 }
-.reveal.show-canvas .slides>section.stack {
+.reveal.show-canvas .slides > section.stack {
     background: rgba(0,0,255,0.3);
 }
 .reveal.show-canvas .slides .slide-body {
@@ -1774,6 +1774,10 @@ body
             outline: 10px solid rgba(150, 150, 150, 0.1);
             outline-offset: 10px;
         }
+
+  .reveal.overview .backgrounds .slide-background.stack {
+    overflow: visible; 
+  }
 
 .reveal.overview .slides section,
 .reveal.overview-deactivating .slides section {

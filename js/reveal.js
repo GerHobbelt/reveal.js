@@ -108,6 +108,9 @@
             // {boolean} Display the page number of the current slide
             slideNumber: false,
 
+		  	// Determine which displays to show the slide number on
+		  	showSlideNumber: 'all',
+
             // {boolean} Push each slide change to the browser history
             history: false,
 
@@ -1152,7 +1155,7 @@
                 }
 
                 // Inject slide numbers if `slideNumbers` are enabled
-                if( config.slideNumber ) {
+				if( config.slideNumber && /all|print/i.test( config.showSlideNumber ) ) {
                     var slideNumberH = parseInt( slide.getAttribute( 'data-index-h' ), 10 ) + 1,
                         slideNumberV = parseInt( slide.getAttribute( 'data-index-v' ), 10 ) + 1;
 
@@ -1586,10 +1589,6 @@
             dom.progress.style.display = config.progress ? 'block' : 'none';
         }
 
-        if( dom.slideNumber ) {
-        dom.slideNumber.style.display = config.slideNumber && !isPrintingPDF() ? 'block' : 'none';
-        }
-
         if( dom.timeRemaining ) {
             dom.timeRemaining.style.display = config.timeRemaining ? 'block' : 'none';
         }
@@ -1674,6 +1673,21 @@
                 element.classList.add( 'visible' );
                 element.classList.remove( 'current-fragment' );
             } );
+        }
+
+		// Slide numbers
+		var slideNumberDisplay = 'none';
+		if( config.slideNumber && !isPrintingPDF() ) {
+			if( config.showSlideNumber === 'all' ) {
+				slideNumberDisplay = 'block';
+			}
+			else if( config.showSlideNumber === 'speaker' && isSpeakerNotes() ) {
+				slideNumberDisplay = 'block';
+			}
+		}
+
+        if( dom.slideNumber ) {
+            dom.slideNumber.style.display = slideNumberDisplay;
         }
 
         // Load the theme in the config, if it's not already loaded
@@ -3601,6 +3615,10 @@
             updateProgress();
             updateParallax();
 
+			if( isOverview() ) {
+				updateOverview();
+			}
+
         }
 
     }
@@ -5368,7 +5386,7 @@
                 var slideWidth = dom.background.offsetWidth;
                 var horizontalSlideCount = horizontalSlides.length;
                 var horizontalOffsetMultiplier;
-        var horizontalOffset;
+                var horizontalOffset;
 
             if( typeof config.parallaxBackgroundHorizontal === 'number' ) {
                 horizontalOffsetMultiplier = config.parallaxBackgroundHorizontal;
@@ -5638,9 +5656,13 @@
                 }
 
 				// Autoplay is always on for slide backgrounds
-				var autoplay = el.hasAttribute( 'data-autoplay' ) || !!closestParent( el, '.slide-background' );
+				var autoplay = 	el.hasAttribute( 'data-autoplay' ) ||
+								el.hasAttribute( 'data-paused-by-reveal' ) ||
+								!!closestParent( el, '.slide-background' );
 
 				if( autoplay && typeof el.play === 'function' ) {
+
+					el.removeAttribute( 'data-paused-by-reveal' );
 
 					if( el.readyState > 1 ) {
 						startEmbeddedMedia( { target: el } );
@@ -5765,6 +5787,7 @@
             // HTML5 media elements
             toArray( element.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.pause === 'function' ) {
+					el.setAttribute('data-paused-by-reveal', '');
                     el.pause();
                 }
             } );

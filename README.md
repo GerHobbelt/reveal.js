@@ -909,7 +909,7 @@ By default, Reveal is configured with [highlight.js](https://highlightjs.org/) f
 
 ### Slide number
 
-If you would like to display the page number of the current slide you can do so using the ```slideNumber``` configuration value.
+If you would like to display the page number of the current slide you can do so using the ```slideNumber``` and ```showSlideNumber``` configuration values.
 
 ```javascript
 // Shows the slide number using default formatting
@@ -921,6 +921,12 @@ Reveal.configure({ slideNumber: true });
 //    "c": 	flattened slide number
 //  "c/t": 	flattened slide number / total slides
 Reveal.configure({ slideNumber: 'c/t' });
+
+// Control which views the slide number displays on using the "showSlideNumber" value:
+//     "all": show on all views (default)
+// "speaker": only show slide numbers on speaker notes view
+//   "print": only show slide numbers when printing to PDF
+Reveal.configure({ showSlideNumber: 'speaker' });
 
 ```
 
@@ -1052,12 +1058,13 @@ To enable the PDF print capability in your presentation, the special print style
 ### Instructions
 
 1. Open your presentation with `print-pdf` included in the query string i.e. http://localhost:8000/?print-pdf. You can test this with [lab.hakim.se/reveal-js?print-pdf](http://lab.hakim.se/reveal-js?print-pdf).
-2. Open the in-browser print dialog (CTRL/CMD+P).
-3. Change the **Destination** setting to **Save as PDF**.
-4. Change the **Layout** to **Landscape**.
-5. Change the **Margins** to **None**.
-6. Enable the **Background graphics** option.
-7. Click **Save**.
+  * If you want to include [speaker notes](#speaker-notes) in your export, you can append `showNotes=true` to the query string: http://localhost:8000/?print-pdf&showNotes=true
+1. Open the in-browser print dialog (CTRL/CMD+P).
+1. Change the **Destination** setting to **Save as PDF**.
+1. Change the **Layout** to **Landscape**.
+1. Change the **Margins** to **None**.
+1. Enable the **Background graphics** option.
+1. Click **Save**.
 
 ![Chrome Print Settings](https://s3.amazonaws.com/hakim-static/reveal-js/pdf-print-settings-2.png)
 
@@ -1255,11 +1262,13 @@ Server that receives the slideChanged events from the master presentation and br
 1. ```npm install```
 2. ```node plugin/multiplex```
 
-Or you use the socket.io server at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/).
+Or you can use the socket.io server at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/).
 
 You'll need to generate a unique secret and token pair for your master and client presentations. To do so, visit ```http://example.com/token```, where ```http://example.com``` is the location of your socket.io server. Or if you're going to use the socket.io server at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/), visit [https://reveal-js-multiplex-ccjbegmaii.now.sh/token](https://reveal-js-multiplex-ccjbegmaii.now.sh/token).
 
-You are very welcome to point your presentations at the Socket.io server running at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/), but availability and stability are not guaranteed. For anything mission critical I recommend you run your own server. It is simple to deploy to nodejitsu, heroku, your own environment, etc.
+You are very welcome to point your presentations at the Socket.io server running at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/), but availability and stability are not guaranteed.
+
+For anything mission critical I recommend you run your own server. The easiest way to do this is by installing [now](https://zeit.co/now). With that installed, deploying your own Multiplex server is as easy running the following command from the reveal.js folder: `now plugin/multiplex`.
 
 
 ##### socket.io server as file static server
