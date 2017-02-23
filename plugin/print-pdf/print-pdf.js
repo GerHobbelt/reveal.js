@@ -18,43 +18,43 @@ var inputFile = system.args[1] || 'index.html?print-pdf';
 var outputFile = system.args[2] || 'slides.pdf';
 
 if( outputFile.match( /\.pdf$/gi ) === null ) {
-	outputFile += '.pdf';
+  outputFile += '.pdf';
 }
 
 console.log( 'Export PDF: Reading reveal.js config [1/3]' );
 
 probePage.open( inputFile, function( status ) {
 
-	console.log( 'Export PDF: Preparing print layout [2/3]' );
+  console.log( 'Export PDF: Preparing print layout [2/3]' );
 
-	var config = probePage.evaluate( function() {
-		return Reveal.getConfig();
-	} );
+  var config = probePage.evaluate( function() {
+    return Reveal.getConfig();
+  } );
 
-	if( config ) {
+  if( config ) {
 
-		printPage.paperSize = {
-			width: Math.floor( config.width * ( 1 + config.margin ) ),
-			height: Math.floor( config.height * ( 1 + config.margin ) ),
-			border: 0
-		};
+    printPage.paperSize = {
+      width: Math.floor( config.width * ( 1 + config.margin ) ),
+      height: Math.floor( config.height * ( 1 + config.margin ) ),
+      border: 0
+    };
 
-		printPage.open( inputFile, function( status ) {
-			window.setTimeout( function() {
-				console.log( 'Export PDF: Writing file [3/3]' );
-				printPage.render( outputFile );
-				console.log( 'Export PDF: Finished successfully!' );
-				phantom.exit();
-			}, 1000 );
-		} );
+    printPage.open( inputFile, function( status ) {
+      window.setTimeout( function() {
+        console.log( 'Export PDF: Writing file [3/3]' );
+        printPage.render( outputFile );
+        console.log( 'Export PDF: Finished successfully!' );
+        phantom.exit();
+      }, 1000 );
+    } );
 
-	}
-	else {
+  }
+  else {
 
-        console.log( 'Export PDF: Unable to read reveal.js config. Make sure the input address points to a reveal.js page.' );
-        phantom.exit(1);
+    console.log( 'Export PDF: Unable to read reveal.js config. Make sure the input address points to a reveal.js page.' );
+    phantom.exit(1);
 
-    }
+  }
 
 } );
 

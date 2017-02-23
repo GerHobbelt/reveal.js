@@ -22,60 +22,60 @@
         return factory(window, document, Reveal, hljs);
       });
     } else {
-        // Browser globals
-        window.Reveal = factory(window, document, Reveal, hljs);
+      // Browser globals
+      window.Reveal = factory(window, document, Reveal, hljs);
     }
   }
 
 // Pass this, window may not be defined yet
 }(this, function ( window, document, Reveal, highlight, undefined ) {
 
-	// Function to perform a better "data-trim" on code snippets
-	// Will slice an indentation amount on each line of the snippet (amount based on the line having the lowest indentation length)
-	function betterTrim(snippetEl) {
-		// Helper functions
-		function trimLeft(val) {
-			// Adapted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim#Polyfill
-			return val.replace(/^[\s\uFEFF\xA0]+/g, '');
-		}
-		function trimLineBreaks(input) {
-			var lines = input.split('\n');
+    // Function to perform a better "data-trim" on code snippets
+    // Will slice an indentation amount on each line of the snippet (amount based on the line having the lowest indentation length)
+    function betterTrim(snippetEl) {
+        // Helper functions
+        function trimLeft(val) {
+            // Adapted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim#Polyfill
+            return val.replace(/^[\s\uFEFF\xA0]+/g, '');
+        }
+        function trimLineBreaks(input) {
+            var lines = input.split('\n');
 
-			// Trim line-breaks from the beginning
-			for (var i = 0; i < lines.length; i++) {
-				if (lines[i].trim() === '') {
-					lines.splice(i--, 1);
-				} else break;
-			}
+            // Trim line-breaks from the beginning
+            for (var i = 0; i < lines.length; i++) {
+                if (lines[i].trim() === '') {
+                    lines.splice(i--, 1);
+                } else break;
+            }
 
-			// Trim line-breaks from the end
-			for (var i = lines.length-1; i >= 0; i--) {
-				if (lines[i].trim() === '') {
-					lines.splice(i, 1);
-				} else break;
-			}
+            // Trim line-breaks from the end
+            for (var i = lines.length-1; i >= 0; i--) {
+                if (lines[i].trim() === '') {
+                    lines.splice(i, 1);
+                } else break;
+            }
 
-			return lines.join('\n');
-		}
+            return lines.join('\n');
+        }
 
-		// Main function for betterTrim()
-		return (function(snippetEl) {
-			var content = trimLineBreaks(snippetEl.innerText);
-			var lines = content.split('\n');
-			// Calculate the minimum amount to remove on each line start of the snippet (can be 0)
-			var pad = lines.reduce(function(acc, line) {
-				if (line.length > 0 && trimLeft(line).length > 0 && acc > line.length - trimLeft(line).length) {
-					return line.length - trimLeft(line).length;
-				}
-				return acc;
-			}, Number.POSITIVE_INFINITY);
-			// Slice each line with this amount
-			return lines.map(function(line, index) {
-				return line.slice(pad);
-			})
-			.join('\n');
-		})(snippetEl);
-	}
+        // Main function for betterTrim()
+        return (function(snippetEl) {
+            var content = trimLineBreaks(snippetEl.innerText);
+            var lines = content.split('\n');
+            // Calculate the minimum amount to remove on each line start of the snippet (can be 0)
+            var pad = lines.reduce(function(acc, line) {
+                if (line.length > 0 && trimLeft(line).length > 0 && acc > line.length - trimLeft(line).length) {
+                    return line.length - trimLeft(line).length;
+                }
+                return acc;
+            }, Number.POSITIVE_INFINITY);
+            // Slice each line with this amount
+            return lines.map(function(line, index) {
+                return line.slice(pad);
+            })
+            .join('\n');
+        })(snippetEl);
+    }
 
     if (!Reveal.AddOn) {
         Reveal.AddOn = {};
@@ -94,7 +94,7 @@
                 Reveal.AddOn.Highlight.highlightMe( element );
             }
         },
-        
+
         highlightMe: function( element ) {
             // trim whitespace if data-trim attribute is present
             if( element.hasAttribute( 'data-trim' ) && typeof element.innerText.trim === 'function' ) {
@@ -111,7 +111,7 @@
     };
 
     function redoHightlightForBlock( event ) {
-        Reveal.AddOn.Highlight.highlightMe( event.currentTarget );        
+        Reveal.AddOn.Highlight.highlightMe( event.currentTarget );
     }
 
     Reveal.AddOn.Highlight.exec();

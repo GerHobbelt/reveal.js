@@ -39,7 +39,7 @@
 
     // these *_SELECTOR defines are all `dom.wrapper` based, which explains why they won't have the `.reveal` root/wrapper DIV class in them:
     // The reveal.js version
-	var VERSION = '3.4.1';
+    var VERSION = '3.4.1';
 
     var SLIDES_SELECTOR = '.slides > section, .slides > section > section',
         HORIZONTAL_SLIDES_SELECTOR = '.slides > section',
@@ -108,8 +108,8 @@
             // {boolean} Display the page number of the current slide
             slideNumber: false,
 
-		  	// Determine which displays to show the slide number on
-		  	showSlideNumber: 'all',
+            // Determine which displays to show the slide number on
+            showSlideNumber: 'all',
 
             // {boolean} Push each slide change to the browser history
             history: false,
@@ -239,8 +239,8 @@
             // via #getComputedSlideSize()
             maxLayoutIterations: 10,
 
-			// The display mode that will be used to show slides
-			display: 'block',
+            // The display mode that will be used to show slides
+            display: 'block',
 
             // Script dependencies to load
             dependencies: []
@@ -1120,9 +1120,9 @@
                 }
 
 // TBD: new code for backgrounds is this little blob:
-				if( slide.slideBackgroundElement ) {
-					page.insertBefore( slide.slideBackgroundElement, slide );
-				}
+                if( slide.slideBackgroundElement ) {
+                    page.insertBefore( slide.slideBackgroundElement, slide );
+                }
 // TBD: end of code blob
 
                 // Inject notes if `showNotes` is enabled
@@ -1155,7 +1155,7 @@
                 }
 
                 // Inject slide numbers if `slideNumbers` are enabled
-				if( config.slideNumber && /all|print/i.test( config.showSlideNumber ) ) {
+                if( config.slideNumber && /all|print/i.test( config.showSlideNumber ) ) {
                     var slideNumberH = parseInt( slide.getAttribute( 'data-index-h' ), 10 ) + 1,
                         slideNumberV = parseInt( slide.getAttribute( 'data-index-v' ), 10 ) + 1;
 
@@ -1174,8 +1174,8 @@
             fragment.classList.add( 'visible' );
         } );
 
-		// Notify subscribers that the PDF layout is good to go
-		dispatchEvent( 'pdf-ready' );
+        // Notify subscribers that the PDF layout is good to go
+        dispatchEvent( 'pdf-ready' );
 
         return true;
     }
@@ -1331,7 +1331,7 @@
 
         if( data.background ) {
             // Auto-wrap image urls in url(...)
-			if( /^(http|file|\/\/)/gi.test( data.background ) || /\.(svg|png|jpg|jpeg|gif|bmp)([?#]|$)/gi.test( data.background ) ) {
+            if( /^(http|file|\/\/)/gi.test( data.background ) || /\.(svg|png|jpg|jpeg|gif|bmp)([?#]|$)/gi.test( data.background ) ) {
                 slide.setAttribute( 'data-background-image', data.background );
                 data.backgroundImage = data.background;
             }
@@ -1644,11 +1644,11 @@
         // Iframe link previews
         if( config.previewLinks ) {
             enablePreviewLinks();
-			disablePreviewLinks( '[data-preview-link=false]' );
+            disablePreviewLinks( '[data-preview-link=false]' );
         }
         else {
             disablePreviewLinks();
-			enablePreviewLinks( '[data-preview-link]:not([data-preview-link=false])' );
+            enablePreviewLinks( '[data-preview-link]:not([data-preview-link=false])' );
         }
 
         // Remove existing auto-slide controls
@@ -1675,16 +1675,16 @@
             } );
         }
 
-		// Slide numbers
-		var slideNumberDisplay = 'none';
-		if( config.slideNumber && !isPrintingPDF() ) {
-			if( config.showSlideNumber === 'all' ) {
-				slideNumberDisplay = 'block';
-			}
-			else if( config.showSlideNumber === 'speaker' && isSpeakerNotes() ) {
-				slideNumberDisplay = 'block';
-			}
-		}
+        // Slide numbers
+        var slideNumberDisplay = 'none';
+        if( config.slideNumber && !isPrintingPDF() ) {
+            if( config.showSlideNumber === 'all' ) {
+                slideNumberDisplay = 'block';
+            }
+            else if( config.showSlideNumber === 'speaker' && isSpeakerNotes() ) {
+                slideNumberDisplay = 'block';
+            }
+        }
 
         if( dom.slideNumber ) {
             dom.slideNumber.style.display = slideNumberDisplay;
@@ -1907,7 +1907,7 @@
             if( value === 'null' ) return null;
             else if( value === 'true' ) return true;
             else if( value === 'false' ) return false;
-			else if( value.match( /^[\d\.]+$/ ) ) return parseFloat( value );
+            else if( value.match( /^[\d\.]+$/ ) ) return parseFloat( value );
         }
 
         return value;
@@ -2538,9 +2538,9 @@
     /**
      * Unbind preview frame links.
      */
-	function disablePreviewLinks( selector ) {
+    function disablePreviewLinks( selector ) {
 
-		var anchors = toArray( document.querySelectorAll( selector ? selector : 'a' ) );
+        var anchors = toArray( document.querySelectorAll( selector ? selector : 'a' ) );
 
         anchors.forEach( function( element ) {
             if( /^(http|www)/gi.test( element.getAttribute( 'href' ) ) ) {
@@ -2573,9 +2573,9 @@
                 '<div class="spinner"></div>',
                 '<div class="viewport">',
                     '<iframe src="'+ url +'"></iframe>',
-				'<small class="viewport-inner">',
-					'<span class="x-frame-error">Unable to load iframe. This is likely due to the site\'s policy (x-frame-options).</span>',
-				'</small>',
+                '<small class="viewport-inner">',
+                    '<span class="x-frame-error">Unable to load iframe. This is likely due to the site\'s policy (x-frame-options).</span>',
+                '</small>',
                 '</div>'
             ].join('');
 
@@ -2597,26 +2597,26 @@
             }, 1 );
         }
 
-	/**
-	 * Open or close help overlay window.
-	 *
-	 * @param {Boolean} [override] Flag which overrides the
-	 * toggle logic and forcibly sets the desired state. True means
-	 * help is open, false means it's closed.
-	 */
-	function toggleHelp( override ){
+    /**
+     * Open or close help overlay window.
+     *
+     * @param {Boolean} [override] Flag which overrides the
+     * toggle logic and forcibly sets the desired state. True means
+     * help is open, false means it's closed.
+     */
+    function toggleHelp( override ){
 
-		if( typeof override === 'boolean' ) {
-			override ? showHelp() : closeOverlay();
-		}
-		else {
-			if( dom.overlay ) {
-				closeOverlay();
-			}
-			else {
-				showHelp();
-			}
-		}
+        if( typeof override === 'boolean' ) {
+            override ? showHelp() : closeOverlay();
+        }
+        else {
+            if( dom.overlay ) {
+                closeOverlay();
+            }
+            else {
+                showHelp();
+            }
+        }
         }
 
     }
@@ -3615,9 +3615,9 @@
             updateProgress();
             updateParallax();
 
-			if( isOverview() ) {
-				updateOverview();
-			}
+            if( isOverview() ) {
+                updateOverview();
+            }
 
         }
 
@@ -5438,7 +5438,7 @@
     function showSlide( slide ) {
 
         // Show the slide element
-	//slide.style.display = config.display;
+    //slide.style.display = config.display;
         slide.classList.add( 'visible' );
 
         // Media elements with data-src attributes
@@ -5511,19 +5511,19 @@
                 else if ( backgroundIframe ) {
                     var iframe = document.createElement( 'iframe' );
 
-					// Only load autoplaying content when the slide is shown to
-					// avoid having it play in the background
-					if( /autoplay=(1|true|yes)/gi.test( backgroundIframe ) ) {
-						iframe.setAttribute( 'data-src', backgroundIframe );
-					}
-					else {
-						iframe.setAttribute( 'src', backgroundIframe );
-					}
+                    // Only load autoplaying content when the slide is shown to
+                    // avoid having it play in the background
+                    if( /autoplay=(1|true|yes)/gi.test( backgroundIframe ) ) {
+                        iframe.setAttribute( 'data-src', backgroundIframe );
+                    }
+                    else {
+                        iframe.setAttribute( 'src', backgroundIframe );
+                    }
 
-					iframe.style.width = '100%';
-					iframe.style.height = '100%';
-					iframe.style.maxHeight = '100%';
-					iframe.style.maxWidth = '100%';
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.maxHeight = '100%';
+                    iframe.style.maxWidth = '100%';
 
                     background.appendChild( iframe );
                 }
@@ -5655,25 +5655,25 @@
                     return;
                 }
 
-				// Autoplay is always on for slide backgrounds
-				var autoplay = 	el.hasAttribute( 'data-autoplay' ) ||
-								el.hasAttribute( 'data-paused-by-reveal' ) ||
-								!!closestParent( el, '.slide-background' );
+                // Autoplay is always on for slide backgrounds
+                var autoplay =  el.hasAttribute( 'data-autoplay' ) ||
+                                el.hasAttribute( 'data-paused-by-reveal' ) ||
+                                !!closestParent( el, '.slide-background' );
 
-				if( autoplay && typeof el.play === 'function' ) {
+                if( autoplay && typeof el.play === 'function' ) {
 
-					el.removeAttribute( 'data-paused-by-reveal' );
+                    el.removeAttribute( 'data-paused-by-reveal' );
 
-					if( el.readyState > 1 ) {
-						startEmbeddedMedia( { target: el } );
-					}
-					else {
-						el.removeEventListener( 'loadeddata', startEmbeddedMedia ); // remove first to avoid dupes
-						el.addEventListener( 'loadeddata', startEmbeddedMedia );
+                    if( el.readyState > 1 ) {
+                        startEmbeddedMedia( { target: el } );
+                    }
+                    else {
+                        el.removeEventListener( 'loadeddata', startEmbeddedMedia ); // remove first to avoid dupes
+                        el.addEventListener( 'loadeddata', startEmbeddedMedia );
 
-						// `loadeddata` never fires unless we start playing on iPad
-						if( /ipad/gi.test( UA ) ) el.play();
-					}
+                        // `loadeddata` never fires unless we start playing on iPad
+                        if( /ipad/gi.test( UA ) ) el.play();
+                    }
 
                 }
             } );
@@ -5711,25 +5711,25 @@
 
     }
 
-	/**
-	 * Starts playing an embedded video/audio element after
-	 * it has finished loading.
-	 *
-	 * @param {object} event
-	 */
-	function startEmbeddedMedia( event ) {
+    /**
+     * Starts playing an embedded video/audio element after
+     * it has finished loading.
+     *
+     * @param {object} event
+     */
+    function startEmbeddedMedia( event ) {
 
-		var isAttachedToDOM = !!closestParent( event.target, 'html' ),
-			isVisible  		= !!closestParent( event.target, '.present' );
+        var isAttachedToDOM = !!closestParent( event.target, 'html' ),
+            isVisible       = !!closestParent( event.target, '.present' );
 
-		if( isAttachedToDOM && isVisible ) {
-			event.target.currentTime = 0;
-			event.target.play();
-		}
+        if( isAttachedToDOM && isVisible ) {
+            event.target.currentTime = 0;
+            event.target.play();
+        }
 
-		event.target.removeEventListener( 'loadeddata', startEmbeddedMedia );
+        event.target.removeEventListener( 'loadeddata', startEmbeddedMedia );
 
-	}
+    }
 
     /**
      * "Starts" the content of an embedded iframe using the
@@ -5743,35 +5743,35 @@
 
         if( iframe && iframe.contentWindow ) {
 
-			var isAttachedToDOM = !!closestParent( event.target, 'html' ),
-				isVisible  		= !!closestParent( event.target, '.present' );
+            var isAttachedToDOM = !!closestParent( event.target, 'html' ),
+                isVisible       = !!closestParent( event.target, '.present' );
 
-			if( isAttachedToDOM && isVisible ) {
+            if( isAttachedToDOM && isVisible ) {
 
-				var autoplay = iframe.hasAttribute( 'data-autoplay' ) || !!closestParent( iframe, '.slide-background' );
+                var autoplay = iframe.hasAttribute( 'data-autoplay' ) || !!closestParent( iframe, '.slide-background' );
 
-				// YouTube postMessage API
-				if( /youtube\.com\/embed\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
-					iframe.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
-				}
-				// Vimeo postMessage API
-				else if( /player\.vimeo\.com\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
-					iframe.contentWindow.postMessage( '{"method":"play"}', '*' );
-				}
-                		// asciinema postMessage API
-                		else if( /asciinema\.org\/api\/asciicasts\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
-		                	iframe.contentWindow.postMessage( ['asciicast:play'], '*' );
-                		}
-				// Generic postMessage API
-				else {
-					iframe.contentWindow.postMessage( 'slide:start', '*' );
-				}
+                // YouTube postMessage API
+                if( /youtube\.com\/embed\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
+                    iframe.contentWindow.postMessage( '{"event":"command","func":"playVideo","args":""}', '*' );
+                }
+                // Vimeo postMessage API
+                else if( /player\.vimeo\.com\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
+                    iframe.contentWindow.postMessage( '{"method":"play"}', '*' );
+                }
+                        // asciinema postMessage API
+                        else if( /asciinema\.org\/api\/asciicasts\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
+                            iframe.contentWindow.postMessage( ['asciicast:play'], '*' );
+                        }
+                // Generic postMessage API
+                else {
+                    iframe.contentWindow.postMessage( 'slide:start', '*' );
+                }
 
-			}
+            }
 
-		}
+        }
 
-	}
+    }
 
     /**
      * Stop playback of any embedded content inside of
@@ -5787,7 +5787,7 @@
             // HTML5 media elements
             toArray( element.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.pause === 'function' ) {
-					el.setAttribute('data-paused-by-reveal', '');
+                    el.setAttribute('data-paused-by-reveal', '');
                     el.pause();
                 }
             } );
@@ -6833,7 +6833,7 @@ if (0) {
                 overlay: dom.overlay,
                 event: event,
             });
-			toggleHelp();
+            toggleHelp();
             event.preventDefault && event.preventDefault();
             event.stopPropagation && event.stopPropagation();
         }
@@ -7770,8 +7770,8 @@ if (0) {
         // Returns an object with the available fragments as booleans (prev/next)
         availableFragments: availableFragments,
 
-		// Toggles a help overlay with keyboard shortcuts
-		toggleHelp: toggleHelp,
+        // Toggles a help overlay with keyboard shortcuts
+        toggleHelp: toggleHelp,
 
         // Toggles the overview mode on/off
         toggleOverview: toggleOverview,

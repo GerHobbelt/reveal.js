@@ -206,11 +206,11 @@ module.exports = function(grunt) {
                 tasks: 'js'
             },
             theme: {
-                files: [ 
-                    'css/theme/source-sass/*.sass', 
-                    'css/theme/source-sass/*.scss', 
-                    'css/theme/template-sass/*.sass', 
-                    'css/theme/template-sass/*.scss' 
+                files: [
+                    'css/theme/source-sass/*.sass',
+                    'css/theme/source-sass/*.scss',
+                    'css/theme/template-sass/*.sass',
+                    'css/theme/template-sass/*.scss'
                 ],
                 tasks: 'css-themes'
             },

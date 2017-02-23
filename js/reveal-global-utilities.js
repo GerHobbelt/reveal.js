@@ -1,7 +1,7 @@
 /**
  * These utility functions should be available already *before* the Reveal module itself is loaded.
  *
- * They provide some generic functions for working with URIs and paths, which are very probably 
+ * They provide some generic functions for working with URIs and paths, which are very probably
  * also useful for Reveal user code, next to the Reveal boot code itself.
  *
  * -----------------------------------------------------------------------
@@ -9,12 +9,12 @@
 
 
 /**
- * Normalize the given URI path: fold any '../' and './' parts in there 
+ * Normalize the given URI path: fold any '../' and './' parts in there
  * to turn this into a legal URI path.
  */
 function normalizeDirectory(path) {
     "use strict";
-    
+
     //path = libdir + path;
     console.log('normalizing path: ', path);
     var a = path.split('/');
@@ -48,7 +48,7 @@ function normalizeDirectory(path) {
 /**
  * Minimally encode content to URI compliant format a la encodeURIComponent.
  *
- * While this output is also considered 'safe enough for the URI hash component' 
+ * While this output is also considered 'safe enough for the URI hash component'
  * it is far more human readable than the strict encodeURIComponent() output.
  */
 function encodeURIComponentMinimally(str) {
@@ -101,10 +101,10 @@ function safeDecodeURIComponent(str) {
 /**
  * Decode the URI path, query and hash parts into a parameter lookup tree.
  *
- * Note that the returned object is READONLY as it is a reference to the decoded Location (https://developer.mozilla.org/en-US/docs/Web/API/Location) 
+ * Note that the returned object is READONLY as it is a reference to the decoded Location (https://developer.mozilla.org/en-US/docs/Web/API/Location)
  * object cached internally, which is only updated/processed again when the location changes, i.e. when the location.hash is altered by some other
- * part of the application. 
- */ 
+ * part of the application.
+ */
 function URIparameters() {
     "use strict";
 
@@ -128,7 +128,7 @@ function URIparameters() {
         query_raw:  (location.search || '').replace(/^\?/, ''),                    // "?transition=concave"
 
         query: {},
-        hash:  {}     
+        hash:  {}
     };
 
     function assign(group, id, value) {
@@ -172,17 +172,17 @@ function URIparameters() {
         });
         // Otherwise we expect the 'route' to be the first argument following the '#' hash;
         // despite the HTML5 allowing this, we do *not* accept routes which contain a '='
-        // character, so that we can easily discern between parameters (param=value) and 
+        // character, so that we can easily discern between parameters (param=value) and
         // labeled routes.
-        // 
+        //
         // In fact, we are rather strict: we only allow HTML4-compliant IDs a labeled routes
         // ( http://www.htmlhelp.com/reference/html40/attrs.html )
-        // 
-        // When such a labeled route is preceded by a '/' it would already have been caught 
+        //
+        // When such a labeled route is preceded by a '/' it would already have been caught
         // in the .some() check above, so we only need to worry about straight IDs here.
-        //  
+        //
         // Yes, we do *not* accept URIencoded IDs this way; if you want to read those,
-        // they *must* be prefixed with a '/' slash. 
+        // they *must* be prefixed with a '/' slash.
         if ( !has_route && /^[A-Za-z][\w.:_-]*$/.test( ha[0] ) ) {
             assign(rv.hash, 'route', ha[0]);
             ha.shift();
@@ -209,7 +209,7 @@ function URIparameters() {
             }
         });
     }
-    
+
     // Update the URI hash and URI history
     //
     // `argset` is an object containing the hash parameters which must be updated
@@ -247,7 +247,7 @@ function URIparameters() {
                     continue;
                 }
                 // mirror the decoder in behaviour:
-                if (value === true) { 
+                if (value === true) {
                     newhash2.push(ENC(id));
                     skiplist.push(id);
                 } else if (id == +id) {             // == instead of === because we're comparing string to number
@@ -263,7 +263,7 @@ function URIparameters() {
         if (newhash !== store.hash_raw) {
             store.hash_raw = newhash;
             // Now the cache has already been updated, so all that's left is to update the browser URI (#hash) itself:
-            window.location.hash = '#' + newhash; 
+            window.location.hash = '#' + newhash;
         }
         return store;
     };

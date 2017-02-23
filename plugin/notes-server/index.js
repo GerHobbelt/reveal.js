@@ -17,37 +17,37 @@ var opts = {
 
 io.on( 'connection', function( socket ) {
 
-	socket.on( 'new-subscriber', function( data ) {
-		socket.broadcast.emit( 'new-subscriber', data );
+  socket.on( 'new-subscriber', function( data ) {
+    socket.broadcast.emit( 'new-subscriber', data );
     });
 
-	socket.on( 'statechanged', function( data ) {
-		delete data.state.overview;
-		socket.broadcast.emit( 'statechanged', data );
+  socket.on( 'statechanged', function( data ) {
+    delete data.state.overview;
+    socket.broadcast.emit( 'statechanged', data );
     });
 
-	socket.on( 'statechanged-speaker', function( data ) {
-		delete data.state.overview;
-		socket.broadcast.emit( 'statechanged-speaker', data );
-	});
+  socket.on( 'statechanged-speaker', function( data ) {
+    delete data.state.overview;
+    socket.broadcast.emit( 'statechanged-speaker', data );
+  });
 
 });
 
 [ 'css', 'js', 'images', 'plugin', 'lib' ].forEach( function( dir ) {
-	app.use( '/' + dir, staticDir( opts.baseDir + dir ) );
+  app.use( '/' + dir, staticDir( opts.baseDir + dir ) );
 });
 
 app.get('/', function( req, res ) {
 
-	res.writeHead(200, {'Content-Type': 'text/html'});
-	fs.createReadStream(opts.baseDir + '/index.html').pipe(res);
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  fs.createReadStream(opts.baseDir + '/index.html').pipe(res);
 
 });
 
 app.get( '/notes/:socketId', function( req, res ) {
 
-	fs.readFile(opts.baseDir + 'plugin/notes-server/notes.html', function(err, data) {
-		res.send(Mustache.to_html(data.toString(), {
+  fs.readFile(opts.baseDir + 'plugin/notes-server/notes.html', function(err, data) {
+    res.send(Mustache.to_html(data.toString(), {
             socketId : req.params.socketId
         }));
     });

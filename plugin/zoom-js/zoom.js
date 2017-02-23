@@ -22,74 +22,74 @@
         return factory(window, document, Reveal, zoom);
       });
     } else {
-        // Browser globals
-        window.Reveal = factory(window, document, Reveal, zoom);
+      // Browser globals
+      window.Reveal = factory(window, document, Reveal, zoom);
     }
   }
 
 // Pass this, window may not be defined yet
 }(this, function ( window, document, Reveal, zoom, undefined ) {
 
-    var isEnabled = true;
+  var isEnabled = true;
 
-    var rootElement = document.querySelector( '.reveal .slides' );
+  var rootElement = document.querySelector( '.reveal .slides' );
 
-    // Inform the zoom tool that the .reveal DIV is the element which should receive the transform.
-    zoom.init(rootElement);
+  // Inform the zoom tool that the .reveal DIV is the element which should receive the transform.
+  zoom.init(rootElement);
 
-    rootElement.addEventListener( 'mousedown', function( event ) {
-        var modifier = ( Reveal.getConfig().zoomKey ? Reveal.getConfig().zoomKey : 'alt' ) + 'Key';
+  rootElement.addEventListener( 'mousedown', function( event ) {
+    var modifier = ( Reveal.getConfig().zoomKey ? Reveal.getConfig().zoomKey : 'alt' ) + 'Key';
 
-		var zoomPadding = 20;
-		var revealScale = Reveal.getScale();
+    var zoomPadding = 20;
+    var revealScale = Reveal.getScale();
 
-        if( event[ modifier ] && isEnabled ) {
-            event.preventDefault();
+    if( event[ modifier ] && isEnabled ) {
+      event.preventDefault();
 
-			var bounds;
-			var originalDisplay = event.target.style.display;
+      var bounds;
+      var originalDisplay = event.target.style.display;
 
-			// Get the bounding rect of the contents, not the containing box
-			if( window.getComputedStyle( event.target ).display === 'block' ) {
-				event.target.style.display = 'inline-block';
-				bounds = event.target.getBoundingClientRect();
-				event.target.style.display = originalDisplay;
-			} else {
-				bounds = event.target.getBoundingClientRect();
-			}
+      // Get the bounding rect of the contents, not the containing box
+      if( window.getComputedStyle( event.target ).display === 'block' ) {
+        event.target.style.display = 'inline-block';
+        bounds = event.target.getBoundingClientRect();
+        event.target.style.display = originalDisplay;
+      } else {
+        bounds = event.target.getBoundingClientRect();
+      }
 
-			zoom.to({
-				x: ( bounds.left * revealScale ) - zoomPadding,
-				y: ( bounds.top * revealScale ) - zoomPadding,
-				width: ( bounds.width * revealScale ) + ( zoomPadding * 2 ),
-				height: ( bounds.height * revealScale ) + ( zoomPadding * 2 ),
-				pan: false
-			});
-        }
-    } );
-
-    Reveal.addEventListener( 'overviewshown', function () {
-        isEnabled = false;
-    } );
-    Reveal.addEventListener( 'overviewhidden', function () {
-        isEnabled = true;
-    } );
-
-    function isZoomEnabled() {
-        return isEnabled;
-    };
-
-    if (!Reveal.AddOn) {
-        Reveal.AddOn = {};
+      zoom.to({
+        x: ( bounds.left * revealScale ) - zoomPadding,
+        y: ( bounds.top * revealScale ) - zoomPadding,
+        width: ( bounds.width * revealScale ) + ( zoomPadding * 2 ),
+        height: ( bounds.height * revealScale ) + ( zoomPadding * 2 ),
+        pan: false
+      });
     }
+  });
 
-    Reveal.AddOn.Zoom = {
-        isEnabled: isZoomEnabled,
-        getZoomInstance: function () {
-            return zoom;
-        }
-    };
+  Reveal.addEventListener( 'overviewshown', function () {
+    isEnabled = false;
+  } );
+  Reveal.addEventListener( 'overviewhidden', function () {
+    isEnabled = true;
+  } );
 
-    return Reveal;
+  function isZoomEnabled() {
+    return isEnabled;
+  };
+
+  if (!Reveal.AddOn) {
+    Reveal.AddOn = {};
+  }
+
+  Reveal.AddOn.Zoom = {
+    isEnabled: isZoomEnabled,
+    getZoomInstance: function () {
+      return zoom;
+    }
+  };
+
+  return Reveal;
 }));
 

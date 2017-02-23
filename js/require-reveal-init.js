@@ -19,8 +19,8 @@ var RevealConfiguration;        // object or function-returning-an-object
         baseUrl: libdir,
         paths: {
             reveal: d('../../js/reveal'),
-            
-            assert: d('../../js/reveal-assert'),             
+
+            assert: d('../../js/reveal-assert'),
 
             // libraries required by the plugins:
             zoom: jslib('zoom.js/js/zoom'),
@@ -39,7 +39,7 @@ var RevealConfiguration;        // object or function-returning-an-object
                 NProgress.inc();
             }
         },
-        // RequireJS BUG?: `callback` is not firing when ALL dependencies have loaded; it is already firing after the first one! 
+        // RequireJS BUG?: `callback` is not firing when ALL dependencies have loaded; it is already firing after the first one!
         callback: function() {
             console.log("RequireJS callback: all loaded: ", document.readyState, arguments);
         }
@@ -68,22 +68,22 @@ var RevealConfiguration;        // object or function-returning-an-object
             //parallaxBackgroundSize: '2100px 900px', [parallaxBackgroundSize is OBSOLETED]
 
             // Optional libraries used to extend on reveal.js
-			//
-			// More info https://github.com/hakimel/reveal.js#dependencies
+            //
+            // More info https://github.com/hakimel/reveal.js#dependencies
             dependencies: [
-                // { src: require.toUrl('../js/classList/classList.js'), condition: function() { 
-                //     return !document.body.classList; 
+                // { src: require.toUrl('../js/classList/classList.js'), condition: function() {
+                //     return !document.body.classList;
                 // } },
                 { src: '../../plugin/markdown/marked.js', condition: function() {
-                    return !!document.querySelector( '[data-markdown]' ); 
+                    return !!document.querySelector( '[data-markdown]' );
                 } },
                 { src: '../../plugin/markdown/markdown.js', condition: function() {
-                    return !!document.querySelector( '[data-markdown]' ); 
+                    return !!document.querySelector( '[data-markdown]' );
                 } },
-                { src: '../../plugin/highlight/highlight.js', async: true, condition: function() { 
-                    return !!document.querySelector( 'pre code' ); 
-                }, callback: function() { 
-                    console.log('highlight plugin callback arguments: ', arguments); 
+                { src: '../../plugin/highlight/highlight.js', async: true, condition: function() {
+                    return !!document.querySelector( 'pre code' );
+                }, callback: function() {
+                    console.log('highlight plugin callback arguments: ', arguments);
                 } },
                 { src: '../../plugin/zoom-js/zoom.js', async: true, condition: true },
                 { src: '../../plugin/notes/notes.js', async: true, condition: true },
@@ -93,8 +93,8 @@ var RevealConfiguration;        // object or function-returning-an-object
             ]
         };
 
-        Reveal.initialize(typeof RevealConfiguration === 'function' ? 
-            RevealConfiguration(ourConfig, Reveal, zoom, highlight, marked, classList, verge) : 
+        Reveal.initialize(typeof RevealConfiguration === 'function' ?
+            RevealConfiguration(ourConfig, Reveal, zoom, highlight, marked, classList, verge) :
             Reveal.extend(ourConfig, RevealConfiguration)
         );
 

@@ -4,26 +4,26 @@
     <head>
         <meta charset="utf-8">
 
-		<title>reveal.js – The HTML Presentation Framework</title>
+    <title>reveal.js – The HTML Presentation Framework</title>
 
         <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
         <meta name="author" content="Hakim El Hattab">
 
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
         <link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/esites.css" id="theme">
+    <link rel="stylesheet" href="css/theme/esites.css" id="theme">
 
-		<!-- FontAwesome include -->
-		<link rel="stylesheet" href="lib/css/font-awesome.css">
+    <!-- FontAwesome include -->
+    <link rel="stylesheet" href="lib/css/font-awesome.css">
 
-		<!-- Theme used for syntax highlighting of code -->
+    <!-- Theme used for syntax highlighting of code -->
         <link rel="stylesheet" href="lib/css/highlight/styles/zenburn.css">
 
-		<link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/custom.css">
 
         <!--[if lt IE 9]>
         <script src="lib/js/html5shiv.js"></script>
@@ -54,7 +54,7 @@
                     <p>
                         reveal.js enables you to create beautiful interactive slide decks using HTML. This presentation will show you examples of what it can do.
                     </p>
-				</section>
+        </section>
 
                 <section style="text-align:left">
                     <h3><a href="https://github.com/FortAwesome/Font-Awesome/">FontAwesome</a>
@@ -73,7 +73,7 @@
                 <section>
                     <h2>Heads Up</h2>
                     <p>
-                        reveal.js is a framework for easily creating beautiful presentations using HTML. You'll need a browser with 
+                        reveal.js is a framework for easily creating beautiful presentations using HTML. You'll need a browser with
                         support for CSS 3D transforms to see it in its full glory.
                     </p>
                     <p>
@@ -381,7 +381,7 @@ function linkify( selector ) {
                         <a href="#/2/3">like this</a>.
                     </p>
                     <p>
-                        Or when you like your JavaScript, there's 
+                        Or when you like your JavaScript, there's
                         <a onClick="require('reveal').slide(2, 3);" style="cursor: pointer;">this clickable bit</a>:
                     </p>
                     <pre><code class="javascript" data-trim>
@@ -497,13 +497,13 @@ Reveal.addEventListener( 'customevent', function() {
                         <li><a href="https://github.com/hakimel/reveal.js#keyboard-bindings">Custom keyboard bindings</a></li>
                     </ul>
                 </section>
-				
-				<section
-					data-separator="^\n\n\n"  
-					data-separator-vertical="^\n\n"  
-					data-separator-notes="^Note:"  
-					data-charset="utf-8">
-				</section>
+
+        <section
+          data-separator="^\n\n\n"
+          data-separator-vertical="^\n\n"
+          data-separator-notes="^Note:"
+          data-charset="utf-8">
+        </section>
 
 
                 <section data-slide-data="url(assets/dynamic-slide-content.md)" data-overview-info="AJAX: Loading slide content dynamically">
@@ -517,38 +517,38 @@ Reveal.addEventListener( 'customevent', function() {
 
                 <section data-scrollable="true" data-slide-margin="0%" data-overview-info="No scaling + columnizer">
                     <style>
-                        .columnizer-wrapper .column p, 
-                        .columnizer-wrapper .column h1 { 
+                        .columnizer-wrapper .column p,
+                        .columnizer-wrapper .column h1 {
                             padding: 5px;
-                            text-align: left; 
+                            text-align: left;
                         }
 
-                        .columnizer-wrapper { 
+                        .columnizer-wrapper {
                             font-size: 9pt;
 
-                            text-align: left; 
+                            text-align: left;
 
-                            margin: 0px 100px; 
+                            margin: 0px 100px;
                         }
 
-                        .columnizer-wrapper p { 
-                            font-size: 11pt; 
+                        .columnizer-wrapper p {
+                            font-size: 11pt;
                         }
                         .columnizer-wrapper h1,
                         .columnizer-wrapper h2,
                         .columnizer-wrapper h3,
-                        .columnizer-wrapper h4 { 
-                            font-size: 16pt; 
+                        .columnizer-wrapper h4 {
+                            font-size: 16pt;
                             text-shadow: none;
                         }
 
-                        .columnizer-wrapper .wide, 
-                        .columnizer-wrapper .thin { 
-                            clear: both; 
+                        .columnizer-wrapper .wide,
+                        .columnizer-wrapper .thin {
+                            clear: both;
                         }
-                        .columnizer-wrapper img { 
-                            float: left; 
-                            margin: 4px; 
+                        .columnizer-wrapper img {
+                            float: left;
+                            margin: 4px;
                         }
                     </style>
                     <script type="text/javascript" src="../slickgrid/lib/jquery.js"></script>
@@ -558,8 +558,8 @@ Reveal.addEventListener( 'customevent', function() {
                             console.log('initializing columnizer');
 
                             $('.columnizer-wrapper h1').addClass("dontend");
-                            $('.columnizer-wrapper a').click(function () { 
-                                alert("click!"); 
+                            $('.columnizer-wrapper a').click(function () {
+                                alert("click!");
                             } );
                             $('.columnizer-wrapper .wide').columnize({
                                 columns : 2,
@@ -567,8 +567,8 @@ Reveal.addEventListener( 'customevent', function() {
                                     id : ".thin",
                                     height : 375,
                                     doneFunc : function () {
-                                        $('.columnizer-wrapper .thin').columnize({ 
-                                            columns : 3 
+                                        $('.columnizer-wrapper .thin').columnize({
+                                            columns : 3
                                         });
                                     }
                                 }
@@ -657,7 +657,7 @@ Reveal.addEventListener( 'customevent', function() {
 
         </footer>
 
-		<script src="js/load_external_markdown.js"></script>
+    <script src="js/load_external_markdown.js"></script>
 
         <script src="js/reveal-pagestart-driver.js"></script>
 

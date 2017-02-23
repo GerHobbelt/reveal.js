@@ -45,7 +45,7 @@ var RevealConfiguration;        // object or function-returning-an-object
     //
     // The Start/Init Driver: this one assumes only NProgress has been loaded and starts the NProgress-based load animation
 
-    // make the web page (body) visible now that we're showing the NProgress loader: 
+    // make the web page (body) visible now that we're showing the NProgress loader:
     var body = document.getElementsByTagName('body')[0];
     body.style.display = 'block'; // $('body').show();
 
@@ -54,7 +54,7 @@ var RevealConfiguration;        // object or function-returning-an-object
       version_el[i].innerHTML = NProgress.version; // $('.version').text(NProgress.version);
     }
 
-    // show the NProgress loader...    
+    // show the NProgress loader...
     NProgress.start("Loading the presentation...");
 
     // invoke this when the load phase is completed (`NProgress.done()`)
