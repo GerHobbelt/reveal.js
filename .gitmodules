@@ -4,77 +4,63 @@
 [submodule "lib/plugins/highlight"]
 	path = lib/plugins/highlight
 	url = git@github.com:GerHobbelt/highlight.js.git
-	ignore = dirty
 [submodule "lib/js/verge"]
 	path = lib/js/verge
 	url = git@github.com:GerHobbelt/verge.git
-	ignore = dirty
 [submodule "lib/js/response.js"]
 	path = lib/js/response.js
 	url = git@github.com:GerHobbelt/response.js.git
-	ignore = dirty
 [submodule "lib/js/head"]
 	path = lib/js/head
 	url = git@github.com:GerHobbelt/headjs.git
-	ignore = dirty
 [submodule "lib/plugins/SyntaxHighlighter"]
 	path = lib/plugins/SyntaxHighlighter
 	url = git@github.com:GerHobbelt/SyntaxHighlighter.git
-	ignore = dirty
 [submodule "lib/js/classList"]
 	path = lib/js/classList
 	url = git@github.com:GerHobbelt/classList.js.git
-	ignore = dirty
 [submodule "lib/plugins/marked"]
 	path = lib/plugins/marked
 	url = git@github.com:GerHobbelt/marked.git
-	ignore = dirty
 [submodule "lib/js/requireJS"]
 	path = lib/js/requireJS
 	url = git@github.com:GerHobbelt/requirejs.git
-	ignore = dirty
 [submodule "lib/js/requireCSS"]
 	path = lib/js/requireCSS
 	url = git@github.com:GerHobbelt/require-css.git
-	ignore = dirty
 [submodule "lib/js/require-less"]
 	path = lib/js/require-less
 	url = git@github.com:GerHobbelt/require-less.git
-	ignore = dirty
 [submodule "lib/js/require-domReady"]
 	path = lib/js/require-domReady
 	url = git@github.com:GerHobbelt/requireJS-domReady.git
-	ignore = dirty
 [submodule "lib/js/require-text"]
 	path = lib/js/require-text
 	url = git@github.com:GerHobbelt/text.git
-	ignore = dirty
 [submodule "lib/js/require-plugins"]
 	path = lib/js/require-plugins
 	url = git@github.com:GerHobbelt/requirejs-plugins.git
-	ignore = dirty
 [submodule "util/wsclean"]
 	path = util/wsclean
 	url = git@github.com:GerHobbelt/whitespace-cleaner.git
-	ignore = dirty
 [submodule "lib/js/nprogress"]
 	path = lib/js/nprogress
 	url = git@github.com:GerHobbelt/nprogress.git
-	ignore = dirty
 [submodule "lib/js/LocalConnection"]
 	path = lib/js/LocalConnection
 	url = git@github.com:GerHobbelt/LocalConnection.js.git
 [submodule "lib/plugins/hilitor"]
 	path = lib/plugins/hilitor
 	url = git@github.com:GerHobbelt/hilitor.git
-	ignore = dirty
 [submodule "lib/js/scopedQuerySelectorShim"]
 	path = lib/js/scopedQuerySelectorShim
 	url = git@github.com:GerHobbelt/scopedQuerySelectorShim.git
-	ignore = dirty
 [submodule "lib/js/MathJax"]
 	path = lib/js/MathJax
 	url = git@github.com:GerHobbelt/MathJax.git
 [submodule "lib/font/FontAwesome"]
 	path = lib/font/FontAwesome
-	url = https://github.com/FortAwesome/Font-Awesome.git
+	url = git@github.com:FortAwesome/Font-Awesome.git
+[submodule "lib/js/assert"]
+	path = lib/js/assert
+	url = git@github.com:GerHobbelt/commonjs-assert.git

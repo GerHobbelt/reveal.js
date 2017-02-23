@@ -5736,6 +5736,10 @@
 				else if( /player\.vimeo\.com\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
 					iframe.contentWindow.postMessage( '{"method":"play"}', '*' );
 				}
+                		// asciinema postMessage API
+                		else if( /asciinema\.org\/api\/asciicasts\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
+		                	iframe.contentWindow.postMessage( ['asciicast:play'], '*' );
+                		}
 				// Generic postMessage API
 				else {
 					iframe.contentWindow.postMessage( 'slide:start', '*' );

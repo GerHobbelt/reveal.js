@@ -4,7 +4,7 @@
  * http://lab.hakim.se/reveal-js
  * MIT licensed
  *
- * Copyright (C) 2014 Hakim El Hattab, http://hakim.se
+ * Copyright (C) 2016 Hakim El Hattab, http://hakim.se
  */
 /*********************************************
  * RESET STYLES
@@ -87,7 +87,7 @@
 .reveal time,
 .reveal mark,
 .reveal audio,
-video {
+.reveal video {
   margin: 0;
   padding: 0;
   border: 0;
@@ -111,9 +111,12 @@ video {
 /*********************************************
  * GLOBAL STYLES
  *********************************************/
+html {
+  height: 100%;
+}
 body {
-  /* 
-        The page is shown (starting with an NProgress loader animation) once 
+  /*
+        The page is shown (starting with an NProgress loader animation) once
         the reveal-pagestart-driver.js script has loaded and executed:
         that script will set the 'display: block' style on the BODY tag.
     */
@@ -134,16 +137,13 @@ body {
   text-shadow: none;
 }
 .reveal-viewport .slides-wrapper.scrollable-slide {
-  /* ensure that 'scrollable slides' are indeed scrollable: position=absolute prevents the scrollbar from showing up */
   overflow: auto;
   position: relative;
   left: 0;
   top: 0;
 }
-/* prevent nasty scrollbars (at full size!) to show up in the overview rendering: */
 .reveal-viewport .reveal.overview .slides-wrapper.scrollable-slide {
   overflow: hidden;
-  /* and, yes, we know we bluntly *clip* the contents here. Readability of this kind of content isn't the purpose of the overview mode anyway. */
 }
 .slides-wrapper {
   transform-origin: 50% 50%;
@@ -544,7 +544,6 @@ body {
   left: 0;
   margin: auto;
   overflow: visible;
-  /* z-index: 1;          -- removing this one ensures that the search plugin always shows up on top like it should. */
   text-align: center;
   -webkit-transition: -webkit-transform-origin 3s cubic-bezier(0.26, 0.86, 0.44, 0.985), -webkit-transform 3s cubic-bezier(0.26, 0.86, 0.44, 0.985), -webkit-perspective 3s ease;
   -moz-transition: -moz-transform-origin 3s cubic-bezier(0.26, 0.86, 0.44, 0.985), -moz-transform 3s cubic-bezier(0.26, 0.86, 0.44, 0.985), -moz-perspective 3s ease;
@@ -582,12 +581,10 @@ body {
 .reveal .slides > section > section.visible {
   display: block;
 }
-/*
- * special layout fixes for when we measure the slide(s)' dimensions:
- */
 .reveal .slides > section.slide-measurement,
 .reveal .slides > section > section.slide-measurement {
   width: auto;
+  height: auto;
 }
 .reveal.center .slides {
   top: -40px;
@@ -606,21 +603,7 @@ body {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
-  /*
-        Together with the flex box model, this will ensure slides are centered by simply setting their height.
-     */
-  /*
-    The alternative, the classic box model:
-
-    display: block;
-
-    -webkit-box-sizing: border-box;
-       -moz-box-sizing: border-box;
-            box-sizing: border-box;
-    */
-  /* auto-create Y-scrollbar in sheets when their dimensions are percentage-based */
   overflow-y: hidden;
-  /* auto */
   overflow-x: hidden;
   -webkit-box-direction: normal;
   -webkit-box-orient: vertical;
@@ -678,7 +661,7 @@ body {
 .reveal.overview .slides > section > section {
   pointer-events: auto;
 }
-/* 
+/*
  * Reset all transforms that may be active for a slide when we switch to overview mode.
  */
 /*
@@ -692,7 +675,7 @@ body {
 }
 */
 /*
- * This 'reset-transitions' class is used to RESET any pending transitions when we go from 
+ * This 'reset-transitions' class is used to RESET any pending transitions when we go from
  * regular to overview mode.
  *
  * Inspired by: http://www.bennadel.com/blog/2462-understanding-css-transitions-and-class-timing-revisited.htm;
@@ -713,7 +696,7 @@ body {
 .reveal .slides > section > section.future {
   opacity: 0;
 }
-/* 
+/*
  * Hide a lot of content in each page in overview mode to clean it up: make the view more readable / less cluttered.
  *
  * This assumes the slide headings are encoded in <H1 > , etc.
@@ -1242,9 +1225,9 @@ body {
   left: 0;
 }
 /*
- * This 'no-transition' class is used to RESET any pending transitions when we manipulate the DOM. 
+ * This 'no-transition' class is used to RESET any pending transitions when we manipulate the DOM.
  *
- * See also: http://www.bennadel.com/blog/2462-understanding-css-transitions-and-class-timing-revisited.htm;
+ * Inspired by: http://www.bennadel.com/blog/2462-understanding-css-transitions-and-class-timing-revisited.htm
  */
 .no-transition,
 .no-transition * {
