@@ -1,5 +1,6 @@
 # GerHobbelt reveal.js fork
 
+
 ## How to use
 
 Clone the project into a new repository gh-pages branch,
@@ -81,6 +82,7 @@ reveal.js comes with a broad range of features including [nested slides](https:/
   - [Folder Structure](#folder-structure)
 - [License](#license)
 
+
 #### More reading
 
 - [Changelog](https://github.com/hakimel/reveal.js/releases): Up-to-date version history.
@@ -156,6 +158,7 @@ Presentations are written using HTML or Markdown but there's also an online edit
 
 
 ## Instructions
+
 
 ### Markup
 
@@ -256,6 +259,7 @@ Special syntax (in html comment) is available for adding attributes to the slide
 </section>
 ```
 
+
 #### Configuring *marked*
 
 We use [marked](https://github.com/chjj/marked) to parse Markdown. To customise marked's rendering, you can pass in options when [configuring Reveal](#configuration):
@@ -269,6 +273,7 @@ Reveal.initialize({
 	}
 });
 ```
+
 
 ### Configuration
 
@@ -437,6 +442,7 @@ Reveal.initialize({
 });
 ```
 
+
 ### Dependencies
 
 Reveal.js doesn't _rely_ on any third party scripts to work but a few optional libraries are included by default. These libraries are loaded as dependencies in the order they appear, for example:
@@ -477,6 +483,7 @@ You can add your own extensions using the same syntax. The following properties 
 
 To load these dependencies, reveal.js requires [head.js](http://headjs.com/) *(a script loading library)* to be loaded before reveal.js.
 
+
 ### Ready Event
 
 A 'ready' event is fired when reveal.js has loaded all non-async dependencies and is ready to start navigating. To check if reveal.js is already 'ready' you can call `Reveal.isReady()`.
@@ -488,6 +495,7 @@ Reveal.addEventListener( 'ready', function( event ) {
 ```
 
 Note that we also add a `.ready` class to the `.reveal` element so that you can hook into this with CSS.
+
 
 ### Auto-sliding
 
@@ -673,15 +681,20 @@ Reveal.addEventListener( 'somestate', function() {
 
 Slides are contained within a limited portion of the screen by default to allow them to fit any display and scale uniformly. You can apply full page backgrounds outside of the slide area by adding a ```data-background``` attribute to your ```<section>``` elements. Four different types of backgrounds are supported: color, image, video and iframe.
 
+
 ##### Color Backgrounds
+
 All CSS color formats are supported, like rgba() or hsl().
+
 ```html
 <section data-background-color="#ff0000">
 	<h2>Color</h2>
 </section>
 ```
 
+
 ##### Image Backgrounds
+
 By default, background images are resized to cover the full page. Available options:
 
 | Attribute                    | Default    | Description |
@@ -690,6 +703,7 @@ By default, background images are resized to cover the full page. Available opti
 | data-background-size         | cover      | See [background-size](https://developer.mozilla.org/docs/Web/CSS/background-size) on MDN.  |
 | data-background-position     | center     | See [background-position](https://developer.mozilla.org/docs/Web/CSS/background-position) on MDN. |
 | data-background-repeat       | no-repeat  | See [background-repeat](https://developer.mozilla.org/docs/Web/CSS/background-repeat) on MDN. |
+
 ```html
 <section data-background-image="http://example.com/image.png">
 	<h2>Image</h2>
@@ -699,7 +713,9 @@ By default, background images are resized to cover the full page. Available opti
 </section>
 ```
 
+
 ##### Video Backgrounds
+
 Automatically plays a full size video behind the slide.
 
 | Attribute                    | Default | Description |
@@ -715,15 +731,20 @@ Automatically plays a full size video behind the slide.
 </section>
 ```
 
+
 ##### Iframe Backgrounds
+
 Embeds a web page as a background. Note that since the iframe is in the background layer, behind your slides, it is not possible to interact with the embedded page.
+
 ```html
 <section data-background-iframe="https://slides.com">
 	<h2>Iframe</h2>
 </section>
 ```
 
+
 ##### Background Transitions
+
 Backgrounds transition using a fade animation by default. This can be changed to a linear sliding transition by passing ```backgroundTransition: 'slide'``` to the ```Reveal.initialize()``` call. Alternatively you can set ```data-background-transition``` on any section with a background to override that specific transition.
 
 
@@ -1007,20 +1028,41 @@ Reveal.initialize({
 Presentations can be exported to PDF via a special print stylesheet. This feature requires that you use [Google Chrome](http://google.com/chrome) or [Chromium](https://www.chromium.org/Home) and to be serving the presention from a webserver.
 Here's an example of an exported presentation that's been uploaded to SlideShare: http://www.slideshare.net/hakimel/revealjs-300.
 
+
+### Page size
+
 Export dimensions are inferred from the configured [presentation size](#presentation-size). Slides that are too tall to fit within a single page will expand onto multiple pages. You can limit how many pages a slide may expand onto using the `pdfMaxPagesPerSlide` config option, for example `Reveal.configure({ pdfMaxPagesPerSlide: 1 })` ensures that no slide ever grows to more than one printed page.
 
-1. Open your presentation with `print-pdf` included in the query string i.e. http://localhost:8000/?print-pdf. This triggers the default index HTML to load the PDF print stylesheet ([css/print/pdf.css](https://github.com/hakimel/reveal.js/blob/master/css/print/pdf.css)). You can test this with [lab.hakim.se/reveal-js?print-pdf](http://lab.hakim.se/reveal-js?print-pdf).
-  * If you want to include [speaker notes](#speaker-notes) in your export, you can append `showNotes=true` to the query string: http://localhost:8000/?print-pdf&showNotes=true
-1. Open the in-browser print dialog (CTRL/CMD+P).
-1. Change the **Destination** setting to **Save as PDF**.
-1. Change the **Layout** to **Landscape**.
-1. Change the **Margins** to **None**.
-1. Enable the **Background graphics** option.
-1. Click **Save**.
+
+### Print stylesheet
+
+To enable the PDF print capability in your presentation, the special print stylesheet at [/css/print/pdf.css](https://github.com/hakimel/reveal.js/blob/master/css/print/pdf.css) must be loaded. The default index.html file handles this for you when `print-pdf` is included in the query string. If you're using a different HTML template, you can add this to your HEAD:
+
+```html
+<script>
+	var link = document.createElement( 'link' );
+	link.rel = 'stylesheet';
+	link.type = 'text/css';
+	link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+	document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+```
+
+
+### Instructions
+
+1. Open your presentation with `print-pdf` included in the query string i.e. http://localhost:8000/?print-pdf. You can test this with [lab.hakim.se/reveal-js?print-pdf](http://lab.hakim.se/reveal-js?print-pdf).
+2. Open the in-browser print dialog (CTRL/CMD+P).
+3. Change the **Destination** setting to **Save as PDF**.
+4. Change the **Layout** to **Landscape**.
+5. Change the **Margins** to **None**.
+6. Enable the **Background graphics** option.
+7. Click **Save**.
 
 ![Chrome Print Settings](https://s3.amazonaws.com/hakim-static/reveal-js/pdf-print-settings-2.png)
 
 Alternatively you can use the [decktape](https://github.com/astefanutti/decktape) project.
+
 
 ## Theming
 
@@ -1075,7 +1117,6 @@ If you're using the external Markdown plugin, you can add notes with the help of
 <section data-markdown="example.md" data-separator="^\n\n\n" data-separator-vertical="^\n\n" data-separator-notes="^Note:"></section>
 
 
-
 # Title
 
 ## Sub-title
@@ -1086,11 +1127,13 @@ Note:
 This will only display in the notes window.
 ```
 
+
 #### Share and Print Speaker Notes
 
 Notes are only visible to the speaker inside of the speaker view. If you wish to share your notes with others you can initialize reveal.js with the `showNotes` config value set to `true`. Notes will appear along the bottom of the presentations.
 
 When `showNotes` is enabled notes are also included when you [export to PDF](https://github.com/hakimel/reveal.js#pdf-export). By default, notes are printed in a semi-transparent box on top of the slide. If you'd rather print them on a separate page after the slide, set `showNotes: "separate-page"`.
+
 
 ## Server Side Speaker Notes
 
@@ -1224,6 +1267,7 @@ You are very welcome to point your presentations at the Socket.io server running
 The socket.io server can play the role of static file server for your client presentation, as in the example at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/). (Open [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/) in two browsers. Navigate through the slides on one, and the other will update to match.)
 
 Example configuration:
+
 ```javascript
 Reveal.initialize({
     // other options...
@@ -1252,6 +1296,7 @@ Reveal.initialize({
 It can also play the role of static file server for your master presentation and client presentations at the same time (as long as you don't want to use speaker notes). (Open [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/) in two browsers. Navigate through the slides on one, and the other will update to match. Navigate through the slides on the second, and the first will update to match.) This is probably not desirable, because you don't want your audience to mess with your slides while you're presenting. ;)
 
 Example configuration:
+
 ```javascript
 Reveal.initialize({
     // other options...
@@ -1336,7 +1381,7 @@ Reveal.initialize({
     },
 
     dependencies: [
-    { src: 'plugin/leap/leap.js', async: true }
+        { src: 'plugin/leap/leap.js', async: true }
     ]
 
 });
@@ -1394,24 +1439,28 @@ Some reveal.js features, like external Markdown and speaker notes, require that 
 1. Install [Node.js](http://nodejs.org/) (4.0.0 or later)
 
 1. Clone the reveal.js repository
-```sh
-$ git clone git@github.com:jolicode/reveal.js.git
-```
+
+   ```sh
+   $ git clone git@github.com:jolicode/reveal.js.git
+   ```
 
 1. Navigate to the reveal.js folder
-```sh
-$ cd reveal.js
-```
+
+   ```sh
+   $ cd reveal.js
+   ```
 
 1. Install dependencies
-```sh
-$ npm install
-```
+
+   ```sh
+   $ npm install
+   ```
 
 1. Serve the presentation and monitor source files for changes
-```sh
+
+   ```sh
    $ npm start
-```
+   ```
 
 1. Open <http://localhost:8000> to view your presentation
 
