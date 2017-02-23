@@ -1522,12 +1522,12 @@ body
     max-height: none;
     top: 0;
     left: 0;
-  -o-object-fit: cover;
+    -o-object-fit: cover;
      object-fit: cover; 
 }
 
 .reveal .slide-background[data-background-size="contain"] video {
-  -o-object-fit: contain;
+    -o-object-fit: contain;
      object-fit: contain; 
 }
 
@@ -2199,4 +2199,17 @@ body
     visibility: hidden;
 }
 
+/*********************************************
+ * NOTES PLUGIN
+ *********************************************/
+
+.speaker-notes .reveal .slides section .fragment {
+  opacity: 1;
+  color: #ff0000;
+  visibility: visible;
+}
+
+.speaker-notes .reveal .slides section .fragment.visible {
+  color: inherit;
+}
 

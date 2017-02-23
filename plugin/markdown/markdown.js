@@ -24,7 +24,6 @@
         root.RevealMarkdown.initialize();
     }
 }(this, function (marked, hljs) {
-
 	var DEFAULT_SLIDE_SEPARATOR = '^\r?\n---\r?\n$',
         DEFAULT_NOTES_SEPARATOR = 'note:',
         DEFAULT_ELEMENT_ATTRIBUTES_SEPARATOR = '\\\.element\\\s*?(.+?)$',
@@ -391,17 +390,22 @@
     return {
 
         initialize: function() {
-			if( typeof marked === 'undefined' ) {
-				throw 'The reveal.js Markdown plugin requires marked to be loaded';
-			}
+	    if( typeof marked === 'undefined' ) {
+	        throw 'The reveal.js Markdown plugin requires marked to be loaded';
+	    }
 
-			if( typeof hljs !== 'undefined' ) {
-				marked.setOptions({
-					highlight: function( code, lang ) {
-						return hljs.highlightAuto( code, [lang] ).value;
-					}
-				});
-			}
+	    if( typeof hljs !== 'undefined' ) {
+	        marked.setOptions({
+	            highlight: function( code, lang ) {
+	                if ( lang ) {
+					return hljs.highlightAuto( code, [lang] ).value;
+	                }
+	                else {
+	                    return hljs.highlightAuto( code ).value;
+	                }
+	            }
+	        });
+	    }
 
 			var options = Reveal.getConfig().markdown;
 

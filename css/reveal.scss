@@ -755,9 +755,9 @@ body
     display: block;
 }
 
-.reveal .slides>section:empty,
-.reveal .slides>section>section:empty {
-	pointer-events: none;
+.reveal .slides > section:empty,
+.reveal .slides > section > section:empty {
+    pointer-events: none;
 }
 
 /* Don't allow interaction with invisible slides */
@@ -1057,7 +1057,7 @@ body
         &.past {
             z-index: 12;
         }
-        
+
         &:not(.stack):before {
             content: '';
             position: absolute;
@@ -1069,7 +1069,7 @@ body
             background: rgba(0, 0, 0, 0.1);
             transform: translateZ( -20px );
         }
-        
+
         &:not(.stack):after {
             content: '';
             position: absolute;
@@ -1158,7 +1158,7 @@ body
     opacity: 0;
 }
 @include transition-horizontal-future(appear) {
-    transform: translate(0, 30%);   
+    transform: translate(0, 30%);
     opacity: 0;
 }
 @include transition-vertical-past(appear) {
@@ -1778,19 +1778,19 @@ body
         visibility: visible;
     }
 
-	.reveal .overlay.overlay-preview.loaded .viewport-inner  {
-		position: absolute;
-		z-index: -1;
-		left: 0;
-		top: 45%;
-		width: 100%;
-		text-align: center;
-		letter-spacing: normal;
-	}
-	.reveal .overlay.overlay-preview .x-frame-error  {
-		opacity: 0;
-		transition: opacity 0.3s ease 0.3s;
-	}
+    .reveal .overlay.overlay-preview.loaded .viewport-inner  {
+        position: absolute;
+        z-index: -1;
+        left: 0;
+        top: 45%;
+        width: 100%;
+        text-align: center;
+        letter-spacing: normal;
+    }
+    .reveal .overlay.overlay-preview .x-frame-error  {
+        opacity: 0;
+        transition: opacity 0.3s ease 0.3s;
+    }
     .reveal .overlay.overlay-preview.loaded .x-frame-error  {
         opacity: 1;
     }
@@ -1988,4 +1988,18 @@ body
     visibility: hidden;
 }
 
+
+/*********************************************
+ * NOTES PLUGIN
+ *********************************************/
+
+.speaker-notes .reveal .slides section .fragment {
+	opacity: 1;
+	color: #ff0000;
+	visibility: visible;
+}
+
+.speaker-notes .reveal .slides section .fragment.visible {
+	color: inherit;
+}
 

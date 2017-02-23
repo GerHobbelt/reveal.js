@@ -850,6 +850,10 @@
 
         dom.wrapper.setAttribute( 'role', 'application' );
 
+        if (isSpeakerNotes() && dom.wrapper.classList) {
+            dom.wrapper.classList.add( 'speaker-notes' );
+        }
+
         dom.slides_wrapper = createSingletonNode( dom.wrapper, 'div', 'slides-wrapper', null );
         // now place wrapper at the 'slides' position in the DOM and wrap it around the slides when we didn't already:
         //   http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-952280727
@@ -1033,7 +1037,7 @@
 
         // Dimensions of the PDF pages
         var pageWidth = Math.floor( slideSize.width * ( 1 + config.margin ) ),
-			pageHeight = Math.floor( slideSize.height * ( 1 + config.margin  ) );
+            pageHeight = Math.floor( slideSize.height * ( 1 + config.margin ) );
 
         // Dimensions of slides within the pages
         var slideWidth = slideSize.width,
@@ -1102,18 +1106,6 @@
                 slide.style.width = targetInfo.slideWidth + 'px';
                 slide.style.height = targetInfo.slideHeight + 'px';
 
-/*
-TBD this is the old code; next marker starts the new code. To be checked and re-evaluated. [GerHobbelt]
-*/
-
-                if( slide.scrollHeight > targetInfo.slideHeight ) {
-                    slide.style.overflow = 'hidden';
-                }
-
-/*
-TBD end of old code, start of new code
-*/
-
                 // TODO Backgrounds need to be multiplied when the slide
                 // stretches over multiple pages
                 var background = slide.querySelector( ':scope > .slide-background' );
@@ -1123,6 +1115,12 @@ TBD end of old code, start of new code
                     background.style.top = -top + 'px';
                     background.style.left = -left + 'px';
                 }
+
+// TBD: new code for backgrounds is this little blob:
+				if( slide.slideBackgroundElement ) {
+					page.insertBefore( slide.slideBackgroundElement, slide );
+				}
+// TBD: end of code blob
 
                 // Inject notes if `showNotes` is enabled
                 if( config.showNotes ) {
@@ -1175,6 +1173,7 @@ TBD end of old code, start of new code
 
 		// Notify subscribers that the PDF layout is good to go
 		dispatchEvent( 'pdf-ready' );
+
         return true;
     }
 
@@ -1357,7 +1356,7 @@ TBD end of old code, start of new code
 
         // Additional and optional background properties
         if( data.backgroundSize ) element.style.backgroundSize = data.backgroundSize;
-		if( data.backgroundSize ) element.setAttribute( 'data-background-size', data.backgroundSize );
+        if( data.backgroundSize ) element.setAttribute( 'data-background-size', data.backgroundSize );
         if( data.backgroundColor ) element.style.backgroundColor = data.backgroundColor;
         if( data.backgroundRepeat ) element.style.backgroundRepeat = data.backgroundRepeat;
         if( data.backgroundPosition ) element.style.backgroundPosition = data.backgroundPosition;
@@ -4637,10 +4636,9 @@ TBD end of old code, start of new code
 
         updateControls();
         updateProgress();
-        updateBackground();
         updateSlideNumber();
-		updateSlidesVisibility();			// ????????????????????
-		updateBackground( true );
+        updateSlidesVisibility();   //??????
+        updateBackground();
         updateNotes();
 
         formatEmbeddedContent();
@@ -5284,17 +5282,17 @@ TBD end of old code, start of new code
 
         } );
 
-		// Stop content inside of previous backgrounds
+        // Stop content inside of previous backgrounds
         if( previousBackground ) {
 
-			stopEmbeddedContent( previousBackground );
+            stopEmbeddedContent( previousBackground );
 
         }
 
-		// Start content in the current background
+        // Start content in the current background
         if( currentBackground ) {
 
-			startEmbeddedContent( currentBackground );
+            startEmbeddedContent( currentBackground );
 
             var backgroundImageURL = currentBackground.style.backgroundImage || '';
 
@@ -5504,7 +5502,7 @@ TBD end of old code, start of new code
 						iframe.setAttribute( 'src', backgroundIframe );
 					}
 
-					iframe.style.width  = '100%';
+					iframe.style.width = '100%';
 					iframe.style.height = '100%';
 					iframe.style.maxHeight = '100%';
 					iframe.style.maxWidth = '100%';
@@ -5620,7 +5618,7 @@ TBD end of old code, start of new code
      * Start playback of any embedded content inside of
      * the given element.
      *
-	 * @param {HTMLElement} element
+     * @param {HTMLElement} element
      */
     function startEmbeddedContent( element ) {
 
@@ -5691,7 +5689,7 @@ TBD end of old code, start of new code
 
     }
 
-    /**
+	/**
 	 * Starts playing an embedded video/audio element after
 	 * it has finished loading.
 	 *
@@ -5711,11 +5709,11 @@ TBD end of old code, start of new code
 
 	}
 
-	/**
+    /**
      * "Starts" the content of an embedded iframe using the
      * postMessage API.
      *
-	 * @param {object} event
+     * @param {object} event
      */
     function startEmbeddedIframe( event ) {
 
@@ -5753,42 +5751,42 @@ TBD end of old code, start of new code
      * Stop playback of any embedded content inside of
      * the targeted slide.
      *
-	 * @param {HTMLElement} element
-	 * @param {boolean} autoplay Optionally override the
-	 * autoplay setting of media elements
+     * @param {HTMLElement} element
+     * @param {boolean} autoplay Optionally override the
+     * autoplay setting of media elements
      */
-	function stopEmbeddedContent( element, autoplay ) {
+    function stopEmbeddedContent( element, autoplay ) {
 
-		if( element && element.parentNode ) {
+        if( element && element.parentNode ) {
             // HTML5 media elements
-			toArray( element.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
+            toArray( element.querySelectorAll( 'video, audio' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.pause === 'function' ) {
                     el.pause();
                 }
             } );
 
             // Generic postMessage API for non-lazy loaded iframes
-			toArray( element.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
+            toArray( element.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
                 el.contentWindow.postMessage( 'slide:stop', '*' );
                 el.removeEventListener( 'load', startEmbeddedIframe );
             } );
 
             // YouTube postMessage API
-			toArray( element.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
+            toArray( element.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
                     el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
                 }
             });
 
             // Vimeo postMessage API
-			toArray( element.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
+            toArray( element.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
                 if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
                     el.contentWindow.postMessage( '{"method":"pause"}', '*' );
                 }
             } );
 
             // Lazy loading iframes
-			toArray( element.querySelectorAll( 'iframe[data-src]' ) ).forEach( function( el ) {
+            toArray( element.querySelectorAll( 'iframe[data-src]' ) ).forEach( function( el ) {
                 // Only removing the src doesn't actually unload the frame
                 // in all browsers (Firefox) so we set it to blank first
                 el.setAttribute( 'src', 'about:blank' );
