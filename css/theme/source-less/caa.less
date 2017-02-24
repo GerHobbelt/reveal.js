@@ -13,7 +13,7 @@
 @import "../template-less/settings";
 // ---------------------------------------------
 
-// Override theme settings (see ../template/settings.less)
+// Override theme settings (see ../template-less/settings.less)
 @mainFont: 'Gudea', sans-serif;
 @mainColor: #000;
 @headingFont: 'Questrial', Impact, sans-serif;
@@ -45,13 +45,6 @@ div.reveal
         z-index: -1;
     }
 }
-
-
-// Theme template ------------------------------
-@import "../template-less/theme";
-// ---------------------------------------------
-
-
 
 /*
     This is what is served to Chrome when going to
@@ -94,5 +87,12 @@ div.reveal
   src: local('Questrial'), local('Questrial-Regular'), url(/css/theme/font/Questrial-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
 }
+
+
+// Theme template ------------------------------
+@import "../template-less/theme";
+// ---------------------------------------------
+
+
 
 
