@@ -854,45 +854,45 @@ body
  * Mixins for readability of transitions
  *********************************************/
 
-@mixin transition-global($style) {
-    .reveal .slides section[data-transition=#{$style}],
-    .reveal.#{$style} .slides section:not([data-transition]) {
-        @content;
+.transition-global(@style, @content) {
+    .reveal .slides section[data-transition="@{style}"],
+    .reveal.@{style} .slides section:not([data-transition]) {
+        @content();
     }
 }
-@mixin transition-stack($style) {
-    .reveal .slides section[data-transition=#{$style}].stack,
-    .reveal.#{$style} .slides section.stack {
-        @content;
+.transition-stack(@style, @content) {
+    .reveal .slides section[data-transition="@{style}"].stack,
+    .reveal.@{style} .slides section.stack {
+        @content();
     }
 }
-@mixin transition-horizontal-past($style) {
-    .reveal .slides>section[data-transition=#{$style}].past,
-    .reveal .slides>section[data-transition~=#{$style}-out].past,
-    .reveal.#{$style} .slides>section:not([data-transition]).past {
-        @content;
+.transition-horizontal-past(@style, @content) {
+    .reveal .slides > section[data-transition="@{style}"].past,
+    .reveal .slides > section[data-transition~="@{style}-out"].past,
+    .reveal.@{style} .slides>section:not([data-transition]).past {
+        @content();
     }
 }
-@mixin transition-horizontal-future($style) {
-    .reveal .slides>section[data-transition=#{$style}].future,
-    .reveal .slides>section[data-transition~=#{$style}-in].future,
-    .reveal.#{$style} .slides>section:not([data-transition]).future {
-        @content;
+.transition-horizontal-future(@style, @content) {
+    .reveal .slides>section[data-transition="@{style}"].future,
+    .reveal .slides>section[data-transition~="@{style}-in"].future,
+    .reveal.@{style} .slides>section:not([data-transition]).future {
+        @content();
     }
 }
 
-@mixin transition-vertical-past($style) {
-    .reveal .slides>section>section[data-transition=#{$style}].past,
-    .reveal .slides>section>section[data-transition~=#{$style}-out].past,
-    .reveal.#{$style} .slides>section>section:not([data-transition]).past {
-        @content;
+.transition-vertical-past(@style, @content) {
+    .reveal .slides>section>section[data-transition="@{style}"].past,
+    .reveal .slides>section>section[data-transition~="@{style}-out"].past,
+    .reveal.@{style} .slides>section>section:not([data-transition]).past {
+        @content();
     }
 }
-@mixin transition-vertical-future($style) {
-    .reveal .slides>section>section[data-transition=#{$style}].future,
-    .reveal .slides>section>section[data-transition~=#{$style}-in].future,
-    .reveal.#{$style} .slides>section>section:not([data-transition]).future {
-        @content;
+.transition-vertical-future(@style, @content) {
+    .reveal .slides>section>section[data-transition="@{style}"].future,
+    .reveal .slides>section>section[data-transition~="@{style}-in"].future,
+    .reveal.@{style} .slides>section>section:not([data-transition]).future {
+        @content();
     }
 }
 
@@ -901,91 +901,107 @@ body
  * Aliased 'linear' for backwards compatibility
  *********************************************/
 
-@each $stylename in slide, linear {
-    .reveal.#{$stylename} section {
+//@each @stylename in slide, linear {
+.transition-slide(@stylename) {
+    .reveal.@{stylename} section {
         backface-visibility: hidden;
     }
-    @include transition-horizontal-past(#{$stylename}) {
+    .transition-horizontal-past(@stylename, {
         transform: translate(-150%, 0);
-    }
-    @include transition-horizontal-future(#{$stylename}) {
+    });
+    .transition-horizontal-future(@stylename, {
         transform: translate(150%, 0);
-    }
-    @include transition-vertical-past(#{$stylename}) {
+    });
+    .transition-vertical-past(@stylename, {
         transform: translate(0, -150%);
-    }
-    @include transition-vertical-future(#{$stylename}) {
+    });
+    .transition-vertical-future(@stylename, {
         transform: translate(0, 150%);
-    }
+    });
 }
+
+.transition-slide(slide);
+.transition-slide(linear);
 
 /*********************************************
  * CONVEX TRANSITION
  * Aliased 'default' for backwards compatibility
  *********************************************/
 
-@each $stylename in default, convex {
-    @include transition-stack(#{$stylename}) {
+//@each @stylename in default, convex {
+.transition-convex(@stylename) {
+    .transition-stack(@stylename, {
         transform-style: preserve-3d;
-    }
+    });
 
-    @include transition-horizontal-past(#{$stylename}) {
+    .transition-horizontal-past(@stylename, {
         transform: translate3d(-100%, 0, 0) rotateY(-90deg) translate3d(-100%, 0, 0);
-    }
-    @include transition-horizontal-future(#{$stylename}) {
+    });
+    .transition-horizontal-future(@stylename, {
         transform: translate3d(100%, 0, 0) rotateY(90deg) translate3d(100%, 0, 0);
-    }
-    @include transition-vertical-past(#{$stylename}) {
+    });
+    .transition-vertical-past(@stylename, {
         transform: translate3d(0, -300px, 0) rotateX(70deg) translate3d(0, -300px, 0);
-    }
-    @include transition-vertical-future(#{$stylename}) {
+    });
+    .transition-vertical-future(@stylename, {
         transform: translate3d(0, 300px, 0) rotateX(-70deg) translate3d(0, 300px, 0);
-    }
+    });
 }
+
+.transition-convex(default);
+.transition-convex(convex);
 
 /*********************************************
  * CONCAVE TRANSITION
  *********************************************/
 
-@include transition-stack(concave) {
-    transform-style: preserve-3d;
+.transition-concave() {
+  .transition-stack(concave, {
+      transform-style: preserve-3d;
+  });
+
+  .transition-horizontal-past(concave, {
+      transform: translate3d(-100%, 0, 0) rotateY(90deg) translate3d(-100%, 0, 0);
+  });
+  .transition-horizontal-future(concave, {
+      transform: translate3d(100%, 0, 0) rotateY(-90deg) translate3d(100%, 0, 0);
+  });
+  .transition-vertical-past(concave, {
+      transform: translate3d(0, -80%, 0) rotateX(-70deg) translate3d(0, -80%, 0);
+  });
+  .transition-vertical-future(concave, {
+      transform: translate3d(0, 80%, 0) rotateX(70deg) translate3d(0, 80%, 0);
+  });
 }
 
-@include transition-horizontal-past(concave) {
-    transform: translate3d(-100%, 0, 0) rotateY(90deg) translate3d(-100%, 0, 0);
-}
-@include transition-horizontal-future(concave) {
-    transform: translate3d(100%, 0, 0) rotateY(-90deg) translate3d(100%, 0, 0);
-}
-@include transition-vertical-past(concave) {
-    transform: translate3d(0, -80%, 0) rotateX(-70deg) translate3d(0, -80%, 0);
-}
-@include transition-vertical-future(concave) {
-    transform: translate3d(0, 80%, 0) rotateX(70deg) translate3d(0, 80%, 0);
-}
+.transition-concave();
 
 
 /*********************************************
  * ZOOM TRANSITION
  *********************************************/
 
-@include transition-global(zoom) {
-    transition-timing-function: ease;
+.transition-zoom() {
+  .transition-global(zoom, {
+      transition-timing-function: ease;
+  });
+  .transition-horizontal-past(zoom, {
+      visibility: hidden;
+      transform: scale(16);
+  });
+  .transition-horizontal-future(zoom, {
+      visibility: hidden;
+      transform: scale(0.2);
+  });
+  .transition-vertical-past(zoom, {
+      transform: translate(0, -150%);
+  });
+  .transition-vertical-future(zoom, {
+      transform: translate(0, 150%);
+  });
 }
-@include transition-horizontal-past(zoom) {
-    visibility: hidden;
-    transform: scale(16);
-}
-@include transition-horizontal-future(zoom) {
-    visibility: hidden;
-    transform: scale(0.2);
-}
-@include transition-vertical-past(zoom) {
-    transform: translate(0, -150%);
-}
-@include transition-vertical-future(zoom) {
-    transform: translate(0, 150%);
-}
+
+.transition-zoom();
 
 
 /*********************************************
@@ -1153,7 +1169,7 @@ body
  * FADE TRANSITION
  *********************************************/
 
-.reveal .slides section[data-transition=fade],
+.reveal .slides section[data-transition="fade"],
 .reveal.fade .slides section:not([data-transition]),
 .reveal.fade .slides > section > section:not([data-transition]) {
     transform: none;
@@ -1171,11 +1187,14 @@ body
  * NO TRANSITION
  *********************************************/
 
-@include transition-global(none) {
-    transform: none;
-    transition: none;
+.transition-none() {
+  .transition-global(none, {
+      transform: none;
+      transition: none;
+  });
 }
 
+.transition-none();
 
 
 
@@ -1339,110 +1358,110 @@ body
 
 
 /* Immediate transition style */
-.reveal[data-background-transition=none] > .backgrounds .slide-background,
-.reveal > .backgrounds .slide-background[data-background-transition=none] {
+.reveal[data-background-transition="none"] > .backgrounds .slide-background,
+.reveal > .backgrounds .slide-background[data-background-transition="none"] {
     transition: none;
 }
 
 /* Slide */
-.reveal[data-background-transition=slide] > .backgrounds .slide-background,
-.reveal > .backgrounds .slide-background[data-background-transition=slide] {
+.reveal[data-background-transition="slide"] > .backgrounds .slide-background,
+.reveal > .backgrounds .slide-background[data-background-transition="slide"] {
     opacity: 1;
     backface-visibility: hidden;
 }
-.reveal[data-background-transition=slide] > .backgrounds .slide-background.past,
-.reveal > .backgrounds .slide-background.past[data-background-transition=slide] {
+.reveal[data-background-transition="slide"] > .backgrounds .slide-background.past,
+.reveal > .backgrounds .slide-background.past[data-background-transition="slide"] {
     transform: translate(-100%, 0);
 }
-.reveal[data-background-transition=slide] > .backgrounds .slide-background.future,
-.reveal > .backgrounds .slide-background.future[data-background-transition=slide] {
+.reveal[data-background-transition="slide"] > .backgrounds .slide-background.future,
+.reveal > .backgrounds .slide-background.future[data-background-transition="slide"] {
     transform: translate(100%, 0);
 }
 
-.reveal[data-background-transition=slide] > .backgrounds .slide-background > .slide-background.past,
-.reveal > .backgrounds .slide-background > .slide-background.past[data-background-transition=slide] {
+.reveal[data-background-transition="slide"] > .backgrounds .slide-background > .slide-background.past,
+.reveal > .backgrounds .slide-background > .slide-background.past[data-background-transition="slide"] {
     transform: translate(0, -100%);
 }
-.reveal[data-background-transition=slide] > .backgrounds .slide-background > .slide-background.future,
-.reveal > .backgrounds .slide-background > .slide-background.future[data-background-transition=slide] {
+.reveal[data-background-transition="slide"] > .backgrounds .slide-background > .slide-background.future,
+.reveal > .backgrounds .slide-background > .slide-background.future[data-background-transition="slide"] {
     transform: translate(0, 100%);
 }
 
 
 /* Convex */
-.reveal[data-background-transition=convex] > .backgrounds .slide-background.past,
-.reveal > .backgrounds .slide-background.past[data-background-transition=convex] {
+.reveal[data-background-transition="convex"] > .backgrounds .slide-background.past,
+.reveal > .backgrounds .slide-background.past[data-background-transition="convex"] {
     opacity: 0;
     transform: translate3d(-100%, 0, 0) rotateY(-90deg) translate3d(-100%, 0, 0);
 }
-.reveal[data-background-transition=convex] > .backgrounds .slide-background.future,
-.reveal > .backgrounds .slide-background.future[data-background-transition=convex] {
+.reveal[data-background-transition="convex"] > .backgrounds .slide-background.future,
+.reveal > .backgrounds .slide-background.future[data-background-transition="convex"] {
     opacity: 0;
     transform: translate3d(100%, 0, 0) rotateY(90deg) translate3d(100%, 0, 0);
 }
 
-.reveal[data-background-transition=convex] > .backgrounds .slide-background > .slide-background.past,
-.reveal > .backgrounds .slide-background > .slide-background.past[data-background-transition=convex] {
+.reveal[data-background-transition="convex"] > .backgrounds .slide-background > .slide-background.past,
+.reveal > .backgrounds .slide-background > .slide-background.past[data-background-transition="convex"] {
     opacity: 0;
     transform: translate3d(0, -100%, 0) rotateX(90deg) translate3d(0, -100%, 0);
 }
-.reveal[data-background-transition=convex] > .backgrounds .slide-background > .slide-background.future,
-.reveal > .backgrounds .slide-background > .slide-background.future[data-background-transition=convex] {
+.reveal[data-background-transition="convex"] > .backgrounds .slide-background > .slide-background.future,
+.reveal > .backgrounds .slide-background > .slide-background.future[data-background-transition="convex"] {
     opacity: 0;
     transform: translate3d(0, 100%, 0) rotateX(-90deg) translate3d(0, 100%, 0);
 }
 
 
 /* Concave */
-.reveal[data-background-transition=concave] > .backgrounds .slide-background.past,
-.reveal > .backgrounds .slide-background.past[data-background-transition=concave] {
+.reveal[data-background-transition="concave"] > .backgrounds .slide-background.past,
+.reveal > .backgrounds .slide-background.past[data-background-transition="concave"] {
     opacity: 0;
     transform: translate3d(-100%, 0, 0) rotateY(90deg) translate3d(-100%, 0, 0);
 }
-.reveal[data-background-transition=concave] > .backgrounds .slide-background.future,
-.reveal > .backgrounds .slide-background.future[data-background-transition=concave] {
+.reveal[data-background-transition="concave"] > .backgrounds .slide-background.future,
+.reveal > .backgrounds .slide-background.future[data-background-transition="concave"] {
     opacity: 0;
     transform: translate3d(100%, 0, 0) rotateY(-90deg) translate3d(100%, 0, 0);
 }
 
-.reveal[data-background-transition=concave] > .backgrounds .slide-background > .slide-background.past,
-.reveal > .backgrounds .slide-background > .slide-background.past[data-background-transition=concave] {
+.reveal[data-background-transition="concave"] > .backgrounds .slide-background > .slide-background.past,
+.reveal > .backgrounds .slide-background > .slide-background.past[data-background-transition="concave"] {
     opacity: 0;
     transform: translate3d(0, -100%, 0) rotateX(-90deg) translate3d(0, -100%, 0);
 }
-.reveal[data-background-transition=concave] > .backgrounds .slide-background > .slide-background.future,
-.reveal > .backgrounds .slide-background > .slide-background.future[data-background-transition=concave] {
+.reveal[data-background-transition="concave"] > .backgrounds .slide-background > .slide-background.future,
+.reveal > .backgrounds .slide-background > .slide-background.future[data-background-transition="concave"] {
     opacity: 0;
     transform: translate3d(0, 100%, 0) rotateX(90deg) translate3d(0, 100%, 0);
 }
 
 /* Zoom */
-.reveal[data-background-transition=zoom] > .backgrounds .slide-background,
-.reveal > .backgrounds .slide-background[data-background-transition=zoom] {
+.reveal[data-background-transition="zoom"] > .backgrounds .slide-background,
+.reveal > .backgrounds .slide-background[data-background-transition="zoom"] {
     transition-timing-function: ease;
 }
 
-.reveal[data-background-transition=zoom] > .backgrounds .slide-background.past,
-.reveal > .backgrounds .slide-background.past[data-background-transition=zoom] {
+.reveal[data-background-transition="zoom"] > .backgrounds .slide-background.past,
+.reveal > .backgrounds .slide-background.past[data-background-transition="zoom"] {
     opacity: 0;
     visibility: hidden;
     transform: scale(16);
 }
-.reveal[data-background-transition=zoom] > .backgrounds .slide-background.future,
-.reveal > .backgrounds .slide-background.future[data-background-transition=zoom] {
+.reveal[data-background-transition="zoom"] > .backgrounds .slide-background.future,
+.reveal > .backgrounds .slide-background.future[data-background-transition="zoom"] {
     opacity: 0;
     visibility: hidden;
     transform: scale(0.2);
 }
 
-.reveal[data-background-transition=zoom] > .backgrounds .slide-background > .slide-background.past,
-.reveal > .backgrounds .slide-background > .slide-background.past[data-background-transition=zoom] {
+.reveal[data-background-transition="zoom"] > .backgrounds .slide-background > .slide-background.past,
+.reveal > .backgrounds .slide-background > .slide-background.past[data-background-transition="zoom"] {
     opacity: 0;
     visibility: hidden;
     transform: scale(16);
 }
-.reveal[data-background-transition=zoom] > .backgrounds .slide-background > .slide-background.future,
-.reveal > .backgrounds .slide-background > .slide-background.future[data-background-transition=zoom] {
+.reveal[data-background-transition="zoom"] > .backgrounds .slide-background > .slide-background.future,
+.reveal > .backgrounds .slide-background > .slide-background.future[data-background-transition="zoom"] {
     opacity: 0;
     visibility: hidden;
     transform: scale(0.2);
@@ -1559,8 +1578,9 @@ body
             outline-offset: 10px;
         }
 
-    .backgrounds .slide-background.stack {
-        overflow: visible;
+        .slide-background.stack {
+            overflow: visible;
+        }
     }
 }
 
