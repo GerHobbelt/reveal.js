@@ -2609,6 +2609,8 @@
             }, 1 );
         }
 
+    }
+
     /**
      * Open or close help overlay window.
      *
@@ -2628,7 +2630,6 @@
             else {
                 showHelp();
             }
-        }
         }
 
     }
