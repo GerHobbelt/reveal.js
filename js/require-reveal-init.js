@@ -33,7 +33,12 @@ var RevealConfiguration;        // object or function-returning-an-object
             marked: plugin('marked/lib/marked'),
         },
         onCompleteLoadOne: function (e) {
-            console.log("RequireJS onCompleteLoadOne: ", e.defQueue, document.readyState, arguments);
+            console.log("RequireJS onCompleteLoadOne: ", {
+                queue: e.defQueue, 
+                readyState: document.readyState, 
+                argv: arguments,
+                name: arguments[0] && arguments[0].moduleName,
+            });
 
             if (NProgress.isStarted()) {
                 NProgress.inc();
@@ -41,7 +46,11 @@ var RevealConfiguration;        // object or function-returning-an-object
         },
         // RequireJS BUG?: `callback` is not firing when ALL dependencies have loaded; it is already firing after the first one!
         callback: function() {
-            console.log("RequireJS callback: all loaded: ", document.readyState, arguments);
+            console.log("RequireJS callback: all loaded: ", {
+                readyState: document.readyState, 
+                argv: arguments,
+                name: arguments[0] && arguments[0].moduleName,
+            });
         }
     });
 
@@ -100,6 +109,12 @@ var RevealConfiguration;        // object or function-returning-an-object
 
         Reveal.addEventListener( 'ready', function ( info ) {
             console.log("Reveal is READY: ", info, arguments);
+
+            NProgress.done(false, "Done. Ready when you are!");
+        } );
+
+        Reveal.addEventListener( 'asyncscriptsloaded', function ( info ) {
+            console.log("Reveal is state ASYNC-SCRIPTS-LOADED: ", info, arguments);
 
             NProgress.done(false, "Done. Ready when you are!");
         } );

@@ -13,6 +13,7 @@
         throw new Error("Reveal plugin requires a window with a document");
       }
       var zoom = require("zoom");
+      var Reveal = require("reveal");
       return factory( w, w.document, Reveal, zoom );
     };
   } else {
@@ -29,6 +30,14 @@
 
 // Pass this, window may not be defined yet
 }(this, function ( window, document, Reveal, zoom, undefined ) {
+
+  if ( typeof Reveal === 'undefined' ) {
+      throw 'The reveal.js library must be loaded first';
+  }
+
+  if ( typeof zoom === 'undefined' ) {
+      throw 'The zoom.js library must be loaded by/before the reveal-zoom plugin';
+  }
 
   var isEnabled = true;
 
