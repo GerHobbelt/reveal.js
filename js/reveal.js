@@ -39,7 +39,7 @@
 
     // these *_SELECTOR defines are all `dom.wrapper` based, which explains why they won't have the `.reveal` root/wrapper DIV class in them:
     // The reveal.js version
-    var VERSION = '3.4.1';
+    var VERSION = '3.5.0';
 
     var SLIDES_SELECTOR = '.slides > section, .slides > section > section',
         HORIZONTAL_SLIDES_SELECTOR = '.slides > section',
@@ -165,6 +165,12 @@
             // Flags if speaker notes should be visible to all viewers
             showNotes: false,
 
+			// Global override for autolaying embedded media (video/audio/iframe)
+			// - null: Media will only autoplay if data-autoplay is present
+			// - true: All media will autoplay, regardless of individual setting
+			// - false: No media will autoplay, regardless of individual setting
+			autoPlayMedia: null,
+
             // Number of milliseconds between automatically proceeding to the
             // next slide, disabled when set to 0, this value can be overwritten
             // by using a data-autoslide attribute on your slides
@@ -228,6 +234,13 @@
             // The maximum number of pages a single slide can expand onto when printing
             // to PDF, unlimited by default
             pdfMaxPagesPerSlide: Number.POSITIVE_INFINITY,
+
+			// Offset used to reduce the height of content within exported PDF pages.
+			// This exists to account for environment differences based on how you
+			// print to PDF. CLI printing options, like phantomjs and wkpdf, can end
+			// on precisely the total height of the document whereas in-browser
+			// printing has to end one pixel before.
+			pdfPageHeightOffset: -1,
 
             // Number of slides away from the current that are visible in overview mode
             viewDistance: 6,
@@ -1054,7 +1067,7 @@
             slideHeight = slideSize.height;
 
         // Let the browser know what page size we want to print
-        injectStyleSheet( '@page{size:'+ pageWidth +'px '+ pageHeight +'px; margin: 0 0 -1px 0;}' );
+		injectStyleSheet( '@page{size:'+ pageWidth +'px '+ pageHeight +'px; margin: 0px;}' );
 
         // Limit the size of certain elements to the dimensions of the slide
         injectStyleSheet( '.reveal section > img, .reveal section > video, .reveal section > iframe{max-width: ' + slideWidth + 'px; max-height:' + slideHeight + 'px}' );
@@ -1067,6 +1080,9 @@
 
         document.body.style.width = targetInfo.rawAvailableWidth + 'px';
         document.body.style.height = targetInfo.rawAvailableHeight + 'px';
+
+		// Make sure stretch elements fit on slide
+		layoutSlideContents( slideWidth, slideHeight );
 
         // Add each slide's index as attributes on itself, we need these
         // indices to generate slide numbers below
@@ -1106,7 +1122,7 @@
                 // so that no page ever flows onto another
                 var page = document.createElement( 'div' );
                 page.className = 'pdf-page';
-                page.style.height = ( pageHeight * numberOfPages ) + 'px';
+				page.style.height = ( ( pageHeight + config.pdfPageHeightOffset ) * numberOfPages ) + 'px';
                 slide.parentNode.insertBefore( page, slide );
                 page.appendChild( slide );
 
@@ -4673,7 +4689,14 @@
         updateNotes();
 
         formatEmbeddedContent();
-        startEmbeddedContent( currentSlide );
+
+		// Start or stop embedded content depending on global config
+		if( config.autoPlayMedia === false ) {
+			stopEmbeddedContent( currentSlide );
+		}
+		else {
+			startEmbeddedContent( currentSlide );
+		}
 
         if( isOverview() ) {
             layoutOverview();
@@ -5441,13 +5464,13 @@
 
     }
 
-    /**
-     * Called when the given slide is within the configured view
-     * distance. Shows the slide element and loads any content
-     * that is set to load lazily (data-src).
-     *
-     * @param {HTMLElement} slide Slide to show
-     */
+	/**
+	 * Called when the given slide is within the configured view
+	 * distance. Shows the slide element and loads any content
+	 * that is set to load lazily (data-src).
+	 *
+	 * @param {HTMLElement} slide Slide to show
+	 */
     function showSlide( slide ) {
 
         // Show the slide element
@@ -5513,6 +5536,15 @@
                         video.muted = true;
                     }
                     }
+					// Inline video playback works (at least in Mobile Safari) as
+					// long as the video is muted and the `playsinline` attribute is
+					// present
+					if( isMobileDevice ) {
+						video.muted = true;
+						video.autoplay = true;
+						video.setAttribute( 'playsinline', '' );
+					}
+
                     // Support comma separated lists of video sources
                     backgroundVideo.split( ',' ).forEach( function( source ) {
                         video.innerHTML += '<source src="' + source + '">';
@@ -5523,6 +5555,9 @@
                 // Iframes
                 else if ( backgroundIframe ) {
                     var iframe = document.createElement( 'iframe' );
+					iframe.setAttribute( 'allowfullscreen', '' );
+					iframe.setAttribute( 'mozallowfullscreen', '' );
+					iframe.setAttribute( 'webkitallowfullscreen', '' );
 
                     // Only load autoplaying content when the slide is shown to
                     // avoid having it play in the background
@@ -5541,6 +5576,7 @@
                     background.appendChild( iframe );
                 }
             }
+
         }
 
     }
@@ -5668,14 +5704,16 @@
                     return;
                 }
 
-                // Autoplay is always on for slide backgrounds
-                var autoplay =  el.hasAttribute( 'data-autoplay' ) ||
-                                el.hasAttribute( 'data-paused-by-reveal' ) ||
-                                !!closestParent( el, '.slide-background' );
+				// Prefer an explicit global autoplay setting
+				var autoplay = config.autoPlayMedia;
+
+				// If no global setting is available, fall back on the element's
+				// own autoplay setting
+				if( typeof autoplay !== 'boolean' ) {
+					autoplay = el.hasAttribute( 'data-autoplay' ) || !!closestParent( el, '.slide-background' );
+				}
 
                 if( autoplay && typeof el.play === 'function' ) {
-
-                    el.removeAttribute( 'data-paused-by-reveal' );
 
                     if( el.readyState > 1 ) {
                         startEmbeddedMedia( { target: el } );
@@ -5683,9 +5721,6 @@
                     else {
                         el.removeEventListener( 'loadeddata', startEmbeddedMedia ); // remove first to avoid dupes
                         el.addEventListener( 'loadeddata', startEmbeddedMedia );
-
-                        // `loadeddata` never fires unless we start playing on iPad
-                        if( /ipad/gi.test( UA ) ) el.play();
                     }
 
                 }
@@ -5761,7 +5796,14 @@
 
             if( isAttachedToDOM && isVisible ) {
 
-                var autoplay = iframe.hasAttribute( 'data-autoplay' ) || !!closestParent( iframe, '.slide-background' );
+				// Prefer an explicit global autoplay setting
+				var autoplay = config.autoPlayMedia;
+
+				// If no global setting is available, fall back on the element's
+				// own autoplay setting
+				if( typeof autoplay !== 'boolean' ) {
+					autoplay = iframe.hasAttribute( 'data-autoplay' ) || !!closestParent( iframe, '.slide-background' );
+				}
 
                 // YouTube postMessage API
                 if( /youtube\.com\/embed\//.test( iframe.getAttribute( 'src' ) ) && autoplay ) {
@@ -5791,10 +5833,8 @@
      * the targeted slide.
      *
      * @param {HTMLElement} element
-     * @param {boolean} autoplay Optionally override the
-     * autoplay setting of media elements
      */
-    function stopEmbeddedContent( element, autoplay ) {
+	function stopEmbeddedContent( element ) {
 
         if( element && element.parentNode ) {
             // HTML5 media elements
@@ -5807,20 +5847,20 @@
 
             // Generic postMessage API for non-lazy loaded iframes
             toArray( element.querySelectorAll( 'iframe' ) ).forEach( function( el ) {
-                el.contentWindow.postMessage( 'slide:stop', '*' );
+				if( el.contentWindow ) el.contentWindow.postMessage( 'slide:stop', '*' );
                 el.removeEventListener( 'load', startEmbeddedIframe );
             } );
 
             // YouTube postMessage API
             toArray( element.querySelectorAll( 'iframe[src*="youtube.com/embed/"]' ) ).forEach( function( el ) {
-                if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
+				if( !el.hasAttribute( 'data-ignore' ) && el.contentWindow && typeof el.contentWindow.postMessage === 'function' ) {
                     el.contentWindow.postMessage( '{"event":"command","func":"pauseVideo","args":""}', '*' );
                 }
             });
 
             // Vimeo postMessage API
             toArray( element.querySelectorAll( 'iframe[src*="player.vimeo.com/"]' ) ).forEach( function( el ) {
-                if( !el.hasAttribute( 'data-ignore' ) && typeof el.contentWindow.postMessage === 'function' ) {
+				if( !el.hasAttribute( 'data-ignore' ) && el.contentWindow && typeof el.contentWindow.postMessage === 'function' ) {
                     el.contentWindow.postMessage( '{"method":"pause"}', '*' );
                 }
             } );
@@ -6156,11 +6196,11 @@
     }
 
     /**
-     * Retrieves the total number of slides in this presentation.
-     *
-     * @return {number}
-     */
-    function getTotalSlides() {
+	 * Retrieves all slides in this presentation.
+	 */
+	function getSlides() {
+
+// TBD: return array of nodes, NOT LENGTH!!!!
 
         // Count all slides, horizontal and vertical, but do NOT count the horizontal wrapper slides which contain vertical slides.
         //
@@ -6169,6 +6209,18 @@
         // would not deliver, and (b) the above ':not(.stack)' fails anyway because *vertical* slides which have *fragments* are also
         // tagged with the `stack` class.
         return dom.slides.querySelectorAll( SCOPED_FROM_WRAPPER_ALL_SLIDES_SELECTOR ).length - dom.slides.querySelectorAll( SCOPED_FROM_WRAPPER_HORIZONTAL_SLIDES_SELECTOR + '.stack' ).length;
+		//return toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ));
+
+	}
+
+	/**
+     * Retrieves the total number of slides in this presentation.
+     *
+     * @return {number}
+     */
+    function getTotalSlides() {
+
+        return getSlides().length;
 
     }
 
@@ -7808,12 +7860,19 @@ if (0) {
         getState: getState,
         setState: setState,
 
+		// Presentation progress
+		getSlidePastCount: getSlidePastCount,
+
         // Presentation progress on range of 0-1
         getProgress: getProgress,
 
         // Returns the indices of the current, or specified, slide
         getIndices: getIndices,
 
+		// Returns an Array of all slides
+		getSlides: getSlides,
+
+		// Returns the total number of slides
         getTotalSlides: getTotalSlides,
 
         // Returns the slide element at the specified index
