@@ -4,11 +4,11 @@
 .rv-font-face( @family, @path, @svgtag, @weight: 'normal', @style: 'normal' ) {
 	@font-face {
 		font-family: @family;
-		src: url('#{@rv-font-path}/#{@path}');
-		src: url('#{@rv-font-path}/#{@path}?#iefix') format('embedded-opentype'),
-			url('#{@rv-font-path}/#{@path}') format('woff'),
-			url('#{@rv-font-path}/#{@path}') format('truetype'),
-			url('#{@rv-font-path}/#{@path}##{@svgtag}') format('svg');
+		src: url('#{@rv-font-path}/@{path}');
+		src: url('#{@rv-font-path}/@{path}?#iefix') format('embedded-opentype'),
+			url('#{@rv-font-path}/@{path}') format('woff'),
+			url('#{@rv-font-path}/@{path}') format('truetype'),
+			url('#{@rv-font-path}/@{path}@@{svgtag}') format('svg');
 		font-weight: @weight;
 		font-style: @style;
 	}
